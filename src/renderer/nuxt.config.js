@@ -48,9 +48,14 @@ module.exports = {
     },
     dev: process.env.NODE_ENV === "development",
     css: [
-        "@/assets/css/global.css",
+        "~assets/css/global.scss",
         "vue-draggable-resizable/dist/VueDraggableResizable.css"
     ],
+    plugins: [
+        { src: "@plugins/vue-draggable-resizable", ssr: true },
+        { src: "@plugins/autocomplete", ssr: true }
+    ],
+    buildModules: ["@nuxtjs/style-resources"],
     modules: [
         [
             "nuxt-fontawesome", {
@@ -71,8 +76,9 @@ module.exports = {
             }
         ]
     ],
-    plugins: [
-        { src: "@plugins/vue-draggable-resizable", ssr: true },
-        { src: "@plugins/autocomplete", ssr: true }
-    ]
+    styleResources: {
+        scss: [
+            "~assets/css/colors.scss"
+        ]
+    }
 };

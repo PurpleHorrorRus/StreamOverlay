@@ -104,7 +104,6 @@ export default {
             saveSettings: "settings/saveSettings",
             turnLock: "ipc/turnLock",
             turnUpdate: "notifications/turnUpdate",
-
             connectOBS: "obs/connectOBS",
             createHelix: "twitch/createHelix",
             createChatBot: "twitch/createChatBot",
@@ -134,46 +133,13 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 html, body, #__nuxt, #__layout, #content {
     width: 100%;
     height: 100%;
 	overflow: hidden;
 }
-
-div, span, input, button {
-	font-family: -apple-system, BlinkMacSystemFont, 
-        'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 
-        'Open Sans', 'Helvetica Neue', sans-serif;
-        
-	color: #fff;
-}
-
-button {
-	background: none;
-	border: 1px solid #ccc;
-	padding: 5px;
-	margin-right: 3px;
-	outline: none;
-}
-
-button:hover {
-	cursor: pointer;
-	border: 1px solid rgb(117, 117, 252);
-}
-
-input {
-	background: none;
-	border: none;
-	border-bottom: 1px solid #ccc;
-	border-radius: 0px;
-	padding: 10px;
-	color: white;
-	width: 100%;
-	outline: none;
-}
-
 
 .link { color: rgb(117, 117, 252); }
 
