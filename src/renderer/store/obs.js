@@ -1,6 +1,5 @@
 import Promise from "bluebird";
 import socket from "obs-websocket-js";
-import misc from "~/plugins/misc";
 
 export default {
     namespaced: true,

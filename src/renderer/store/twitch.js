@@ -1,5 +1,3 @@
-import { ipcRenderer } from "electron-better-ipc";
-
 import fetch from "node-fetch";
 import Helix from "simple-helix-api";
 import Promise from "bluebird";

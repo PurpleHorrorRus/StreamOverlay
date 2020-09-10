@@ -1,6 +1,7 @@
 import { app } from "electron";
 import { autoUpdater } from "electron-updater";
 
+// eslint-disable-next-line no-unused-vars
 import { default as common } from "./common";
 
 autoUpdater.currentVersion = app.getVersion();
