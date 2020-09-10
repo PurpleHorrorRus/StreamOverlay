@@ -49,19 +49,6 @@
                     @change="changeFont"
                 >
             </div>
-            <div class="modal-item">
-                <div class="modal-item-tip">
-                    <span class="modal-item-tip-text" v-text="'Звук сообщения'" />
-                </div>
-
-                <div class="setting-item">
-                    <span class="setting-name" v-text="'Включить'" />
-                    <input id="scb2" type="checkbox" :checked="settings.chat.sound" @change="turnSound">
-                    <label for="scb2" class="setting-tumbler">
-                        <div class="tick" />
-                    </label>
-                </div>
-            </div>
         </div>
     </div>
 </template>
@@ -97,12 +84,13 @@ export default {
             this.save();
         },
         changeFont () {
-            if (this.settings.chat.font < 4) this.settings.chat.font = 4;
-            else if (this.settings.chat.font > 18) this.settings.chat.font = 18;
-            this.save();
-        },
-        turnSound () {
-            this.settings.chat.sound = !this.settings.chat.sound;
+            if (this.settings.chat.font < 4) {
+                this.settings.chat.font = 4;
+            }
+            else if (this.settings.chat.font > 18) {
+                this.settings.chat.font = 18;
+            }
+            
             this.save();
         }
     }

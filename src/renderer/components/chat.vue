@@ -1,5 +1,5 @@
 <template>
-    <movable :source="settings.chat" name="Чат" @onResize="onResize" @onDrag="onDrag">
+    <movable v-if="settings" :source="settings.chat" name="Чат" @onResize="onResize" @onDrag="onDrag">
         <div id="chat-block">
             <message 
                 v-for="(message, index) of messages" 

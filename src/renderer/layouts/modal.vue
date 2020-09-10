@@ -223,7 +223,7 @@ input[type="checkbox"]:focus + label {
 }
 
 .setting-item { padding: 5px;}
-.setting-item .setting-name { font-size: 15pt; }
+.setting-item .setting-name { font-size: 12pt; }
 
 .setting-item select {
     outline: none;

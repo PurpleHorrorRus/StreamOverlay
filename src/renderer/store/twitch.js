@@ -1,13 +1,9 @@
-import { fork } from "child_process";
-import { encode } from "querystring";
 import { join } from "path";
 import fetch from "node-fetch";
 import fs from "fs";
 import Helix from "simple-helix-api";
 import Promise from "bluebird";
 
-import sound from "~/sounds/sound.mp3";
-import misc from "~/plugins/misc";
 
 fetch.Promise = Promise;
 
@@ -86,11 +82,6 @@ export default {
                     user.emotes, 
                     color 
                 });
-
-                const { chat } = this.getters["settings/getSettings"];
-                if (chat.sound && chat.sound_file.length) {
-                    this.dispatch("twitch/playSound");
-                }
             });
 
             state.client.on("connected", () => {
@@ -224,25 +215,12 @@ export default {
         removeMessage ({ commit }, message) { 
             commit("removeMessage", message); 
         },
-        async updateStats ({ dispatch, commit, getters, rootGetters }) { 
-            dispatch("lastFollower");
-
+        async updateStats ({ commit, getters, rootGetters }) { 
             const helix = getters["getHelix"];
             const user = getters["getUser"];
 
             const count = await helix.getFollowersCount(user.id);
             commit("setFollowersCount", count);
-
-            const text = fs.readFileSync("./config/followers.json");
-            const json = JSON.parse(text);
-            const fileCount = json.length;
-
-            if (count !== fileCount) { 
-                dispatch("checkFool", {
-                    newCount: count,
-                    oldCount: fileCount
-                });
-            }
 
             const { stream } = rootGetters["obs/getStatus"];
 
@@ -280,10 +258,6 @@ export default {
         },
         loadEmotes({ commit }) { 
             commit("loadEmotes");
-        },
-        playSound () {
-            const audio = new Audio(sound);
-            audio.play();
         },
         runInterval({ commit }) { 
             commit("runInterval"); 

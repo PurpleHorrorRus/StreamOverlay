@@ -17,7 +17,6 @@
         <div id="overlays">
             <overlay v-for="(overlay, index) of overlays" :key="index" :overlay="overlay" />
         </div>
-        <music />
         <notifications />
         <obs />
         <chat />
@@ -26,11 +25,10 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import { ipcRenderer } from "electron-better-ipc";
 
 import obs from "~/components/obs";
-import music from "~/components/music";
 import notifications from "~/components/notifications/notifications";
 import chat from "~/components/chat";
 import overlay from "~/components/overlay";
@@ -41,7 +39,6 @@ import other from "~/mixins/other";
 export default {
     components: { 
         obs, 
-        music,
         notifications, 
         chat, 
         overlay, 
@@ -70,13 +67,13 @@ export default {
 
         const { settings, overlays, OBS, twitch } = await ipcRenderer.callMain("config");
 
-        if (!OBS.address.length || !OBS.port) {
+        if (!OBS.address || !OBS.port) {
             ipcRenderer.send("enableMouse");
             this.$router.replace("/settings/obs").catch(() => {});
             return;
         }
 
-        if (!twitch.id.length || !twitch.username.length || !twitch.access_token.length || !twitch.oauth_token.length) {
+        if (!twitch.id || !twitch.username || !twitch.access_token || !twitch.oauth_token) {
             ipcRenderer.send("enableMouse");
             this.$router.replace("/settings/twitch").catch(() => {});
             return;
@@ -86,12 +83,12 @@ export default {
             this.setSettings(settings);
             this.setOverlays(overlays);
             this.connectOBS(OBS);
-        }
-
-        if (!this.helix) {
-            this.createHelix();
-            this.createChatBot();
-            this.runInterval();
+        } else {
+            if (!this.helix) {
+                this.createHelix();
+                this.createChatBot();
+                this.runInterval();
+            }
         }
     },
     methods: {

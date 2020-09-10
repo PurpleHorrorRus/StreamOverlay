@@ -1,22 +1,16 @@
 <template>
     <div class="modal-content">
-        <ModalTitle :text="strings.MENU_LABEL" />
+        <ModalTitle :text="'Меню'" />
         <MenuItem 
-            :text="strings.MENU_ITEMS.MENU_ITEM_STREAM" 
+            :text="'Трансляция'" 
             :icon="['fas', 'signal']"
             :load="loadingStream"
             @method="openStream" 
         />
-        <MenuItem :text="strings.MENU_ITEMS.MENU_ITEM_EDIT" :icon="['fas', 'pen']" @method="enableEdit" />
-        <MenuItem :text="strings.MENU_ITEMS.MENU_ITEM_OBS" :icon="['fas', 'wrench']" @method="openObs" />
-        <MenuItem :text="strings.MENU_ITEMS.MENU_ITEM_TWITCH" :icon="['fab', 'twitch']" @method="openTwitch" />
-        <MenuItem :text="strings.MENU_ITEMS.MENU_ITEM_CHAT" :icon="['fas', 'comment']" @method="openChat" />
-        <MenuItem :text="strings.MENU_ITEMS.MENU_ITEM_DATABASE" :icon="['fas', 'database']" @method="openDatabase" />
-        <MenuItem :text="strings.MENU_ITEMS.MENU_ITEM_VK" :icon="['fab', 'vk']" @method="openVK" />
-        <!-- <div id="menu-actions">
-            <ActionItem :icon="['fab', 'discord']" :label="'Вкл. муз.бота'" @action="startBot" />
-            <ActionItem :icon="['fab', 'discord']" :label="'Выкл муз.бота'" @action="leaveBot" />
-        </div> -->
+        <MenuItem :text="'Режим редактирования'" :icon="['fas', 'pen']" @method="enableEdit" />
+        <MenuItem :text="'Настройки OBS'" :icon="['fas', 'wrench']" @method="openObs" />
+        <MenuItem :text="'Настройки Twitch'" :icon="['fab', 'twitch']" @method="openTwitch" />
+        <MenuItem :text="'Настройки чата'" :icon="['fas', 'comment']" @method="openChat" />
     </div>
 </template>
 
@@ -26,14 +20,12 @@ import { mapActions, mapGetters } from "vuex";
 
 import ModalTitle from "~/components/ModalTitle";
 import MenuItem from "~/components/MenuItem";
-// import ActionItem from "~/components/ActionItem";
 
 export default {
     layout: "modal",
     components: { 
         ModalTitle, 
-        MenuItem, 
-        // ActionItem 
+        MenuItem
     },
     data: () => ({ 
         loadingStream: false 
@@ -69,12 +61,6 @@ export default {
         },
         openChat () { 
             this.$router.replace("/settings/chat").catch(() => {});
-        },
-        openDatabase () { 
-            this.$router.replace("/settings/database/").catch(() => {});
-        },
-        openVK () { 
-            this.$router.replace("/settings/vk").catch(() => {});
         }
     }
 };

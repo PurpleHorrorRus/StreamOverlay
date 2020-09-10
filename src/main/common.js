@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { app } from "electron";
 import fs from "fs";
 import path from "path";
@@ -17,8 +18,6 @@ const writeJSON = (dir, content) => {
 const clearSettings = {
     chat: {
         timeout: 80,
-        sound: false,
-        sound_file: "",
         opacity: 30,
         font: 12,
         x: 1633,
@@ -47,7 +46,7 @@ if (!fs.existsSync(configPath)) {
 }
 
 const spath = isDev
-    ? path.join(configPath, "StreamOverlay")
+    ? path.join(configPath, "StreamOverlayStandart")
     : configPath;
 
 if (!fs.existsSync(spath)) {

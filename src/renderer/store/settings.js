@@ -3,10 +3,7 @@ import { ipcRenderer } from "electron";
 export default {
     namespaced: true,
     state: () => ({
-        settings: null,
-        OBS: null,
-        twitch: null,
-        overlays: null
+        settings: null
     }),
     mutations: {
         setSettings (state, settings) {
