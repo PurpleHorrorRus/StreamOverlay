@@ -18,7 +18,6 @@ import moderator from "~/images/moderator.png";
 import premium from "~/images/premium.png";
 import subscriber from "~/images/subscriber.png";
 import vip from "~/images/vip.png";
-import vk from "~/images/vk.png";
 
 export default {
     props: {
@@ -46,7 +45,6 @@ export default {
             case "premium": return premium;
             case "subscriber": return subscriber;
             case "vip": return vip;
-            case "vk": return vk;
             }
         }
     }
