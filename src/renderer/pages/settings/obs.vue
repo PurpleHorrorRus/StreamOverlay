@@ -62,7 +62,7 @@
             <div class="modal-item-tip">
                 <span class="modal-item-tip-text">
                     Для дальнейшей работы 
-                    <strong style="color: red">ОБЯЗАТЕЛЬНО</strong> 
+                    <strong style="color: red" v-text="'ОБЯЗАТЕЛЬНО'" />
                     установите 
                     <strong 
                         class="link" 

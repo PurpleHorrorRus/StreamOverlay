@@ -8,7 +8,10 @@ const TerserConfig = {
 module.exports = {
     mode: "universal",
     head: {
-        title: "Stream Overlay"
+        title: "Stream Overlay",
+        meta: [
+            { charset: "utf-8" }
+        ]
     },
     loading: false,
     build: {
