@@ -5,6 +5,8 @@ const TerserConfig = {
     parallel: true
 };
 
+const cssnano = require("cssnano");
+
 module.exports = {
     mode: "universal",
     head: {
@@ -36,6 +38,11 @@ module.exports = {
             minimize: true,
             minimizer: [
                 compiler => new TerserPlugin(TerserConfig).apply(compiler),
+            ]
+        },
+        postcss: {
+            plugins: [
+                cssnano({ preset: "default" })
             ]
         }
     },
