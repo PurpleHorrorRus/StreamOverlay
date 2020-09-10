@@ -210,15 +210,17 @@ export default {
 
             state.obs.on("error", handleError);
         },
-        setDevices(state, devices) { return state.devices = devices; },
-        setupUpdateInterval(state) {
+        setDevices (state, devices) { 
+            state.devices = devices; 
+        },
+        setupUpdateInterval (state) {
             if (state.updateInterval) {
                 this.dispatch("obs/clearUpdateInterval");
             }
 
             state.updateInterval = setInterval(() => this.dispatch("obs/updateTime"), 1000);
         },
-        clearUpdateInterval(state) {
+        clearUpdateInterval (state) {
             state.status.time.seconds = 0;
             state.status.time.mins = 0;
             state.status.time.hours = 0;
@@ -227,7 +229,7 @@ export default {
                 state.updateInterval = null;
             }
         },
-        updateTime(state) {
+        updateTime (state) {
             if (state.status.stream || state.status.recording) {
                 state.status.time.seconds++;
                 if (state.status.time.seconds >= 60) {
@@ -261,14 +263,8 @@ export default {
         }
     },
     getters: {
-        getOBS(state) { 
-            return state.obs; 
-        },
-        getStatus(state) { 
-            return state.status; 
-        },
-        getDevices(state) { 
-            return state.devices; 
-        }
+        getOBS: state => state.obs,
+        getStatus: state => state.status,
+        getDevices: state => state.devices
     }
 };
