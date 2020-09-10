@@ -54,10 +54,11 @@ export default {
     layout: "modal",
     components: { game },
     async asyncData ({ store }) {
-        const top_games = await store.getters["twitch/getTopGames"];
         const helix = store.getters["twitch/getHelix"];
         const stream = store.getters["twitch/getStream"];
         const game = await helix.getGame(stream.game);
+
+        const top_games = await helix.getTopGames();
 
         const art_size = {
             width: 85,
@@ -86,8 +87,7 @@ export default {
     computed: {
         ...mapGetters({
             user: "twitch/getUser",
-            helix: "twitch/getHelix",
-            getTopGames: "twitch/getTopGames"
+            helix: "twitch/getHelix"
         }),
         filtered_top_games () {
             if (!this.local.game.length) {
@@ -114,7 +114,7 @@ export default {
             }
 
             if (newVal.length === 0) {
-                this.top_games = await this.getTopGames;
+                this.top_games = await this.helix.getTopGames();
                 return;
             }
 

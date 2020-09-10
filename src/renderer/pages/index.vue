@@ -88,10 +88,13 @@ export default {
             this.setSettings(settings);
             this.setOverlays(overlays);
             this.connectOBS(OBS);
-        } else if (!this.helix) {
-            this.createHelix();
-            this.createChatBot();
-            this.runInterval();
+
+            if (!this.helix) {
+                console.log(twitch);
+                this.createHelix(twitch);
+                this.createChatBot();
+                this.runInterval();
+            }
         }
     },
     methods: {

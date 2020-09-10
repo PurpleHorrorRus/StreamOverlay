@@ -42,11 +42,10 @@ export default {
         followers: -1
     }),
     mutations: {
-        createHelix (state) {
+        createHelix (state, twitch) {
             return new Promise(async resolve => {
-                const { twitch } = await ipcRenderer.callMain("config");
-                this.user = twitch;
-    
+                state.user = twitch;
+
                 state.helix = new Helix({ 
                     access_token: twitch.access_token, 
                     client_id, 
@@ -66,7 +65,7 @@ export default {
             const { status: title, game } = await state.helix.getChannel(state.user.id);
             state.stream = { title, game };
 
-            state.client = state.helix.createChatBot("BernkastelBot", state.user.oauth_token, state.user.username);
+            state.client = state.helix.createChatBot(state.user.username, state.user.oauth_token, state.user.username);
             state.client.on("message", async (_channel, user, message) => {
                 const nickname = user["display-name"];
                 const profile = await state.helix.getUser(nickname);
@@ -98,7 +97,6 @@ export default {
             state.client.on("disconnected", () => this.dispatch("notifications/turnChatDisconnect", true));
         },
         pushMessage (state, message) { 
-            console.log(message);
             state.messages = [message, ...state.messages]; 
         },
         ban (state, nickname) { 
@@ -196,8 +194,8 @@ export default {
         }
     },
     actions: {
-        createHelix ({ commit }) { 
-            commit("createHelix");
+        createHelix ({ commit }, twitch) { 
+            commit("createHelix", twitch);
         },
         createChatBot ({ commit }) { 
             commit("createChatBot"); 
@@ -217,8 +215,6 @@ export default {
         async updateStats ({ commit, getters, rootGetters }) { 
             const helix = getters["getHelix"];
             const user = getters["getUser"];
-
-            console.log(helix, user);
 
             const count = await helix.getFollowersCount(user.id);
             commit("setFollowersCount", count);
@@ -274,36 +270,14 @@ export default {
         }
     },
     getters: {
-        getUser(state) { 
-            return state.user; 
-        },
-        getMessages(state) { 
-            return state.messages; 
-        },
-        getHelix(state) { 
-            return state.helix; 
-        },
+        getUser: state => state.user,
+        getMessages: state => state.messages,
+        getHelix: state => state.helix,
         getClient: state => state.client,
-        getStream(state) { 
-            return state.stream; 
-        },
-        async getChannel(state) { 
-            return await state.helix.getChannel(state.user.id); 
-        },
-        async getTopGames(state) { 
-            return await state.helix.getTopGames(); 
-        },
-        getBetterTTV(state) { 
-            return state.betterTTV; 
-        },
-        getFrankerFaceZ(state) { 
-            return state.FrankerFaceZ; 
-        },
-        getFollowers(state) { 
-            return state.followers; 
-        },
-        getViewers(state) { 
-            return state.viewers; 
-        }
+        getStream: state => state.stream,
+        getBetterTTV: state => state.betterTTV,
+        getFrankerFaceZ: state => state.FrankerFaceZ,
+        getFollowers: state => state.followers,
+        getViewers: state => state.viewers
     }
 };

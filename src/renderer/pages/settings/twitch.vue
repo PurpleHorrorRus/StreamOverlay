@@ -144,12 +144,8 @@ export default {
                     increaseRate: true
                 });
 
-                console.log(helix);
-
                 const user = await helix.getUser(this.username)
                     .catch(() => reject({ success: false, error: "Пользователь с таким ником не найден" }));
-
-                console.log(user);
 
                 const data = await helix.getChannel(user.id);
                 const title = data.status,
