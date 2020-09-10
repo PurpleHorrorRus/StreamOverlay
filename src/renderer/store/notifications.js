@@ -4,7 +4,8 @@ export default {
         notifications: [],
         lowbitrate: false,
         lowfps: false,
-        chatdisconnect: false
+        chatdisconnect: false,
+        update: false
     }),
     mutations: {
         addNotification(state, notification) {
@@ -26,20 +27,30 @@ export default {
         turnChatDisconnect(state, show) {
             if(state.chatdisconnect === show) return;
             return state.chatdisconnect = show;
+        },
+        turnUpdate (state, show) {
+            if (state.update === show) {
+                return;
+            }
+
+            state.update = show;
         }
     },
     actions: {
-        addNotification({ commit }, notification) { 
+        addNotification ({ commit }, notification) { 
             commit("addNotification", notification); 
         },
-        turnLowBitrate({ commit }, show) { 
+        turnLowBitrate ({ commit }, show) { 
             commit("turnLowBitrate", show);
         },
-        turnLowFPS({ commit }, show) { 
+        turnLowFPS ({ commit }, show) { 
             commit("turnLowFPS", show); 
         },
-        turnChatDisconnect({ commit }, show) { 
+        turnChatDisconnect ({ commit }, show) { 
             commit("turnChatDisconnect", show); 
+        },
+        turnUpdate ({ commit }, show) { 
+            commit("turnUpdate", show); 
         }
     },
     getters: {
@@ -54,6 +65,9 @@ export default {
         },
         getChatDisconnect(state) { 
             return state.chatdisconnect; 
+        },
+        getShowUpdate (state) {
+            return state.update;
         }
     }
 };

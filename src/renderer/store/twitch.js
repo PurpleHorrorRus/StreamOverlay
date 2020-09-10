@@ -1,17 +1,11 @@
-import { join } from "path";
+import { ipcRenderer } from "electron-better-ipc";
+
 import fetch from "node-fetch";
-import fs from "fs";
 import Helix from "simple-helix-api";
 import Promise from "bluebird";
 
-
 fetch.Promise = Promise;
 
-const ReadJSON = dir => JSON.parse(fs.readFileSync(dir, "UTF-8"));
-
-const twitchPath = join("config", "twitch.json");
-const data = ReadJSON(twitchPath);
-const { id, username, access_token, oauth_token } = data;
 const client_id = "zmin05a65f74rln2g94iv935w58nyq";
 
 const syncRequest = async (url, params = {}) => {
@@ -32,10 +26,7 @@ const syncRequest = async (url, params = {}) => {
 export default {
     namespaced: true,
     state: () => ({
-        user: { 
-            id,
-            username 
-        },
+        user: null,
         helix: null,
         client: null,
         chatServer: null,
@@ -51,8 +42,19 @@ export default {
         followers: -1
     }),
     mutations: {
-        async createHelix (state, helix) {
-            state.helix = helix;
+        createHelix (state) {
+            return new Promise(async resolve => {
+                const { twitch } = await ipcRenderer.callMain("config");
+                this.user = twitch;
+    
+                state.helix = new Helix({ 
+                    access_token: twitch.access_token, 
+                    client_id, 
+                    increaseRate: true 
+                });
+
+                return resolve();
+            });
         },
         async createChatBot (state) {
             if (state.client || !state.helix) {
@@ -64,7 +66,7 @@ export default {
             const { status: title, game } = await state.helix.getChannel(state.user.id);
             state.stream = { title, game };
 
-            state.client = state.helix.createChatBot("BernkastelBot", oauth_token, username);
+            state.client = state.helix.createChatBot("BernkastelBot", state.user.oauth_token, state.user.username);
             state.client.on("message", async (_channel, user, message) => {
                 const nickname = user["display-name"];
                 const profile = await state.helix.getUser(nickname);
@@ -118,7 +120,7 @@ export default {
         setViewers (state, viewers) {
             state.viewers = viewers;
         },
-        updateStream (state, stream) { 
+        updateStream(state, stream) { 
             state.stream = stream; 
         },
         loadEmotes (state) {
@@ -176,7 +178,9 @@ export default {
                 this.dispatch("twitch/clearInterval");
                 this.dispatch("twitch/updateStats");
             }
-            state.interval = setInterval(() => this.dispatch("twitch/updateStats"), 20 * 1000);
+
+            state.interval = setInterval(() => 
+                this.dispatch("twitch/updateStats"), 20 * 1000);
         },
         clearInterval (state) {
             if (state.interval) {
@@ -193,12 +197,7 @@ export default {
     },
     actions: {
         createHelix ({ commit }) { 
-            const helix = new Helix({ 
-                access_token, 
-                client_id, 
-                increaseRate: true 
-            });
-            commit("createHelix", helix);
+            commit("createHelix");
         },
         createChatBot ({ commit }) { 
             commit("createChatBot"); 
@@ -218,6 +217,8 @@ export default {
         async updateStats ({ commit, getters, rootGetters }) { 
             const helix = getters["getHelix"];
             const user = getters["getUser"];
+
+            console.log(helix, user);
 
             const count = await helix.getFollowersCount(user.id);
             commit("setFollowersCount", count);
@@ -256,16 +257,16 @@ export default {
                 return resolve(success);
             });
         },
-        loadEmotes({ commit }) { 
+        loadEmotes ({ commit }) { 
             commit("loadEmotes");
         },
-        runInterval({ commit }) { 
+        runInterval ({ commit }) { 
             commit("runInterval"); 
         },
-        clearInterval({ commit }) { 
+        clearInterval ({ commit }) { 
             commit("clearInterval"); 
         },
-        say({ commit }, message) { 
+        say ({ commit }, message) { 
             commit("say", message); 
         },
         sendToChat ({ commit }, data) {

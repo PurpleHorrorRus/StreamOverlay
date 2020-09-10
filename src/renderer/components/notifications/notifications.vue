@@ -3,23 +3,34 @@
         <notification v-for="(notification, index) of notifications" :key="index" :notification="notification" />
         <lowbitrate v-if="showLowBitrate" :notification="{ color: 'red' }" />
         <lowfps v-if="showLowFPS" :notification="{ color: 'red' }" />
+        <notification 
+            v-if="showUpdate" 
+            :notification="{ text: 'Доступно новое обновление. Скачивание...', 
+                             color: '#171717' }" 
+        />
         <notification v-if="showChatDisconnect" :notification="{ text: 'Чат отключен', color: 'red' }" />
     </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 import notification from "~/components/notifications/notification";
 import lowbitrate from "~/components/notifications/lowbitrate";
 import lowfps from "~/components/notifications/lowfps";
-import { mapGetters } from "vuex";
 
 export default {
-    components: { notification, lowbitrate, lowfps },
+    components: { 
+        notification, 
+        lowbitrate, 
+        lowfps
+    },
     computed: {
         ...mapGetters({
             notifications: "notifications/getNotifications",
             showLowBitrate: "notifications/getLowBitrate",
             showLowFPS: "notifications/getLowFPS",
+            showUpdate: "notifications/getShowUpdate",
             showChatDisconnect: "notifications/getChatDisconnect"
         })
     }

@@ -4,11 +4,19 @@ const path = require("path");
 const ICONS_DIR = path.resolve("build", "icons");
 
 const windowsOS = {
+    publish: {
+        provider: "github",
+        repo: "StreamOverlay",
+        owner: "PurpleHorrorRus"
+    },
+
     win: {
         icon: path.join(ICONS_DIR, "icon.ico"),
         publisherName: "PurpleHorrorRus",
         verifyUpdateCodeSignature: false,
-        target: "nsis"
+        target: "nsis",
+
+        publish: ["github"]
     },
 
     nsis: {
@@ -18,19 +26,19 @@ const windowsOS = {
 
 module.exports = {
     asar: true,
-    productName: "StreamOverlayMaximum",
-    appId: "com.purplehorrorrus.streamoverlaymaximum",
-    artifactName: "streamoverlaymaximum-${version}.${ext}",
+    productName: "StreamOverlay",
+    appId: "com.purplehorrorrus.streamoverlay",
+    artifactName: "streamoverlay-${version}.${ext}",
     directories: {
         output: "build",
         buildResources: "dist"
     },
-    // default files: https://www.electron.build/configuration/contents
     files: [
         "!**",
         "dist/**/*",
         "!dist/renderer/icon.psd",
         "!dist/renderer/icons",
+        "!dist/win-unpacked",
         "package.json",
         "node_modules",
     ],
@@ -38,14 +46,6 @@ module.exports = {
         {
             from: "./build/icons",
             to: "../build/icons"
-        },
-        {
-            from: "./config",
-            to: "../config"
-        },
-        {
-            from: "./chat",
-            to: "../chat"
         }
     ],
     ...windowsOS

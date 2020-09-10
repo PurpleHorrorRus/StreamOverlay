@@ -9,8 +9,8 @@ module.exports = {
     mode: "universal",
     head: {
         title: "Stream Overlay"
-    }, // Headers of the page
-    loading: false, // Disable default loading bar
+    },
+    loading: false,
     build: {
         extend (config, { isClient }) {
             if (isClient) { 

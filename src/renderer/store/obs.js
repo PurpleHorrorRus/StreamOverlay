@@ -89,7 +89,6 @@ export default {
                 if (_data.streaming || _data.recording) {
                     this.dispatch("obs/setupUpdateInterval");
                 }
-                // if (_data.streaming) this.dispatch("discord/start");
 
                 const setTime = timecode => {
                     if (timecode) {
@@ -110,15 +109,7 @@ export default {
  
                 state.obs.on("StreamStarting", async () => {
                     state.status.stream = true;
-                    const date = new Date().toLocaleString();
-                    const channel = await this.getters["twitch/getChannel"];
-                    
-                    this.dispatch("vk/send", `\
-                    === Стрим от ${date} ===\n\
-                    Название: ${channel.status}\n\
-                    Категория: ${channel.game}`);
 
-                    // this.dispatch("discord/start");
                     if (!state.status.recording) { 
                         this.dispatch("obs/setupUpdateInterval");
                     }
@@ -126,8 +117,7 @@ export default {
 
                 state.obs.on("StreamStopping", () => {
                     state.status.stream = false;
-                    const time = misc.formatTime(state.status.time);
-                    this.dispatch("vk/send", `=== Стрим окончен ===\nПродолжительность: ${time}`);
+                    
                     this.dispatch("notifications/turnLowBitrate", false);
                     this.dispatch("notifications/turnLowFPS", false);
                     if (!state.status.recording) {
@@ -179,11 +169,13 @@ export default {
                     state.status.strain = data.strain;
                 });
 
+                const sources = await send("GetSpecialSources");
+
                 state.interval = setInterval(async () => {
-                    state.devices = { 
-                        mic: !await muted("Mic/Aux").catch(handleError), 
-                        sound: !await muted("Устройство воспроизведения").catch(handleError), 
-                        camera: await getVisible(data.camera).catch(handleError)
+                    state.devices = {
+                        mic: !await muted(sources["mic-1"]).catch(handleError),
+                        sound: !await muted(sources["desktop-1"]).catch(handleError),
+                        camera: await getVisible(data.camera)
                     };
                 }, 800);
             };
@@ -200,7 +192,9 @@ export default {
                 });
             };
 
-            const handleError = async () => {
+            const handleError = async e => {
+                console.error(e);
+
                 if (state.interval) {
                     clearInterval(state.interval);
                     state.interval = null;

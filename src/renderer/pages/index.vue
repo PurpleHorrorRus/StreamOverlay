@@ -57,6 +57,11 @@ export default {
             return this.obs._connected;
         }
     },
+    beforeMount () {
+        ipcRenderer.on("update-available", () => {
+            this.turnUpdate(true);
+        });
+    },
     async mounted () {
         if (this.edit) {
             ipcRenderer.send("enableMouse");
@@ -83,12 +88,10 @@ export default {
             this.setSettings(settings);
             this.setOverlays(overlays);
             this.connectOBS(OBS);
-        } else {
-            if (!this.helix) {
-                this.createHelix();
-                this.createChatBot();
-                this.runInterval();
-            }
+        } else if (!this.helix) {
+            this.createHelix();
+            this.createChatBot();
+            this.runInterval();
         }
     },
     methods: {
@@ -98,6 +101,7 @@ export default {
             enableEdit: "overlays/enableEdit",
             saveSettings: "settings/saveSettings",
             turnLock: "ipc/turnLock",
+            turnUpdate: "notifications/turnUpdate",
 
             connectOBS: "obs/connectOBS",
             createHelix: "twitch/createHelix",

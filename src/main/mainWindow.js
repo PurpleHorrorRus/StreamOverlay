@@ -8,6 +8,9 @@ import path from "path";
 import { default as common } from "./common";
 const { icon, isDev, config } = common;
 
+import { default as updater } from "./updater";
+const { autoUpdater } = updater;
+
 const INDEX_PATH = path.join(__dirname, "..", "renderer", "index.html");
 const DEV_SERVER_URL = process.env.DEV_SERVER_URL;
 
@@ -58,6 +61,14 @@ const open = () => {
         }
     };
 
+    window.webContents.once("dom-ready", () => {
+        autoUpdater.on("update-available", info => {
+            send("update-available", info);
+        });
+
+        autoUpdater.checkForUpdates();
+    });
+
     ipcMain.answerRenderer("config", () => (config));
     ipcMain.on("saveSettings", (_, args) =>
         common.saveSettings(args.type, args.content)
@@ -101,9 +112,7 @@ const open = () => {
         if (!window) return;
         window.setAlwaysOnTop(true, "screen-saver");
         window.setVisibleOnAllWorkspaces(true);
-        window.setFullScreenable(true);
     }, 2000);
 };
 
 app.on("ready", open);
-app.on("window-all-closed", () => app.quit());
