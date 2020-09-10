@@ -1,7 +1,7 @@
 <template>
-    <movable v-if="settings" :source="settings.chat" name="Чат" @onResize="onResize" @onDrag="onDrag">
+    <Movable v-if="settings" :source="settings.chat" name="Чат" @onResize="onResize" @onDrag="onDrag">
         <div id="chat-block">
-            <message 
+            <Message 
                 v-for="(message, index) of messages" 
                 :key="message.id + index" 
                 :message="message" 
@@ -13,11 +13,14 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 
-import movable from "~/components/movable";
-import message from "~/components/message";
+import Movable from "~/components/movable";
+import Message from "~/components/Message";
 
 export default {
-    components: { movable, message },
+    components: { 
+        Movable, 
+        Message 
+    },
     computed: {
         ...mapGetters({
             active: "overlays/getEdit",
@@ -52,8 +55,10 @@ export default {
 <style>
 #chat-block { 
     position: absolute; 
+    
     width: 100%; 
     height: 100%; 
+
     overflow: hidden;
 }
 </style>

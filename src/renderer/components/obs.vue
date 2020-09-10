@@ -1,9 +1,9 @@
 <template>
     <div id="obs" :class="OBSClass">
-        <twitchInfo />
+        <TwitchInfo />
         <div v-if="connected" id="obs-panel">
-            <devices />
-            <status />
+            <Devices />
+            <Status />
         </div>
     </div>
 </template>
@@ -11,16 +11,17 @@
 <script>
 import { mapGetters } from "vuex";
 
+import Devices from "~/components/OBS/Devices";
+import TwitchInfo from "~/components/OBS/TwitchInfo";
+import Status from "~/components/OBS/Status";
+
 import other from "~/mixins/other";
-import twitchInfo from "~/components/obs/twitch-info";
-import devices from "~/components/obs/devices";
-import status from "~/components/obs/status";
 
 export default {
     components: { 
-        devices, 
-        twitchInfo, 
-        status 
+        Devices, 
+        TwitchInfo, 
+        Status 
     },
     mixins: [other],
     computed: {
@@ -50,26 +51,40 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 #obs {
 	position: absolute;
 	bottom: 0px;
-	right: 0px;
+    right: 0px;
+
+    display: flex;
+    align-items: center;
+    
 	max-width: 400px;
-	height: 30px;
-	background: rgba(0, 0, 0, 0.4);
-}
+    height: 30px;
+    
+    background: rgba(0, 0, 0, 0.4);
+    
+    &-panel {
+        display: inline-block;
+    }
 
-#obs #obs-panel { display: inline-block; }
+    &.connected {
+        border-left: 4px solid lightgreen; 
+        min-width: 170px;
+    }
 
-#obs.connected { 
-    border-left: 4px solid lightgreen; 
-    min-width: 170px;
+    &.disconnected { 
+        border-left: 4px solid #ccc; 
+        min-width: 4px;
+    }
+
+    &.streaming {
+         border-left: 4px solid purple;
+    }
+
+    &.recording {
+        border-left: 4px solid red;
+    }
 }
-#obs.disconnected { 
-    border-left: 4px solid #ccc; 
-    min-width: 4px;
-}
-#obs.streaming { border-left: 4px solid purple; }
-#obs.recording { border-left: 4px solid red; }
 </style>

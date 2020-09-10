@@ -17,10 +17,10 @@
         <div id="overlays">
             <overlay v-for="(overlay, index) of overlays" :key="index" :overlay="overlay" />
         </div>
-        <notifications />
-        <obs />
-        <chat />
-        <viewerslist v-if="settings.viewers_list.enable" />
+        <Notifications />
+        <OBS />
+        <Chat />
+        <ViewersList v-if="settings.viewers_list.enable" />
     </div>
 </template>
 
@@ -28,21 +28,21 @@
 import { mapActions, mapGetters } from "vuex";
 import { ipcRenderer } from "electron-better-ipc";
 
-import obs from "~/components/obs";
-import notifications from "~/components/notifications/notifications";
-import chat from "~/components/chat";
-import overlay from "~/components/overlay";
-import viewerslist from "~/components/ViewersList";
+import OBS from "~/components/OBS";
+import Notifications from "~/components/Notifications/Notifications";
+import Chat from "~/components/Chat";
+import Overlay from "~/components/Overlay";
+import ViewersList from "~/components/ViewersList";
 
 import other from "~/mixins/other";
 
 export default {
     components: { 
-        obs, 
-        notifications, 
-        chat, 
-        overlay, 
-        viewerslist
+        OBS, 
+        Notifications, 
+        Chat, 
+        Overlay, 
+        ViewersList
     },
     mixins: [other],
     computed: {
@@ -134,33 +134,21 @@ export default {
 </script>
 
 <style lang="scss">
-@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
-html, body, #__nuxt, #__layout, #content {
-    width: 100%;
-    height: 100%;
-	overflow: hidden;
-}
-
-.link { color: rgb(117, 117, 252); }
-
-.link:hover {
-	color: red;
-	text-decoration: underline;
-	cursor: pointer;
-}
-
 #overlays {
     position: absolute;
+
 	width: 100%;
 	height: 100%;
 }
 
 #editNotification {
-	position: absolute;
+    position: absolute;
 	top: 0px;
-	left: 45%;
+    left: 45%;
+    
 	width: 200px;
-	height: 60px;
+    height: 60px;
+    
     background: rgba(0, 0, 0, 0.4);
 	text-align: center;
 	border-bottom-left-radius: 10px;
@@ -169,7 +157,8 @@ html, body, #__nuxt, #__layout, #content {
 }
 
 #editText {
-	display: inline-block;
+    display: inline-block;
+    
 	margin-bottom: 5px;
 }
 </style>

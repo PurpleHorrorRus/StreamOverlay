@@ -13,9 +13,5 @@ export default {
             default: "Не задано"
         }
     }
-}
+};
 </script>
-
-<style>
-
-</style>

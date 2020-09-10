@@ -1,7 +1,7 @@
 <template>
     <div class="game">
         <img class="game-image" :src="box_art_url">
-        <span class="game-name" v-text="game.name" />
+        <span class="game-name nowrap" v-text="game.name" />
     </div>
 </template>
 
@@ -21,33 +21,35 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .game {
-    display: block;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+
     width: 100%;
     height: 60px;
+
     padding: 10px;
-}
 
-.game:hover {
-    background: rgba(255, 255, 255, .1);
-    cursor: pointer;
-}
+    &:hover {
+        cursor: pointer;
+        background: $secondary;
+    }
 
-.game-image {
-    display: inline-block;
-    vertical-align: middle;
-    width: 30px;
-}
+    &-image {
+        display: inline-block;
+        width: 30px;
 
-.game-name {
-    display: inline-block;
-    width: 85%;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    vertical-align: middle;
-    margin-left: 10px;
-    margin-right: 10px;
+        vertical-align: middle;
+    }
+
+    &-name {
+        display: inline-block;
+        width: 85%;
+
+        margin-left: 10px;
+        margin-right: 10px;
+    }
 }
 </style>

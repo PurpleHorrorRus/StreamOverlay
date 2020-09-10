@@ -5,7 +5,7 @@
             :src="message.avatar"
             class="avatar"
         >
-        <badges :badges="message.badges" />
+        <Badges :badges="message.badges" />
         <span 
             :style="nicknameStyle" 
             class="nickname" 
@@ -18,10 +18,11 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import badges from "~/components/badges";
+
+import Badges from "~/components/Badges";
 
 export default {
-    components: { badges },
+    components: { Badges },
     props: {
         message: {
             required: true,
@@ -147,44 +148,43 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .message {
-    padding: 2%;
+    display: block;
     width: 100%;
     height: max-content;
-    margin-bottom: 0px;
-    max-width: 100%;
-}
 
-.message  .avatar { border-radius: 100px; }
-.message .nickname {
-    display: inline-block;
-    font-weight: 600;
-    margin-right: 5px;
-    pointer-events: all;
-}
+    padding: 5px;
 
-.message .body {
-    display: inline;
-}
+    .avatar {
+        border-radius: 100px;
+    }
 
-.message .nickname, .message .body {
-    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-}
+    .nickname {
+        display: inline-block;
 
-.message .nickname:hover {
-	cursor: pointer;
-	text-decoration: underline;
-}
+        margin-right: 5px;
 
-.message .message-span {
-    word-break: break-word;
-    display: inline-table;
-}
+        font-weight: 600;
+        pointer-events: all;
 
-.message .emoticon {
-    width: 18px;
-	vertical-align: middle;
-}
+        &:hover {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    }
 
+    .body {
+        display: inline;
+    }
+
+    .nickname, .body {
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    }
+
+    .emoticon {
+        width: 10px;
+        vertical-align: middle;
+    }
+}
 </style>

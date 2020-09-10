@@ -47,16 +47,18 @@ export default {
 
 </script>
 
-<style>
+<style lang="scss">
 .vdr { 
     position: absolute;
     height: max-content;
-    border: 2px solid rgb(117, 117, 252); 
+    border: 2px solid $secondary; 
 }
+
 .nonactive.vdr {
     border: none;
     pointer-events: none;
 }
+
 .movable_name {
     padding: 5px;
     background: rgba(255, 255, 255, .4);

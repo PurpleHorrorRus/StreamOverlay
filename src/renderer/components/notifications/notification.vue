@@ -14,16 +14,5 @@ export default {
             type: Object
         }
     }
-}
+};
 </script>
-
-<style>
-.notification {
-    display: block;
-    width: max-content;
-    float: right;
-    max-width: 300px;
-    height: auto;
-    padding: 15px;
-}
-</style>

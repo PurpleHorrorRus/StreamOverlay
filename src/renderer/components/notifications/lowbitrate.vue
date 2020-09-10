@@ -2,7 +2,7 @@
     <div :style="{ border: `2px solid ${notification.color}` }" class="notification">
         <div class="notification-content">
             <span class="notification-text">Обнаружен низкий битрейт: {{ bitrate }}</span>
-            <div :style="{ width: `${percent}%` }" id="bitrate-line" class="enter-active"></div>
+            <div id="bitrate-line" :style="{ width: `${percent}%` }" class="enter-active" />
         </div>
     </div>
 </template>
@@ -21,12 +21,14 @@ export default {
         ...mapGetters({
             status: "obs/getStatus"
         }),
-        bitrate() { return this.status.bitrate; },
-        percent() {
+        bitrate () { 
+            return this.status.bitrate; 
+        },
+        percent () {
             return (this.bitrate / 5500) * 100;
         }
     }
-}
+};
 </script>
 
 <style>

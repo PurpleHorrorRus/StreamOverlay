@@ -51,11 +51,13 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .badges {
     display: inline-block;
     width: max-content;
-}
 
-.badge { margin-right: 2px; }
+    .badge {
+        margin-right: 3px;
+    }
+}
 </style>

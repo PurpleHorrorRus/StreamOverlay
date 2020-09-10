@@ -65,27 +65,3 @@ export default {
     }
 };
 </script>
-
-<style>
-.modal-navigation-link {
-    display: block;
-    width: 100%;
-    height: 40px;
-    padding: 10px;
-}
-
-.modal-navigation-link:hover {
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.4);
-}
-
-.modal-navigation-text {
-    display: inline-block;
-    margin-left: 10px;
-}
-
-#menu-actions {
-    border-top: 2px solid #fff;
-    padding-top: 10px;
-}
-</style>

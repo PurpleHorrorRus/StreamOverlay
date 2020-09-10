@@ -1,19 +1,22 @@
 <template>
-   <div class="setting-item">
+    <div class="setting-item">
         <span v-if="type == 'checkbox'" class="setting-name" v-text="text" />
-        <input v-if="type == 'checkbox'" type="checkbox" :id="`scb${id}`" :checked="checked" @change="$emit('checked')">
-        <label v-if="type == 'checkbox'" :for="`scb${id}`" class="setting-tumbler"> <div class="tick"></div> </label><br /><br />
-        <button v-if="type == 'chooseFile'" @click="$emit('chooseFile')">Выбрать файл</button> 
-        <span v-if="type == 'chooseFile'" id="choosed-file" v-text="settings.chat.sound_file"></span>
+        <input v-if="type == 'checkbox'" :id="`scb${id}`" type="checkbox" :checked="checked" @change="$emit('checked')">
+        <label v-if="type == 'checkbox'" :for="`scb${id}`" class="setting-tumbler"> 
+            <div class="tick" /> 
+        </label>
+        <button v-if="type == 'chooseFile'" @click="$emit('choose-file')" v-text="'Выбрать файл'" />
+        <span v-if="type == 'chooseFile'" id="choosed-file" v-text="settings.chat.sound_file" />
         <Tip v-if="tip" :text="tipText" />
     </div>
 </template>
 
 <script>
 import Tip from "~/components/settings/Tip";
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
 
 export default {
+    components: { Tip },
     props: {
         type: {
             type: String,
@@ -51,15 +54,10 @@ export default {
             default: "Не задано"
         }
     },
-    components: { Tip },
     computed: {
         ...mapGetters({
             strings: "strings/getStrings"
         })
     }
-}
+};
 </script>
-
-<style>
-
-</style>

@@ -21,5 +21,5 @@ export default {
             status: "obs/getStatus"
         })
     }
-}
+};
 </script>

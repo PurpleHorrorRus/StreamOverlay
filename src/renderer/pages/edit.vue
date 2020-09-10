@@ -1,5 +1,5 @@
 <template>
-    <div class="modal-content">
+    <div class="modal-edit-content">
         <div class="modal-title">
             <span class="modal-title-text" v-text="'Редактирование виджетов'" />
         </div>
@@ -12,16 +12,26 @@
                 @click="select(index)"
             >
                 <span 
-                    class="modal-navigation-item-text" 
+                    class="modal-navigation-item-text nowrap" 
                     v-text="_overlay.name" 
                 />
             </div>
-            <button id="add-new" @click="add" v-text="'Добавить'" />
-            <button id="add-new" @click="del" v-text="'Удалить'" />
+            <button class="add-new" @click="add" v-text="'Добавить'" />
+            <button class="add-new" @click="del" v-text="'Удалить'" />
         </div>
         <div v-if="overlay" id="modal-navigation-content">
-            <input v-model="overlay.name" type="text" class="overlay_name" style="background: none">
-            <input v-model="overlay.src" type="text" class="overlay_src">
+            <input 
+                v-model="overlay.name" 
+                type="text" class="overlay_name" 
+                placeholder="Название"
+                style="background: none"
+            >
+            <input 
+                v-model="overlay.src" 
+                type="text" 
+                placeholder="Ссылка"
+                class="overlay_src"
+            >
             <span v-if="error" class="error" v-text="error" />
             <button id="save" @click="save" v-text="'Сохранить'" />
         </div>
@@ -29,7 +39,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 import other from "~/mixins/other";
 
@@ -74,7 +84,7 @@ export default {
         select (index) { 
             this.overlay = this.overlays[index]; 
         },
-        add() { 
+        add () { 
             this.overlay = this.empty;
         },
         del () {
@@ -93,7 +103,7 @@ export default {
 
             return this.saveOverlays(this.overlays);
         },
-        save() {
+        save () {
             if (!this.overlay.name.length || !this.overlay.src.length) {
                 return this.error = "Все поля должны быть заполнены";
             }
@@ -112,38 +122,49 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 #modal {
     width: 680px;
-}
-#modal-navigation {
-    float: left;
-    width: 200px;
-    height: 51%;
-    border-right: 1px solid #ccc;
-    overflow: auto;
-    height: 110px;
-    max-height: 110px;
-}
 
-#modal-navigation-content {
-    float: right;
-    width: 445px;
-}
+    .modal-edit-content {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            grid-template-rows: 30px 1fr;
+            gap: 1px 1px;
+            grid-template-areas:
+                "modal-title modal-title"
+                "modal-navigation modal-navigation-content";
 
-.modal-navigation-item:hover {
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.2);
-}
+            .modal-title {
+                grid-area: modal-title;
+            }
 
-.modal-navigation-item-text {
-    font-size: 10pt;
-    display: block;
-    white-space: nowrap;
-    width: 100%;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    padding: 5px;
+            #modal-navigation {
+                grid-area: modal-navigation;
+
+                .modal-navigation-item {
+                    &:not(.item-active) {
+                        &:hover {
+                            cursor: pointer;
+                            background: $secondary;
+                        }
+                    }
+
+                    &-text {
+                        display: block;
+                        width: 100%;
+                        
+                        padding: 5px;
+
+                        font-size: 10pt;
+                    }
+                }
+            }
+
+            #modal-navigation-content {
+                grid-area: modal-navigation-content;
+            }
+    }
 }
 
 #save {
@@ -152,10 +173,10 @@ export default {
 }
 
 .item-active {
-    background: rgba(255, 255, 255, 0.2);
+    background: $outline;
 }
 
-#add-new {
+.add-new {
     margin-top: 3%;
 }
 </style>

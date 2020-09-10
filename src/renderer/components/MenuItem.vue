@@ -26,3 +26,26 @@ export default {
     }
 };
 </script>
+
+<style lang="scss">
+.modal-navigation {
+    &-link {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        width: 100%;
+        height: 40px;
+
+        padding: 10px;
+
+        &:hover {
+            cursor: pointer;
+            background: $secondary;
+        }
+    }
+
+    &-text {
+        margin-left: 10px;
+    }
+}
+</style>

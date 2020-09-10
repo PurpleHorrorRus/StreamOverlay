@@ -18,14 +18,14 @@
             <input v-model="local.game" type="text" placeholder="Название игры">
         </div>
         <div v-if="show_autocomplete" id="autocomplete-container">
-            <game 
+            <Game 
                 v-for="_game of filtered_top_games" 
                 :key="_game.id" 
                 :game="_game" 
                 @click.native="select(_game)" 
             />
         </div>
-        <button id="save" @click="updateStream">
+        <button id="rename-stream" @click="updateStream">
             <div v-if="!loading">
                 <font-awesome-icon 
                     v-if="success || reset"
@@ -48,22 +48,22 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 
-import game from "~/components/game";
+import Game from "~/components/Game";
 
 export default {
     layout: "modal",
-    components: { game },
+    components: { Game },
     async asyncData ({ store }) {
         const helix = store.getters["twitch/getHelix"];
         const stream = store.getters["twitch/getStream"];
         const game = await helix.getGame(stream.game);
-
         const top_games = await helix.getTopGames();
 
         const art_size = {
-            width: 85,
+            width: 90,
             height: 115
         };
+
         const art = game 
             ? game.box_art_url.replace("{width}", art_size.width).replace("{height}", art_size.height) 
             : "https://static-cdn.jtvnw.net/ttv-static/404_boxart-75x115.jpg";
@@ -153,7 +153,6 @@ export default {
                 return this.error = "Необходимо заполнить все поля";
             }
 
-            // this.success = true;
             this.success = await this._updateStream({ 
                 title: this.local.title, 
                 game: this.local.game 
@@ -172,14 +171,14 @@ export default {
 <style>
 #autocomplete-container {
     position: absolute;
-    left: 3%;
-    top: 90%;
+    left: 17%;
+    top: 85%;
     background: #121212;
     overflow-x: hidden;
     overflow-y: auto;
     height: auto;
     max-height: 400px;
-    width: 520px;
+    width: 490px;
 }
 
 .game-art {
@@ -192,5 +191,5 @@ export default {
     display: inline-block;
 }
 
-#save { float: right; }
+#rename-stream { float: right; }
 </style>
