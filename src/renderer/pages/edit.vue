@@ -1,7 +1,7 @@
 <template>
     <div class="modal-content">
         <div class="modal-title">
-            <span class="modal-title-text" v-text="'Редактирование оверлеев'" />
+            <span class="modal-title-text" v-text="'Редактирование виджетов'" />
         </div>
         <div id="modal-navigation">
             <div 
