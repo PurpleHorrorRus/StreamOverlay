@@ -90,7 +90,6 @@ export default {
             this.connectOBS(OBS);
 
             if (!this.helix) {
-                console.log(twitch);
                 this.createHelix(twitch);
                 this.createChatBot();
                 this.runInterval();

@@ -154,7 +154,6 @@ export default {
                 const { success } = await helix.updateStream(user.id, "test overlay", "League of Legends")
                     .catch(() => reject({ success: false, error: "Неверный Access Token" }));
 
-                console.log(success);
                 if (success) {
                     helix.updateStream(user.id, title, game);
                     return resolve({ success: true });
