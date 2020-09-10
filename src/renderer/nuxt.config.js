@@ -16,21 +16,8 @@ module.exports = {
             if (isClient) { 
                 config.target = "electron-renderer"; 
             }
-            config.plugins = config.plugins.filter(plugin => plugin.constructor.name !== "UglifyJsPlugin");
 
-            if (process.env.NODE_ENV === "production") {
-                const obfuscator = require("webpack-obfuscator");
-                config.plugins = [...config.plugins, new obfuscator({
-                    compact: true,
-                    stringArray: true,
-                    rotateStringArray: true,
-                    shuffleStringArray: true,
-                    // disableConsoleOutput: true,
-                    identifierNamesGenerator: "hexadecimal",
-                    splitStrings: true,
-                    splitStringsChunkLength: 10
-                })];
-            }
+            config.plugins = config.plugins.filter(plugin => plugin.constructor.name !== "UglifyJsPlugin");
 
             config.module.rules.push(
                 {
@@ -39,10 +26,6 @@ module.exports = {
                     use: {
                         loader: "babel-loader"
                     }
-                },
-                {
-                    test: /\.mp3$/,
-                    loader: "file-loader"
                 }
             );
         },
