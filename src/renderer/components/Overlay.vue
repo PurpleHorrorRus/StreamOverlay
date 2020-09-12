@@ -1,5 +1,5 @@
 <template>
-    <movable :source="overlay.style" :name="overlay.name" @onDrag="onDrag" @onResize="onResize">
+    <Movable :source="overlay.style" :name="overlay.name" @onDrag="onDrag" @onResize="onResize">
         <webview 
             ref="webview" 
             class="webview" 
@@ -7,17 +7,18 @@
             :src="overlay.src" 
             style="width: 100%; height: 100%;" 
         />
-    </movable>
+    </Movable>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
 
-import movable from "~/components/movable";
+import Movable from "~/components/Movable";
+
 import other from "~/mixins/other";
 
 export default {
-    components: { movable },
+    components: { Movable },
     mixins: [other],
     props: {
         overlay: {

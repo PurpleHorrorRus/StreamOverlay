@@ -1,5 +1,5 @@
 <template>
-    <movable class="viewers-list" :source="vl_settings" name="Список зрителей" @onDrag="onDrag" @onResize="onResize">
+    <Movable class="viewers-list" :source="vl_settings" name="Список зрителей" @onDrag="onDrag" @onResize="onResize">
         <div v-if="!loading" id="viewers-container">
             <div v-for="category of categories" :key="category" class="category">
                 <span 
@@ -16,7 +16,7 @@
             </div>
         </div>
         <span v-else class="loading-title" v-text="'Загрузка...'" />
-    </movable>
+    </Movable>
 </template>
 
 <script>
@@ -24,12 +24,12 @@ import { mapGetters, mapActions } from "vuex";
 import fetch from "node-fetch";
 import Promise from "bluebird";
 
-import movable from "~/components/movable";
+import Movable from "~/components/Movable";
 
 fetch.Promise = Promise;
 
 export default {
-    components: { movable },
+    components: { Movable },
     data: () => ({
         loading: true,
         updateInterval: null,
