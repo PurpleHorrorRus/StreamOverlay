@@ -1,7 +1,9 @@
 <template>
     <div :style="{ border: `2px solid ${notification.color}` }" class="notification">
         <div class="notification-content">
-            <span class="notification-text">Обнаружен низкий FPS: {{ status.fps.toFixed(0) }}</span>
+            <span class="notification-text">
+                Обнаружен низкий FPS: {{ status.fps.toFixed(0) }}
+            </span>
         </div>
     </div>
 </template>

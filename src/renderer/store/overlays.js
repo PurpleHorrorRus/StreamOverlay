@@ -1,7 +1,3 @@
-import { ipcRenderer } from "electron-better-ipc";
-
-import Promise from "bluebird";
-
 export default {
     namespaced: true,
     state: () => ({
@@ -32,11 +28,7 @@ export default {
         }
     },
     getters: {
-        getOverlays (state) { 
-            return state.overlays; 
-        },
-        getEdit (state) {
-            return state.edit; 
-        }
+        getOverlays: state => state.overlays,
+        getEdit: state => state.edit
     }
 };

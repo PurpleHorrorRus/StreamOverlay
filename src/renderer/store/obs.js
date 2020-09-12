@@ -235,8 +235,8 @@ export default {
                 if (state.status.time.seconds >= 60) {
                     state.status.time.seconds = 0;
                     state.status.time.mins++;
-                    this.dispatch("timers/addTime", 1);
                 }
+                
                 if (state.status.time.mins >= 60) {
                     state.status.time.seconds = 0;
                     state.status.time.mins = 0;

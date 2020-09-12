@@ -30,8 +30,6 @@ export default {
         }
     },
     getters: {
-        getSettings (state) { 
-            return state.settings; 
-        }
+        getSettings: state => state.settings
     }
 };

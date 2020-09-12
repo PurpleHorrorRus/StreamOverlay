@@ -8,25 +8,35 @@ export default {
         update: false
     }),
     mutations: {
-        addNotification(state, notification) {
+        addNotification (state, notification) {
             const handle = notification.handle ? notification.handle * 1000 : 4 * 1000;
             setTimeout(() => {
                 const index = state.notifications.indexOf(notification);
                 state.notifications.splice(index, 1);
             }, handle);
-            return state.notifications = [...state.notifications, notification];
+
+            state.notifications = [...state.notifications, notification];
         },
-        turnLowBitrate(state, show) {
-            if(state.lowbitrate === show) return;
-            return state.lowbitrate = show; 
+        turnLowBitrate (state, show) {
+            if (state.lowbitrate === show) {
+                return;
+            }
+            
+            state.lowbitrate = show; 
         },
-        turnLowFPS(state, show) {
-            if(state.lowfps === show) return;
-            return state.lowfps = show;
+        turnLowFPS (state, show) {
+            if (state.lowfps === show) {
+                return;
+            }
+             
+            state.lowfps = show;
         },
-        turnChatDisconnect(state, show) {
-            if(state.chatdisconnect === show) return;
-            return state.chatdisconnect = show;
+        turnChatDisconnect (state, show) {
+            if(state.chatdisconnect === show) {
+                return;
+            }
+
+            state.chatdisconnect = show;
         },
         turnUpdate (state, show) {
             if (state.update === show) {
@@ -54,20 +64,10 @@ export default {
         }
     },
     getters: {
-        getNotifications(state) { 
-            return state.notifications; 
-        },
-        getLowBitrate(state) { 
-            return state.lowbitrate; 
-        },
-        getLowFPS(state) { 
-            return state.lowfps; 
-        },
-        getChatDisconnect(state) { 
-            return state.chatdisconnect; 
-        },
-        getShowUpdate (state) {
-            return state.update;
-        }
+        getNotifications: state => state.notifications,
+        getLowBitrate: state => state.lowbitrate,
+        getLowFPS: state => state.lowfps,
+        getChatDisconnect: state => state.chatdisconnect,
+        getShowUpdate: state => state.update
     }
 };

@@ -17,14 +17,23 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 #devices {
 	display: inline-block;
+
 	font-size: 16pt;
 	vertical-align: middle;
-}
 
-.device { margin-left: 5px; }
-.device.enabled { color: #fff; }
-.device.disabled { color: red; }
+    .device {
+        margin-left: 5px;
+
+        &.enabled {
+            color: $text;
+        }
+        
+        &.disabled {
+            color: red;
+        }
+    }
+}
 </style>

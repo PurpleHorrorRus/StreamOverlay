@@ -14,6 +14,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+
 import misc from "~/plugins/misc";
 
 export default {
@@ -36,16 +37,19 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 #status {
 	display: inline-block;
+
 	margin-left: 10px;
 	margin-right: 10px;
-    vertical-align: middle;
-}
 
-#time {
-	display: inline-block;
-	margin-right: 5px;
+    vertical-align: middle;
+
+    #time {
+        display: inline-block;
+        
+	    margin-right: 5px;
+    }
 }
 </style>
