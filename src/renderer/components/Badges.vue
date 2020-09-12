@@ -3,9 +3,9 @@
         <img 
             v-for="badge of badges" 
             :key="badge" 
-            :style="badgeStyle"
             class="badge" 
-            :src="image(badge)"
+            :style="badgeStyle"
+            :src="require(`~/images/${badge}.png`).default"
         >
     </div>
 </template>
@@ -29,12 +29,6 @@ export default {
             return { 
                 width: `${this.settings.chat.font}px` 
             };
-        }
-    },
-    methods: {
-        image (badge) {
-            // eslint-disable-next-line no-undef
-            return require(`~/images/${badge}.png`).default;
         }
     }
 };
