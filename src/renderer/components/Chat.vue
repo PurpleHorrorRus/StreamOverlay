@@ -7,14 +7,14 @@
                 :message="message" 
             />
         </div>
-    </movable>
+    </Movable>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
 
-import Movable from "~/components/movable";
-import Message from "~/components/Message";
+import Movable from "~/components/Movable";
+import Message from "~/components/chat/Message";
 
 export default {
     components: { 

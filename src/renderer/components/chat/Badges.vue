@@ -16,9 +16,9 @@ import { mapGetters } from "vuex";
 export default {
     props: {
         badges: {
+            type: Array,
             required: false,
-            default: () => [],
-            type: Array
+            default: () => []
         }
     },
     computed: {

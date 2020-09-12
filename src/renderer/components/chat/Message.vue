@@ -19,7 +19,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 
-import Badges from "~/components/Badges";
+import Badges from "~/components/chat/Badges";
 
 export default {
     components: { Badges },
@@ -118,25 +118,18 @@ export default {
             ban: "twitch/ban",
             removeMessage: "twitch/removeMessage"
         }),
-        htmlEntities(html) {
-            const it = () => {
-                return html.map(n => {
-                    if (n.length === 1) {
-                        // eslint-disable-next-line no-useless-escape
-                        return n.replace(/[\u00A0-\u9999<>\&]/gim, i => {
-                            return `&#${i.charCodeAt(0)};`;
-                        });
-                    }
-                    return n;
-                });
-            };
- 
+        htmlEntities (html) {
             const isArray = Array.isArray(html);
+            
             if (!isArray) {
                 html = html.split("");
             }
 
-            html = it(html);
+            html = html.map(n => n.length === 1
+                // eslint-disable-next-line no-useless-escape
+                ? n.replace(/[\u00A0-\u9999<>\&]/gim, i => `&#${i.charCodeAt(0)};`)
+                : n
+            );
 
             if (!isArray) {
                 html = html.join("");
