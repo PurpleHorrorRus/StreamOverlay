@@ -36,10 +36,10 @@ export default {
         }) 
     },
     methods: {
-        onResize(...args) { 
+        onResize (...args) { 
             this.$emit("onResize", ...args); 
         },
-        onDrag(...args) { 
+        onDrag (...args) { 
             this.$emit("onDrag", ...args); 
         }
     }
