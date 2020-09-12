@@ -13,12 +13,6 @@
 <script>
 import { mapGetters } from "vuex";
 
-import broadcaster from "~/images/broadcaster.png";
-import moderator from "~/images/moderator.png";
-import premium from "~/images/premium.png";
-import subscriber from "~/images/subscriber.png";
-import vip from "~/images/vip.png";
-
 export default {
     props: {
         badges: {
@@ -38,14 +32,9 @@ export default {
         }
     },
     methods: {
-        image(badge) {
-            switch(badge) {
-            case "broadcaster": return broadcaster;
-            case "moderator": return moderator;
-            case "premium": return premium;
-            case "subscriber": return subscriber;
-            case "vip": return vip;
-            }
+        image (badge) {
+            // eslint-disable-next-line no-undef
+            return require(`~/images/${badge}.png`).default;
         }
     }
 };
