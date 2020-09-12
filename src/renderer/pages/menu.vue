@@ -8,7 +8,7 @@
             @method="openStream" 
         />
         <MenuItem :text="'Режим редактирования'" :icon="['fas', 'pen']" @method="enableEdit" />
-        <MenuItem :text="'Настройки OBS'" :icon="['fas', 'wrench']" @method="openObs" />
+        <MenuItem :text="'Настройки OBS'" :icon="['fas', 'wrench']" @method="openOBS" />
         <MenuItem :text="'Настройки Twitch'" :icon="['fab', 'twitch']" @method="openTwitch" />
         <MenuItem :text="'Настройки чата'" :icon="['fas', 'comment']" @method="openChat" />
     </div>
@@ -41,19 +41,17 @@ export default {
     },
     methods: {
         ...mapActions({
-            _enableEdit: "overlays/enableEdit",
-            startBot: "discord/start",
-            leaveBot: "discord/leave"
+            _enableEdit: "overlays/enableEdit"
         }),
         openStream() { 
             this.loadingStream = true; 
-            return this.$router.replace("/stream"); 
+            this.$router.replace("/stream"); 
         },
         enableEdit() {
             this._enableEdit(true);
             this.$router.replace("/").catch(() => {});
         },
-        openObs () { 
+        openOBS () { 
             this.$router.replace("/settings/obs").catch(() => {}); 
         },
         openTwitch () { 
