@@ -35,10 +35,7 @@ export default {
         onResize (x, y, width, height) {
             this.settings.chat.width = width;
             this.settings.chat.height = height;
-            this.saveSettings({
-                type: "settings",
-                content: this.settings
-            });
+            this.onDrag(x, y);
         },
         onDrag (x, y) {
             this.settings.chat.x = x;

@@ -96,15 +96,3 @@ export default {
     }
 };
 </script>
-
-<style>
-#sound-file {
-    display: inline-block;
-    width: 420px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    vertical-align: middle;
-    margin-left: 10px;
-}
-</style>

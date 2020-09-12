@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 import movable from "~/components/movable";
 import other from "~/mixins/other";
@@ -43,18 +43,12 @@ export default {
         ...mapActions({ 
             saveOverlays: "overlays/saveOverlays" 
         }),
-        onResize(x, y, width, height) {
-            this.overlay.style.left = x;
-            this.overlay.style.top = y;
+        onResize (x, y, width, height) {
             this.overlay.style.width = width;
             this.overlay.style.height = height;
-
-            const index = this.overlays.findIndex(r => r.id === this.overlay.id);
-            this.overlays[index] = this.overlay;
-
-            this.saveOverlays(this.overlays);
+            this.onDrag(x, y);
         },
-        onDrag(x, y) {
+        onDrag (x, y) {
             this.overlay.style.left = x;
             this.overlay.style.top = y;
 
@@ -68,5 +62,7 @@ export default {
 </script>
 
 <style>
-.overlay { position: absolute; }
+.overlay { 
+    position: absolute; 
+}
 </style>
