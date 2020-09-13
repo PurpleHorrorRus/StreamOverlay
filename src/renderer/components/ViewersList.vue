@@ -5,7 +5,7 @@
                 <span 
                     v-if="chatters[category].length" 
                     class="category-title" 
-                    :style="{ color: color(category) }" 
+                    :style="{ color: colors[category] }" 
                     v-text="`${category} (${chatters[category].length})`" 
                 />
                 <span 
@@ -25,6 +25,8 @@ import fetch from "node-fetch";
 import Promise from "bluebird";
 
 import Movable from "~/components/Movable";
+
+import _ from "lodash";
 
 fetch.Promise = Promise;
 
@@ -74,36 +76,23 @@ export default {
         ...mapActions({
             saveSettings: "settings/saveSettings"
         }),
-        get () {
-            return new Promise(resolve => {
-                const botsPromise = new Promise(resolve => {
-                    fetch("https://api.twitchinsights.net/v1/bots/online")
-                        .then(response => response.json())
-                        .then(({ bots }) => resolve(bots.map(([name]) => name)));
-                });
-            
-                const viewersPromise = new Promise(resolve => {
-                    this.helix.getViewers(this.user.username)
-                        .then(({ chatters }) => resolve(chatters));
-                });
-
-                return Promise.all([botsPromise, viewersPromise])
-                    .then(([bots, chatters]) => {
-                        for (const category of Object.keys(chatters)) {
-                            const users = chatters[category];
-                            if (users.length) {
-                                for (const user of users) {
-                                    if (~bots.indexOf(user)) {
-                                        chatters[category] = chatters[category].filter(c => c !== user);
-                                    }
-                                }
-                            }
-                        }
-
-                        this.chatters = chatters;
-                        return resolve(chatters);
-                    });
+        async get () {
+            const botsPromise = new Promise(resolve => {
+                fetch("https://api.twitchinsights.net/v1/bots/online")
+                    .then(response => response.json())
+                    .then(({ bots }) => resolve(bots.map(([name]) => name)));
             });
+        
+            const viewersPromise = new Promise(resolve => {
+                this.helix.getViewers(this.user.username)
+                    .then(({ chatters }) => resolve(chatters));
+            });
+            
+            const [bots, chatters] = await Promise.all([botsPromise, viewersPromise]);
+            for (const category of Object.keys(chatters)) {
+                this.chatters[category] = 
+                    _.without(chatters[category], ...bots);
+            }
         },
         color (category) { 
             return this.colors[category]; 
@@ -111,10 +100,7 @@ export default {
         onResize  (x, y, width, height) {
             this.settings.viewers_list.width = width;
             this.settings.viewers_list.height = height;
-            this.saveSettings({
-                type: "settings",
-                content: this.settings
-            });
+            this.onDrag(x, y);
         },
         onDrag (x, y) {
             this.settings.viewers_list.x = x;

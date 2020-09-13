@@ -52,8 +52,8 @@ module.exports = {
         "vue-draggable-resizable/dist/VueDraggableResizable.css"
     ],
     plugins: [
-        { src: "@plugins/vue-draggable-resizable", ssr: true },
-        { src: "@plugins/autocomplete", ssr: true }
+        { src: "~plugins/vue-draggable-resizable", ssr: true },
+        { src: "~plugins/autocomplete", ssr: true }
     ],
     buildModules: ["@nuxtjs/style-resources"],
     modules: [

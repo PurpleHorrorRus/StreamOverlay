@@ -1,16 +1,3 @@
-const attachmentsTypes = {
-    wall: "Wall",
-    photo: "Photo",
-    audio: "Audio",
-    video: "Video",
-    graffiti: "Sticker",
-    document: "Document",
-    sticker: "Sticker",
-    gift: "Gift",
-    link: "Link",
-    audio_message: "Voice message"
-};
-
 export default { 
     fancyTimeFormat: time => {
         const hrs = ~~(time / 3600), mins = ~~((time % 3600) / 60), secs = ~~time % 60;
@@ -24,13 +11,13 @@ export default {
         return ret;
     },
     formatTime: time => {
-		let h = time.hours, m = time.mins, s = time.seconds;
-		if(time.seconds < 10) s = `0${time.seconds}`;
-		if(time.mins < 10) m = `0${time.mins}`;
-		if(time.hours) {
-			if(time.hours < 10) h = `0${time.hours}`;
-			return `${h}:${m}:${s}`;
-		} else return `${m}:${s}`;
+        let h = time.hours, m = time.mins, s = time.seconds;
+        if (time.seconds < 10) s = `0${time.seconds}`;
+        if (time.mins < 10) m = `0${time.mins}`;
+        if (time.hours) {
+            if(time.hours < 10) h = `0${time.hours}`;
+            return `${h}:${m}:${s}`;
+        } else return `${m}:${s}`;
 	
     },
     formatUnixTime: time => {
@@ -60,4 +47,4 @@ export default {
         arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0]);
         return arr;
     }
-}
+};
