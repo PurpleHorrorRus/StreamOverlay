@@ -77,22 +77,23 @@ export default {
             saveSettings: "settings/saveSettings"
         }),
         async get () {
-            const botsPromise = new Promise(resolve => {
+            let botsPromise = new Promise(resolve => {
                 fetch("https://api.twitchinsights.net/v1/bots/online")
                     .then(response => response.json())
                     .then(({ bots }) => resolve(bots.map(([name]) => name)));
             });
         
-            const viewersPromise = new Promise(resolve => {
+            let viewersPromise = new Promise(resolve => {
                 this.helix.getViewers(this.user.username)
                     .then(({ chatters }) => resolve(chatters));
             });
             
             const [bots, chatters] = await Promise.all([botsPromise, viewersPromise]);
-            for (const category of Object.keys(chatters)) {
+            botsPromise = viewersPromise = null;
+
+            Object.keys(chatters).forEach(category =>
                 this.chatters[category] = 
-                    _.without(chatters[category], ...bots);
-            }
+                    _.without(chatters[category], ...bots));
         },
         onResize  (x, y, width, height) {
             this.settings.viewers_list.width = width;
