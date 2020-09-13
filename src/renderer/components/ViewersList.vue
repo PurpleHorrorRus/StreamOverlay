@@ -64,7 +64,7 @@ export default {
         this.loading = true;
         await this.get();
         this.updateInterval = setInterval(this.get, 4 * 1000);
-        return this.loading = false;
+        this.loading = false;
     },
     destroyed () {
         if (this.updateInterval) {
@@ -111,34 +111,45 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .viewers-list {
     position: absolute;
+
     width: 100%;
     height: 100%;
+
     background: rgba(0, 0, 0, .4);
     border-radius: 5px;
     z-index: 50;
-}
 
-#viewers-container {
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-    border: 1px solid #000;
-    padding: 5px;
-    border-radius: 5px;
-}
+    span {
+        display: block;
+        
+        color: #fff;
+        font-family: Roboto;
+        font-size: 11pt;
+        text-align: center;
+    }
 
-.category { margin-bottom: 5px; }
-.category .category-title { font-weight: 600; }
+    #viewers-container {
+        width: 100%;
+        height: 100%;
 
-.viewers-list span {
-    display: block;
-    color: #fff;
-    font-family: Roboto;
-    font-size: 11pt;
-    text-align: center;
+        padding: 5px;
+        
+        border: 1px solid #000;
+        border-radius: 5px;
+
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        .category {
+            margin-bottom: 5px;
+            
+            &-title {
+                font-weight: 600;
+            }
+        }
+    }
 }
 </style>
