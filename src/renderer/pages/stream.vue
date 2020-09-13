@@ -1,23 +1,44 @@
 <template>
-    <div class="modal-content">
-        <div class="modal-title">
-            <span class="modal-title-text" v-text="'Трансляция'" />
-        </div>
-        <span v-if="error.length" class="error" v-text="error" />
-        <img class="game-art" :src="art">
-        <div class="modal-item">
-            <div class="modal-item-tip">
-                <span class="modal-item-tip-text" v-text="'Название трансляции'" />
+    <div id="modal-stream-container">
+        <div id="modal-stream-content">
+            <div class="modal-title">
+                <span class="modal-title-text" v-text="'Трансляция'" />
             </div>
-            <input v-model="local.title" type="text" placeholder="Название трансляции">
-        </div>
-        <div class="modal-item">
-            <div class="modal-item-tip">
-                <span class="modal-item-tip-text" v-text="'Название игры'" />
+            <div id="game-art">
+                <img class="game-art-image" :src="art">
             </div>
-            <input v-model="local.game" type="text" placeholder="Название игры">
+            <div id="edit">
+                <Input 
+                    :value="local.title"
+                    text="Название трансляции" 
+                    @input="changeLocal('title')" 
+                    @keypress.enter.native="updateStream"
+                />
+                <Input 
+                    :value="local.game" 
+                    text="Название игры" 
+                    @input="changeGame" 
+                    @keypress.enter.native="updateStream"
+                />
+                <button id="rename-stream" @click="updateStream">
+                    <div v-if="!loading">
+                        <span
+                            v-if="success || reset"
+                            v-text="'Обновить'"
+                        />
+                        <font-awesome-icon
+                            v-else 
+                            :icon="['fas', 'times']" style="color: red"
+                        />
+                    </div>
+                    <font-awesome-icon
+                        v-else 
+                        :icon="['fas', 'circle-notch']" class="fa-spin" 
+                    />
+                </button>
+            </div>
         </div>
-        <div v-if="show_autocomplete" id="autocomplete-container">
+        <div v-show="show_autocomplete" id="autocomplete-container">
             <Game 
                 v-for="_game of filtered_top_games" 
                 :key="_game.id" 
@@ -25,34 +46,21 @@
                 @click.native="select(_game)" 
             />
         </div>
-        <button id="rename-stream" @click="updateStream">
-            <div v-if="!loading">
-                <font-awesome-icon 
-                    v-if="success || reset"
-                    :icon="['fas', 'check']" 
-                    :style="{ color: success && !reset ? 'lightgreen' : '#fff' }"
-                />
-                <font-awesome-icon
-                    v-else 
-                    :icon="['fas', 'times']" style="color: red"
-                />
-            </div>
-            <font-awesome-icon
-                v-else 
-                :icon="['fas', 'circle-notch']" class="fa-spin" 
-            />
-        </button>
     </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
 
+import Input from "~/components/settings/Input";
 import Game from "~/components/Game";
 
 export default {
     layout: "modal",
-    components: { Game },
+    components: { 
+        Game,
+        Input
+    },
     async asyncData ({ store }) {
         const helix = store.getters["twitch/getHelix"];
         const stream = store.getters["twitch/getStream"];
@@ -120,7 +128,7 @@ export default {
 
             this.input_delay = setTimeout(async () => {
                 const { data: games } = await this.helix.searchCategories(newVal);
-                if (games.length) {
+                if (games && games.length) {
                     this.top_games = games;
                     const index = this.top_games.map(g => g.name).indexOf(this.local.game);
                     if (~index) {
@@ -139,6 +147,12 @@ export default {
         ...mapActions({ 
             _updateStream: "twitch/updateStream" 
         }),
+        changeTitle (value) {
+            this.local.title = value;
+        },
+        changeGame (value) {
+            this.local.game = value;
+        },
         select (game) {
             this.local.game = game.name;
             setTimeout(() => this.show_autocomplete = false, 300);
@@ -169,28 +183,62 @@ export default {
 };
 </script>
 
-<style>
-#autocomplete-container {
-    position: absolute;
-    left: 17%;
-    top: 85%;
-    background: #121212;
-    overflow-x: hidden;
-    overflow-y: auto;
-    height: auto;
-    max-height: 400px;
-    width: 490px;
-}
+<style lang="scss">
+#modal-stream-container {
+    grid-template-columns: 1fr;
+        grid-template-rows: 210px 300px;
+        grid-template-areas: 
+            "content"
+            "games";
 
-.game-art {
-    float: left;
-    padding: 10px;
-}
+    #modal-stream-content {
+        grid-area: content;
+        display: grid;
 
-.modal-item {
-    width: 75%;
-    display: inline-block;
-}
+        grid-template-columns: 110px 1fr;
+        grid-template-rows: 1fr;
+        grid-template-areas: 
+            "title title"
+            "art edit";
 
-#rename-stream { float: right; }
+        .modal-title {
+            grid-area: title;
+        }
+
+        #game-art {
+            grid-area: art;
+
+            padding: 10px;
+
+            &-image {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        #edit {
+            grid-area: edit;
+
+            padding-left: 10px;
+            padding-right: 10px;
+
+            #rename-stream {
+                margin-top: 10px;
+                margin-right: 10px;
+
+                float: right;
+            }
+        }
+    }
+
+    #autocomplete-container {
+        grid-area: games;
+
+        max-height: 300px;
+
+        margin-top: 10px;
+
+        overflow-y: auto;
+    }
+}
 </style>
