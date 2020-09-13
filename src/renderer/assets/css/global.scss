@@ -56,6 +56,11 @@ input {
     overflow: hidden;
 }
 
+.link {
+    color: $outline;
+    cursor: pointer;
+}
+
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;

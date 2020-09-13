@@ -7,7 +7,7 @@
             :load="loadingStream"
             @method="openStream" 
         />
-        <MenuItem :text="'Режим редактирования'" :icon="['fas', 'pen']" @method="enableEdit" />
+        <MenuItem :text="'Редактирование виджетов'" :icon="['fas', 'pen']" @method="enableEdit" />
         <MenuItem :text="'Настройки OBS'" :icon="['fas', 'wrench']" @method="openOBS" />
         <MenuItem :text="'Настройки Twitch'" :icon="['fab', 'twitch']" @method="openTwitch" />
         <MenuItem :text="'Настройки чата'" :icon="['fas', 'comment']" @method="openChat" />
