@@ -21,6 +21,7 @@ export default {
     components: { Chat },
     computed: {
         ...mapGetters({
+            settings: "settings/getSettings",
             locked: "ipc/getLock"
         })
     },
@@ -29,80 +30,93 @@ export default {
     },
     methods: {
         exit () {
-            ipcRenderer.send("disableMouse");
-            this.$router.replace("/").catch(() => {});
+            if (!this.settings.first) {
+                ipcRenderer.send("disableMouse");
+                this.$router.replace("/").catch(() => {});
+            } 
         }
     }
 };
 </script>
 
-<style>
-#modal-container { background: rgba(0, 0, 0, 0.0); }
+<style lang="scss">
+#modal-container { 
+    background: none;
 
-#modal {
-    position: absolute;
-    width: 600px;
-    height: auto;
-    padding: 15px;
-    background: #141414;
-    left: 35%;
-    top: 10%;
-}
+    #modal-lock {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 15pt;
+    }
 
-#modal-lock {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 15pt;
-}
+    #modal {
+        position: absolute;
+        left: 35%;
+        top: 10%;
 
-.modal-title { border-bottom: 2px solid #fff; }
+        width: 600px;
+        height: auto;
 
-.modal-title-text {
-    font-size: 18pt;
-    font-weight: 600;
-}
+        padding: 15px;
+        
+        background: #141414;
+    }
 
-.modal-item-tip {
-    display: block;
-    margin-bottom: 2px;
-}
+    .modal-title { 
+        border-bottom: 2px solid $text;
 
-.modal-item-tip-text {
-    position: relative;
-    top: 5px;
-    color: #ccc;
-    font-size: 8pt;
-}
+        &-text {
+            font-size: 18pt;
+            font-weight: 600;
+        } 
+    }
 
-h1 {
-    color: var(--checkbox-color);
-    font-size: 3rem;
-    margin: 50px 0;
+    
+    .modal-item-tip {
+        display: block;
+
+        margin-bottom: 2px;
+
+        &-text {
+            position: relative;
+            top: 5px;
+            color: $secondary;
+            font-size: 8pt;
+        }
+    }
+
+    .setting-item { 
+        padding: 5px;
+
+        select {
+            width: 200px;
+
+            padding: 5px;
+
+            background: none;
+            outline: none;
+            
+            color: $text;
+            border: 1px solid $outline;
+            border-radius: 10px;
+
+            option {
+                margin: 40px;
+                background: $secondary;
+                color: $text;
+            }
+        }
+
+        .setting-name {
+            font-size: 12pt;
+        }
+    }
 }
 
 .settings-category-name {
     padding: 5px;
     font-size: 15pt;
-}
-
-.setting-item { padding: 5px;}
-.setting-item .setting-name { font-size: 12pt; }
-
-.setting-item select {
-    outline: none;
-    width: 200px;
-    background: none;
-    color: white;
-    padding: 5px;
-    border: 1px solid #4f4f4f;
-    border-radius: 10px;
-}
-
-.setting-item select option {
-    margin: 40px;
-    background: #4f4f4f;
-    color: #fff;
 }
 
 .setting-item .setting-tumbler { float: right; }

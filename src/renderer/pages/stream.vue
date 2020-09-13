@@ -150,7 +150,8 @@ export default {
             
             if (!this.local.title.length || !this.local.game.length) {
                 this.loading = false;
-                return this.error = "Необходимо заполнить все поля";
+                this.error = "Необходимо заполнить все поля";
+                return;
             }
 
             this.success = await this._updateStream({ 
