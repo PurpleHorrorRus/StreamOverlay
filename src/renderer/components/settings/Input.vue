@@ -8,6 +8,7 @@
             type="text"
             :placeholder="text"
             @input="$emit('input', mutated)"
+            @change="$emit('input', mutated)"
         >
     </div>
 </template>
@@ -22,7 +23,8 @@ export default {
         },
         text: {
             type: String,
-            required: true
+            required: false,
+            default: ""
         }
     },
     data: () => ({

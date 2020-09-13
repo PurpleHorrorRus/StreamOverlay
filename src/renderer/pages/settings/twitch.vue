@@ -21,7 +21,7 @@
             </div>
             <Input
                 :value="access_token"
-                @input="changeAceessToken"
+                @input="changeAccessToken"
             />
 
             <div class="modal-item-tip">
