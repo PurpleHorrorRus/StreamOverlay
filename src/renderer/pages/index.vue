@@ -47,11 +47,13 @@ export default {
     mixins: [other],
     computed: {
         ...mapGetters({
-            obs: "obs/getOBS",
-            helix: "twitch/getHelix",
+            settings: "settings/getSettings",
+
             overlays: "overlays/getOverlays",
             edit: "overlays/getEdit",
-            settings: "settings/getSettings"
+
+            obs: "obs/getOBS",
+            helix: "twitch/getHelix"
         }),
         connected () { 
             return this.obs._connected;
