@@ -1,43 +1,44 @@
 <template>
     <div class="modal-content">
         <div class="modal-title">
-            <span class="modal-title-text">Настройка Twitch</span>
+            <span class="modal-title-text" v-text="'Настройка Twitch'" />
         </div>
         <div class="modal-body">
+            <Tip
+                text="Для того, чтобы включить и отключить фокус на оверлее, нажмите комбинацию клавиш Alt + A"
+            />
+            <Input
+                text="Имя пользователя Twitch"
+                :value="username"
+                @input="changeUsername"
+            />
+
             <div class="modal-item-tip">
-                <span 
-                    class="modal-item-tip-text" 
-                    v-text="'Для того, чтобы включить и отключить фокус на оверлее, нажмите комбинацию клавиш Alt + A'"
-                />
+                <span class="modal-item-tip-text">
+                    Access Token - нужен для того, чтобы менять название стрима и игру через оверлей
+                    (<strong class="link" @click="getToken" v-text="'Получить'" />)
+                </span>
             </div>
-            <div class="modal-item">
-                <div class="modal-item-tip">
-                    <span class="modal-item-tip-text">Имя пользователя Twitch</span>
-                </div>
-                <input v-model="username" type="text" placeholder="Имя пользователя Twitch">
+            <Input
+                :value="access_token"
+                @input="changeAceessToken"
+            />
+
+            <div class="modal-item-tip">
+                <span class="modal-item-tip-text">
+                    OAuth Token - нужен для того, чтобы получать сообщения из чата
+                    (<strong class="link" @click="getOAuth" v-text="'Получить'" />)
+                </span>
             </div>
-            <div class="modal-item">
-                <div class="modal-item-tip">
-                    <span class="modal-item-tip-text">
-                        Access Token - нужен для того, чтобы менять название стрима и игру через оверлей
-                        (<strong class="link" @click="getToken" v-text="'Получить'" />)
-                    </span>
-                </div>
-                <input v-model="access_token" type="text" placeholder="Access Token">
-            </div>
-            <div class="modal-item">
-                <div class="modal-item-tip">
-                    <span class="modal-item-tip-text">
-                        OAuth Token - нужен для того, чтобы получать сообщения из чата
-                        (<strong class="link" @click="getOAuth" v-text="'Получить'" />)
-                    </span>
-                </div>
-                <input v-model="oauth_token" type="text" placeholder="OAuth Token ">
-            </div>
+            <Input
+                :value="oauth_token"
+                @input="changeOAuth"
+            />
+
             <div v-if="error.length" class="modal-item-tip">
                 <span style="color: red" class="modal-item-tip-text">Ошибка: {{ error }}</span>
             </div>
-            <next :loading="validating" @click.native="goNext" />
+            <Next :loading="validating" @click.native="goNext" />
         </div>
     </div>
 </template>
@@ -50,7 +51,10 @@ import express from "express";
 import Helix from "simple-helix-api";
 import { encode } from "querystring";
 
-import next from "~/components/settings/next";
+import Input from "~/components/settings/Input";
+import Tip from "~/components/settings/Tip";
+import Next from "~/components/settings/Next";
+
 import other from "~/mixins/other";
 
 let app = undefined;
@@ -59,7 +63,11 @@ const client_id = "zmin05a65f74rln2g94iv935w58nyq";
 let helix;
 
 export default {
-    components: { next },
+    components: { 
+        Input,
+        Tip,
+        Next 
+    },
     mixins: [other],
     layout: "modal",
     data: () => ({
@@ -98,13 +106,23 @@ export default {
         ...mapActions({
             saveSettings: "settings/saveSettings"
         }),
+        changeUsername (value) {
+            this.username = value;
+        },
+        changeAccessToken (value) {
+            this.access_token = value;
+        },
+        changeOAuth (value) {
+            this.oauth_token = value;
+        },
         async goNext () {
             this.validating = true;
             this.error = "";
 
             if (!this.username.length || !this.access_token.length || !this.oauth_token.length) {
                 this.validating = false;
-                return this.error = "Необходимо заполнить все поля";
+                this.error = "Необходимо заполнить все поля";
+                return;
             } 
             if (~this.access_token.indexOf("http://")) {
                 this.access_token = this.access_token.match(/access_token=(.*?)&/)[1];
@@ -112,11 +130,13 @@ export default {
 
             const valid = await this.validate().catch(e => { 
                 this.validating = false; 
-                return this.error = e.error; 
+                this.error = e.error; 
+                return;
             });
 
             if (!valid.success) { 
-                return this.validating = false;
+                this.validating = false;
+                return;
             }
 
             const user = await helix.getUser(this.username);

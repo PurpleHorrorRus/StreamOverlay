@@ -7,48 +7,21 @@
             />
         </div>
         <div class="modal-body">
-            <div class="modal-item">
-                <div class="modal-item-tip">
-                    <span 
-                        class="modal-item-tip-text" 
-                        v-text="'Время сообщения в чате (в секундах)'" 
-                    />
-                </div>
-                <input 
-                    v-model.number="settings.chat.timeout" 
-                    type="text" 
-                    placeholder="Время сообщения в чате (в секундах)" 
-                    @change="save"
-                >
-            </div>
-            <div class="modal-item">
-                <div class="modal-item-tip">
-                    <span 
-                        class="modal-item-tip-text" 
-                        v-text="'Непрозрачность фона сообщений (в процентах от 0 до 100)'" 
-                    />
-                </div>
-                <input 
-                    v-model.number="settings.chat.opacity"
-                    type="text" 
-                    placeholder="Непрозрачность фона сообщений (в процентах от 0 до 100)" 
-                    @change="changeOpactiy"
-                >
-            </div>
-            <div class="modal-item">
-                <div class="modal-item-tip">
-                    <span 
-                        class="modal-item-tip-text" 
-                        v-text="'Размер текста сообщений (в пунктах от 4 до 18)'" 
-                    />
-                </div>
-                <input 
-                    v-model.number="settings.chat.font" 
-                    type="text" 
-                    placeholder="Размер текста сообщений (в пунктах от 4 до 18)" 
-                    @change="changeFont"
-                >
-            </div>
+            <Input
+                text="Время сообщения в чате (в секундах)"
+                :value="Number(settings.chat.timeout)"
+                @input="changeTimeout"
+            />
+            <Input
+                text="Непрозрачность фона сообщений (в процентах от 0 до 100)"
+                :value="Number(settings.chat.opacity)"
+                @input="changeOpactiy"
+            />
+            <Input
+                text="Размер текста сообщений (в пунктах от 4 до 18)"
+                :value="Number(settings.chat.font)"
+                @input="changeFont"
+            />
         </div>
     </div>
 </template>
@@ -56,7 +29,12 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 
+import Input from "~/components/settings/Input";
+
 export default {
+    components: {
+        Input
+    },
     layout: "modal",
     computed: {
         ...mapGetters({
@@ -73,24 +51,29 @@ export default {
                 content: this.settings
             });
         },
-        changeOpactiy () {
-            if (this.settings.chat.opacity < 0) {
-                this.settings.chat.opacity = 0;
-            }
-            else if (this.settings.chat.opacity > 100) {
-                this.settings.chat.opacity = 100;
+        validateValue (value, min, max = 0) {
+            if (isNaN(value)) {
+                return min;
             }
 
+            if (value < min) {
+                return min;
+            } else if (value > max && max !== 0) {
+                return max;
+            }
+
+            return Number(value);
+        },
+        changeTimeout (value) {
+            this.settings.chat.timeout = this.validateValue(value, 5);
             this.save();
         },
-        changeFont () {
-            if (this.settings.chat.font < 4) {
-                this.settings.chat.font = 4;
-            }
-            else if (this.settings.chat.font > 18) {
-                this.settings.chat.font = 18;
-            }
-            
+        changeOpactiy (value) {
+            this.settings.chat.opacity = this.validateValue(value, 0, 100);
+            this.save();
+        },
+        changeFont (value) {
+            this.settings.chat.font = this.validateValue(value, 4, 18);
             this.save();
         }
     }
