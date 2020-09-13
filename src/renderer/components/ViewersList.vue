@@ -94,9 +94,6 @@ export default {
                     _.without(chatters[category], ...bots);
             }
         },
-        color (category) { 
-            return this.colors[category]; 
-        },
         onResize  (x, y, width, height) {
             this.settings.viewers_list.width = width;
             this.settings.viewers_list.height = height;
