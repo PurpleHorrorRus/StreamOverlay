@@ -16,6 +16,7 @@ const writeJSON = (dir, content) => {
 };
 
 const clearSettings = {
+    first: true,
     chat: {
         timeout: 80,
         opacity: 30,

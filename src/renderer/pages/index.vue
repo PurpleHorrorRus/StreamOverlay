@@ -85,7 +85,16 @@ export default {
         }
 
         if (!this.connected) {
-            this.setSettings(settings);
+            if (settings.first) {
+                settings.first = false;
+                this.saveSettings({
+                    type: "settings",
+                    content: settings
+                });
+            } else {
+                this.setSettings(settings); 
+            }
+
             this.setOverlays(overlays);
             this.connectOBS(OBS);
 
@@ -99,12 +108,16 @@ export default {
     methods: {
         ...mapActions({
             setSettings: "settings/setSettings",
+            saveSettings: "settings/saveSettings",
+
             setOverlays: "overlays/setOverlays",
             enableEdit: "overlays/enableEdit",
-            saveSettings: "settings/saveSettings",
+            
             turnLock: "ipc/turnLock",
             turnUpdate: "notifications/turnUpdate",
+
             connectOBS: "obs/connectOBS",
+
             createHelix: "twitch/createHelix",
             createChatBot: "twitch/createChatBot",
             runInterval: "twitch/runInterval"
