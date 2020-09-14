@@ -30,7 +30,7 @@ export default {
     }),
     async created () {
         this.widgets = await ipcRenderer.callMain("getAllWidgets");
-        ipcRenderer.send("minimizeWidgetsts");
+        ipcRenderer.send("minimizeWidgets");
     },
     beforeDestroy () {
         ipcRenderer.send("restoreWidgetsts");
