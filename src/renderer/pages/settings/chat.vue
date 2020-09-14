@@ -18,7 +18,7 @@
                 @input="changeOpactiy"
             />
             <Input
-                text="Размер текста сообщений (в пунктах от 4 до 18)"
+                text="Размер текста сообщений (в пунктах от 10 до 18)"
                 :value="Number(settings.chat.font)"
                 @input="changeFont"
             />
@@ -73,7 +73,7 @@ export default {
             this.save();
         },
         changeFont (value) {
-            this.settings.chat.font = this.validateValue(value, 4, 18);
+            this.settings.chat.font = this.validateValue(value, 10, 18);
             this.save();
         }
     }
