@@ -1,26 +1,18 @@
 export default {
     namespaced: true,
     state: () => ({
-        edit: false,
-        overlays: []
+        edit: false
     }),
     mutations: {
         enableEdit (state, seq) { 
             state.edit = seq; 
-        },
-        setOverlays (state, overlays) { 
-            state.overlays = overlays; 
         }
     },
     actions: {
         enableEdit ({ commit }, seq) { 
             commit("enableEdit", seq); 
         },
-        setOverlays ({ commit }, overlays) { 
-            commit("setOverlays", overlays); 
-        },
-        saveOverlays ({ commit, dispatch }, overlays) { 
-            commit("setOverlays", overlays);
+        saveWidgets ({ dispatch }, overlays) { 
             dispatch("settings/saveSettings", {
                 type: "overlays",
                 content: overlays
@@ -28,7 +20,6 @@ export default {
         }
     },
     getters: {
-        getOverlays: state => state.overlays,
         getEdit: state => state.edit
     }
 };

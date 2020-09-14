@@ -1,22 +1,6 @@
 <template>
     <div v-if="settings" id="content">
-        <div v-if="edit" id="editNotification">
-            <span 
-                id="editText"
-                v-text="'Режим редактирования'"
-            />
-            <button 
-                @click="openFullEdit"
-                v-text="'Ред.'" 
-            />
-            <button 
-                @click="exitEdit"
-                v-text="'Выйти'"
-            />
-        </div>
-        <div id="overlays">
-            <overlay v-for="(overlay, index) of overlays" :key="index" :overlay="overlay" />
-        </div>
+        <EditMode v-if="edit" />
         <Notifications />
         <OBS />
         <Chat />
@@ -28,28 +12,30 @@
 import { mapActions, mapGetters } from "vuex";
 import { ipcRenderer } from "electron-better-ipc";
 
+import EditMode from "~/components/EditMode";
 import OBS from "~/components/OBS";
 import Notifications from "~/components/Notifications/Notifications";
 import Chat from "~/components/Chat";
-import Overlay from "~/components/Overlay";
 import ViewersList from "~/components/ViewersList";
 
 import other from "~/mixins/other";
 
 export default {
     components: { 
+        EditMode,
         OBS, 
         Notifications, 
         Chat, 
-        Overlay, 
         ViewersList
     },
     mixins: [other],
+    data: () => ({
+        widgets: []
+    }),
     computed: {
         ...mapGetters({
             settings: "settings/getSettings",
 
-            overlays: "overlays/getOverlays",
             edit: "overlays/getEdit",
 
             obs: "obs/getOBS",
@@ -65,14 +51,15 @@ export default {
         });
     },
     async mounted () {
+        const { settings, overlays, OBS, twitch } = await ipcRenderer.callMain("config");
+        this.widgets = overlays;
+
         if (this.edit) {
             ipcRenderer.send("enableMouse");
             return;
         }
 
         this.registerIPC();
-
-        const { settings, overlays, OBS, twitch } = await ipcRenderer.callMain("config");
 
         if (!OBS.address || !OBS.port) {
             ipcRenderer.send("enableMouse");
@@ -97,7 +84,6 @@ export default {
                 this.setSettings(settings); 
             }
 
-            this.setOverlays(overlays);
             this.connectOBS(OBS);
 
             if (!this.helix) {
@@ -112,7 +98,6 @@ export default {
             setSettings: "settings/setSettings",
             saveSettings: "settings/saveSettings",
 
-            setOverlays: "overlays/setOverlays",
             enableEdit: "overlays/enableEdit",
             
             turnLock: "ipc/turnLock",

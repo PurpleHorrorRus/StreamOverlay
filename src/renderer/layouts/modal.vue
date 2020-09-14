@@ -25,6 +25,12 @@ export default {
             locked: "ipc/getLock"
         })
     },
+    created () {
+        ipcRenderer.send("minimizeWidgets");
+    },
+    beforeDestroy () {
+        ipcRenderer.send("restoreWidgets");
+    },
     mounted () { 
         ipcRenderer.send("enableMouse"); 
     },

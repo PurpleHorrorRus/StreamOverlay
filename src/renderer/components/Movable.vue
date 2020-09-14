@@ -11,7 +11,7 @@
         @resizestop="onResize"
     >
         <span v-if="active" class="movable_name" v-text="name" />
-        <slot />
+        <slot v-if="!!$slots.default" />
     </vue-draggable-resizable>
 </template>
 
@@ -50,21 +50,22 @@ export default {
 <style lang="scss">
 .vdr { 
     position: absolute;
-    height: max-content;
-    border: 2px solid $secondary; 
+
+    border: 2px solid $outline;
+    cursor: move;
 }
 
 .nonactive.vdr {
     border: none;
-    pointer-events: none;
 }
 
 .movable_name {
-    padding: 5px;
-    background: rgba(255, 255, 255, .4);
     position: relative;
     top: 5px;
-    cursor: move;
-    user-select: none;
+
+    padding: 5px;
+
+    background: rgba(255, 255, 255, .4);
+    user-select: none; 
 }
 </style>

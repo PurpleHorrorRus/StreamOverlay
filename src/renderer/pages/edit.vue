@@ -5,32 +5,32 @@
         </div>
         <div id="modal-navigation">
             <div 
-                v-for="(_overlay, index) of overlays" 
-                :key="_overlay.id + index" 
+                v-for="(_widget, index) of widgets" 
+                :key="_widget.id + index" 
                 class="modal-navigation-item" 
-                :class="{ 'item-active': _overlay.id === overlay.id }" 
+                :class="{ 'item-active': _widget.id === widget.id }" 
                 @click="select(index)"
             >
                 <span 
                     class="modal-navigation-item-text nowrap" 
-                    v-text="_overlay.name" 
+                    v-text="_widget.name" 
                 />
             </div>
             <button class="add-new" @click="add" v-text="'Добавить'" />
             <button class="add-new" @click="del" v-text="'Удалить'" />
         </div>
-        <div v-if="overlay" id="modal-navigation-content">
+        <div v-if="widget" id="modal-navigation-content">
             <input 
-                v-model="overlay.name" 
-                type="text" class="overlay_name" 
+                v-model="widget.name" 
+                type="text" class="widget_name" 
                 placeholder="Название"
                 style="background: none"
             >
             <input 
-                v-model="overlay.src" 
+                v-model="widget.src" 
                 type="text" 
                 placeholder="Ссылка"
-                class="overlay_src"
+                class="widget_src"
             >
             <span v-if="error" class="error" v-text="error" />
             <button id="save" @click="save" v-text="'Сохранить'" />
@@ -39,7 +39,8 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions } from "vuex";
+import { ipcRenderer } from "electron-better-ipc";
 
 import other from "~/mixins/other";
 
@@ -47,76 +48,61 @@ export default {
     mixins: [other],
     layout: "modal",
     data: () => ({
-        overlay: null,
+        widget: null,
+        widgets: [],
         error: ""
     }),
     computed: {
-        ...mapGetters({
-            overlays: "overlays/getOverlays"
-        }),
-        empty() {
+        empty () {
             return {
                 id: (Math.random() * 1000).toFixed(0),
                 name: "",
                 src: "",
                 style: {
-                    left: 200,
-                    top: 200,
+                    x: 200,
+                    y: 200,
                     width: 200,
                     height: 200
                 }
             };
         }
     },
-    created () {
-        if (this.overlays.length) {
-            this.overlay = this.overlays[0];
+    async created () {
+        this.widgets = await ipcRenderer.callMain("getAllWidgets");
+        if (this.widgets.length) {
+            this.widget = this.widgets[0];
         }
     },
     methods: {
         ...mapActions({
-            setOverlays: "overlays/setOverlays",
-            saveOverlays: "overlays/saveOverlays"
+            saveWidgets: "overlays/saveWidgets"
         }),
-        active (id) { 
-            this.overlay.id === id; 
-        },
-        select (index) { 
-            this.overlay = this.overlays[index]; 
+        async select (index) { 
+            this.widget = this.widgets[index];
         },
         add () { 
-            this.overlay = this.empty;
+            this.widget = this.empty;
         },
         del () {
-            const index = this.overlays.findIndex(r => r.id == this.overlay.id);
-            if (!~index) {
-                return this.error = "Нельзя удалить недобавленный оверлей";
+            const index = this.widgets.findIndex(o => o.id === this.widget.id);
+            if (~index) {
+                this.widgets.splice(index, 1);
+                ipcRenderer.send("removeWidget", this.widget.id);
             }
-
-            this.overlays.splice(index, 1);
-            this.setOverlays(this.overlays);
-
-            if (this.overlays.length) {
-                if (!index) this.overlay = this.overlays[0];
-                else this.overlay = this.overlays[index - 1];
-            } else this.overlay = this.empty;
-
-            return this.saveOverlays(this.overlays);
+            
         },
         save () {
-            if (!this.overlay.name.length || !this.overlay.src.length) {
-                return this.error = "Все поля должны быть заполнены";
+            const index = this.widgets.findIndex(o => o.id === this.widget.id);
+
+            if (~index) {
+                this.widgets[index] = this.widget;
+                ipcRenderer.send("editWidget", this.widget);
+            } else {
+                this.widgets = [...this.widgets, this.widget];
+                ipcRenderer.send("addWidget", this.widget);
             }
 
-            const index = this.overlays.findIndex(r => r.id == this.overlay.id);
-            if (!~index) {
-                this.setOverlays([...this.overlays, this.overlay]);
-            }
-            else {
-                this.overlays[index] = this.overlay;
-                this.setOverlays(this.overlays);
-            }
-            this.saveOverlays(this.overlays);
+            this.saveWidgets(this.widgets);
         }
     }
 };
