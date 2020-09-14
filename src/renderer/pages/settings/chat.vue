@@ -8,7 +8,7 @@
         </div>
         <div class="modal-body">
             <Input
-                text="Время сообщения в чате (в секундах)"
+                text="Время сообщения в чате (в секундах). Установив 0, сообщения не будут удаляться"
                 :value="Number(settings.chat.timeout)"
                 @input="changeTimeout"
             />
@@ -62,7 +62,7 @@ export default {
                 return max;
             }
 
-            return Number(value);
+            return Math.abs(Number(value));
         },
         changeTimeout (value) {
             this.settings.chat.timeout = this.validateValue(value, 0);
