@@ -110,8 +110,10 @@ export default {
         }
     },
     created () { 
-        setTimeout(() => this.removeMessage(this.message), 
-            this.settings.chat.timeout * 1000); 
+        if (this.settings.chat.timeout !== 0) {
+            setTimeout(() => this.removeMessage(this.message), 
+                this.settings.chat.timeout * 1000); 
+        }
     },
     methods: {
         ...mapActions({

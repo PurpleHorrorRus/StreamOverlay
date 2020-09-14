@@ -65,7 +65,7 @@ export default {
             return Number(value);
         },
         changeTimeout (value) {
-            this.settings.chat.timeout = this.validateValue(value, 5);
+            this.settings.chat.timeout = this.validateValue(value, 0);
             this.save();
         },
         changeOpactiy (value) {
