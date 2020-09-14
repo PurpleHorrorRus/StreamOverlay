@@ -8,29 +8,24 @@
         <Badges :badges="message.badges" />
         <span 
             :style="textStyle" 
-            class="nickname" 
+            class="nickname stroke" 
             @click="ban(message.nickname)" 
             v-text="message.nickname" 
         />
-        <div 
-            v-for="(item, index) of formatMessage"
-            :key="index"
-            class="item"
-        >
-            <span v-if="item.type === 'text'" class="body" v-text="item.content" />
-            <img v-else-if="item.type === 'emoji'" class="emoticon" :style="emoticionStyle" :src="item.content">
-        </div>
+        <Body :items="formatMessage" />
     </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 import Badges from "~/components/chat/Badges";
+import Body from "~/components/chat/Body";
 
 export default {
     components: { 
-        Badges 
+        Badges,
+        Body
     },
     props: {
         message: {
@@ -123,11 +118,6 @@ export default {
                 width: `${this.settings.chat.font}px`
             };
         },
-        emoticionStyle () {
-            return { 
-                width: `${this.settings.chat.font + 10}px`
-            }; 
-        },
         textStyle () {
             return { 
                 fontSize: `${this.settings.chat.font}pt` 
@@ -155,7 +145,7 @@ export default {
     width: 100%;
     padding: 5px;
 
-    .avatar, .nickname, .body, .badges, .emoticon {
+    .avatar, .nickname {
         display: inline;
     }
 
@@ -171,19 +161,6 @@ export default {
             cursor: pointer;
             text-decoration: underline;
         }
-    }
-
-    .item {
-        display: inline;
-        margin-left: 2px;
-    }
-
-    .nickname, .body {
-        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-    }
-    
-    .body, .emoticon {
-        vertical-align: middle;
     }
 }
 </style>
