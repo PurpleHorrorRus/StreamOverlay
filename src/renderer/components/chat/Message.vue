@@ -7,7 +7,7 @@
         >
         <Badges :badges="message.badges" />
         <span 
-            :style="textStyle" 
+            :style="nicknameStyle" 
             class="nickname stroke" 
             @click="ban(message.nickname)" 
             v-text="message.nickname" 
@@ -116,6 +116,12 @@ export default {
         pictureStyle () {
             return { 
                 width: `${this.settings.chat.font}px`
+            };
+        },
+        nicknameStyle () {
+            return {
+                color: this.message.color,
+                ...this.textStyle
             };
         },
         textStyle () {
