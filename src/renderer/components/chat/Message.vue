@@ -7,12 +7,19 @@
         >
         <Badges :badges="message.badges" />
         <span 
-            :style="nicknameStyle" 
+            :style="textStyle" 
             class="nickname" 
             @click="ban(message.nickname)" 
             v-text="message.nickname" 
         />
-        <span :style="textStyle" class="body" v-html="formatMessage" />
+        <div 
+            v-for="(item, index) of formatMessage"
+            :key="index"
+            class="item"
+        >
+            <span v-if="item.type === 'text'" class="body" v-text="item.content" />
+            <img v-else-if="item.type === 'emoji'" class="emoticon" :style="emoticionStyle" :src="item.content">
+        </div>
     </div>
 </template>
 
@@ -22,70 +29,89 @@ import { mapGetters, mapActions } from "vuex";
 import Badges from "~/components/chat/Badges";
 
 export default {
-    components: { Badges },
+    components: { 
+        Badges 
+    },
     props: {
         message: {
-            required: true,
-            type: Object
+            type: Object,
+            required: true
         }
     },
     computed: {
         ...mapGetters({
+            settings: "settings/getSettings",
             betterTTV: "twitch/getBetterTTV",
-            FrankerFaceZ: "twitch/getFrankerFaceZ",
-            settings: "settings/getSettings"
+
+            FrankerFaceZ: "twitch/getFrankerFaceZ"
         }),
         formatMessage () {
             const { text, emotes } = this.message;
-            let splitText = text.split("");
 
-            for (const i in emotes) {
-                const e = emotes[i];
-                for (const j in e) {
-                    let mote = e[j];
-                    if (typeof mote == "string") {
-                        mote = mote.split("-");
-                        mote = [parseInt(mote[0]), parseInt(mote[1])];
-                        const length =  mote[1] - mote[0],
-                            empty = Array.apply(null, new Array(length + 1)).map(() => { return ""; });
+            let ready = [];
+            let emojiWords = [];
 
-                        splitText = splitText
-                            .slice(0, mote[0])
-                            .concat(empty)
-                            .concat(splitText
-                                .slice(mote[1] + 1, splitText.length));
+            const addEmoji = url => {
+                ready = [...ready, {
+                    type: "emoji",
+                    content: url
+                }];
+            };
+            
+            if (emotes) {
+                const positions = Object.values(emotes)
+                    .map(([position]) => 
+                        position.split("-")
+                            .map(Number));
 
-                        splitText
-                            .splice(
-                                mote[0], 
-                                1,
-                                `<img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/${i}/3.0">`
-                            );
-                    }
-                }
+                const ids = Object.keys(emotes);
+
+                emojiWords = positions.map(([start, end], index) => {
+                    return {
+                        id: ids[index],
+                        word: text.substring(start, end + 1)
+                    };
+                });
             }
 
-            const splitted = splitText.join("").split(" ");
-            
             const betterTTVMap = this.betterTTV.map(e => e.code),
                 FrankerFaceZMap = this.FrankerFaceZ.map(e => e.code);
 
+            let txt = "";
+
+            const splitted = text.split(" ");
             for (const wordIndex in splitted) {
                 const word = splitted[wordIndex];
+
+                const index = emotes 
+                    ? word.indexOf(emojiWords.map(({ word }) => word))
+                    : -1;
+
                 const betterTTVIndex = betterTTVMap.indexOf(word);
-                if (~betterTTVIndex) {
-                    const { url } = this.betterTTV[betterTTVIndex];
-                    splitted[wordIndex] = `<img class="emoticon" src="${url}">`;
-                }
-
                 const FrankerFaceZIndex = FrankerFaceZMap.indexOf(word);
-                if (~FrankerFaceZIndex) {
-                    const { url } = this.FrankerFaceZ[FrankerFaceZIndex];
-                    splitted[wordIndex] = `<img class="emoticon" src="${url}">`;
+                
+                if (~index) {
+                    addEmoji(`http://static-cdn.jtvnw.net/emoticons/v1/${emojiWords[index].id}/3.0`);
+                    continue;
+                } else if (~betterTTVIndex) {
+                    addEmoji(this.betterTTV[betterTTVIndex].url);
+                    continue;
+                } else if (~FrankerFaceZIndex) {
+                    addEmoji(this.FrankerFaceZ[FrankerFaceZIndex].url);
+                    continue;
+                } else {
+                    txt += word;
                 }
-            }
 
-            return splitted.join(" ");
+                ready = [...ready, {
+                    type: "text",
+                    content: txt
+                }];
+
+                txt = "";
+            }
+            
+            return ready;
         },
         messageStyle () {
             return { 
@@ -97,11 +123,10 @@ export default {
                 width: `${this.settings.chat.font}px`
             };
         },
-        nicknameStyle () {
+        emoticionStyle () {
             return { 
-                color: this.message.color, 
-                fontSize: `${this.settings.chat.font}pt`
-            };
+                width: `${this.settings.chat.font + 10}px`
+            }; 
         },
         textStyle () {
             return { 
@@ -119,26 +144,7 @@ export default {
         ...mapActions({
             ban: "twitch/ban",
             removeMessage: "twitch/removeMessage"
-        }),
-        htmlEntities (html) {
-            const isArray = Array.isArray(html);
-            
-            if (!isArray) {
-                html = html.split("");
-            }
-
-            html = html.map(n => n.length === 1
-                // eslint-disable-next-line no-useless-escape
-                ? n.replace(/[\u00A0-\u9999<>\&]/gim, i => `&#${i.charCodeAt(0)};`)
-                : n
-            );
-
-            if (!isArray) {
-                html = html.join("");
-            }
-
-            return html;
-        }
+        })
     }
 };
 </script>
@@ -147,19 +153,17 @@ export default {
 .message {
     display: block;
     width: 100%;
-    height: max-content;
-
     padding: 5px;
+
+    .avatar, .nickname, .body, .badges, .emoticon {
+        display: inline;
+    }
 
     .avatar {
         border-radius: 100px;
     }
 
     .nickname {
-        display: inline-block;
-
-        margin-right: 5px;
-
         font-weight: 600;
         pointer-events: all;
 
@@ -169,16 +173,16 @@ export default {
         }
     }
 
-    .body {
+    .item {
         display: inline;
+        margin-left: 2px;
     }
 
     .nickname, .body {
         text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
     }
-
-    .emoticon {
-        width: 10px;
+    
+    .body, .emoticon {
         vertical-align: middle;
     }
 }
