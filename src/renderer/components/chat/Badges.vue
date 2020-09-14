@@ -36,11 +36,12 @@ export default {
 
 <style lang="scss">
 .badges {
-    display: inline-block;
-    width: max-content;
-
+    display: inline;
+    vertical-align: middle;
+    
     .badge {
-        margin-right: 3px;
+        margin-right: 2px;
+        margin-left: 2px;
     }
 }
 </style>
