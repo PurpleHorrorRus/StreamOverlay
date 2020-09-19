@@ -7,7 +7,6 @@
         "type": "git",
         "url": "https://github.com/PurpleHorrorRus/StreamOverlayStandart/"
     },
-    "private": true,
     "main": "./dist/main/index.js",
     "engines": {
         "node": ">=12.13.0"
