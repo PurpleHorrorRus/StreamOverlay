@@ -25,6 +25,7 @@ const params = {
     movable: false,
     transparent: true,
     frame: false,
+    fullscreenable: false,
     webPreferences: {
         nodeIntegration: true,
         webSecurity: false,
@@ -85,9 +86,13 @@ const editWidget = widget => {
 
 const open = () => {
     window = new BrowserWindow(params);
+
     window.maximize();
     window.removeMenu();
     window.setIgnoreMouseEvents(true);
+    window.setContentProtection(true);
+    window.setVisibleOnAllWorkspaces(true);
+    window.setAlwaysOnTop(true, "screen-saver");
 
     if (isDev) {
         window.loadURL(DEV_SERVER_URL);
@@ -176,12 +181,6 @@ const open = () => {
         send("lock", mouse);
         menu = false;
     });
-
-    setInterval(() => {
-        if (!window) return;
-        window.setAlwaysOnTop(true, "screen-saver");
-        window.setVisibleOnAllWorkspaces(true);
-    }, 2000);
 };
 
 app.on("ready", open);
