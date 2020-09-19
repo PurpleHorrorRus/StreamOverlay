@@ -183,4 +183,5 @@ const open = () => {
     });
 };
 
+app.disableHardwareAcceleration();
 app.on("ready", open);
