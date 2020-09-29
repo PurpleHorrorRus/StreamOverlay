@@ -63,7 +63,7 @@ export default {
 
                 emojiWords = positions.map(([start, end], index) => {
                     return {
-                        id: ids[index],
+                        url: `http://static-cdn.jtvnw.net/emoticons/v1/${ids[index]}/3.0`,
                         word: text.substring(start, end + 1)
                     };
                 });
@@ -79,14 +79,14 @@ export default {
                 const word = splitted[wordIndex];
 
                 const index = emotes 
-                    ? word.indexOf(emojiWords.map(({ word }) => word))
+                    ? emojiWords.map(({ word }) => word).indexOf(word)
                     : -1;
 
                 const betterTTVIndex = betterTTVMap.indexOf(word);
                 const FrankerFaceZIndex = FrankerFaceZMap.indexOf(word);
                 
                 if (~index) {
-                    addEmoji(`http://static-cdn.jtvnw.net/emoticons/v1/${emojiWords[index].id}/3.0`);
+                    addEmoji(emojiWords[index].url);
                     continue;
                 } else if (~betterTTVIndex) {
                     addEmoji(this.betterTTV[betterTTVIndex].url);
