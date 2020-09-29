@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import { ipcRenderer } from "electron-better-ipc";
 
 import other from "~/mixins/other";
@@ -53,9 +53,12 @@ export default {
         error: ""
     }),
     computed: {
+        ...mapGetters({
+            config: "GET_CONFIG"
+        }),
         empty () {
             return {
-                id: (Math.random() * 1000).toFixed(0),
+                id: Number((Math.random() * 1000).toFixed(0)),
                 name: "",
                 src: "",
                 style: {
@@ -68,7 +71,7 @@ export default {
         }
     },
     async created () {
-        this.widgets = await ipcRenderer.callMain("getAllWidgets");
+        this.widgets = this.config.overlays;
         if (this.widgets.length) {
             this.widget = this.widgets[0];
         }

@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import { ipcRenderer } from "electron-better-ipc";
 
 import Widget from "~/components/Widget";
@@ -28,8 +28,13 @@ export default {
     data: () => ({
         widgets: []
     }),
+    computed: {
+        ...mapGetters({
+            config: "GET_CONFIG"
+        })
+    },
     async created () {
-        this.widgets = await ipcRenderer.callMain("getAllWidgets");
+        this.widgets = this.config.overlays;
         ipcRenderer.send("minimizeWidgets");
     },
     beforeDestroy () {

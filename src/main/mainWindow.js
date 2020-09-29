@@ -54,7 +54,7 @@ const addWidget = widget => {
     if (window) {
         const view = new BrowserView();
         view.widgetID = widget.id;
-        window.setBrowserView(view);
+        window.addBrowserView(view);
         view.setBounds(widget.style);
         view.webContents.loadURL(widget.src);
         view.webContents.on("dom-ready", () => view.webContents.audioMuted = true);
@@ -143,7 +143,10 @@ const open = () => {
 
     ipcMain.on("restoreWidgets", () => {
         BrowserView.getAllViews()
-            .forEach((v, i) => v.setBounds(config.overlays[i].style));
+            .forEach(v => {
+                const styleIndex = config.overlays.findIndex(o => o.id === v.widgetID);
+                v.setBounds(config.overlays[styleIndex].style);
+            });
     });
 
     ipcMain.on("saveSettings", (_, args) =>
