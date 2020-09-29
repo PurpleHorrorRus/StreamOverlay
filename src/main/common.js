@@ -15,6 +15,12 @@ const writeJSON = (dir, content) => {
     return content;
 };
 
+const saveSettings = (type = "settings", content) => {
+    const path = paths[type];
+    config[type] = content;
+    writeJSON(path, content);
+};
+
 const clearSettings = {
     first: true,
     chat: {
@@ -79,6 +85,7 @@ let keys = Object.keys(config.settings),
 for (let key of clearKeys) {
     if (!~keys.indexOf(key)) {
         config.settings[key] = clearSettings[key];
+        saveSettings("settings", config.settings);
     }
 
     key = null;
@@ -89,10 +96,6 @@ keys = clearKeys = null;
 export default {
     icon, isDev, paths, config, 
     readJSON, writeJSON, exist,
-    saveSettings: (type = "settings", content) => {
-        const path = paths[type];
-        config[type] = content;
-        writeJSON(path, content);
-    },
+    saveSettings,
     readSettings: (type = "settings") => readJSON(paths[type])
 };
