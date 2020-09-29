@@ -15,7 +15,9 @@
                 />
             </div>
         </div>
-        <span v-else class="loading-title" v-text="'Загрузка...'" />
+        <div v-else id="loading-block">
+            <font-awesome-icon id="loading-icon" class="fa-spin" :icon="['fas', 'circle-notch']" />
+        </div>
     </Movable>
 </template>
 
@@ -151,6 +153,13 @@ export default {
                 font-weight: 600;
             }
         }
+    }
+
+    #loading-block {
+        display: flex;
+        align-content: center;
+        justify-content: center;
+        margin-top: 20px;
     }
 }
 </style>
