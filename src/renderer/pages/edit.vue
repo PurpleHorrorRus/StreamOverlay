@@ -80,7 +80,7 @@ export default {
         ...mapActions({
             saveWidgets: "overlays/saveWidgets"
         }),
-        async select (index) { 
+        select (index) { 
             this.widget = this.widgets[index];
         },
         add () { 
