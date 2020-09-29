@@ -36,7 +36,7 @@ export default {
         display: inline;
         
         .item {
-            display: inline;
+            display: inline-block;
             margin-left: 5px;
 
             .text, .emoticon {
