@@ -17,7 +17,7 @@
                 />
             </div>
             <button class="add-new" @click="add" v-text="'Добавить'" />
-            <button class="add-new" @click="del" v-text="'Удалить'" />
+            <button v-if="widgets.length > 0" class="add-new" @click="del" v-text="'Удалить'" />
         </div>
         <div v-if="widget" id="modal-navigation-content">
             <input 
