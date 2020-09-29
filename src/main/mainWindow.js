@@ -21,6 +21,7 @@ const params = {
     icon,
     width,
     height,
+    show: false,
     resizable: false,
     movable: false,
     transparent: true,
@@ -87,6 +88,7 @@ const editWidget = widget => {
 const open = () => {
     window = new BrowserWindow(params);
 
+    window.showInactive();
     window.maximize();
     window.removeMenu();
     window.setIgnoreMouseEvents(true);
@@ -120,7 +122,7 @@ const open = () => {
         autoUpdater.checkForUpdates();
     });
 
-    ipcMain.answerRenderer("config", () => (config));
+    ipcMain.answerRenderer("config", () => config);
     ipcMain.answerRenderer("getAllWidgets", () => (config.overlays));
 
     ipcMain.on("addWidget", (_event, widget) => {
@@ -149,37 +151,41 @@ const open = () => {
     );
 
     globalShortcut.register("Alt+R", () => {
-        if (!window) return;
-        window.setIgnoreMouseEvents(menu);
-        menu = !menu;
-        send("menu", menu);
+        if (window) {
+            window.setIgnoreMouseEvents(menu);
+            menu = !menu;
+            send("menu", menu);
+        }
     });
 
     globalShortcut.register("Alt+A", () => {
-        if (!window) return;
-        if (menu) {
-            window.setIgnoreMouseEvents(mouse);
-            mouse = !mouse;
-            send("lock", mouse);
+        if (window) {
+            if (menu) {
+                window.setIgnoreMouseEvents(mouse);
+                mouse = !mouse;
+                send("lock", mouse);
+            }
         }
     });
 
     globalShortcut.register("Alt+K", () => send("viewers_list"));
 
     ipcMain.on("enableMouse", () => {
-        if (!window) return;
-        window.setIgnoreMouseEvents(false);
-        mouse = true;
-        send("lock", mouse);
-        menu = true;
+        if (window) {
+            window.setIgnoreMouseEvents(false);
+            mouse = true;
+            send("lock", mouse);
+            menu = true;
+        }
     });
 
     ipcMain.on("disableMouse", () => {
-        if (!window) return;
-        window.setIgnoreMouseEvents(true);
-        mouse = false;
-        send("lock", mouse);
-        menu = false;
+        if (window) {
+            window.setIgnoreMouseEvents(true);
+            mouse = false;
+            send("lock", mouse);
+            menu = false;
+        }
     });
 };
 

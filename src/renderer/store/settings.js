@@ -14,7 +14,7 @@ export default {
         setSettings ({ commit }, settings) {
             commit("setSettings", settings);
         },
-        saveSettings ({ commit }, settings) { 
+        saveSettings ({ commit, dispatch, rootGetters }, settings) {
             if (!settings.type) {
                 return console.error("You must to specify settings type", settings);
             }
@@ -22,6 +22,11 @@ export default {
             if (settings.type === "settings") {
                 commit("setSettings", settings.content);
             }
+
+            const config = rootGetters["GET_CONFIG"];
+            config[settings.type] = settings.content;
+
+            dispatch("SET_CONFIG", config, { root: true });
             
             ipcRenderer.send("saveSettings", {
                 type: settings.type,

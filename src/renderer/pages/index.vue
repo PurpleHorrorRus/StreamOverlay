@@ -10,6 +10,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import { ipcRenderer as IPC } from "electron";
 import { ipcRenderer } from "electron-better-ipc";
 
 import EditMode from "~/components/EditMode";
@@ -51,15 +52,16 @@ export default {
         });
     },
     async mounted () {
-        const { settings, overlays, OBS, twitch } = await ipcRenderer.callMain("config");
+        const config = await ipcRenderer.callMain("config");
+        const { settings, overlays, OBS, twitch } = config;
+
+        this.setConfig(config);
         this.widgets = overlays;
 
         if (this.edit) {
             ipcRenderer.send("enableMouse");
             return;
         }
-
-        this.registerIPC();
 
         if (!OBS.address || !OBS.port) {
             ipcRenderer.send("enableMouse");
@@ -87,6 +89,7 @@ export default {
             this.connectOBS(OBS);
 
             if (!this.helix) {
+                this.registerIPC();
                 this.createHelix(twitch);
                 this.createChatBot();
                 this.runInterval();
@@ -95,6 +98,8 @@ export default {
     },
     methods: {
         ...mapActions({
+            setConfig: "SET_CONFIG",
+
             setSettings: "settings/setSettings",
             saveSettings: "settings/saveSettings",
 
@@ -110,9 +115,9 @@ export default {
             runInterval: "twitch/runInterval"
         }),
         registerIPC () { 
-            ipcRenderer.on("menu", () => this.$router.replace("/menu").catch(() => {}));
-            ipcRenderer.on("lock", (event, mouse) => this.turnLock(mouse));
-            ipcRenderer.on("viewers_list", () => {
+            IPC.on("menu", (event, sequence) => this.$router.replace(sequence ? "/menu" : "/").catch(() => {}));
+            IPC.on("lock", (event, mouse) => this.turnLock(mouse));
+            IPC.on("viewers_list", () => {
                 const { enable } = this.settings.viewers_list;
                 this.settings.viewers_list.enable = !enable;
                 this.saveSettings({

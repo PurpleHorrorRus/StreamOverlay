@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import { ipcRenderer } from "electron-better-ipc";
 
 import Input from "~/components/settings/Input";
@@ -78,14 +78,18 @@ export default {
         camera: "",
         error: ""
     }),
+    computed: {
+        ...mapGetters({
+            config: "GET_CONFIG"
+        })
+    },
     async created () {
         ipcRenderer.send("enableMouse");
-        const { OBS } = await ipcRenderer.callMain("config");
-        if (OBS.address) {
-            this.address = OBS.address;
-            this.port = OBS.port;
-            this.password = OBS.password;
-            this.camera = OBS.camera;
+        if (this.config.OBS.address) {
+            this.address = this.config.OBS.address;
+            this.port = this.config.OBS.port;
+            this.password = this.config.OBS.password;
+            this.camera = this.config.OBS.camera;
         }
     },
     methods: {

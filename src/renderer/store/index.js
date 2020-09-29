@@ -9,10 +9,20 @@ import ipc from "~/store/ipc";
 
 const store = () => {
     return new Vuex.Store({
-        state: () => ({}),
-        mutations: {},
-        actions: {},
-        getters: {},
+        state: () => ({
+            config: {}
+        }),
+        mutations: {
+            SET_CONFIG: (state, config) => state.config = config
+        },
+        actions: {
+            SET_CONFIG ({ commit }, config) {
+                commit("SET_CONFIG", config);
+            }
+        },
+        getters: {
+            GET_CONFIG: state => state.config
+        },
         modules: { 
             obs, 
             twitch, 

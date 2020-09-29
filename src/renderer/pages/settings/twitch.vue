@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import { ipcRenderer } from "electron-better-ipc";
 
 import express from "express";
@@ -77,6 +77,11 @@ export default {
         error: "",
         validating: false
     }),
+    computed: {
+        ...mapGetters({
+            config: "GET_CONFIG"
+        })
+    },
     watch: {
         access_token (newVal) {
             if (~newVal.indexOf("http://")) {
@@ -95,11 +100,10 @@ export default {
     },
     async created () {
         ipcRenderer.send("enableMouse");
-        const { twitch } = await ipcRenderer.callMain("config");
-        if (twitch.username) {
-            this.username = twitch.username;
-            this.access_token = twitch.access_token;
-            this.oauth_token = twitch.oauth_token;
+        if (this.config.twitch.username) {
+            this.username = this.config.twitch.username;
+            this.access_token = this.config.twitch.access_token;
+            this.oauth_token = this.config.twitch.oauth_token;
         }
     },
     methods: {

@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import { ipcRenderer } from "electron";
 import { mapActions, mapGetters } from "vuex";
 
 import ModalTitle from "~/components/ModalTitle";
@@ -36,7 +35,6 @@ export default {
         })
     },
     mounted () { 
-        ipcRenderer.on("menu", () => this.$router.replace("/").catch(() => {})); 
         this._enableEdit(false);
     },
     methods: {
