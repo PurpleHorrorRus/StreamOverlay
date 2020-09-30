@@ -11,7 +11,7 @@
                 <Input 
                     :value="local.title"
                     text="Название трансляции" 
-                    @input="changeLocal('title')" 
+                    @input="changeTitle" 
                     @keypress.enter.native="updateStream"
                 />
                 <Input 
