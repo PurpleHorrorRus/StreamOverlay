@@ -91,9 +91,9 @@ input {
 
 :root {
     --checkbox-size: 10px;
-    --checkbox-color: $text;
+    --checkbox-color: #fff;
     --hover-color: $text;
-    --tick-color: $secondary;
+    --tick-color: #9c3536;
 }
 
 @keyframes cb-pop {

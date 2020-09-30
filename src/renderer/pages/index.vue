@@ -3,7 +3,7 @@
         <EditMode v-if="edit" />
         <Notifications />
         <OBS />
-        <Chat />
+        <Chat v-if="settings.chat.enable" />
         <ViewersList v-if="settings.viewers_list.enable" />
     </div>
 </template>

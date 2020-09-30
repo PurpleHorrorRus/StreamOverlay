@@ -7,6 +7,13 @@
             />
         </div>
         <div class="modal-body">
+            <Item 
+                :id="0" 
+                :type="'checkbox'" 
+                :text="'Включить чат'" 
+                :checked="settings.chat.enable"
+                @checked="turnChat" 
+            />
             <Input
                 text="Время сообщения в чате (в секундах). Установив 0, сообщения не будут удаляться"
                 :value="Number(settings.chat.timeout)"
@@ -29,10 +36,12 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 
+import Item from "~/components/settings/Item";
 import Input from "~/components/settings/Input";
 
 export default {
     components: {
+        Item,
         Input
     },
     layout: "modal",
@@ -45,6 +54,10 @@ export default {
         ...mapActions({
             saveSettings: "settings/saveSettings"
         }),
+        turnChat () {
+            this.settings.chat.enable = !this.settings.chat.enable;
+            this.save();
+        },
         save () {
             this.saveSettings({
                 type: "settings",
