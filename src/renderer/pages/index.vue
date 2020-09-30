@@ -64,12 +64,14 @@ export default {
         }
 
         if (!OBS.address || !OBS.port) {
+            this.registerIPC();
             ipcRenderer.send("enableMouse");
             this.$router.replace("/settings/obs").catch(() => {});
             return;
         }
 
         if (!twitch.id || !twitch.username || !twitch.access_token || !twitch.oauth_token) {
+            this.registerIPC();
             ipcRenderer.send("enableMouse");
             this.$router.replace("/settings/twitch").catch(() => {});
             return;

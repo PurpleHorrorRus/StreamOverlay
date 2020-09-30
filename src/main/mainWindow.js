@@ -176,9 +176,9 @@ const open = () => {
     ipcMain.on("enableMouse", () => {
         if (window) {
             window.setIgnoreMouseEvents(false);
-            mouse = true;
-            send("lock", mouse);
             menu = true;
+            mouse = true;
+            send("lock", true);
         }
     });
 
