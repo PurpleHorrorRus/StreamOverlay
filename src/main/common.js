@@ -3,7 +3,7 @@ import { app } from "electron";
 import fs from "fs";
 import path from "path";
 
-app.getVersion = () => "0.0.7";
+app.getVersion = () => "0.0.8";
 app.commandLine.appendSwitch("js-flags", "--expose_gc --max-old-space-size=128");
 
 const icon = path.join("build", "icons", "icon.ico");
@@ -24,6 +24,7 @@ const saveSettings = (type = "settings", content) => {
 const clearSettings = {
     first: true,
     chat: {
+        enable: true,
         timeout: 80,
         opacity: 30,
         font: 12,
