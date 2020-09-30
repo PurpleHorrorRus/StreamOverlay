@@ -8,7 +8,7 @@ const TerserConfig = {
 const cssnano = require("cssnano");
 
 module.exports = {
-    mode: "universal",
+    mode: "spa",
     head: {
         title: "Stream Overlay",
         meta: [
