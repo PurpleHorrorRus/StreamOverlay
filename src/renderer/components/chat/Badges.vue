@@ -5,7 +5,7 @@
             :key="badge" 
             class="badge" 
             :style="badgeStyle"
-            :src="require(`~/images/${badge}.png`).default"
+            :src="badgeImage(badge)"
         >
     </div>
 </template>
@@ -30,6 +30,15 @@ export default {
                 width: `${this.settings.chat.font}px` 
             };
         }
+    },
+    methods: {
+        badgeImage (badge) {
+            try {
+                return require(`~/images/${badge}.png`).default;
+            } catch (e) {
+                return "";
+            }
+        },
     }
 };
 </script>
