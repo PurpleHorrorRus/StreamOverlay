@@ -28,7 +28,7 @@ const clearSettings = {
         timeout: 80,
         opacity: 30,
         font: 12,
-        x: 1633,
+        x: 50,
         y: 156,
         width: 273,
         height: 556
