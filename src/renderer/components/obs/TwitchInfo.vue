@@ -3,7 +3,7 @@
         <font-awesome-icon :icon="['fas', 'eye']" /> 
         <span v-if="viewers > -1" id="viewers_count" v-text="viewers" />
         <font-awesome-icon v-else id="viewers_count" :icon="['fa', 'circle-notch']" class="fa-spin" />
-        <font-awesome-icon :icon="['fas', 'star']" /> 
+        <font-awesome-icon :icon="['fas', 'heart']" /> 
         <span v-if="followers > -1" id="followers_count" v-text="followers" />
         <font-awesome-icon v-else id="viewers_count" :icon="['fas', 'circle-notch']" class="fa-spin" />
     </div>
