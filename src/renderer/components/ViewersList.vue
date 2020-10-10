@@ -79,20 +79,11 @@ export default {
             saveSettings: "settings/saveSettings"
         }),
         async get () {
-            let botsPromise = new Promise(resolve => {
-                fetch("https://api.twitchinsights.net/v1/bots/online")
-                    .then(response => response.json())
-                    .then(({ bots }) => resolve(bots.map(([name]) => name)));
-            });
-        
-            let viewersPromise = new Promise(resolve => {
-                this.helix.getViewers(this.user.username)
-                    .then(({ chatters }) => resolve(chatters));
-            });
-            
-            const [bots, chatters] = await Promise.all([botsPromise, viewersPromise]);
-            botsPromise = viewersPromise = null;
+            const botsRequest = await fetch("https://api.twitchinsights.net/v1/bots/online");
 
+            const { bots } = await botsRequest.json();
+            const { chatters } = await this.helix.getViewers(this.user.username);
+            
             Object.keys(chatters).forEach(category =>
                 this.chatters[category] = 
                     _.without(chatters[category], ...bots));
