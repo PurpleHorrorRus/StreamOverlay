@@ -64,8 +64,8 @@ export default {
     },
     async mounted () {
         this.loading = true;
-        await this.get();
-        this.updateInterval = setInterval(this.get, 4 * 1000);
+        this.chatters = await this.get();
+        this.updateInterval = setInterval(async () => this.chatters = await this.get(), 4 * 1000);
         this.loading = false;
     },
     destroyed () {
@@ -83,10 +83,12 @@ export default {
 
             const { bots } = await botsRequest.json();
             const { chatters } = await this.helix.getViewers(this.user.username);
-            
-            Object.keys(chatters).forEach(category =>
-                this.chatters[category] = 
-                    _.without(chatters[category], ...bots));
+
+            for (const category in chatters) {
+                chatters[category] = _.without(chatters[category], ...bots.map(([name]) => name));
+            }
+
+            return chatters;
         },
         onResize  (x, y, width, height) {
             this.settings.viewers_list.width = width;
@@ -130,9 +132,6 @@ export default {
         height: 100%;
 
         padding: 5px;
-        
-        border: 1px solid #000;
-        border-radius: 5px;
 
         overflow-x: hidden;
         overflow-y: auto;
