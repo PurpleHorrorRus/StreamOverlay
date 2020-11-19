@@ -1,8 +1,6 @@
 import Promise from "bluebird";
 import socket from "obs-websocket-js";
 
-import misc from "~/plugins/misc";
-
 export default {
     namespaced: true,
     state: () => ({
@@ -112,24 +110,10 @@ export default {
                     if (!state.status.recording) { 
                         this.dispatch("obs/setupUpdateInterval");
                     }
-
-                    const date = new Date().toLocaleString();
-                    const stream = this.getters["twitch/getStream"];
-                    this.dispatch("vk/SEND", `\
-                        === Стрим от ${date} ===\n\
-                        Название: ${stream.title}\n\
-                        Категория: ${stream.game}
-                    `);
                 });
 
                 state.obs.on("StreamStopping", () => {
                     state.status.stream = false;
-
-                    const time = misc.formatTime(state.status.time);
-                    this.dispatch("vk/SEND", `\
-                        === Стрим окончен ===\n\
-                        Продолжительность: ${time}
-                    `);
                     
                     this.dispatch("notifications/turnLowBitrate", false);
                     this.dispatch("notifications/turnLowFPS", false);
