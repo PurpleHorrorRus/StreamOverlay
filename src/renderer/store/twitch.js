@@ -59,7 +59,6 @@ export default {
             }
 
             this.dispatch("followers/GET", state.user.id);
-            this.dispatch("followers/START", state.user.id);
             this.dispatch("twitch/loadEmotes");
 
             const { status: title, game } = await state.helix.getChannel(state.user.id);
@@ -302,12 +301,11 @@ export default {
         removeMessage ({ commit }, message) { 
             commit("removeMessage", message); 
         },
-        async updateStats ({ commit, getters, rootGetters }) { 
+        async updateStats ({ commit, dispatch, getters, rootGetters }) { 
             const helix = getters["getHelix"];
             const user = getters["getUser"];
 
-            const count = await helix.getFollowersCount(user.id);
-            commit("setFollowersCount", count);
+            dispatch("followers/GET", user.id, { root: true });
 
             const { stream } = rootGetters["obs/getStatus"];
 
