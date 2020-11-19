@@ -85,6 +85,16 @@ const open = () => {
         common.saveSettings(args.type, args.content)
     );
 
+    ipcMain.on("turnMouse", (_event, sequence) => {
+        if (window) {
+            console.log(sequence);
+            window.setIgnoreMouseEvents(!sequence);
+            mouse = sequence;
+            menu = sequence;
+            send("lock", sequence);
+        }
+    });
+
     globalShortcut.register("Alt+T", () => {
         send("beep");
         window.setAlwaysOnTop(true, "screen-saver");
@@ -100,34 +110,13 @@ const open = () => {
 
     globalShortcut.register("Alt+A", () => {
         if (window) {
-            if (menu) {
-                window.setIgnoreMouseEvents(mouse);
-                mouse = !mouse;
-                send("lock", mouse);
-            }
+            window.setIgnoreMouseEvents(mouse);
+            send("lock", !mouse);
+            mouse = !mouse;
         }
     });
 
     globalShortcut.register("Alt+K", () => send("viewers_list"));
-
-    ipcMain.on("enableMouse", () => {
-        if (window) {
-            window.setIgnoreMouseEvents(false);
-            mouse = true;
-            send("lock", mouse);
-            menu = true;
-        }
-    });
-
-    ipcMain.on("disableMouse", () => {
-        if (window) {
-            window.setIgnoreMouseEvents(true);
-            mouse = false;
-            send("lock", mouse);
-            menu = false;
-        }
-        
-    });
 };
 
 app.disableHardwareAcceleration();

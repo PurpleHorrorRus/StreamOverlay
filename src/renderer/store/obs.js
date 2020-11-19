@@ -37,8 +37,6 @@ export default {
             }
 
             const connect = () => {
-                console.log("Try to connect to OBS...");
-
                 return new Promise(resolve => {
                     state.obs = new socket({ 
                         address: `${data.address}:${data.port}`
@@ -53,12 +51,10 @@ export default {
             const awaitConnection = (timeout = 4 * 1000) => {
                 return new Promise(async resolve => {
                     let connected = await connect();
-                    console.log("First connection", connected);
 
                     while (!connected) {
                         await Promise.delay(timeout);
                         connected = await connect();
-                        console.log("Retrying connection", connected);
                     }
 
                     console.log("OBS Connected");

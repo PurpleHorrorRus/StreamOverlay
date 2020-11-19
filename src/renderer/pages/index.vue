@@ -72,42 +72,37 @@ export default {
         this.setConfig(config);
         this.setWidgets(overlays);
 
-        if (this.edit) {
-            ipcRenderer.send("enableMouse");
-            return;
-        }
-
         if (!OBS.address || !OBS.port) {
-            ipcRenderer.send("enableMouse");
+            this.registerIPC();
+            this.setSettings(settings); 
             this.$router.replace("/settings/obs").catch(() => {});
             return;
         }
 
         if (!twitch.id || !twitch.username || !twitch.access_token || !twitch.oauth_token) {
-            ipcRenderer.send("enableMouse");
+            this.registerIPC();
+            this.setSettings(settings); 
             this.$router.replace("/settings/twitch").catch(() => {});
             return;
         }
 
-        if (!this.connected) {
-            if (settings.first) {
-                settings.first = false;
-                this.saveSettings({
-                    type: "settings",
-                    content: settings
-                });
-            } else {
-                this.setSettings(settings); 
-            }
-            
-            this.connectOBS(OBS);
+        if (settings.first) {
+            settings.first = false;
+            this.saveSettings({
+                type: "settings",
+                content: settings
+            });
+        } else {
+            this.setSettings(settings); 
+        }
 
-            if (!this.helix) {
-                this.registerIPC();
-                this.createHelix(twitch);
-                this.createChatBot();
-                this.runInterval();
-            }
+        if (!this.helix) {
+            this.connectOBS(OBS);
+            this.createHelix(twitch);
+            
+            this.registerIPC();
+            this.createChatBot();
+            this.runInterval();
         }
     },
     methods: {
@@ -137,8 +132,8 @@ export default {
                 beep.play();
             });
 
-            IPC.on("menu", (event, sequence) => this.$router.replace(sequence ? "/menu" : "/").catch(() => {}));
-            IPC.on("lock", (event, mouse) => this.turnLock(mouse));
+            IPC.on("menu", (_event, sequence) => this.$router.replace(sequence ? "/menu" : "/").catch(() => {}));
+            IPC.on("lock", (_event, mouse) => this.turnLock(mouse));
             IPC.on("viewers_list", () => {
                 this.settings.viewers_list.enable = !this.settings.viewers_list.enable;
                 this.saveSettings({

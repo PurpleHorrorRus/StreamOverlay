@@ -95,7 +95,6 @@ export default {
         })
     },
     async created () {
-        ipcRenderer.send("enableMouse");
         if (this.config.OBS.address) {
             this.address = this.config.OBS.address;
             this.port = this.config.OBS.port;
@@ -148,7 +147,7 @@ export default {
             });
 
             ipcRenderer.send("disableMouse");
-            this.$router.replace("/").catch(() => {});
+            this.$router.replace("/settings/twitch").catch(() => {});
         },
         install () { 
             // eslint-disable-next-line max-len

@@ -99,7 +99,6 @@ export default {
         }
     },
     async created () {
-        ipcRenderer.send("enableMouse");
         if (this.config.twitch.username) {
             this.username = this.config.twitch.username;
             this.access_token = this.config.twitch.access_token;
