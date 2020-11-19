@@ -28,30 +28,30 @@ const clearSettings = {
         timeout: 80,
         opacity: 30,
         font: 12,
-        x: 50,
-        y: 156,
-        width: 273,
-        height: 556
+        x: 13,
+        y: 721,
+        width: 143,
+        height: 160
     },
     OBSStatus: {
         enable: true,
-        x: -37,
-        y: 1022,
+        x: 0,
+        y: 1021,
         width: 174,
         height: 35
     },
     TwitchInfo: {
-        x: -3,
-        y: 996,
+        x: -2,
+        y: 196,
         width: 130,
         height: 23
     },
     TechInfo: {
         enable: true,
-        x: 0,
-        y: 0,
-        width: 300,
-        height: 300
+        x: 7,
+        y: 891,
+        width: 180,
+        height: 104
     },
     viewers_list: {
         enable: false,
