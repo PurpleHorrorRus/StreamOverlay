@@ -13,6 +13,16 @@ module.exports = {
         title: "Stream Overlay",
         meta: [
             { charset: "utf-8" }
+        ],
+        link: [
+            {
+                rel: "stylesheet",
+                href: "https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap"
+            },
+            {
+                rel: "stylesheet",
+                href: "https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap"
+            }
         ]
     },
     loading: false,

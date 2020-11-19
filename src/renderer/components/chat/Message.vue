@@ -36,8 +36,8 @@ export default {
     computed: {
         ...mapGetters({
             settings: "settings/getSettings",
-            betterTTV: "twitch/getBetterTTV",
 
+            betterTTV: "twitch/getBetterTTV",
             FrankerFaceZ: "twitch/getFrankerFaceZ"
         }),
         messageStyle () {
@@ -47,7 +47,7 @@ export default {
         },
         pictureStyle () {
             return { 
-                width: `${this.settings.chat.font}px`
+                width: `${this.settings.chat.font - 1}px`
             };
         },
         nicknameStyle () {
@@ -79,7 +79,8 @@ export default {
 
 <style lang="scss">
 .message {
-    display: block;
+    display: inline-block;
+
     width: 100%;
     padding: 5px;
 
@@ -88,12 +89,15 @@ export default {
     }
 
     .avatar {
+        vertical-align: middle;
         border-radius: 100px;
     }
 
     .nickname {
-        font-weight: 600;
         pointer-events: all;
+
+        font-family: "Roboto Condensed", sans-serif;
+        font-weight: 700;
 
         &:hover {
             cursor: pointer;
