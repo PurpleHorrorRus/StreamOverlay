@@ -1,5 +1,6 @@
 import Vuex from "vuex";
 
+import followers from "~/store/followers";
 import obs from "~/store/obs";
 import twitch from "~/store/twitch";
 import widgets from "~/store/widgets";
@@ -24,6 +25,7 @@ const store = () => {
             GET_CONFIG: state => state.config
         },
         modules: { 
+            followers,
             obs, 
             twitch, 
             widgets, 
