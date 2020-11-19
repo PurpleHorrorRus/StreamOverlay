@@ -23,7 +23,7 @@ export default {
     },
     computed: {
         ...mapGetters({
-            active: "overlays/getEdit",
+            active: "widgets/getEdit",
             settings: "settings/getSettings",
             messages: "twitch/getMessages"
         })
@@ -49,13 +49,20 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 #chat-block { 
     position: absolute; 
     
     width: 100%; 
     height: 100%; 
 
+    border-radius: 5px;
+
     overflow: hidden;
+
+    .message:last-child {
+        border-bottom-right-radius: 5px;
+        border-bottom-left-radius: 5px;
+    }
 }
 </style>

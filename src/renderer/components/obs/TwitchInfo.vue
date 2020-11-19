@@ -1,38 +1,105 @@
 <template>
-    <div v-if="status.stream" id="twitch-info">
-        <font-awesome-icon :icon="['fas', 'eye']" /> 
-        <span v-if="viewers > -1" id="viewers_count" v-text="viewers" />
-        <font-awesome-icon v-else id="viewers_count" :icon="['fa', 'circle-notch']" class="fa-spin" />
-        <font-awesome-icon :icon="['fas', 'heart']" /> 
-        <span v-if="followers > -1" id="followers_count" v-text="followers" />
-        <font-awesome-icon v-else id="viewers_count" :icon="['fas', 'circle-notch']" class="fa-spin" />
-    </div>
+    <Movable
+        :source="settings.TwitchInfo"
+        :name="''"
+        :resizable="false"
+        @onDrag="onDrag"
+    >
+        <div id="twitch-info">
+            <div id="twitch-info-viewers">
+                <EyeIcon class="feather shadow-box" />
+                <span v-if="viewers > -1" id="viewers_count" class="shadow" v-text="viewers" />
+                <font-awesome-icon 
+                    v-else 
+                    id="viewers_count" 
+                    :icon="['fa', 'circle-notch']" 
+                    class="fa-spin" 
+                />
+            </div>
+            
+            <div id="twitch-info-followers">
+                <HeartIcon class="feather shadow-box" />
+                <span v-if="followers > -1" id="followers_count" class="shadow" v-text="followers" />
+                <font-awesome-icon 
+                    v-else id="viewers_count" 
+                    :icon="['fas', 'circle-notch']" 
+                    class="fa-spin" 
+                />
+            </div>
+        </div>
+    </Movable>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
+
+import { EyeIcon, HeartIcon } from "vue-feather-icons";
+
+import Movable from "~/components/Movable";
 
 export default {
+    components: {
+        Movable,
+        EyeIcon,
+        HeartIcon
+    },
     computed: {
         ...mapGetters({
+            settings: "settings/getSettings",
+
             status: "obs/getStatus",
-            followers: "twitch/getFollowers",
+            followers: "followers/GET_COUNT",
             viewers: "twitch/getViewers"
         })
+    },
+    methods: {
+        ...mapActions({
+            saveSettings: "settings/saveSettings"
+        }),
+        onDrag (x, y) {
+            this.settings.TwitchInfo.x = x;
+            this.settings.TwitchInfo.y = y;
+            this.saveSettings({
+                type: "settings",
+                content: this.settings
+            });
+        }
     }
 };
 </script>
 
-<style>
+<style lang="scss">
 #twitch-info {
-	display: inline-block;
-    vertical-align: middle;
-    margin-left: 5px;
-    
-    font-size: 16pt;
-}
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
 
-#viewers_count, #followers_count {
-	display: inline-block;
+    background: #00000080;
+
+    &-viewers {
+        span {
+            color: red;
+        }
+        
+        .feather {
+            stroke: red;
+        }
+    }
+
+    span {
+        font-family: "Roboto Condensed", sans-serif;
+        font-weight: 300;
+    }
+
+    svg, span {
+        vertical-align: middle;
+        font-weight: 300;
+
+        font-size: 9pt;
+    }
+
+    .feather {
+        width: 12px;
+    }
 }
 </style>

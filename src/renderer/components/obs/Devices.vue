@@ -1,38 +1,55 @@
 <template>
-  	<div id="devices">
-		<font-awesome-icon :icon="['fas', 'microphone']" class="device" :class="{ enabled: devices.mic, disabled: !devices.mic }"/>
-		<font-awesome-icon :icon="['fas', 'headphones']" class="device" :class="{ enabled: devices.sound, disabled: !devices.sound }"/>
-		<font-awesome-icon :icon="['fas', 'camera']" class="device" v-if="devices.camera !== null" :class="{ enabled: devices.camera, disabled: !devices.camera }"/>
-	</div>
+    <div id="devices">
+        <MicOffIcon v-if="!devices.mic" class="device disabled feather shadow-box" />
+        <HeadphonesIcon v-if="!devices.sound" class="device disabled feather shadow-box" />
+        <CameraIcon v-if="devices.camera !== null" :class="cameraClass" class="device feather shadow-box" />
+    </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
+
+import { MicOffIcon, HeadphonesIcon, CameraIcon } from "vue-feather-icons";
+
 export default {
+    components: {
+        MicOffIcon,
+        HeadphonesIcon,
+        CameraIcon
+    },
     computed: {
         ...mapGetters({
             devices: "obs/getDevices"
-        })
+        }),
+        classes () {
+            return {
+                mic: this.devices.mic,
+                sound: this.devices.sound,
+                camera: this.devices.camera
+            };
+        },
+        cameraClass () {
+            return {
+                disabled: this.devices.camera === false
+            };
+        }
     }
-}
+};
 </script>
 
 <style lang="scss">
 #devices {
-	display: inline-block;
+    display: inline-block;
+    width: 80px;
 
-	font-size: 16pt;
 	vertical-align: middle;
 
     .device {
         margin-left: 5px;
+        width: 15px;
 
-        &.enabled {
-            color: $text;
-        }
-        
         &.disabled {
-            color: red;
+            stroke: red;
         }
     }
 }

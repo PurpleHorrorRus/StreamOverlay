@@ -3,6 +3,7 @@
         <EditMode v-if="edit" />
         <Notifications />
         <OBS />
+        <TwitchInfo />
         <Chat v-if="settings.chat.enable" />
         <ViewersList v-if="settings.viewers_list.enable" />
 
@@ -32,6 +33,7 @@ export default {
     components: { 
         EditMode,
         OBS, 
+        TwitchInfo,
         Notifications, 
         Chat, 
         ViewersList,

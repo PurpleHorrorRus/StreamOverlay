@@ -1,31 +1,41 @@
 <template>
-    <div id="obs" :class="OBSClass">
-        <TwitchInfo />
-        <div v-if="connected" id="obs-panel">
-            <Devices />
-            <Status />
+    <Movable
+        ref="OBSStatus"
+        :source="settings.OBSStatus"
+        :name="''"
+        :resizable="false"
+        @onDrag="onDrag"
+    >
+        <div id="obs" :class="OBSClass">
+            <div v-if="connected" id="obs-panel">
+                <Status />
+                <Devices />
+            </div>
         </div>
-    </div>
+    </Movable>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
+
+import Movable from "~/components/Movable";
 
 import Devices from "~/components/OBS/Devices";
-import TwitchInfo from "~/components/OBS/TwitchInfo";
 import Status from "~/components/OBS/Status";
 
 import other from "~/mixins/other";
 
 export default {
     components: { 
+        Movable,
         Devices, 
-        TwitchInfo, 
         Status 
     },
     mixins: [other],
     computed: {
         ...mapGetters({
+            settings: "settings/getSettings",
+
             obs: "obs/getOBS",
             status: "obs/getStatus",
             devices: "obs/getDevices"
@@ -39,19 +49,47 @@ export default {
         recording () { 
             return this.connected && this.status.recording; 
         },
+        isLeft () {
+            return this.settings.OBSStatus.x < window.innerWidth / 2;
+        },
+        isRight () {
+            return !this.isLeft;
+        },
         OBSClass () {
             return {
                 connected: this.connected,
                 disconnected: !this.connected,
                 streaming: this.streaming,
-                recording: this.recording
+                recording: this.recording,
+                left: this.isLeft,
+                right: this.isRight
             };
+        }
+    },
+    methods: {
+        ...mapActions({
+            saveSettings: "settings/saveSettings"
+        }),
+        onDrag (x, y) {
+            this.settings.OBSStatus.x = x;
+            this.settings.OBSStatus.y = y;
+            this.saveSettings({
+                type: "settings",
+                content: this.settings
+            });
         }
     }
 };
 </script>
 
 <style lang="scss">
+$borderWidth: 2px;
+
+$connected: lightgreen;
+$disconnected: #ccc;
+$streaming: purple;
+$recording: red;
+
 #obs {
 	position: absolute;
 	bottom: 0px;
@@ -60,31 +98,78 @@ export default {
     display: flex;
     align-items: center;
     
-	max-width: 400px;
-    height: 30px;
+	width: 174px;
+    height: 25px;
     
-    background: rgba(0, 0, 0, 0.4);
+    &.left {
+        background: -webkit-gradient(
+            linear, left top, right bottom, from(rgb(0 0 0 / 100%)),
+            to(rgb(80 80 80 / 0%)), color-stop(.6, #33333300)
+        );
+    }
+
+    &.right {
+        justify-content: flex-end;
+
+        background: -webkit-gradient(
+            linear, right top, left bottom, from(rgb(0 0 0 / 100%)),
+            to(rgb(80 80 80 / 0%)), color-stop(.8, #33333300)
+        );
+
+        #obs-panel {
+            flex-direction: row-reverse;
+        }
+    }
     
     &-panel {
-        display: inline-block;
+        display: flex;
+
+        justify-content: center;
+        align-items: center;
     }
 
     &.connected {
-        border-left: 4px solid lightgreen; 
-        min-width: 170px;
+        min-width: 135px;
+
+        &.left {
+            border-left: $borderWidth solid $connected;
+        }
+
+        &.right {
+            border-right: $borderWidth solid $connected;
+        }
     }
 
     &.disconnected { 
-        border-left: 4px solid #ccc; 
-        min-width: 4px;
+        min-width: 135px;
+
+        &.left {
+            border-left: $borderWidth solid $disconnected;
+        }
+
+        &.right {
+            border-right: $borderWidth solid $disconnected;
+        }
     }
 
     &.streaming {
-         border-left: 4px solid purple;
+         &.left {
+            border-left: $borderWidth solid $streaming;
+        }
+
+        &.right {
+            border-right: $borderWidth solid $streaming;
+        }
     }
 
     &.recording {
-        border-left: 4px solid red;
+        &.left {
+            border-left: $borderWidth solid $recording;
+        }
+
+        &.right {
+            border-right: $borderWidth solid $recording;
+        }
     }
 }
 </style>

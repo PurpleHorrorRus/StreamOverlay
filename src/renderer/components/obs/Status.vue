@@ -4,11 +4,11 @@
             id="time" 
             v-text="formatTime" 
         />
-        <span 
+        <!-- <span 
             id="fps" 
             :style="fpsStyle"
             v-text="FPS"
-        />
+        /> -->
     </div>
 </template>
 
@@ -20,15 +20,15 @@ import misc from "~/plugins/misc";
 export default {
     computed: {
         ...mapGetters({ 
-            status: "obs/getStatus" 
+            status: "obs/getStatus"
         }),
         fpsStyle () {
             return {
-                color: this.status.fps.toFixed(0) < 60 ? "red" : "white"
+                color: this.status.tech.fps.toFixed(0) < status.videoSettings.fps ? "red" : "white"
             };
         },
         FPS () {
-            return `FPS: ${this.status.fps.toFixed(0)}`;
+            return `FPS: ${this.status.tech.fps.toFixed(0)}`;
         },
         formatTime () { 
             return misc.formatTime(this.status.time); 
@@ -42,14 +42,19 @@ export default {
 	display: inline-block;
 
 	margin-left: 10px;
-	margin-right: 10px;
 
     vertical-align: middle;
 
+    font-size: 9pt;
+
     #time {
         display: inline-block;
+        width: 50px;
         
-	    margin-right: 5px;
+        margin-right: 5px;
+
+        font-family: "Roboto Condensed", sans-serif;
+        font-weight: 400;
     }
 }
 </style>
