@@ -66,6 +66,9 @@ export default {
             return this.obs._connected;
         }
     },
+    beforeMount () {
+        ipcRenderer.on("update-available", () => this.turnUpdate(true));
+    },
     async mounted () {
         const config = await ipcRenderer.callMain("config");
         const { settings, overlays, OBS, twitch } = config;
@@ -116,6 +119,7 @@ export default {
             enableEdit: "widgets/enableEdit",
             
             turnLock: "ipc/turnLock",
+            turnUpdate: "notifications/turnUpdate",
 
             connectOBS: "obs/connectOBS",
 
