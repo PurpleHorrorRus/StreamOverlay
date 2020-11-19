@@ -10,6 +10,7 @@
                 v-if="status.stream"
                 :label="'Bitrate'"
                 :value="formatBitrate"
+                :valueStyle="bitrateStyle"
             />
             <TechInfoItem
                 :label="'FPS'"
