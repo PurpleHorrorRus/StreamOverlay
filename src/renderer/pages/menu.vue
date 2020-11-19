@@ -39,7 +39,7 @@ export default {
     },
     methods: {
         ...mapActions({
-            _enableEdit: "overlays/enableEdit"
+            _enableEdit: "widgets/enableEdit"
         }),
         openStream() { 
             this.loadingStream = true; 

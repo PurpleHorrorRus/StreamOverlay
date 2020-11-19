@@ -10,7 +10,7 @@
         @dragstop="onDrag" 
         @resizestop="onResize"
     >
-        <span v-if="active" class="movable_name" v-text="name" />
+        <span v-if="active && name.length" class="movable_name" v-text="name" />
         <slot v-if="!!$slots.default" />
     </vue-draggable-resizable>
 </template>
@@ -32,7 +32,7 @@ export default {
     },
     computed: { 
         ...mapGetters({ 
-            active: "overlays/getEdit" 
+            active: "widgets/getEdit" 
         }) 
     },
     methods: {

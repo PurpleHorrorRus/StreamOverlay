@@ -22,8 +22,11 @@ import { ipcRenderer as IPC } from "electron";
 import { ipcRenderer } from "electron-better-ipc";
 
 import EditMode from "~/components/EditMode";
+
 import OBS from "~/components/OBS";
+import TwitchInfo from "~/components/obs/TwitchInfo";
 import TechInfo from "~/components/obs/TechInfo";
+
 import Notifications from "~/components/Notifications/Notifications";
 import Chat from "~/components/Chat";
 import ViewersList from "~/components/ViewersList";
@@ -101,19 +104,9 @@ export default {
 
             if (!this.helix) {
                 this.registerIPC();
-                this.connectMeridius();
                 this.createHelix(twitch);
                 this.createChatBot();
                 this.runInterval();
-
-                this.$nuxtSocket({
-                    channel: "/chat",
-                    persist: "chat",
-                    reconnection: true,
-                    query: {
-                        type: "overlay"
-                    }
-                });
             }
         }
     },
@@ -133,9 +126,7 @@ export default {
 
             createHelix: "twitch/createHelix",
             createChatBot: "twitch/createChatBot",
-            runInterval: "twitch/runInterval",
-
-            connectMeridius: "meridius/CONNECT"
+            runInterval: "twitch/runInterval"
         }),
         registerIPC () { 
             IPC.on("beep", () => {
@@ -145,11 +136,11 @@ export default {
                 
                 beep.play();
             });
+
             IPC.on("menu", (event, sequence) => this.$router.replace(sequence ? "/menu" : "/").catch(() => {}));
             IPC.on("lock", (event, mouse) => this.turnLock(mouse));
             IPC.on("viewers_list", () => {
-                const { enable } = this.settings.viewers_list;
-                this.settings.viewers_list.enable = !enable;
+                this.settings.viewers_list.enable = !this.settings.viewers_list.enable;
                 this.saveSettings({
                     type: "settings",
                     content: this.settings

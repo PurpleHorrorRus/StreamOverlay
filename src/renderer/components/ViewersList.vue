@@ -50,7 +50,7 @@ export default {
     }),
     computed: {
         ...mapGetters({
-            active: "overlays/getEdit",
+            active: "widgets/getEdit",
             helix: "twitch/getHelix",
             settings: "settings/getSettings",
             user: "twitch/getUser"
