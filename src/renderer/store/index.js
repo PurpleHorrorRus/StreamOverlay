@@ -2,7 +2,7 @@ import Vuex from "vuex";
 
 import obs from "~/store/obs";
 import twitch from "~/store/twitch";
-import overlays from "~/store/overlays";
+import widgets from "~/store/widgets";
 import notifications from "~/store/notifications";
 import settings from "~/store/settings";
 import ipc from "~/store/ipc";
@@ -26,7 +26,7 @@ const store = () => {
         modules: { 
             obs, 
             twitch, 
-            overlays, 
+            widgets, 
             notifications, 
             settings,  
             ipc
