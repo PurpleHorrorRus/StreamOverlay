@@ -58,6 +58,8 @@ export default {
                 return;
             }
 
+            this.dispatch("followers/GET", state.user.id);
+            this.dispatch("followers/START", state.user.id);
             this.dispatch("twitch/loadEmotes");
 
             const { status: title, game } = await state.helix.getChannel(state.user.id);
