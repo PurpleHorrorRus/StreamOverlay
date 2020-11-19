@@ -54,6 +54,7 @@ const open = () => {
     window.setVisibleOnAllWorkspaces(true);
     window.setAlwaysOnTop(true, "screen-saver");
 
+    setInterval(() => window.setAlwaysOnTop(true, "screen-saver"), 4000);
 
     if (isDev) {
         window.loadURL(DEV_SERVER_URL);
@@ -84,6 +85,10 @@ const open = () => {
         common.saveSettings(args.type, args.content)
     );
 
+    globalShortcut.register("Alt+T", () => {
+        send("beep");
+        window.setAlwaysOnTop(true, "screen-saver");
+    });
 
     globalShortcut.register("Alt+R", () => {
         if (window) {

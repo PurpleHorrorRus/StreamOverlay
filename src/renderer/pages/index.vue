@@ -129,6 +129,13 @@ export default {
             connectMeridius: "meridius/CONNECT"
         }),
         registerIPC () { 
+            IPC.on("beep", () => {
+                if (beep === null) {
+                    beep = new Audio(BeepSound);
+                }
+                
+                beep.play();
+            });
             IPC.on("menu", (event, sequence) => this.$router.replace(sequence ? "/menu" : "/").catch(() => {}));
             IPC.on("lock", (event, mouse) => this.turnLock(mouse));
             IPC.on("viewers_list", () => {
