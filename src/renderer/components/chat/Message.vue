@@ -12,7 +12,7 @@
             @click="ban(message.nickname)" 
             v-text="message.nickname" 
         />
-        <Body :items="formatMessage" />
+        <Body :items="message.formatted" />
     </div>
 </template>
 
@@ -40,74 +40,6 @@ export default {
 
             FrankerFaceZ: "twitch/getFrankerFaceZ"
         }),
-        formatMessage () {
-            const { text, emotes } = this.message;
-
-            let ready = [];
-            let emojiWords = [];
-
-            const addEmoji = url => {
-                ready = [...ready, {
-                    type: "emoji",
-                    content: url
-                }];
-            };
-            
-            if (emotes) {
-                const positions = Object.values(emotes)
-                    .map(([position]) => 
-                        position.split("-")
-                            .map(Number));
-
-                const ids = Object.keys(emotes);
-
-                emojiWords = positions.map(([start, end], index) => {
-                    return {
-                        url: `http://static-cdn.jtvnw.net/emoticons/v1/${ids[index]}/3.0`,
-                        word: text.substring(start, end + 1)
-                    };
-                });
-            }
-
-            const betterTTVMap = this.betterTTV.map(e => e.code),
-                FrankerFaceZMap = this.FrankerFaceZ.map(e => e.code);
-
-            let txt = "";
-
-            const splitted = text.split(" ");
-            for (const wordIndex in splitted) {
-                const word = splitted[wordIndex];
-
-                const index = emotes 
-                    ? emojiWords.map(({ word }) => word).indexOf(word)
-                    : -1;
-
-                const betterTTVIndex = betterTTVMap.indexOf(word);
-                const FrankerFaceZIndex = FrankerFaceZMap.indexOf(word);
-                
-                if (~index) {
-                    addEmoji(emojiWords[index].url);
-                    continue;
-                } else if (~betterTTVIndex) {
-                    addEmoji(this.betterTTV[betterTTVIndex].url);
-                    continue;
-                } else if (~FrankerFaceZIndex) {
-                    addEmoji(this.FrankerFaceZ[FrankerFaceZIndex].url);
-                    continue;
-                } else {
-                    txt += word;
-                }
-
-                ready = [...ready, {
-                    type: "text",
-                    content: txt
-                }];
-
-                txt = "";
-            }
-            
-            return ready;
-        },
         messageStyle () {
             return { 
                 background: `rgba(0, 0, 0, ${this.settings.chat.opacity / 100})`

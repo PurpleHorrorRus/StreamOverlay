@@ -70,17 +70,19 @@ export default {
                 const { profile_image_url: avatar } = profile;
                 const { color } = user;
                 const badges = user.badges ? Object.keys(user.badges) : user.badges;
-
-                this.dispatch("twitch/pushMessage", { 
+                
+                const data = { 
                     id: (Math.random() * 10000).toFixed(0), 
                     nickname, 
                     avatar, 
                     badges, 
                     text: message, 
-                    emotes: 
-                    user.emotes, 
+                    emotes: user.emotes, 
                     color 
-                });
+                };
+
+                data.formatted = await this.dispatch("twitch/formatMessage", data);
+                this.dispatch("twitch/pushMessage", data);
             });
 
             state.client.on("connected", () => {
@@ -197,6 +199,94 @@ export default {
         },
         createChatBot ({ commit }) { 
             commit("createChatBot"); 
+        },
+        formatMessage ({ getters }, message) {
+            const { text, emotes } = message;
+
+            let ready = [];
+            let emojiWords = [];
+
+            const addEmoji = url => {
+                ready = [...ready, {
+                    type: "emoji",
+                    content: url
+                }];
+            };
+            
+            if (emotes) {
+                const positions = Object.values(emotes)
+                    .map(([position]) => 
+                        position.split("-")
+                            .map(Number));
+
+                const ids = Object.keys(emotes);
+
+                emojiWords = positions.map(([start, end], index) => {
+                    return {
+                        url: `http://static-cdn.jtvnw.net/emoticons/v1/${ids[index]}/3.0`,
+                        word: text.substring(start, end + 1)
+                    };
+                });
+            }
+
+            const betterTTV = getters["getBetterTTV"],
+                FrankerFaceZ = getters["getFrankerFaceZ"];
+
+            const betterTTVMap = betterTTV.map(e => e.code),
+                FrankerFaceZMap = FrankerFaceZ.map(e => e.code);
+
+            let txt = "";
+
+            const addText = () => {
+                if (txt.length) {
+                    ready = [...ready, {
+                        type: "text",
+                        content: txt
+                    }];
+    
+                    txt = "";
+                }
+            };
+
+            const splitted = text.split(" ");
+            for (let wordIndex in splitted) {
+                wordIndex = Number(wordIndex);
+                const word = splitted[wordIndex];
+
+                const index = emotes 
+                    ? emojiWords.map(({ word }) => word).indexOf(word)
+                    : -1;
+
+                const betterTTVIndex = betterTTVMap.indexOf(word);
+                const FrankerFaceZIndex = FrankerFaceZMap.indexOf(word);
+
+                const isEmote = (~index || ~betterTTVIndex || ~FrankerFaceZIndex) !== 0;
+                const isEnd = wordIndex === splitted.length - 1;
+                // const isStartOrEnd = wordIndex === 0 || wordIndex === splitted.length - 1;
+
+                if (isEmote) {
+                    addText();
+
+                    if (~index) {
+                        addEmoji(emojiWords[index].url);
+                        continue;
+                    } else if (~betterTTVIndex) {
+                        addEmoji(betterTTV[betterTTVIndex].url);
+                        continue;
+                    } else if (~FrankerFaceZIndex) {
+                        addEmoji(FrankerFaceZ[FrankerFaceZIndex].url);
+                        continue;
+                    }
+                } else {
+                    txt += " " + word;
+
+                    if (isEnd) {
+                        addText();
+                    }
+                }
+            }
+            
+            return ready;
         },
         pushMessage ({ commit }, message) { 
             commit("pushMessage", message); 
