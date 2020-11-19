@@ -33,6 +33,26 @@ const clearSettings = {
         width: 273,
         height: 556
     },
+    OBSStatus: {
+        enable: true,
+        x: -37,
+        y: 1022,
+        width: 174,
+        height: 35
+    },
+    TwitchInfo: {
+        x: -3,
+        y: 996,
+        width: 130,
+        height: 23
+    },
+    TechInfo: {
+        enable: true,
+        x: 0,
+        y: 0,
+        width: 300,
+        height: 300
+    },
     viewers_list: {
         enable: false,
         x: 1721,
