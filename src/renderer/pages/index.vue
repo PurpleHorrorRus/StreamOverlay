@@ -4,6 +4,7 @@
         <Notifications />
         <OBS />
         <TwitchInfo />
+        <TechInfo v-if="settings.TechInfo.enable && connected && status.tech !== null" />
         <Chat v-if="settings.chat.enable" />
         <ViewersList v-if="settings.viewers_list.enable" />
 
@@ -22,6 +23,7 @@ import { ipcRenderer } from "electron-better-ipc";
 
 import EditMode from "~/components/EditMode";
 import OBS from "~/components/OBS";
+import TechInfo from "~/components/obs/TechInfo";
 import Notifications from "~/components/Notifications/Notifications";
 import Chat from "~/components/Chat";
 import ViewersList from "~/components/ViewersList";
@@ -34,6 +36,7 @@ export default {
         EditMode,
         OBS, 
         TwitchInfo,
+        TechInfo,
         Notifications, 
         Chat, 
         ViewersList,

@@ -33,6 +33,13 @@
             <Tip
                 text="Если у вас нет веб-камеры или вы не палите лицо на стриме, оставьте это поле пустым"
             />
+            <Item 
+                :id="0" 
+                :type="'checkbox'" 
+                :text="'Включить техническую статистику'" 
+                :checked="settings.TechInfo.enable" 
+                @checked="turnTech" 
+            />
             <div class="modal-item-tip">
                 <span class="modal-item-tip-text">
                     Для дальнейшей работы 
@@ -59,6 +66,7 @@ import { ipcRenderer } from "electron-better-ipc";
 
 import Input from "~/components/settings/Input";
 import Tip from "~/components/settings/Tip";
+import Item from "~/components/settings/Item";
 import Next from "~/components/settings/Next";
 
 import other from "~/mixins/other";
@@ -67,6 +75,7 @@ export default {
     components: { 
         Input,
         Tip,
+        Item,
         Next 
     },
     mixins: [other],
@@ -80,7 +89,9 @@ export default {
     }),
     computed: {
         ...mapGetters({
-            config: "GET_CONFIG"
+            config: "GET_CONFIG",
+
+            settings: "settings/getSettings"
         })
     },
     async created () {
@@ -107,6 +118,13 @@ export default {
         },
         changeCamera (value) {
             this.camera = value;
+        },
+        turnTech () {
+            this.settings.TechInfo.enable = !this.settings.TechInfo.enable;
+            this.saveSettings({
+                type: "settings",
+                content: this.settings
+            });
         },
         async goNext () {
             this.error = "";

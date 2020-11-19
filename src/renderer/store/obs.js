@@ -1,6 +1,8 @@
 import Promise from "bluebird";
 import socket from "obs-websocket-js";
 
+import misc from "~/plugins/misc";
+
 export default {
     namespaced: true,
     state: () => ({
@@ -15,8 +17,9 @@ export default {
                 mins: 0,
                 hours: 0
             },
+            videoSettings: null,
+            tech: null,
             bitrate: 2300,
-            fps: 60,
             droppedFPS: 0,
             totalFPS: 0,
             strain: 0
@@ -34,6 +37,8 @@ export default {
             }
 
             const connect = () => {
+                console.log("Try to connect to OBS...");
+
                 return new Promise(resolve => {
                     state.obs = new socket({ 
                         address: `${data.address}:${data.port}`
@@ -45,16 +50,15 @@ export default {
                 });
             };
 
-            const sleep = timeout => {
-                return new Promise(resolve => {
-                    setTimeout(resolve, timeout);
-                });
-            };
-
             const awaitConnection = (timeout = 4 * 1000) => {
                 return new Promise(async resolve => {
-                    while (!await connect()) {
-                        await sleep(timeout);
+                    let connected = await connect();
+                    console.log("First connection", connected);
+
+                    while (!connected) {
+                        await Promise.delay(timeout);
+                        connected = await connect();
+                        console.log("Retrying connection", connected);
                     }
 
                     console.log("OBS Connected");
@@ -112,10 +116,24 @@ export default {
                     if (!state.status.recording) { 
                         this.dispatch("obs/setupUpdateInterval");
                     }
+
+                    const date = new Date().toLocaleString();
+                    const stream = this.getters["twitch/getStream"];
+                    this.dispatch("vk/SEND", `\
+                        === Стрим от ${date} ===\n\
+                        Название: ${stream.title}\n\
+                        Категория: ${stream.game}
+                    `);
                 });
 
                 state.obs.on("StreamStopping", () => {
                     state.status.stream = false;
+
+                    const time = misc.formatTime(state.status.time);
+                    this.dispatch("vk/SEND", `\
+                        === Стрим окончен ===\n\
+                        Продолжительность: ${time}
+                    `);
                     
                     this.dispatch("notifications/turnLowBitrate", false);
                     this.dispatch("notifications/turnLowFPS", false);
@@ -130,6 +148,7 @@ export default {
                         this.dispatch("obs/setupUpdateInterval");
                     }
                 });
+
                 state.obs.on("RecordingStopping", () => {
                     state.status.recording = false;
                     if (!state.status.stream) {
@@ -151,18 +170,6 @@ export default {
                         }
                     }
 
-                    state.status.fps = data.fps;
-                    visible = this.getters["notifications/getLowFPS"];
-                    if (state.status.fps <= 40) {
-                        if (!visible) {
-                            this.dispatch("notifications/turnLowFPS", true);
-                        }
-                    } else {
-                        if (visible) {
-                            this.dispatch("notifications/turnLowFPS", false);
-                        }
-                    }
-
                     state.status.droppedFPS = data["num-dropped-frames"];
                     state.status.totalFPS = data["num-total-frames"];
                     state.status.strain = data.strain;
@@ -170,16 +177,41 @@ export default {
 
                 const sources = await send("GetSpecialSources");
 
+                const checkFPS = () => 
+                    this.dispatch(
+                        "notifications/turnLowFPS", 
+                        state.status.tech.fps <= state.status.videoSettings.fps
+                    );
+
                 state.interval = setInterval(async () => {
-                    state.devices = {
-                        mic: !await muted(sources["mic-1"]).catch(handleError),
-                        sound: !await muted(sources["desktop-1"]).catch(handleError),
-                        camera: await getVisible(data.camera)
-                    };
+                    if (state.obs._connected) {
+                        send("GetVideoInfo").then(video => {
+                            state.status.videoSettings = video;
+                            
+                            send("GetStats").then(({ stats }) => {
+                                state.status.tech = stats;
+                                checkFPS();
+                            });
+                        });
+    
+                        const devices = await Promise.all([
+                            muted(sources["mic-1"]).catch(handleError),
+                            muted(sources["desktop-1"]).catch(handleError),
+                            getVisible(data.camera).catch(handleError),
+                        ]).catch(handleError);
+    
+                        state.devices = {
+                            mic: !devices[0],
+                            sound: !devices[1],
+                            camera: devices[2]
+                        };
+                    } else { 
+                        handleError("Losing connection with OBS..."); 
+                    }
                 }, 800);
             };
 
-            const send = (...args) => {
+            const send = async (...args) => {
                 if (!state.obs._connected) {
                     return;
                 }
@@ -199,8 +231,12 @@ export default {
                     state.interval = null;
                 }
                 
+                state.status.tech = null;
+                state.status.videoSettings = null;
                 state.obs = { _connected: false };
+
                 state.obs._connected = await awaitConnection();
+
                 startStatusChecking();
                 return;
             };
@@ -246,21 +282,11 @@ export default {
         }
     },
     actions: {
-        connectOBS ({ commit }, data) { 
-            commit("connectOBS", data); 
-        },
-        setDevices({ commit }, devices) { 
-            commit("setDevices", devices); 
-        },
-        setupUpdateInterval({ commit }) { 
-            commit("setupUpdateInterval"); 
-        },
-        clearUpdateInterval({ commit }) { 
-            commit("clearUpdateInterval"); 
-        },
-        updateTime({ commit }) { 
-            commit("updateTime"); 
-        }
+        connectOBS: ({ commit }, data) => commit("connectOBS", data),
+        setDevices: ({ commit }, devices) => commit("setDevices", devices),
+        setupUpdateInterval: ({ commit }) => commit("setupUpdateInterval"),
+        clearUpdateInterval: ({ commit }) => commit("clearUpdateInterval"),
+        updateTime: ({ commit }) => commit("updateTime")
     },
     getters: {
         getOBS: state => state.obs,
