@@ -7,7 +7,7 @@ export default {
         SET_COUNT: (state, count) => state.count = count
     },
     actions: {
-        START: async ({ dispatch }, id) => setInterval(() => dispatch("GET"), 20 * 1000),
+        START: async ({ dispatch }, id) => setInterval(() => dispatch("GET", id), 20 * 1000),
         GET: async ({ commit, rootGetters }, id) => {
             const count = await rootGetters["twitch/getHelix"]
                 .getFollowersCount(id);
