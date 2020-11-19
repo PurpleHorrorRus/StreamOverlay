@@ -180,7 +180,7 @@ export default {
                 const checkFPS = () => 
                     this.dispatch(
                         "notifications/turnLowFPS", 
-                        state.status.tech.fps <= state.status.videoSettings.fps
+                        state.status.tech.fps < state.status.videoSettings.fps
                     );
 
                 state.interval = setInterval(async () => {
