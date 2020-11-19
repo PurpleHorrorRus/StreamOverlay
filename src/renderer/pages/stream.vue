@@ -20,7 +20,7 @@
                     @input="changeGame" 
                     @keypress.enter.native="updateStream"
                 />
-                <button id="rename-stream" @click="updateStream">
+                <button id="rename-stream" :class="{ disabled }" @click="updateStream">
                     <div v-if="!loading">
                         <span
                             v-if="success || reset"
@@ -39,12 +39,22 @@
             </div>
         </div>
         <div v-show="show_autocomplete" id="autocomplete-container">
-            <Game 
-                v-for="_game of filtered_top_games" 
-                :key="_game.id" 
-                :game="_game" 
-                @click.native="select(_game)" 
-            />
+            <div id="filtered-top">
+                <Game 
+                    v-for="_game of filtered_top_games" 
+                    :key="_game.id" 
+                    :game="_game" 
+                    @click.native="select(_game)" 
+                />
+            </div>
+            <div v-if="search.length > 0" id="search-categories">
+                <Game 
+                    v-for="_game of search" 
+                    :key="_game.id" 
+                    :game="_game" 
+                    @click.native="select(_game)" 
+                />
+            </div>
         </div>
     </div>
 </template>
@@ -73,7 +83,7 @@ export default {
         };
 
         const art = game 
-            ? game.box_art_url.replace("{width}", art_size.width).replace("{height}", art_size.height) 
+            ? game.box_art_url
             : "https://static-cdn.jtvnw.net/ttv-static/404_boxart-75x115.jpg";
 
         return { 
@@ -82,6 +92,8 @@ export default {
                 title: stream.title, 
                 game: stream.game 
             },
+            games: top_games,
+            search: [],
             input_delay: null,
             art,
             top_games, 
@@ -97,6 +109,9 @@ export default {
             user: "twitch/getUser",
             helix: "twitch/getHelix"
         }),
+        empty () {
+            return this.resizeArt("https://static-cdn.jtvnw.net/ttv-static/404_boxart-{width}x{height}.jpg");
+        },
         filtered_top_games () {
             if (!this.local.game.length) {
                 return this.top_games;
@@ -105,12 +120,18 @@ export default {
             return this.top_games.filter(r => 
                 ~r.name.toLowerCase()
                     .indexOf(this.local.game.toLowerCase()));
+        },
+        disabled () {
+            return this.local.title.length === 0 || this.local.game.length === 0;
         }
     },
     watch: {
+        art: function (newVal) {
+            this.art = this.resizeArt(newVal);
+        },
         "local.game": async function (newVal) {
             // eslint-disable-next-line max-len
-            this.art = `https://static-cdn.jtvnw.net/ttv-static/404_boxart-${this.art_size.width}x${this.art_size.height}.jpg`;
+            this.art = this.empty;
 
             if (this.input_delay) {
                 clearTimeout(this.input_delay);
@@ -122,31 +143,46 @@ export default {
             }
 
             if (newVal.length === 0) {
-                this.top_games = await this.helix.getTopGames();
+                this.search = [];
+                this.top_games = this.games;
                 return;
-            }
+            } else if (
+                this.findCache(this.games, this.local.game) || 
+                this.findCache(this.search, this.local.game
+                )) return;
 
             this.input_delay = setTimeout(async () => {
                 const { data: games } = await this.helix.searchCategories(newVal);
                 if (games && games.length) {
-                    this.top_games = games;
-                    const index = this.top_games.map(g => g.name).indexOf(this.local.game);
-                    if (~index) {
-                        const game = this.top_games[index];
-                        this.show_autocomplete = false;
-                        this.art = game.box_art_url
-                            .replace("{width}", this.art_size.width)
-                            .replace("{height}", this.art_size.height)
-                            .replace("52x72", `${this.art_size.width}x${this.art_size.height}`);
-                    }
+                    this.search = games;
+                    this.findCache(this.search, this.local.game);
                 }
             }, 200);
         }
+    },
+    mounted () {
+        this.art = this.resizeArt(this.art);
     },
     methods: {
         ...mapActions({ 
             _updateStream: "twitch/updateStream" 
         }),
+        findCache (array, game) {
+            const index = array.map(g => g.name).indexOf(game);
+
+            if (~index) {
+                const game = array[index];
+                this.show_autocomplete = false;
+                this.art = game.box_art_url;
+            }
+
+            return index !== -1;
+        },
+        resizeArt (art) {
+            return art.replace("{width}", this.art_size.width)
+                .replace("{height}", this.art_size.height)
+                .replace("52x72", `${this.art_size.width}x${this.art_size.height}`);
+        },
         changeTitle (value) {
             this.local.title = value;
         },
@@ -158,15 +194,13 @@ export default {
             setTimeout(() => this.show_autocomplete = false, 300);
         },
         async updateStream () {
+            if (this.disabled) {
+                return;
+            }
+
             this.reset = false;
             this.loading = true;
             this.error = "";
-            
-            if (!this.local.title.length || !this.local.game.length) {
-                this.loading = false;
-                this.error = "Необходимо заполнить все поля";
-                return;
-            }
 
             this.success = await this._updateStream({ 
                 title: this.local.title, 
@@ -227,6 +261,10 @@ export default {
                 margin-right: 10px;
 
                 float: right;
+
+                &.disabled {
+                    cursor: not-allowed;
+                }
             }
         }
     }
@@ -239,6 +277,10 @@ export default {
         margin-top: 10px;
 
         overflow-y: auto;
+
+        #search-categories {
+            border-top: 1px solid rgb(41, 41, 41);
+        }
     }
 }
 </style>
