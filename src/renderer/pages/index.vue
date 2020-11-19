@@ -31,6 +31,10 @@ import Widget from "~/components/Widget";
 
 import other from "~/mixins/other";
 
+import BeepSound from "~/static/beep.mp3";
+
+let beep = null;
+
 export default {
     components: { 
         EditMode,
