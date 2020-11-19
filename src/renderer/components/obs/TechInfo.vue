@@ -7,6 +7,11 @@
     >
         <div id="tech-info">
             <TechInfoItem
+                v-if="status.stream"
+                :label="'Bitrate'"
+                :value="formatBitrate"
+            />
+            <TechInfoItem
                 :label="'FPS'"
                 :value="formatFPS"
                 :valueStyle="FPSStyle"
@@ -53,6 +58,14 @@ export default {
 
             status: "obs/getStatus"
         }),
+        formatBitrate () {
+            return `${(this.status.bitrate / 1024).toFixed(1)} MB/s`;
+        },
+        bitrateStyle () {
+            return {
+                color: this.status.bitrate < 200 ? "red" : "#fff"
+            };
+        },
         formatFPS () {
             return this.status.tech.fps.toFixed(0);
         },
