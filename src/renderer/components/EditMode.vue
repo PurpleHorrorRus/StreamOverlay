@@ -5,44 +5,21 @@
             <button @click="openFullEdit" v-text="'Ред.'" />
             <button @click="exitEdit" v-text="'Выйти'" />
         </div>
-        <div id="edit-mode-widgets">
-            <Widget
-                v-for="widget of widgets" 
-                :key="widget.id"
-                :widget="widget"
-            />
-        </div>
     </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import { ipcRenderer } from "electron-better-ipc";
-
-import Widget from "~/components/Widget";
 
 export default {
-    components: {
-        Widget
-    },
-    data: () => ({
-        widgets: []
-    }),
     computed: {
         ...mapGetters({
             config: "GET_CONFIG"
         })
     },
-    async created () {
-        this.widgets = this.config.overlays;
-        ipcRenderer.send("minimizeWidgets");
-    },
-    beforeDestroy () {
-        ipcRenderer.send("restoreWidgetsts");
-    },
     methods: {
         ...mapActions({
-            enableEdit: "overlays/enableEdit"
+            enableEdit: "widgets/enableEdit"
         }),
         openFullEdit () {
             this.$router.replace("/edit").catch(() => {});

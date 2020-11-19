@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-import { app, BrowserView, BrowserWindow, globalShortcut } from "electron";
+import { app, BrowserWindow, globalShortcut } from "electron";
 import { ipcMain } from "electron-better-ipc";
 
 import path from "path";
@@ -28,6 +28,8 @@ const params = {
     frame: false,
     fullscreenable: false,
     webPreferences: {
+        contextIsolation: false,
+        webviewTag: true,
         nodeIntegration: true,
         webSecurity: false,
         allowRunningInsecureContent: true,
@@ -40,68 +42,23 @@ let window = null;
 let mouse = false,
     menu = false;
 
-const getViewByID = id => {
-    const views = BrowserView.getAllViews();
-    const index = views.map(e => e.widgetID).indexOf(id);
-    if (~index) {
-        return views[index];
-    }
-};
-
-const getOverlayIndexByID = id => config.overlays.map(o => o.id).indexOf(id);
-
-const addWidget = widget => {
-    if (window) {
-        const view = new BrowserView();
-        view.widgetID = widget.id;
-        window.addBrowserView(view);
-        view.setBounds(widget.style);
-        view.webContents.loadURL(widget.src);
-        view.webContents.on("dom-ready", () => view.webContents.audioMuted = true);
-        view.webContents.on("before-input-event", e => e.preventDefault());
-    }
-};
-
-const deleteWidget = id => {
-    const view = getViewByID(id);
-    if (view) {
-        view.destroy();
-        
-        const overlayIndex = getOverlayIndexByID(id);
-        if (~overlayIndex) {
-            config.overlays.splice(overlayIndex, 1);
-        }
-    }
-};
-
-const editWidget = widget => {
-    const view = getViewByID(widget.id);
-    if (view) {
-        const overlayIndex = getOverlayIndexByID(widget.id);
-        if (~overlayIndex) {
-            config.overlays[overlayIndex] = widget;
-            common.saveSettings("overlays", config.overlays);
-        }
-    }
-};
+app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
 
 const open = () => {
     window = new BrowserWindow(params);
 
     window.showInactive();
-    window.maximize();
     window.removeMenu();
     window.setIgnoreMouseEvents(true);
     window.setContentProtection(true);
     window.setVisibleOnAllWorkspaces(true);
     window.setAlwaysOnTop(true, "screen-saver");
 
+
     if (isDev) {
         window.loadURL(DEV_SERVER_URL);
         window.openDevTools();
     } else window.loadFile(INDEX_PATH);
-
-    config.overlays.forEach(addWidget);
 
     window.on("close", () => {
         window = null;
@@ -121,37 +78,12 @@ const open = () => {
 
         autoUpdater.checkForUpdates();
     });
-
     ipcMain.answerRenderer("config", () => config);
-    ipcMain.answerRenderer("getAllWidgets", () => (config.overlays));
-
-    ipcMain.on("addWidget", (_event, widget) => {
-        config.overlays = [...config.overlays, widget];
-        addWidget(widget);
-    });
-    ipcMain.on("removeWidget", (_event, id) => deleteWidget(id));
-    ipcMain.on("editWidget", (_event, widget) => editWidget(widget));
-    ipcMain.on("minimizeWidgets", () => {
-        BrowserView.getAllViews()
-            .forEach(v => v.setBounds({ 
-                x: 0, 
-                y: 0, 
-                width: 0, 
-                height: 0 
-            }));
-    });
-
-    ipcMain.on("restoreWidgets", () => {
-        BrowserView.getAllViews()
-            .forEach(v => {
-                const styleIndex = config.overlays.findIndex(o => o.id === v.widgetID);
-                v.setBounds(config.overlays[styleIndex].style);
-            });
-    });
 
     ipcMain.on("saveSettings", (_, args) =>
         common.saveSettings(args.type, args.content)
     );
+
 
     globalShortcut.register("Alt+R", () => {
         if (window) {
@@ -176,9 +108,9 @@ const open = () => {
     ipcMain.on("enableMouse", () => {
         if (window) {
             window.setIgnoreMouseEvents(false);
-            menu = true;
             mouse = true;
-            send("lock", true);
+            send("lock", mouse);
+            menu = true;
         }
     });
 
@@ -189,6 +121,7 @@ const open = () => {
             send("lock", mouse);
             menu = false;
         }
+        
     });
 };
 

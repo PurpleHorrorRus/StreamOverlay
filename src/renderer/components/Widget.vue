@@ -1,15 +1,22 @@
 <template>
     <Movable 
+        ref="widget"
         class="widget"
         :source="widget.style" 
         :name="widget.name" 
         @onDrag="onDrag" 
         @onResize="onResize"
-    />
+    >
+        <webview 
+            ref="webview" 
+            class="webview" 
+            :src="widget.src"
+        />
+    </Movable>
 </template>
 
 <script>
-import { ipcRenderer } from "electron-better-ipc";
+import { mapActions, mapGetters } from "vuex";
 
 import Movable from "~/components/Movable";
 
@@ -21,7 +28,19 @@ export default {
             required: true
         }
     },
+    computed: {
+        ...mapGetters({
+            widgets: "widgets/getWidgets"
+        })
+    },
+    mounted () {
+        this.$refs.webview.addEventListener("dom-ready", 
+            () => this.$refs.webview.setAudioMuted(true));
+    },
     methods: {
+        ...mapActions({ 
+            saveWidgets: "widgets/saveWidgets" 
+        }),
         onResize (x, y, width, height) {
             this.widget.style.width = width;
             this.widget.style.height = height;
@@ -31,7 +50,10 @@ export default {
             this.widget.style.x = x;
             this.widget.style.y = y;
 
-            ipcRenderer.send("editWidget", this.widget);
+            const index = this.widgets.findIndex(r => r.id === this.widget.id);
+            this.widgets[index] = this.widget;
+
+            this.saveWidgets(this.widgets);
         }
     }
 };
@@ -40,5 +62,10 @@ export default {
 <style lang="scss">
 .widget {
     position: absolute;
+
+    .webview {
+        width: 100%;
+        height: 100%;
+    }
 }
 </style>

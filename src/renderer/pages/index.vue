@@ -5,6 +5,12 @@
         <OBS />
         <Chat v-if="settings.chat.enable" />
         <ViewersList v-if="settings.viewers_list.enable" />
+
+        <Widget
+            v-for="widget of widgets" 
+            :key="widget.id"
+            :widget="widget"
+        />
     </div>
 </template>
 
@@ -18,6 +24,7 @@ import OBS from "~/components/OBS";
 import Notifications from "~/components/Notifications/Notifications";
 import Chat from "~/components/Chat";
 import ViewersList from "~/components/ViewersList";
+import Widget from "~/components/Widget";
 
 import other from "~/mixins/other";
 
@@ -27,36 +34,31 @@ export default {
         OBS, 
         Notifications, 
         Chat, 
-        ViewersList
+        ViewersList,
+        Widget
     },
     mixins: [other],
-    data: () => ({
-        widgets: []
-    }),
     computed: {
         ...mapGetters({
             settings: "settings/getSettings",
 
-            edit: "overlays/getEdit",
+            widgets: "widgets/getWidgets",
+            edit: "widgets/getEdit",
 
             obs: "obs/getOBS",
+            status: "obs/getStatus",
+
             helix: "twitch/getHelix"
         }),
         connected () { 
             return this.obs._connected;
         }
     },
-    beforeMount () {
-        ipcRenderer.on("update-available", () => {
-            this.turnUpdate(true);
-        });
-    },
     async mounted () {
         const config = await ipcRenderer.callMain("config");
         const { settings, overlays, OBS, twitch } = config;
-
         this.setConfig(config);
-        this.widgets = overlays;
+        this.setWidgets(overlays);
 
         if (this.edit) {
             ipcRenderer.send("enableMouse");
@@ -64,14 +66,12 @@ export default {
         }
 
         if (!OBS.address || !OBS.port) {
-            this.registerIPC();
             ipcRenderer.send("enableMouse");
             this.$router.replace("/settings/obs").catch(() => {});
             return;
         }
 
         if (!twitch.id || !twitch.username || !twitch.access_token || !twitch.oauth_token) {
-            this.registerIPC();
             ipcRenderer.send("enableMouse");
             this.$router.replace("/settings/twitch").catch(() => {});
             return;
@@ -87,14 +87,24 @@ export default {
             } else {
                 this.setSettings(settings); 
             }
-
+            
             this.connectOBS(OBS);
 
             if (!this.helix) {
                 this.registerIPC();
+                this.connectMeridius();
                 this.createHelix(twitch);
                 this.createChatBot();
                 this.runInterval();
+
+                this.$nuxtSocket({
+                    channel: "/chat",
+                    persist: "chat",
+                    reconnection: true,
+                    query: {
+                        type: "overlay"
+                    }
+                });
             }
         }
     },
@@ -105,16 +115,18 @@ export default {
             setSettings: "settings/setSettings",
             saveSettings: "settings/saveSettings",
 
-            enableEdit: "overlays/enableEdit",
+            setWidgets: "widgets/setWidgets",
+            enableEdit: "widgets/enableEdit",
             
             turnLock: "ipc/turnLock",
-            turnUpdate: "notifications/turnUpdate",
 
             connectOBS: "obs/connectOBS",
 
             createHelix: "twitch/createHelix",
             createChatBot: "twitch/createChatBot",
-            runInterval: "twitch/runInterval"
+            runInterval: "twitch/runInterval",
+
+            connectMeridius: "meridius/CONNECT"
         }),
         registerIPC () { 
             IPC.on("menu", (event, sequence) => this.$router.replace(sequence ? "/menu" : "/").catch(() => {}));

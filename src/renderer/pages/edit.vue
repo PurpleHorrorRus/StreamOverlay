@@ -40,7 +40,6 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import { ipcRenderer } from "electron-better-ipc";
 
 import other from "~/mixins/other";
 
@@ -78,7 +77,7 @@ export default {
     },
     methods: {
         ...mapActions({
-            saveWidgets: "overlays/saveWidgets"
+            saveWidgets: "widgets/saveWidgets"
         }),
         select (index) { 
             this.widget = this.widgets[index];
@@ -90,7 +89,6 @@ export default {
             const index = this.widgets.findIndex(o => o.id === this.widget.id);
             if (~index) {
                 this.widgets.splice(index, 1);
-                ipcRenderer.send("removeWidget", this.widget.id);
             }
             
         },
@@ -99,10 +97,8 @@ export default {
 
             if (~index) {
                 this.widgets[index] = this.widget;
-                ipcRenderer.send("editWidget", this.widget);
             } else {
                 this.widgets = [...this.widgets, this.widget];
-                ipcRenderer.send("addWidget", this.widget);
             }
 
             this.saveWidgets(this.widgets);
