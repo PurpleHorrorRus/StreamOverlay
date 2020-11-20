@@ -27,7 +27,6 @@ export default {
     methods: {
         exit () {
             if (!this.settings.first) {
-                ipcRenderer.send("disableMouse");
                 this.$router.replace("/").catch(() => {});
             } 
         }

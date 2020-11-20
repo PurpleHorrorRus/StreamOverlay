@@ -87,7 +87,6 @@ const open = () => {
 
     ipcMain.on("turnMouse", (_event, sequence) => {
         if (window) {
-            console.log(sequence);
             window.setIgnoreMouseEvents(!sequence);
             mouse = sequence;
             menu = sequence;

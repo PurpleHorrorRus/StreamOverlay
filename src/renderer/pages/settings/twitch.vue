@@ -153,8 +153,6 @@ export default {
                 }
             });
 
-            ipcRenderer.send("disableMouse");
-
             this.validating = false;
             this.$router.replace("/");
             
