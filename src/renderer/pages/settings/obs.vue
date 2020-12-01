@@ -146,7 +146,6 @@ export default {
                 }
             });
 
-            ipcRenderer.send("disableMouse");
             this.$router.replace("/settings/twitch").catch(() => {});
         },
         install () { 
