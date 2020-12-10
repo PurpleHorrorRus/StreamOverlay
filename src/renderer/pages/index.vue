@@ -131,6 +131,7 @@ export default {
             IPC.on("beep", () => {
                 if (beep === null) {
                     beep = new Audio(BeepSound);
+                    beep.volume = 0.05;
                 }
                 
                 beep.play();
