@@ -27,6 +27,10 @@ const params = {
     transparent: true,
     frame: false,
     fullscreenable: false,
+    fullscreenable: true,
+    fullscreen: true,
+    alwaysOnTop: true,
+    flashFrame: false,
     webPreferences: {
         contextIsolation: false,
         webviewTag: true,
@@ -54,8 +58,7 @@ const open = () => {
     window.setVisibleOnAllWorkspaces(true);
     window.setAlwaysOnTop(true, "screen-saver");
 
-    const moveOnTop = () => {
-        window.setAlwaysOnTop(true, "screen-saver");
+    setInterval(() => window.moveTop(), 2000);
         window.showInactive();
     };
 
@@ -101,11 +104,12 @@ const open = () => {
 
     globalShortcut.register("Alt+T", () => {
         send("beep");
-        moveOnTop();
+        window.moveTop();
     });
 
     globalShortcut.register("Alt+R", () => {
         if (window) {
+            window.focus();
             window.setIgnoreMouseEvents(menu);
             menu = !menu;
             send("menu", menu);
