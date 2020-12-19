@@ -1,6 +1,6 @@
 <template>
     <div id="modal">
-        <Chat />
+        <Chat v-if="settings.chat.enable" />
         <div id="modal-lock">
             <font-awesome-icon v-if="locked" :icon="['fa', 'lock']" style="color: lightgreen" />
             <font-awesome-icon v-else :icon="['fa', 'unlock']" style="color: red" />
