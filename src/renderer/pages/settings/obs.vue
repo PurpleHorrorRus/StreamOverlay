@@ -7,9 +7,9 @@
             />
         </div>
         <div class="modal-body">
-            <Tip
+            <!-- <Tip
                 text="Для того, чтобы включить и отключить фокус на оверлее, нажмите комбинацию клавиш Alt + A"
-            />
+            /> -->
             <Input
                 text="Адрес подключения"
                 :value="address"
@@ -28,17 +28,16 @@
             <Input
                 text="Название источника с веб-камерой"
                 :value="camera"
+                :tip="'Если у вас нет веб-камеры или вы не палите лицо на стриме, оставьте это поле пустым'"
                 @input="changeCamera"
             />
-            <Tip
+            <!-- <Tip
                 text="Если у вас нет веб-камеры или вы не палите лицо на стриме, оставьте это поле пустым"
-            />
+            /> -->
             <Item 
-                :id="0" 
-                :type="'checkbox'" 
                 :text="'Включить техническую статистику'" 
                 :checked="settings.TechInfo.enable" 
-                @checked="turnTech" 
+                @change="turnTech" 
             />
             <div class="modal-item-tip">
                 <span class="modal-item-tip-text">
@@ -55,32 +54,34 @@
             <div v-if="error.length" class="modal-item-tip">
                 <span style="color: red" class="modal-item-tip-text">Ошибка: {{ error }}</span>
             </div>
-            <Next @click.native="goNext" />
+            
+            <SolidButton 
+                :label="'Продолжить'"
+                :disabled="disabled"
+                @clicked="next" 
+            />
         </div>
     </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
-import { ipcRenderer } from "electron-better-ipc";
-
 import Input from "~/components/settings/Input";
-import Tip from "~/components/settings/Tip";
 import Item from "~/components/settings/Item";
-import Next from "~/components/settings/Next";
+import SolidButton from "~/components/SolidButton";
 
+import CoreMixin from "~/mixins/core";
 import other from "~/mixins/other";
 
 export default {
     components: { 
         Input,
-        Tip,
         Item,
-        Next 
+        SolidButton
     },
-    mixins: [other],
+    mixins: [CoreMixin, other],
     layout: "modal",
     data: () => ({
+        load: false,
         address: "localhost",
         port: 4444,
         password: "",
@@ -88,14 +89,13 @@ export default {
         error: ""
     }),
     computed: {
-        ...mapGetters({
-            config: "GET_CONFIG",
-
-            settings: "settings/getSettings"
-        })
+        disabled () {
+            return this.address.length === 0 ||
+                this.port.length === 0;
+        }
     },
     async created () {
-        if (this.config.OBS.address) {
+        if (this.config.OBS) {
             this.address = this.config.OBS.address;
             this.port = this.config.OBS.port;
             this.password = this.config.OBS.password;
@@ -103,9 +103,6 @@ export default {
         }
     },
     methods: {
-        ...mapActions({
-            saveSettings: "settings/saveSettings"
-        }),
         changeAddress (value) {
             this.address = value;
         },
@@ -125,28 +122,24 @@ export default {
                 content: this.settings
             });
         },
-        async goNext () {
+        async next () {
+            console.log(true);
+            this.load = true;
             this.error = "";
-            const connection = await this.checkConnection();
-            if (!connection.success) {
-                this.error = "Ошибка подключения. Пожалуйста, убедитесь, \
-                что вы правильно установили OBS Websocket, запустили (перезапустили) \
-                OBS Studio и корректно ввели данные";
 
-                return;
+            if (await this.checkConnection()) {
+                this.saveSettings({
+                    type: "OBS",
+                    content: { 
+                        address: this.address, 
+                        port: this.port, 
+                        password: this.password, 
+                        camera: this.camera 
+                    }
+                });
+
+                this.$router.replace("/settings/twitch").catch(() => {});
             }
-
-            this.saveSettings({
-                type: "OBS",
-                content: { 
-                    address: this.address, 
-                    port: this.port, 
-                    password: this.password, 
-                    camera: this.camera 
-                }
-            });
-
-            this.$router.replace("/settings/twitch").catch(() => {});
         },
         install () { 
             // eslint-disable-next-line max-len

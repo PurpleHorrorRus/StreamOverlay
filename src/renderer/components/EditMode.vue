@@ -9,25 +9,18 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import WidgetsMixin from "~/mixins/widgets";
 
 export default {
-    computed: {
-        ...mapGetters({
-            config: "GET_CONFIG"
-        })
-    },
+    mixins: [WidgetsMixin],
     methods: {
-        ...mapActions({
-            enableEdit: "widgets/enableEdit"
-        }),
         openFullEdit () {
             this.$router.replace("/edit").catch(() => {});
-            this.enableEdit(false);
+            this.active = true;
         },
         exitEdit () {
-            this.$router.replace("/menu").catch(() => {});
-            this.enableEdit(false);
+            this.$router.replace("/").catch(() => {});
+            this.active = false;
         }
     }
 };

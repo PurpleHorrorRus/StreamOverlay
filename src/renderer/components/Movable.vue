@@ -16,9 +16,10 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import WidgetsMixin from "~/mixins/widgets";
 
 export default {
+    mixins: [WidgetsMixin],
     props: {
         source: {
             type: Object,
@@ -35,16 +36,11 @@ export default {
             default: true
         } 
     },
-    computed: { 
-        ...mapGetters({ 
-            active: "widgets/getEdit" 
-        }) 
-    },
     methods: {
         onResize (...args) { 
             this.$emit("onResize", ...args); 
         },
-        onDrag (...args) { 
+        onDrag (...args) {
             this.$emit("onDrag", ...args); 
         }
     }
@@ -54,14 +50,20 @@ export default {
 
 <style lang="scss">
 .vdr { 
-    position: absolute;
+    background:
+        linear-gradient($secondary,$secondary) top center/calc(100%) 2px,
+        linear-gradient($secondary,$secondary) bottom center/calc(100%) 2px,
+        linear-gradient($secondary,$secondary) left center/2px calc(100%),
+        linear-gradient($secondary,$secondary) right center/2px calc(100%);
 
-    border: 2px solid $outline;
+    background-repeat: no-repeat;
     cursor: move;
+
+    border: none;
 }
 
 .nonactive.vdr {
-    border: none;
+    background: none;
 }
 
 .movable_name {

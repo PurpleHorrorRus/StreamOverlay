@@ -5,20 +5,20 @@
             :text="'Трансляция'" 
             :icon="['fas', 'signal']"
             :load="loadingStream"
-            @method="openStream" 
+            @click="openStream" 
         />
-        <MenuItem :text="'Редактирование виджетов'" :icon="['fas', 'pen']" @method="enableEdit" />
-        <MenuItem :text="'Настройки OBS'" :icon="['fas', 'wrench']" @method="openOBS" />
-        <MenuItem :text="'Настройки Twitch'" :icon="['fab', 'twitch']" @method="openTwitch" />
-        <MenuItem :text="'Настройки чата'" :icon="['fas', 'comment']" @method="openChat" />
+        <MenuItem :text="'Редактирование виджетов'" :icon="['fas', 'pen']" @click="enterEdit" />
+        <MenuItem :text="'Настройки OBS'" :icon="['fas', 'wrench']" @click="openOBS" />
+        <MenuItem :text="'Настройки Twitch'" :icon="['fab', 'twitch']" @click="openTwitch" />
+        <MenuItem :text="'Настройки чата'" :icon="['fas', 'comment']" @click="openChat" />
     </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
-
 import ModalTitle from "~/components/ModalTitle";
 import MenuItem from "~/components/MenuItem";
+
+import WidgetsMixin from "~/mixins/widgets";
 
 export default {
     layout: "modal",
@@ -26,27 +26,17 @@ export default {
         ModalTitle, 
         MenuItem
     },
+    mixins: [WidgetsMixin],
     data: () => ({ 
         loadingStream: false 
     }),
-    computed: {
-        ...mapGetters({
-            strings: "strings/getStrings"
-        })
-    },
-    mounted () { 
-        this._enableEdit(false);
-    },
     methods: {
-        ...mapActions({
-            _enableEdit: "widgets/enableEdit"
-        }),
         openStream() { 
             this.loadingStream = true; 
             this.$router.replace("/stream"); 
         },
-        enableEdit() {
-            this._enableEdit(true);
+        enterEdit() {
+            this.active = true;
             this.$router.replace("/").catch(() => {});
         },
         openOBS () { 

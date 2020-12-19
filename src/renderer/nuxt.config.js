@@ -67,11 +67,14 @@ module.exports = {
     dev: process.env.NODE_ENV === "development",
     css: [
         "~assets/css/global.scss",
-        "vue-draggable-resizable/dist/VueDraggableResizable.css"
+        "vue-draggable-resizable/dist/VueDraggableResizable.css",
+        "vue-range-component/dist/vue-range-slider.css"
     ],
     plugins: [
         { src: "~plugins/vue-draggable-resizable", ssr: true },
-        { src: "~plugins/autocomplete", ssr: true }
+        { src: "~plugins/autocomplete", ssr: true },
+        { src: "~plugins/vue-range-component.js", mode: "client" },
+        { src: "~plugins/vue-toggle-button.js", mode: "client" }
     ],
     buildModules: ["@nuxtjs/style-resources"],
     modules: [

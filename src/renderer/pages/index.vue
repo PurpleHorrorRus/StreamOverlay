@@ -1,6 +1,6 @@
 <template>
     <div v-if="settings" id="content">
-        <EditMode v-if="edit" />
+        <EditMode v-if="active" />
         <Notifications />
         <OBS />
         <TwitchInfo />
@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions } from "vuex";
 import { ipcRenderer as IPC } from "electron";
 import { ipcRenderer } from "electron-better-ipc";
 
@@ -32,11 +32,15 @@ import Chat from "~/components/Chat";
 import ViewersList from "~/components/ViewersList";
 import Widget from "~/components/Widget";
 
+import OBSMixin from "~/mixins/obs";
+import TwitchMixin from "~/mixins/twitch";
+import WidgetsMixin from "~/mixins/widgets";
 import other from "~/mixins/other";
 
 import BeepSound from "~/static/beep.mp3";
 
-let beep = null;
+let beep = new Audio(BeepSound);
+beep.volume = 0.05;
 
 export default {
     components: { 
@@ -49,19 +53,8 @@ export default {
         ViewersList,
         Widget
     },
-    mixins: [other],
+    mixins: [OBSMixin, TwitchMixin, WidgetsMixin, other],
     computed: {
-        ...mapGetters({
-            settings: "settings/getSettings",
-
-            widgets: "widgets/getWidgets",
-            edit: "widgets/getEdit",
-
-            obs: "obs/getOBS",
-            status: "obs/getStatus",
-
-            helix: "twitch/getHelix"
-        }),
         connected () { 
             return this.obs._connected;
         }
@@ -111,33 +104,17 @@ export default {
     methods: {
         ...mapActions({
             setConfig: "SET_CONFIG",
-
-            setSettings: "settings/setSettings",
-            saveSettings: "settings/saveSettings",
-
-            setWidgets: "widgets/setWidgets",
-            enableEdit: "widgets/enableEdit",
             
             turnLock: "ipc/turnLock",
-            turnUpdate: "notifications/turnUpdate",
-
-            connectOBS: "obs/connectOBS",
-
-            createHelix: "twitch/createHelix",
-            createChatBot: "twitch/createChatBot",
-            runInterval: "twitch/runInterval"
+            turnUpdate: "notifications/turnUpdate"
         }),
         registerIPC () { 
-            IPC.on("beep", () => {
-                if (beep === null) {
-                    beep = new Audio(BeepSound);
-                    beep.volume = 0.05;
-                }
-                
-                beep.play();
+            IPC.on("beep", () => beep.play());
+            IPC.on("menu", (_event, sequence) => {
+                this.$router.replace(sequence ? "/menu" : "/").catch(() => {});
+                this.active = false;
             });
 
-            IPC.on("menu", (_event, sequence) => this.$router.replace(sequence ? "/menu" : "/").catch(() => {}));
             IPC.on("lock", (_event, mouse) => this.turnLock(mouse));
             IPC.on("viewers_list", () => {
                 this.settings.viewers_list.enable = !this.settings.viewers_list.enable;
@@ -149,11 +126,11 @@ export default {
         },
         openFullEdit () {
             this.$router.replace("/edit").catch(() => {});
-            this.enableEdit(false);
+            this.active = false;
         },
         exitEdit () {
             this.$router.replace("/menu").catch(() => {});
-            this.enableEdit(false);
+            this.active = false;
         }
     }
 };

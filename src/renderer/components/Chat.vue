@@ -11,27 +11,25 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapState } from "vuex";
 
 import Movable from "~/components/Movable";
 import Message from "~/components/chat/Message";
+
+import CoreMixin from "~/mixins/core";
 
 export default {
     components: { 
         Movable, 
         Message 
     },
+    mixins: [CoreMixin],
     computed: {
-        ...mapGetters({
-            active: "widgets/getEdit",
-            settings: "settings/getSettings",
-            messages: "twitch/getMessages"
+        ...mapState({
+            messages: state => state.twitch.messages
         })
     },
     methods: {
-        ...mapActions({
-            saveSettings: "settings/saveSettings"
-        }),
         onResize (x, y, width, height) {
             this.settings.chat.width = width;
             this.settings.chat.height = height;

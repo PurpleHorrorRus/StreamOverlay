@@ -4,9 +4,9 @@
             <span class="modal-title-text" v-text="'Настройка Twitch'" />
         </div>
         <div class="modal-body">
-            <Tip
+            <!-- <Tip
                 text="Для того, чтобы включить и отключить фокус на оверлее, нажмите комбинацию клавиш Alt + A"
-            />
+            /> -->
             <Input
                 text="Имя пользователя Twitch"
                 :value="username"
@@ -16,7 +16,7 @@
             <div class="modal-item-tip">
                 <span class="modal-item-tip-text">
                     Access Token - нужен для того, чтобы менять название стрима и игру через оверлей
-                    (<strong class="link" @click="getToken" v-text="'Получить'" />)
+                    (<span class="link" @click="getToken" v-text="'Получить'" />)
                 </span>
             </div>
             <Input
@@ -27,7 +27,7 @@
             <div class="modal-item-tip">
                 <span class="modal-item-tip-text">
                     OAuth Token - нужен для того, чтобы получать сообщения из чата
-                    (<strong class="link" @click="getOAuth" v-text="'Получить'" />)
+                    (<span class="link" @click="getOAuth" v-text="'Получить'" />)
                 </span>
             </div>
             <Input
@@ -38,23 +38,26 @@
             <div v-if="error.length" class="modal-item-tip">
                 <span style="color: red" class="modal-item-tip-text">Ошибка: {{ error }}</span>
             </div>
-            <Next :loading="validating" @click.native="goNext" />
+            
+            <SolidButton 
+                :label="'Продолжить'"
+                :disabled="disabled"
+                :load="validating"
+                @clicked="next" 
+            />
         </div>
     </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
-import { ipcRenderer } from "electron-better-ipc";
-
 import express from "express";
 import Helix from "simple-helix-api";
 import { encode } from "querystring";
 
 import Input from "~/components/settings/Input";
-import Tip from "~/components/settings/Tip";
-import Next from "~/components/settings/Next";
+import SolidButton from "~/components/SolidButton";
 
+import CoreMixin from "~/mixins/core";
 import other from "~/mixins/other";
 
 let app = undefined;
@@ -65,10 +68,9 @@ let helix;
 export default {
     components: { 
         Input,
-        Tip,
-        Next 
+        SolidButton
     },
-    mixins: [other],
+    mixins: [CoreMixin, other],
     layout: "modal",
     data: () => ({
         username: "",
@@ -78,9 +80,11 @@ export default {
         validating: false
     }),
     computed: {
-        ...mapGetters({
-            config: "GET_CONFIG"
-        })
+        disabled () {
+            return this.username.length === 0 ||
+                    this.access_token.length === 0 ||
+                    this.oauth_token.length === 0;
+        }
     },
     watch: {
         access_token (newVal) {
@@ -106,9 +110,6 @@ export default {
         }
     },
     methods: {
-        ...mapActions({
-            saveSettings: "settings/saveSettings"
-        }),
         changeUsername (value) {
             this.username = value;
         },
@@ -118,15 +119,10 @@ export default {
         changeOAuth (value) {
             this.oauth_token = value;
         },
-        async goNext () {
+        async next () {
             this.validating = true;
             this.error = "";
 
-            if (!this.username.length || !this.access_token.length || !this.oauth_token.length) {
-                this.validating = false;
-                this.error = "Необходимо заполнить все поля";
-                return;
-            } 
             if (~this.access_token.indexOf("http://")) {
                 this.access_token = this.access_token.match(/access_token=(.*?)&/)[1];
             }
@@ -157,31 +153,35 @@ export default {
             this.$router.replace("/");
             
         },
-        validate () {
-            return new Promise(async (resolve, reject) => {
-                helix = new Helix({ 
-                    client_id, 
-                    access_token: this.access_token,
-                    increaseRate: true
-                });
-
-                const user = await helix.getUser(this.username)
-                    .catch(() => reject({ success: false, error: "Пользователь с таким ником не найден" }));
-
-                const data = await helix.getChannel(user.id);
-                const title = data.status,
-                    game = data.game;
-
-                const { success } = await helix.updateStream(user.id, "test overlay", "League of Legends")
-                    .catch(() => reject({ success: false, error: "Неверный Access Token" }));
-
-                if (success) {
-                    helix.updateStream(user.id, title, game);
-                    return resolve({ success: true });
-                } else {
-                    return reject({ success: false, error: "Неверный Access Token" });
-                }
+        async validate () {
+            helix = new Helix({ 
+                client_id, 
+                access_token: this.access_token,
+                increaseRate: true
             });
+
+            const user = await helix.getUser(this.username)
+                .catch(() => ({ 
+                    success: false, 
+                    error: "Пользователь с таким ником не найден" 
+                }));
+
+            const data = await helix.getChannel(user.id);
+            const title = data.status,
+                game = data.game;
+
+            const { success } = await helix.updateStream(user.id, "test overlay", "League of Legends")
+                .catch(() => ({ success: false, error: "Неверный Access Token" }));
+
+            if (success) {
+                helix.updateStream(user.id, title, game);
+                return { success: true };
+            } else {
+                return { 
+                    success: false, 
+                    error: "Неверный Access Token" 
+                };
+            }
         },
         getToken () {
             const params = {
@@ -192,10 +192,11 @@ export default {
             };
 
             const query = encode(params);
-
             const url = `https://id.twitch.tv/oauth2/authorize?${query}`;
+
             if (app) {
-                return this.openLink(url);
+                this.openLink(url);
+                return;
             }
 
             app = express();
@@ -212,3 +213,13 @@ export default {
     }
 };
 </script>
+
+<style lang="scss">
+.link {
+    &:hover {
+        cursor: pointer;
+        color: $secondary;
+        text-decoration: underline;
+    }
+}
+</style>

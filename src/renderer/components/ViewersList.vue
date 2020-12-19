@@ -22,18 +22,19 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import _ from "lodash";
 import fetch from "node-fetch";
 import Promise from "bluebird";
 
 import Movable from "~/components/Movable";
 
-import _ from "lodash";
+import TwitchMixin from "~/mixins/twitch";
 
 fetch.Promise = Promise;
 
 export default {
     components: { Movable },
+    mixins: [TwitchMixin],
     data: () => ({
         loading: true,
         updateInterval: null,
@@ -49,12 +50,6 @@ export default {
         }
     }),
     computed: {
-        ...mapGetters({
-            active: "widgets/getEdit",
-            helix: "twitch/getHelix",
-            settings: "settings/getSettings",
-            user: "twitch/getUser"
-        }),
         vl_settings () { 
             return this.settings.viewers_list; 
         },
@@ -62,7 +57,7 @@ export default {
             return Object.keys(this.chatters); 
         }
     },
-    async mounted () {
+    async created () {
         this.loading = true;
         this.chatters = await this.get();
         this.updateInterval = setInterval(async () => this.chatters = await this.get(), 4 * 1000);
@@ -75,9 +70,6 @@ export default {
         }
     },
     methods: {
-        ...mapActions({
-            saveSettings: "settings/saveSettings"
-        }),
         async get () {
             const botsRequest = await fetch("https://api.twitchinsights.net/v1/bots/online");
 
@@ -85,7 +77,10 @@ export default {
             const { chatters } = await this.helix.getViewers(this.user.username);
 
             for (const category in chatters) {
-                chatters[category] = _.without(chatters[category], ...bots.map(([name]) => name));
+                chatters[category] = _.without(
+                    chatters[category], 
+                    ...bots.map(([name]) => name)
+                );
             }
 
             return chatters;

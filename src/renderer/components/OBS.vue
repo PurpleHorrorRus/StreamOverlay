@@ -16,14 +16,12 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
-
 import Movable from "~/components/Movable";
 
 import Devices from "~/components/OBS/Devices";
 import Status from "~/components/OBS/Status";
 
-import other from "~/mixins/other";
+import OBSMixin from "~/mixins/obs";
 
 export default {
     components: { 
@@ -31,45 +29,8 @@ export default {
         Devices, 
         Status 
     },
-    mixins: [other],
-    computed: {
-        ...mapGetters({
-            settings: "settings/getSettings",
-
-            obs: "obs/getOBS",
-            status: "obs/getStatus",
-            devices: "obs/getDevices"
-        }),
-        connected () { 
-            return this.obs._connected;
-        },
-        streaming () { 
-            return this.connected && this.status.stream; 
-        },
-        recording () { 
-            return this.connected && this.status.recording; 
-        },
-        isLeft () {
-            return this.settings.OBSStatus.x < window.innerWidth / 2;
-        },
-        isRight () {
-            return !this.isLeft;
-        },
-        OBSClass () {
-            return {
-                connected: this.connected,
-                disconnected: !this.connected,
-                streaming: this.streaming,
-                recording: this.recording,
-                left: this.isLeft,
-                right: this.isRight
-            };
-        }
-    },
+    mixins: [OBSMixin],
     methods: {
-        ...mapActions({
-            saveSettings: "settings/saveSettings"
-        }),
         onDrag (x, y) {
             this.settings.OBSStatus.x = x;
             this.settings.OBSStatus.y = y;

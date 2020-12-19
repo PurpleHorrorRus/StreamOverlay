@@ -31,11 +31,11 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
-
 import { EyeIcon, HeartIcon } from "vue-feather-icons";
 
 import Movable from "~/components/Movable";
+
+import TwitchMixin from "~/mixins/twitch";
 
 export default {
     components: {
@@ -43,19 +43,8 @@ export default {
         EyeIcon,
         HeartIcon
     },
-    computed: {
-        ...mapGetters({
-            settings: "settings/getSettings",
-
-            status: "obs/getStatus",
-            followers: "followers/GET_COUNT",
-            viewers: "twitch/getViewers"
-        })
-    },
+    mixins: [TwitchMixin],
     methods: {
-        ...mapActions({
-            saveSettings: "settings/saveSettings"
-        }),
         onDrag (x, y) {
             this.settings.TwitchInfo.x = x;
             this.settings.TwitchInfo.y = y;

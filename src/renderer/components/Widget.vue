@@ -16,31 +16,24 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
-
 import Movable from "~/components/Movable";
+
+import WidgetsMixin from "~/mixins/widgets";
 
 export default {
     components: { Movable },
+    mixins: [WidgetsMixin],
     props: {
         widget: {
             type: Object,
             required: true
         }
     },
-    computed: {
-        ...mapGetters({
-            widgets: "widgets/getWidgets"
-        })
-    },
     mounted () {
         this.$refs.webview.addEventListener("dom-ready", 
             () => this.$refs.webview.setAudioMuted(true));
     },
     methods: {
-        ...mapActions({ 
-            saveWidgets: "widgets/saveWidgets" 
-        }),
         onResize (x, y, width, height) {
             this.widget.style.width = width;
             this.widget.style.height = height;

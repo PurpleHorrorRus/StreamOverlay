@@ -4,24 +4,16 @@
             id="time" 
             v-text="formatTime" 
         />
-        <!-- <span 
-            id="fps" 
-            :style="fpsStyle"
-            v-text="FPS"
-        /> -->
     </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-
+import OBSMixin from "~/mixins/obs";
 import misc from "~/plugins/misc";
 
 export default {
+    mixins: [OBSMixin],
     computed: {
-        ...mapGetters({ 
-            status: "obs/getStatus"
-        }),
         fpsStyle () {
             return {
                 color: this.status.tech.fps.toFixed(0) < status.videoSettings.fps ? "red" : "white"

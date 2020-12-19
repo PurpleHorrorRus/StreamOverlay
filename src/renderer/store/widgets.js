@@ -5,22 +5,14 @@ export default {
         widgets: []
     }),
     mutations: {
-        enableEdit (state, seq) { 
-            state.edit = seq; 
-        },
-        setWidgets (state, widgets) { 
-            state.overlays = widgets; 
-        }
+        TURN_EDIT: (state, sequence) => state.edit = sequence,
+        SET: (state, widgets) => state.widgets = widgets
     },
     actions: {
-        enableEdit ({ commit }, seq) { 
-            commit("enableEdit", seq); 
-        },
-        setWidgets ({ commit }, widgets) { 
-            commit("setWidgets", widgets); 
-        },
-        saveWidgets ({ commit, dispatch }, widgets) { 
-            commit("setWidgets", widgets);
+        TURN_EDIT: ({ commit }, seq) => commit("TURN_EDIT", seq),
+        SET: ({ commit }, widgets) => commit("SET", widgets),
+        SAVE: ({ commit, dispatch }, widgets) => {
+            commit("SET", widgets);
             dispatch("settings/saveSettings", {
                 type: "overlays",
                 content: widgets
@@ -28,7 +20,7 @@ export default {
         }
     },
     getters: {
-        getWidgets: state => state.overlays,
-        getEdit: state => state.edit
+        GET_WIDGETS: state => state.overlays,
+        GET_EDIT: state => state.edit
     }
 };
