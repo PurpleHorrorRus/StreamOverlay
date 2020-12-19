@@ -1,5 +1,6 @@
 <template>
-    <div id="modal" @click.self="exit">
+    <div id="modal">
+        <Chat />
         <div id="modal-lock">
             <font-awesome-icon v-if="locked" :icon="['fa', 'lock']" style="color: lightgreen" />
             <font-awesome-icon v-else :icon="['fa', 'unlock']" style="color: red" />
@@ -14,9 +15,14 @@
 import { ipcRenderer } from "electron";
 import { mapGetters } from "vuex";
 
+import Chat from "~/components/Chat";
+
 import CoreMixin from "~/mixins/core";
 
 export default {
+    components: {
+        Chat
+    },
     mixins: [CoreMixin],
     computed: {
         ...mapGetters({
