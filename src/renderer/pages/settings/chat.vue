@@ -59,29 +59,16 @@ export default {
                 content: this.settings
             });
         },
-        validateValue (value, min, max = 0) {
-            if (isNaN(value)) {
-                return min;
-            }
-
-            if (value < min) {
-                return min;
-            } else if (value > max && max !== 0) {
-                return max;
-            }
-
-            return Math.abs(Number(value));
-        },
         changeTimeout (value) {
-            this.settings.chat.timeout = this.validateValue(value, 0);
+            this.settings.chat.timeout = Number(value);
             this.save();
         },
         changeOpactiy (value) {
-            this.settings.chat.opacity = this.validateValue(value, 0, 100);
+            this.settings.chat.opacity = Number(value);
             this.save();
         },
         changeFont (value) {
-            this.settings.chat.font = this.validateValue(value, 10, 18);
+            this.settings.chat.font = Number(value);
             this.save();
         }
     }
