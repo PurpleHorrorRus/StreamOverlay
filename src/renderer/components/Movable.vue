@@ -2,7 +2,7 @@
     <vue-draggable-resizable
         :class="{ active, nonactive: !active }"
         :draggable="active"
-        :resizable="active"
+        :resizable="resizable && active"
         :w="source.width"
         :h="source.height"
         :x="source.x || source.left"
@@ -10,7 +10,7 @@
         @dragstop="onDrag" 
         @resizestop="onResize"
     >
-        <span v-if="active && name.length" class="movable_name" v-text="name" />
+        <span v-if="active && name.length > 0" class="movable_name nowrap" v-text="name" />
         <slot v-if="!!$slots.default" />
     </vue-draggable-resizable>
 </template>
@@ -28,7 +28,12 @@ export default {
             type: String,
             required: false,
             default: "null"
-        }
+        },
+        resizable: {
+            type: Boolean,
+            required: false,
+            default: true
+        } 
     },
     computed: { 
         ...mapGetters({ 
@@ -60,8 +65,10 @@ export default {
 }
 
 .movable_name {
-    position: relative;
-    top: 5px;
+    position: absolute;
+    top: 0px;
+
+    width: 100%;
 
     padding: 5px;
 
