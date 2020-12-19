@@ -14,46 +14,43 @@
                 :checked="settings.chat.enable"
                 @checked="turnChat" 
             />
-            <Input
-                text="Время сообщения в чате (в секундах). Установив 0, сообщения не будут удаляться"
+            <Range
+                text="Время сообщения в чате (в секундах)"
                 :value="Number(settings.chat.timeout)"
-                @input="changeTimeout"
+                :max="600"
+                :tip="'Установив 0, сообщения не будут удаляться'"
+                @select="changeTimeout"
             />
-            <Input
-                text="Непрозрачность фона сообщений (в процентах от 0 до 100)"
+            <Range
+                text="Непрозрачность фона сообщений"
                 :value="Number(settings.chat.opacity)"
-                @input="changeOpactiy"
+                @select="changeOpactiy"
             />
-            <Input
-                text="Размер текста сообщений (в пунктах от 10 до 18)"
+            <Range
+                text="Размер текста сообщений"
                 :value="Number(settings.chat.font)"
-                @input="changeFont"
+                :min="8"
+                :max="16"
+                @select="changeFont"
             />
         </div>
     </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
-
 import Item from "~/components/settings/Item";
-import Input from "~/components/settings/Input";
+import Range from "~/components/settings/Range";
+
+import CoreMixin from "~/mixins/core";
 
 export default {
     components: {
         Item,
-        Input
+        Range
     },
+    mixins: [CoreMixin],
     layout: "modal",
-    computed: {
-        ...mapGetters({
-            settings: "settings/getSettings"
-        })
-    },
     methods: {
-        ...mapActions({
-            saveSettings: "settings/saveSettings"
-        }),
         turnChat () {
             this.settings.chat.enable = !this.settings.chat.enable;
             this.save();
