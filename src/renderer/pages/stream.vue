@@ -253,17 +253,6 @@ export default {
 
             padding-left: 10px;
             padding-right: 10px;
-
-            #rename-stream {
-                margin-top: 10px;
-                margin-right: 10px;
-
-                float: right;
-
-                &.disabled {
-                    cursor: not-allowed;
-                }
-            }
         }
     }
 
