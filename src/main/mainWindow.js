@@ -60,7 +60,12 @@ const open = () => {
     window.setAlwaysOnTop(true, "screen-saver");
     window.moveTop();
 
-    setInterval(() => window.moveTop(), 2000);
+    const moveTop = () => {
+        window.moveTop();
+        window.showInactive();
+    };
+
+    setInterval(moveTop, 2000);
 
     tray = new Tray(icon);
     const trayMenu = Menu.buildFromTemplate([
@@ -118,7 +123,7 @@ const open = () => {
 
     globalShortcut.register("Alt+T", () => {
         send("beep");
-        window.moveTop();
+        moveTop();
     });
 
     globalShortcut.register("Alt+R", () => {
