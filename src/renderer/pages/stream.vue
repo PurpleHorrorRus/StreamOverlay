@@ -10,32 +10,22 @@
             <div id="edit">
                 <Input 
                     :value="local.title"
-                    text="Название трансляции" 
+                    :placeholder="'Название трансляции'" 
                     @input="changeTitle" 
                     @keypress.enter.native="updateStream"
                 />
                 <Input 
                     :value="local.game" 
-                    text="Название игры" 
+                    :placeholder="'Название игры'" 
                     @input="changeGame" 
                     @keypress.enter.native="updateStream"
                 />
-                <button id="rename-stream" :class="{ disabled }" @click="updateStream">
-                    <div v-if="!loading">
-                        <span
-                            v-if="success || reset"
-                            v-text="'Обновить'"
-                        />
-                        <font-awesome-icon
-                            v-else 
-                            :icon="['fas', 'times']" style="color: red"
-                        />
-                    </div>
-                    <font-awesome-icon
-                        v-else 
-                        :icon="['fas', 'circle-notch']" class="fa-spin" 
-                    />
-                </button>
+                <SolidButton
+                    :label="'Обновить'"
+                    :disabled="disabled"
+                    :load="loading"
+                    @clicked="updateStream"
+                />
             </div>
         </div>
         <div v-show="show_autocomplete" id="autocomplete-container">
@@ -64,12 +54,14 @@ import { mapGetters, mapActions } from "vuex";
 
 import Input from "~/components/settings/Input";
 import Game from "~/components/Game";
+import SolidButton from "~/components/SolidButton";
 
 export default {
     layout: "modal",
     components: { 
         Game,
-        Input
+        Input,
+        SolidButton
     },
     async asyncData ({ store }) {
         const helix = store.getters["twitch/getHelix"];
@@ -220,10 +212,11 @@ export default {
 <style lang="scss">
 #modal-stream-container {
     grid-template-columns: 1fr;
-        grid-template-rows: 210px 300px;
-        grid-template-areas: 
-            "content"
-            "games";
+    grid-template-rows: 210px 300px;
+    grid-template-areas: "content"
+                        "games";
+
+    width: 100%;
 
     #modal-stream-content {
         grid-area: content;
@@ -252,6 +245,11 @@ export default {
 
         #edit {
             grid-area: edit;
+
+            display: flex;
+            justify-content: flex-end;
+            align-content: center;
+            flex-wrap: wrap;
 
             padding-left: 10px;
             padding-right: 10px;
