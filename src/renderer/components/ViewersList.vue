@@ -109,7 +109,7 @@ export default {
     width: 100%;
     height: 100%;
 
-    background: rgba(0, 0, 0, .4);
+    background: rgba(0, 0, 0, .4) !important;
     border-radius: 5px;
     z-index: 50;
 
