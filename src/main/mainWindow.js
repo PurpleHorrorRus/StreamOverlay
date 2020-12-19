@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-import { app, BrowserWindow, globalShortcut } from "electron";
+import { app, BrowserWindow, globalShortcut, Tray, Menu } from "electron";
 import { ipcMain } from "electron-better-ipc";
 
 import path from "path";
@@ -26,7 +26,6 @@ const params = {
     movable: false,
     transparent: true,
     frame: false,
-    fullscreenable: false,
     fullscreenable: true,
     fullscreen: true,
     alwaysOnTop: true,
@@ -42,6 +41,7 @@ const params = {
 };
 
 let window = null;
+let tray = null;
 
 let mouse = false,
     menu = false;
@@ -51,18 +51,32 @@ app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
 const open = () => {
     window = new BrowserWindow(params);
 
+    window.setSkipTaskbar(true);
     window.showInactive();
     window.removeMenu();
     window.setIgnoreMouseEvents(true);
     window.setContentProtection(true);
     window.setVisibleOnAllWorkspaces(true);
     window.setAlwaysOnTop(true, "screen-saver");
+    window.moveTop();
 
     setInterval(() => window.moveTop(), 2000);
-        window.showInactive();
-    };
 
-    setInterval(moveOnTop, 4000);
+    tray = new Tray(icon);
+    const trayMenu = Menu.buildFromTemplate([
+        { label: "Показать", type: "normal" },
+        { type: "separator" },
+        { label: "Выход", type: "normal", click: app.exit }
+    ]);
+
+    tray.setToolTip("Stream Overlay");
+    tray.setContextMenu(trayMenu);
+
+    tray.on("double-click", () => {
+        window.showInactive();
+        window.setAlwaysOnTop(true, "screen-saver");
+    });
+
 
     if (isDev) {
         window.loadURL(DEV_SERVER_URL);
