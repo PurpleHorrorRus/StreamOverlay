@@ -16,7 +16,7 @@ export default {
     methods: {
         openFullEdit () {
             this.$router.replace("/edit").catch(() => {});
-            this.active = true;
+            this.active = false;
         },
         exitEdit () {
             this.$router.replace("/").catch(() => {});

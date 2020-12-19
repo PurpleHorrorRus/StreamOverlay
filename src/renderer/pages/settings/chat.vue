@@ -8,11 +8,9 @@
         </div>
         <div class="modal-body">
             <Item 
-                :id="0" 
-                :type="'checkbox'" 
                 :text="'Включить чат'" 
                 :checked="settings.chat.enable"
-                @checked="turnChat" 
+                @change="turnChat" 
             />
             <Range
                 text="Время сообщения в чате (в секундах)"
