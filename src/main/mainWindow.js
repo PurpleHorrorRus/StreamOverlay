@@ -102,12 +102,10 @@ const open = () => {
     };
 
     window.webContents.once("dom-ready", () => {
-        autoUpdater.on("update-available", info => {
-            send("update-available", info);
-        });
-
+        autoUpdater.on("update-available", info => send("update-available", info));
         autoUpdater.checkForUpdates();
     });
+    
     ipcMain.answerRenderer("config", () => config);
 
     ipcMain.on("saveSettings", (_, args) =>
