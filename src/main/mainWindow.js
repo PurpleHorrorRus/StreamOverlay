@@ -55,7 +55,7 @@ const open = () => {
     window.showInactive();
     window.removeMenu();
     window.setIgnoreMouseEvents(true);
-    // window.setContentProtection(true);
+    window.setContentProtection(true);
     window.setVisibleOnAllWorkspaces(true);
     window.setAlwaysOnTop(true, "screen-saver");
     window.moveTop();
@@ -105,7 +105,7 @@ const open = () => {
         autoUpdater.on("update-available", info => send("update-available", info));
         autoUpdater.checkForUpdates();
     });
-    
+
     ipcMain.answerRenderer("config", () => config);
 
     ipcMain.on("saveSettings", (_, args) =>
