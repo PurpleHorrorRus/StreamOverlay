@@ -55,7 +55,7 @@ const open = () => {
     window.showInactive();
     window.removeMenu();
     window.setIgnoreMouseEvents(true);
-    window.setContentProtection(true);
+    // window.setContentProtection(true);
     window.setVisibleOnAllWorkspaces(true);
     window.setAlwaysOnTop(true, "screen-saver");
     window.moveTop();
