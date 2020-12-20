@@ -72,8 +72,12 @@ export default {
     }),
     computed: {
         disabled () {
-            return this.widget.name.length === 0 ||
+            if (this.widget) {
+                return this.widget.name.length === 0 ||
                     this.widget.src.length === 0;
+            }
+
+            return true;
         }
     },
     async created () {
