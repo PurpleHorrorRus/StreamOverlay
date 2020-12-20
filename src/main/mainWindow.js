@@ -61,8 +61,10 @@ const open = () => {
     window.moveTop();
 
     const moveTop = () => {
-        window.moveTop();
-        window.showInactive();
+        if (window) {
+            window.moveTop();
+            window.showInactive();
+        }
     };
 
     setInterval(moveTop, 2000);
