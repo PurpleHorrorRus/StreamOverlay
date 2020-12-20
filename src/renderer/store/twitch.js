@@ -36,8 +36,7 @@ export default {
         betterTTV: [],
         FrankerFaceZ: [],
         interval: null,
-        viewers: -1,
-        followers: -1
+        viewers: -1
     }),
     mutations: {
         createHelix (state, twitch) {
@@ -112,9 +111,6 @@ export default {
         },
         setStream (state, stream) { 
             state.stream = stream; 
-        },
-        setFollowersCount (state, count) {
-            state.followers = count;
         },
         setViewers (state, viewers) {
             state.viewers = viewers;
@@ -365,7 +361,6 @@ export default {
         getStream: state => state.stream,
         getBetterTTV: state => state.betterTTV,
         getFrankerFaceZ: state => state.FrankerFaceZ,
-        getFollowers: state => state.followers,
         getViewers: state => state.viewers
     }
 };
