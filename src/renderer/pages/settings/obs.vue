@@ -35,6 +35,7 @@
                 text="Если у вас нет веб-камеры или вы не палите лицо на стриме, оставьте это поле пустым"
             /> -->
             <Item 
+                v-if="settings !== null && !settings.first"
                 :text="'Включить техническую статистику'" 
                 :checked="settings.TechInfo.enable" 
                 @change="turnTech" 
@@ -90,8 +91,11 @@ export default {
     }),
     computed: {
         disabled () {
-            return this.address.length === 0 ||
-                this.port.length === 0;
+            if (this.address) {
+                return this.address.length === 0;
+            }
+
+            return true;
         }
     },
     async created () {

@@ -50,7 +50,7 @@ export default {
             this.mutated = newVal;
         }
     },
-    mounted () {
+    created () {
         this.mutated = this.value;
     }
 };
