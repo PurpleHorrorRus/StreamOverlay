@@ -59,36 +59,38 @@ export default {
 
 <style lang="scss">
 #twitch-info {
+    $infoSize: 12pt;
+    $viewersColor: #ff3838;
+
     display: flex;
     justify-content: space-evenly;
     align-items: center;
 
-    background: #00000080;
+    background: #00000098;
 
     &-viewers {
         span {
-            color: red;
+            color: $viewersColor;
         }
         
         .feather {
-            stroke: red;
+            stroke: $viewersColor;
         }
     }
 
     span {
         font-family: "Roboto Condensed", sans-serif;
-        font-weight: 300;
+        font-weight: 800;
     }
 
     svg, span {
         vertical-align: middle;
-        font-weight: 300;
 
-        font-size: 9pt;
+        font-size: $infoSize;
     }
 
     .feather {
-        width: 12px;
+        width: $infoSize;
     }
 }
 </style>
