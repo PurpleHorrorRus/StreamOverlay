@@ -76,6 +76,10 @@ export default {
             const { bots } = await botsRequest.json();
             const { chatters } = await this.helix.getViewers(this.user.username);
 
+            if (!bots || !chatters) {
+                return this.chatters;
+            }
+
             for (const category in chatters) {
                 chatters[category] = _.without(
                     chatters[category], 
