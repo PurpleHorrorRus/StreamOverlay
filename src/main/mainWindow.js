@@ -61,7 +61,7 @@ const open = () => {
     window.moveTop();
 
     const moveTop = () => {
-        if (window) {
+        if (window && !menu) {
             window.moveTop();
             window.showInactive();
         }
