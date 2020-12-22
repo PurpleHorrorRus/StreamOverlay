@@ -7877,10 +7877,10 @@ signal-exit@^3.0.2:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.3.tgz#a1410c2edd8f077b08b4e253c8eacfcaf057461c"
   integrity sha512-VUJ49FC8U1OxwZLxIbTTrDvLnf/6TDgxZcK8wxR8zs13xpx7xbG60ndBlhNrFi2EMuFRoeDoJO7wthSLq42EjA==
 
-simple-helix-api@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/simple-helix-api/-/simple-helix-api-1.2.0.tgz#6fb21b98d66b9cbc03b7b9dc08f79d19d13d2b43"
-  integrity sha512-snSZ3/6MdOy2UmFWFSDMB4gwx5R+GmyvcRqpSEAs/5mGih4k/MWjs/P3Om7d4ZfruzFL71V1ioD3TEZOiYovpA==
+simple-helix-api@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/simple-helix-api/-/simple-helix-api-1.2.1.tgz#4c8c1c896f3ca05013d8757643ac18a2b5f107c8"
+  integrity sha512-TyoNff043y+mXA+6RTsyZ9xHDheJE+IR1gSTE7eDnnWnrbINttnXBv1MfbOaAPctvtvMwu2CPt+y1PQB0MmygA==
   dependencies:
     node-fetch "^2.6.1"
     tmi.js "^1.7.1"

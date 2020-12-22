@@ -36,7 +36,7 @@
         "nuxt-fontawesome": "^0.4.0",
         "obs-websocket-js": "^4.0.1",
         "reconnecting-websocket": "^4.4.0",
-        "simple-helix-api": "^1.2.0",
+        "simple-helix-api": "^1.2.1",
         "vue-autosuggest": "^2.2.0",
         "vue-draggable-resizable": "2.1.0",
         "vue-feather-icons": "^5.1.0",
