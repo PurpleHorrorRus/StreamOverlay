@@ -1,6 +1,6 @@
 {
     "name": "streamoverlay",
-    "version": "0.3.4",
+    "version": "0.3.5",
     "description": "An overlay for streamers with single display",
     "author": "Maxim <purplehorrorrus@gmail.com>",
     "repository": {
@@ -35,6 +35,7 @@
         "nuxt": "2.11.0",
         "nuxt-fontawesome": "^0.4.0",
         "obs-websocket-js": "^4.0.1",
+        "ps-list": "^7.2.0",
         "reconnecting-websocket": "^4.4.0",
         "simple-helix-api": "^1.2.1",
         "vue-autosuggest": "^2.2.0",

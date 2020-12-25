@@ -3,6 +3,9 @@
 import { app, BrowserWindow, globalShortcut, Tray, Menu } from "electron";
 import { ipcMain } from "electron-better-ipc";
 
+import psList from "ps-list";
+import os from "os";
+
 import path from "path";
 
 import { default as common } from "./common";
@@ -46,6 +49,8 @@ let tray = null;
 let mouse = false,
     menu = false;
 
+const processName = path.basename(process.execPath);
+
 app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
 
 const open = () => {
@@ -58,7 +63,19 @@ const open = () => {
     window.setContentProtection(true);
     window.setVisibleOnAllWorkspaces(true);
     window.setAlwaysOnTop(true, "screen-saver");
-    window.moveTop();
+
+    const setLowPriority = async () => {
+        const processes = await psList();
+        const electronProcesses = processes.filter(pr => pr.name === processName);
+        
+        if (electronProcesses.length > 0) {
+            electronProcesses.map(pr => pr.pid).forEach(pid => {
+                if (os.getPriority(pid) !== 19) {
+                    os.setPriority(pid, 19);
+                }
+            });
+        }
+    };
 
     const moveTop = () => {
         if (window && !menu) {
@@ -67,7 +84,10 @@ const open = () => {
         }
     };
 
+    moveTop();
     setInterval(moveTop, 2000);
+
+    setInterval(setLowPriority, 30000);
 
     tray = new Tray(icon);
     const trayMenu = Menu.buildFromTemplate([
@@ -88,7 +108,9 @@ const open = () => {
     if (isDev) {
         window.loadURL(DEV_SERVER_URL);
         window.openDevTools();
-    } else window.loadFile(INDEX_PATH);
+    } else {
+        window.loadFile(INDEX_PATH);
+    }
 
     window.on("close", () => {
         window = null;
@@ -102,6 +124,7 @@ const open = () => {
     };
 
     window.webContents.once("dom-ready", () => {
+        setLowPriority();
         autoUpdater.on("update-available", info => send("update-available", info));
         autoUpdater.checkForUpdates();
     });
