@@ -1,14 +1,8 @@
 /* eslint-disable no-undef */
-const TerserPlugin = require("terser-webpack-plugin");
-const TerserConfig = {
-    cache: true,
-    parallel: true
-};
-
 const cssnano = require("cssnano");
 
 module.exports = {
-    mode: "spa",
+    mode: "universal",
     head: {
         title: "Stream Overlay",
         meta: [
@@ -56,11 +50,11 @@ module.exports = {
                 }
             });
         },
+        cache: true,
+        parallel: true,
         optimization: {
             minimize: true,
-            minimizer: [
-                compiler => new TerserPlugin(TerserConfig).apply(compiler),
-            ]
+            minimizer: []
         },
         postcss: {
             plugins: [
