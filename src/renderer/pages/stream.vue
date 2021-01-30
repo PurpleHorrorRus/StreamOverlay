@@ -12,37 +12,37 @@
                     :value="local.title"
                     :placeholder="'Название трансляции'" 
                     @input="changeTitle" 
-                    @keypress.enter.native="updateStream"
+                    @keypress.enter.native="update"
                 />
                 <Input 
                     :value="local.game" 
                     :placeholder="'Название игры'" 
                     @input="changeGame" 
-                    @keypress.enter.native="updateStream"
+                    @keypress.enter.native="update"
                 />
                 <SolidButton
                     :label="'Обновить'"
                     :disabled="disabled"
                     :load="loading"
-                    @clicked="updateStream"
+                    @clicked="update"
                 />
             </div>
         </div>
         <div v-show="show_autocomplete" id="autocomplete-container">
             <div id="filtered-top">
                 <Game 
-                    v-for="_game of filtered_top_games" 
-                    :key="_game.id" 
-                    :game="_game" 
-                    @click.native="select(_game)" 
+                    v-for="game of filteredTopGames" 
+                    :key="game.id" 
+                    :game="game" 
+                    @click.native="select(game)" 
                 />
             </div>
             <div v-if="search.length > 0" id="search-categories">
                 <Game 
-                    v-for="_game of search" 
-                    :key="_game.id" 
-                    :game="_game" 
-                    @click.native="select(_game)" 
+                    v-for="game of search" 
+                    :key="game.id" 
+                    :game="game" 
+                    @click.native="select(game)" 
                 />
             </div>
         </div>
@@ -104,7 +104,7 @@ export default {
         empty () {
             return this.resizeArt("https://static-cdn.jtvnw.net/ttv-static/404_boxart-{width}x{height}.jpg");
         },
-        filtered_top_games () {
+        filteredTopGames () {
             if (!this.local.game.length) {
                 return this.top_games;
             }
@@ -157,7 +157,7 @@ export default {
     },
     methods: {
         ...mapActions({ 
-            _updateStream: "twitch/updateStream" 
+            updateStream: "twitch/updateStream" 
         }),
         findCache (array, game) {
             const index = array.map(g => g.name).indexOf(game);
@@ -185,7 +185,7 @@ export default {
             this.local.game = game.name;
             setTimeout(() => this.show_autocomplete = false, 300);
         },
-        async updateStream () {
+        async update () {
             if (this.disabled) {
                 return;
             }
@@ -194,7 +194,7 @@ export default {
             this.loading = true;
             this.error = "";
 
-            this.success = await this._updateStream({ 
+            this.success = await this.updateStream({ 
                 title: this.local.title, 
                 game: this.local.game 
             });
