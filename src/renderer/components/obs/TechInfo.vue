@@ -22,13 +22,13 @@
                 :value="formatFrametime"
             />
             <TechInfoItem
-                :label="'Rendering'"
-                :value="formatRender"
+                :label="'Encoding'"
+                :value="formatEncoding"
             />
             <TechInfoItem
                 v-if="status.stream || status.recording"
-                :label="'Encoding'"
-                :value="formatEncoding"
+                :label="'Network'"
+                :value="formatNetwork"
             />
             <TechInfoItem
                 :label="'CPU Usage'"
@@ -73,10 +73,10 @@ export default {
         formatFrametime () {
             return `${this.status.tech["average-frame-time"].toFixed(2)} ms`;
         },
-        formatRender () {
+        formatEncoding () {
             return `${this.status.tech["render-missed-frames"]} / ${this.status.tech["render-total-frames"]}`;
         },
-        formatEncoding () {
+        formatNetwork () {
             return `${this.status.tech["output-skipped-frames"]} / ${this.status.tech["output-total-frames"]}`;
         },
         formatCPU () {
