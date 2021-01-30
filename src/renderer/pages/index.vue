@@ -39,8 +39,7 @@ import other from "~/mixins/other";
 
 import BeepSound from "~/static/beep.mp3";
 
-let beep = new Audio(BeepSound);
-beep.volume = 0.05;
+let beep = null;
 
 export default {
     components: { 
@@ -109,7 +108,16 @@ export default {
             turnUpdate: "notifications/turnUpdate"
         }),
         registerIPC () { 
-            IPC.on("beep", () => beep.play());
+            IPC.on("beep", () => {
+                if (beep === null) {
+                    beep = new Audio(BeepSound);
+                    beep.volume = 0.05;
+                }
+                
+                beep.setSinkId(this.settings.outputDeviceId);
+                beep.play();
+            });
+
             IPC.on("menu", (_event, sequence) => {
                 this.$router.replace(sequence ? "/menu" : "/").catch(() => {});
                 this.active = false;
