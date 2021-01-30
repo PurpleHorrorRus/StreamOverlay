@@ -107,42 +107,46 @@ export default {
             const betterttv_url = `https://api.betterttv.net/3/cached/users/twitch/${state.user.id}`;
             const frankerfacez_url = `https://api.frankerfacez.com/v1/room/${state.user.username.toLowerCase()}`;
 
-            const promises = [
-                (async () => {
-                    const res = await syncRequest(betterttv_global_url);
+            const bGlobalPromise = new Promise(async resolve => {
+                const res = await syncRequest(betterttv_global_url);
 
-                    return res.map(emote => ({
+                return resolve(res.map(emote => ({
+                    code: emote.code,
+                    url: `https://cdn.betterttv.net/emote/${emote.id}/3x`
+                })));
+            });
+
+            const bChannelPromise = new Promise(async resolve => {
+                const res = await syncRequest(betterttv_url);
+
+                if (res.sharedEmotes) {
+                    return resolve(res.sharedEmotes.map(emote => ({
                         code: emote.code,
                         url: `https://cdn.betterttv.net/emote/${emote.id}/3x`
-                    }));
-                })(),
-                (async () => {
-                    const res = await syncRequest(betterttv_url);
+                    })));
+                }
 
-                    return res.sharedEmotes.map(emote => ({
-                        code: emote.code,
-                        url: `https://cdn.betterttv.net/emote/${emote.id}/3x`
-                    }));
-                })(),
-                (async () => {
-                    const res = await syncRequest(frankerfacez_url);
+                return resolve([]);
+            });
+
+            const fChannelPromise = new Promise(async resolve => {
+                const res = await syncRequest(frankerfacez_url);
                     
-                    if (res.sets[res.room.set]) {
-                        return res.sets[res.room.set].emoticons.map(emote => {
-                            const urls = Object.values(emote.urls);
+                if (res.sets[res.room.set]) {
+                    return resolve(res.sets[res.room.set].emoticons.map(emote => {
+                        const urls = Object.values(emote.urls);
                             
-                            return {
-                                code: emote.name,
-                                url: urls[urls.length - 1]
-                            };
-                        });
-                    }
+                        return {
+                            code: emote.name,
+                            url: urls[urls.length - 1]
+                        };
+                    }));
+                }
 
-                    return [];
-                })()
-            ];
+                return resolve([]);
+            });
             
-            const [bGlobal, bChannel, fChannel] = await Promise.all(promises);
+            const [bGlobal, bChannel, fChannel] = await Promise.all([bGlobalPromise, bChannelPromise, fChannelPromise]);
             state.betterTTV = [...bGlobal, ...bChannel];
             state.FrankerFaceZ = fChannel;
         },
