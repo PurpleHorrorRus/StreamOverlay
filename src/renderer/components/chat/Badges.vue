@@ -27,7 +27,7 @@ export default {
         }),
         badgeStyle () {
             return { 
-                width: `${this.settings.chat.font}px` 
+                width: `${this.settings.chat.font}pt` 
             };
         }
     },
@@ -51,6 +51,8 @@ export default {
     .badge {
         margin-right: 2px;
         margin-left: 2px;
+
+        vertical-align: middle;
     }
 }
 </style>

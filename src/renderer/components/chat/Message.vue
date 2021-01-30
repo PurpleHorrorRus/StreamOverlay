@@ -44,7 +44,7 @@ export default {
         },
         pictureStyle () {
             return { 
-                width: `${this.settings.chat.font - 1}px`
+                width: `${this.settings.chat.font}pt`
             };
         },
         nicknameStyle () {
@@ -77,16 +77,16 @@ export default {
 <style lang="scss">
 .message {
     display: inline-block;
-
+    
     width: 100%;
     padding: 5px;
 
     .avatar, .nickname {
         display: inline;
+        vertical-align: middle;
     }
 
     .avatar {
-        vertical-align: middle;
         border-radius: 100px;
     }
 

@@ -28,7 +28,7 @@ export default {
         },
         emoticionStyle () {
             return { 
-                width: `${this.settings.chat.font + 8}px`
+                width: `${this.settings.chat.font}pt`
             }; 
         },
     }
@@ -37,12 +37,20 @@ export default {
 
 <style lang="scss">
 .message {
+    vertical-align: middle;
+
     .items {
         display: inline;
         align-items: center;
+        vertical-align: middle;
 
         .item {
             display: inline;
+            vertical-align: middle;
+
+            * {
+                vertical-align: middle;
+            }
 
             &:not(:first-child) {
                 margin-left: 5px;
