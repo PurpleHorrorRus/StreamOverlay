@@ -83,14 +83,15 @@ export default {
 
     .avatar, .nickname {
         display: inline;
-        vertical-align: middle;
     }
 
     .avatar {
+        vertical-align: middle;
         border-radius: 100px;
     }
 
     .nickname {
+        vertical-align: bottom;
         pointer-events: all;
 
         font-family: "Roboto Condensed", sans-serif;
