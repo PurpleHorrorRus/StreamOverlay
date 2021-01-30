@@ -52,7 +52,6 @@
 <script>
 import express from "express";
 import Helix from "simple-helix-api";
-import { encode } from "querystring";
 
 import Input from "~/components/settings/Input";
 import SolidButton from "~/components/SolidButton";
@@ -184,15 +183,14 @@ export default {
             }
         },
         getToken () {
-            const params = {
+            let tempHelix = new Helix({
                 client_id,
                 redirect_uri: "http://localhost:3000/token",
-                response_type: "token",
-                scope: "channel_editor chat_login openid"
-            };
+                disableWarns: true
+            });
 
-            const query = encode(params);
-            const url = `https://id.twitch.tv/oauth2/authorize?${query}`;
+            const url = tempHelix.getAuthLink();
+            tempHelix = null;
 
             if (app) {
                 this.openLink(url);
