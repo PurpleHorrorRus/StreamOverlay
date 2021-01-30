@@ -1,14 +1,14 @@
 <template>
     <div :style="{ border: `2px solid ${notification.color}` }" class="notification">
         <div class="notification-content">
-            <span class="notification-text">Обнаружен низкий битрейт: {{ bitrate }}</span>
+            <span class="notification-text">Обнаружен низкий битрейт: {{ status.bitrate }}</span>
             <div id="bitrate-line" :style="{ width: `${percent}%` }" class="enter-active" />
         </div>
     </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "vuex";
 
 export default {
     props: {
@@ -18,14 +18,11 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({
-            status: "obs/getStatus"
+        ...mapState({
+            status: state => state.obs.status
         }),
-        bitrate () { 
-            return this.status.bitrate; 
-        },
         percent () {
-            return (this.bitrate / 5500) * 100;
+            return (this.status.bitrate / 5500) * 100;
         }
     }
 };

@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 import Movable from "~/components/Movable";
 import TechInfoItem from "~/components/obs/TechInfoItem";
@@ -54,10 +54,9 @@ export default {
         TechInfoItem
     },
     computed: {
-        ...mapGetters({
-            settings: "settings/getSettings",
-
-            status: "obs/getStatus"
+        ...mapState({
+            settings: state => state.settings.settings,
+            status: state => state.obs.status
         }),
         formatBitrate () {
             return `${(this.status.bitrate / 1024).toFixed(1)} MB/s`;

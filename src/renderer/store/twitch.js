@@ -207,16 +207,11 @@ export default {
         },
         ban: ({ state }, nickname) => state.client.ban(state.user.username, nickname, "бан стримером"),
         removeMessage: ({ commit }, id) => commit("removeMessage", id),
-        async updateStats ({ commit, dispatch, getters, rootGetters }) { 
-            const helix = getters["getHelix"];
-            const user = getters["getUser"];
+        async updateStats ({ commit, dispatch, state, rootState }) { 
+            dispatch("followers/GET", state.user.id, { root: true });
 
-            dispatch("followers/GET", user.id, { root: true });
-
-            const { stream } = rootGetters["obs/getStatus"];
-
-            if (stream) {
-                const response = await helix.getStream(user.username).catch(() => commit("setViewers", -1));
+            if (rootState.obs.status.stream) {
+                const response = await state.helix.getStream(state.user.username).catch(() => commit("setViewers", -1));
 
                 if (response) {
                     const viewers = !response.error ? response.viewer_count : -1;
@@ -224,28 +219,23 @@ export default {
                 }
             }
         },
-        updateStream ({ commit, getters }, data) {
-            return new Promise(async resolve => {
-                const helix = getters["getHelix"];
-                const user = getters["getUser"];
-                const { status: _title, game: _game } = await helix.getChannel(user.id);
+        async updateStream ({ commit, state }, data) {
+            const { status: _title, game: _game } = await state.helix.getChannel(state.user.id);
             
-                const title_update = data.title !== null ? data.title : _title;
-                const game_update = data.game !== null ? data.game : _game;
+            const title_update = data.title !== null ? data.title : _title;
+            const game_update = data.game !== null ? data.game : _game;
 
-                const { success } = 
-                    await helix.updateStream(user.id, title_update, game_update)
-                        .catch(console.error);
+            const { success } = await state.helix.updateStream(state.user.id, title_update, game_update)
+                .catch(console.error);
                 
-                if (success) {
-                    commit("setStream", {
-                        title: title_update,
-                        game: game_update
-                    });
-                }
+            if (success) {
+                commit("setStream", {
+                    title: title_update,
+                    game: game_update
+                });
+            }
 
-                return resolve(success);
-            });
+            return success;
         },
         async loadEmotes ({ commit, state }) { 
             const betterttv_global_url = "https://api.betterttv.net/3/cached/emotes/global";
@@ -298,14 +288,5 @@ export default {
             commit("runInterval"); 
         }
     },
-    getters: {
-        getUser: state => state.user,
-        getMessages: state => state.messages,
-        getHelix: state => state.helix,
-        getClient: state => state.client,
-        getStream: state => state.stream,
-        getBetterTTV: state => state.betterTTV,
-        getFrankerFaceZ: state => state.FrankerFaceZ,
-        getViewers: state => state.viewers
-    }
+    getters: {}
 };

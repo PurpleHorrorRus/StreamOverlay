@@ -1,6 +1,6 @@
 <template>
     <div id="modal">
-        <Chat v-if="settings !== null && settings.chat.enable" />
+        <Chat />
         <div id="modal-lock">
             <font-awesome-icon v-if="locked" :icon="['fa', 'lock']" style="color: lightgreen" />
             <font-awesome-icon v-else :icon="['fa', 'unlock']" style="color: red" />
@@ -13,7 +13,7 @@
 
 <script>
 import { ipcRenderer } from "electron";
-import { mapGetters } from "vuex";
+import { mapState } from "vuex";
 
 import Chat from "~/components/Chat";
 
@@ -25,8 +25,8 @@ export default {
     },
     mixins: [CoreMixin],
     computed: {
-        ...mapGetters({
-            locked: "ipc/getLock"
+        ...mapState({
+            locked: state => state.ipc.locked
         })
     },
     mounted () { 
@@ -69,7 +69,7 @@ export default {
         align-items: center;
         flex-wrap: wrap;
 
-        width: 600px;
+        min-width: 600px;
 
         padding: 15px;
 

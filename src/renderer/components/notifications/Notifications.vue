@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "vuex";
 
 import Notification from "~/components/notifications/notification";
 import LowBitrate from "~/components/notifications/lowbitrate";
@@ -26,12 +26,12 @@ export default {
         LowFPS
     },
     computed: {
-        ...mapGetters({
-            notifications: "notifications/getNotifications",
-            showLowBitrate: "notifications/getLowBitrate",
-            showLowFPS: "notifications/getLowFPS",
-            showUpdate: "notifications/getShowUpdate",
-            showChatDisconnect: "notifications/getChatDisconnect"
+        ...mapState({
+            notifications: state => state.notifications.notifications,
+            showLowBitrate: state => state.notifications.lowbitrate,
+            showLowFPS: state => state.notifications.lowfps,
+            showUpdate: state => state.notifications.update,
+            showChatDisconnect: state => state.notifications.chatdisconnect
         })
     }
 };

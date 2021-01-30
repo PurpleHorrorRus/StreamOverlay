@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "vuex";
 
 export default {
     props: {
@@ -19,8 +19,8 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({
-            status: "obs/getStatus"
+        ...mapState({
+            status: state => state.obs.status
         })
     }
 };

@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 import Input from "~/components/settings/Input";
 import Game from "~/components/Game";
@@ -64,8 +64,7 @@ export default {
         SolidButton
     },
     async asyncData ({ store }) {
-        const helix = store.getters["twitch/getHelix"];
-        const stream = store.getters["twitch/getStream"];
+        const { helix, stream } = store.state.twitch;
         const game = await helix.getGame(stream.game);
         const top_games = await helix.getTopGames();
 
@@ -97,9 +96,9 @@ export default {
         };
     },
     computed: {
-        ...mapGetters({
-            user: "twitch/getUser",
-            helix: "twitch/getHelix"
+        ...mapState({
+            user: state => state.twitch.user,
+            helix: state => state.twitch.helix
         }),
         empty () {
             return this.resizeArt("https://static-cdn.jtvnw.net/ttv-static/404_boxart-{width}x{height}.jpg");

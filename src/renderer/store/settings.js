@@ -6,15 +6,11 @@ export default {
         settings: null
     }),
     mutations: {
-        setSettings (state, settings) {
-            state.settings = settings;
-        }
+        setSettings: (state, settings) => state.settings = settings
     },
     actions: {
-        setSettings ({ commit }, settings) {
-            commit("setSettings", settings);
-        },
-        saveSettings ({ commit, dispatch, rootGetters }, settings) {
+        setSettings: ({ commit }, settings) => commit("setSettings", settings),
+        saveSettings: ({ commit, dispatch, rootState }, settings) => {
             if (!settings.type) {
                 return console.error("You must to specify settings type", settings);
             }
@@ -23,7 +19,7 @@ export default {
                 commit("setSettings", settings.content);
             }
 
-            const config = rootGetters["GET_CONFIG"];
+            const config = rootState.config;
             config[settings.type] = settings.content;
 
             dispatch("SET_CONFIG", config, { root: true });
@@ -34,7 +30,5 @@ export default {
             });
         }
     },
-    getters: {
-        getSettings: state => state.settings
-    }
+    getters: {}
 };

@@ -4,18 +4,10 @@ export default {
         locked: false 
     }),
     mutations: {
-        turnLock (state, mouse) { 
-            state.locked = mouse; 
-        }
+        TURN_LOCK: (state, mouse) => state.locked = mouse
     },
     actions: {
-        turnLock ({ commit }, mouse) { 
-            commit("turnLock", mouse);
-        }
+        TURN_LOCK: ({ commit }, mouse) => commit("TURN_LOCK", mouse)
     },
-    getters: {
-        getLock (state) { 
-            return state.locked; 
-        }
-    }
+    getters: {}
 };

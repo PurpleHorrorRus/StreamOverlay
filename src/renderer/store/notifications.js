@@ -47,27 +47,11 @@ export default {
         }
     },
     actions: {
-        addNotification ({ commit }, notification) { 
-            commit("addNotification", notification); 
-        },
-        turnLowBitrate ({ commit }, show) { 
-            commit("turnLowBitrate", show);
-        },
-        turnLowFPS ({ commit }, show) { 
-            commit("turnLowFPS", show); 
-        },
-        turnChatDisconnect ({ commit }, show) { 
-            commit("turnChatDisconnect", show); 
-        },
-        turnUpdate ({ commit }, show) { 
-            commit("turnUpdate", show); 
-        }
+        addNotification: ({ commit }, notification) => commit("addNotification", notification),
+        turnLowBitrate: ({ commit }, show) => commit("turnLowBitrate", show),
+        turnLowFPS: ({ commit }, show) => commit("turnLowFPS", show),
+        turnChatDisconnect: ({ commit }, show) => commit("turnChatDisconnect", show),
+        turnUpdate: ({ commit }, show) => commit("turnUpdate", show)
     },
-    getters: {
-        getNotifications: state => state.notifications,
-        getLowBitrate: state => state.lowbitrate,
-        getLowFPS: state => state.lowfps,
-        getChatDisconnect: state => state.chatdisconnect,
-        getShowUpdate: state => state.update
-    }
+    getters: {}
 };

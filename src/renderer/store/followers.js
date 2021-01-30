@@ -7,15 +7,11 @@ export default {
         SET_COUNT: (state, count) => state.count = count
     },
     actions: {
-        GET: async ({ commit, rootGetters }, id) => {
-            const count = await rootGetters["twitch/getHelix"]
-                .getFollowersCount(id);
-
+        GET: async ({ commit, rootState }, id) => {
+            const count = await rootState.twitch.helix.getFollowersCount(id);
             commit("SET_COUNT", count);
             return count;
         }
     },
-    getters: {
-        GET_COUNT: state => state.count
-    }
+    getters: {}
 };

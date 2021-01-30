@@ -268,9 +268,5 @@ export default {
         clearUpdateInterval: ({ commit }) => commit("clearUpdateInterval"),
         updateTime: ({ commit }) => commit("updateTime")
     },
-    getters: {
-        getOBS: state => state.obs,
-        getStatus: state => state.status,
-        getDevices: state => state.devices
-    }
+    getters: {}
 };

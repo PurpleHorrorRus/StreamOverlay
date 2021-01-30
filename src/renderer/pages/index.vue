@@ -104,7 +104,7 @@ export default {
         ...mapActions({
             setConfig: "SET_CONFIG",
             
-            turnLock: "ipc/turnLock",
+            turnLock: "ipc/TURN_LOCK",
             turnUpdate: "notifications/turnUpdate"
         }),
         registerIPC () { 

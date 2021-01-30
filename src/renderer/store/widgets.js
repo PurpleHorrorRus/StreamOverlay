@@ -19,8 +19,5 @@ export default {
             }, { root: true });
         }
     },
-    getters: {
-        GET_WIDGETS: state => state.overlays,
-        GET_EDIT: state => state.edit
-    }
+    getters: {}
 };
