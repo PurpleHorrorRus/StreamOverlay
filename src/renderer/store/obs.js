@@ -139,13 +139,12 @@ export default {
                 state.obs.on("StreamStatus", data => {
                     state.status.bitrate = data["kbits-per-sec"];
 
-                    let visible = this.getters["notifications/getLowBitrate"];
                     if (state.status.bitrate <= 200) {
-                        if (!visible) {
+                        if (!this.state.notifications.lowbitrate) {
                             this.dispatch("notifications/turnLowBitrate", true);
                         }
                     } else {
-                        if (visible) {
+                        if (this.state.notifications.lowbitrate) {
                             this.dispatch("notifications/turnLowBitrate", false);
                         }
                     }
