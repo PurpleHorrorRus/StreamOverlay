@@ -93,74 +93,58 @@ export default {
 
             state.client.on("disconnected", () => this.dispatch("notifications/turnChatDisconnect", true));
         },
-        ban (state, nickname) { 
-            state.client.ban(state.user.username, nickname, "бан стримером"); 
-        },
-        removeMessage (state, message) {
-            const index = state.messages.findIndex(m => m.id === message.id);
-            if (!~index) {
-                return;
+        ban: (state, nickname) => state.client.ban(state.user.username, nickname, "бан стримером"),
+        removeMessage: (state, id) => {
+            const index = state.messages.findIndex(m => m.id === id);
+            if (~index) {
+                state.messages.splice(index, 1);
             }
-            state.messages.splice(index, 1); 
         },
-        setStream (state, stream) { 
-            state.stream = stream; 
-        },
-        setViewers (state, viewers) {
-            state.viewers = viewers;
-        },
-        updateStream(state, stream) { 
-            state.stream = stream; 
-        },
-        loadEmotes (state) {
-            const success = title => {
-                console.log("%s%c%s", `${title} `, "color: lightgreen", "[OK]");
-            };
-
-            const fail = title => {
-                console.log("%s%c%s", `${title} `, "color: red", "[Fail]");
-            };
-
+        setStream: (state, stream) => state.stream = stream,
+        setViewers: (state, viewers) => state.viewers = viewers,
+        loadEmotes: async state => {
             const betterttv_global_url = "https://api.betterttv.net/3/cached/emotes/global";
-            syncRequest(betterttv_global_url).then(res => {
-                for (const emote of res) {
-                    state.betterTTV = [...state.betterTTV, {
-                        code: emote.code,
-                        url: `https://cdn.betterttv.net/emote/${emote.id}/3x`
-                    }];
-                }
-                success("Global BTTV Emotes");
-            }).catch(() => fail("Global BTTV Emotes"));
-            
             const betterttv_url = `https://api.betterttv.net/3/cached/users/twitch/${state.user.id}`;
-            syncRequest(betterttv_url).then(res => {
-                for (const emote of res.sharedEmotes) {
-                    state.betterTTV = [...state.betterTTV, {
+            const frankerfacez_url = `https://api.frankerfacez.com/v1/room/${state.user.username.toLowerCase()}`;
+
+            const promises = [
+                (async () => {
+                    const res = await syncRequest(betterttv_global_url);
+
+                    return res.map(emote => ({
                         code: emote.code,
                         url: `https://cdn.betterttv.net/emote/${emote.id}/3x`
-                    }];
-                }
-                success("Channel BTTV Emotes");
-            }).catch(() => fail("Channel BTTV Emotes"));
+                    }));
+                })(),
+                (async () => {
+                    const res = await syncRequest(betterttv_url);
 
-
-            const frankerfacez_url = `https://api.frankerfacez.com/v1/room/${state.user.username.toLowerCase()}`;
-            syncRequest(frankerfacez_url).then(res => {
-                const id = res.room.set;
-                for (const franker_emote of res.sets[id].emoticons) {
-                    let lastURLIndex = 1;
-                    for (const obj in franker_emote.urls) {
-                        lastURLIndex = obj;
-                    }
+                    return res.sharedEmotes.map(emote => ({
+                        code: emote.code,
+                        url: `https://cdn.betterttv.net/emote/${emote.id}/3x`
+                    }));
+                })(),
+                (async () => {
+                    const res = await syncRequest(frankerfacez_url);
                     
-                    state.FrankerFaceZ = [...state.FrankerFaceZ, {
-                        code: franker_emote.name,
-                        url: `https://${franker_emote.urls[lastURLIndex]}`
-                    }];
-                }
+                    if (res.sets[res.room.set]) {
+                        return res.sets[res.room.set].emoticons.map(emote => {
+                            const urls = Object.values(emote.urls);
+                            
+                            return {
+                                code: emote.name,
+                                url: urls[urls.length - 1]
+                            };
+                        });
+                    }
 
-                success("FrankerFaceZ Channel Emotes");
-            }).catch(() => fail("FrankerFaceZ Channel Emotes"));
+                    return [];
+                })()
+            ];
+            
+            const [bGlobal, bChannel, fChannel] = await Promise.all(promises);
+            state.betterTTV = [...bGlobal, ...bChannel];
+            state.FrankerFaceZ = fChannel;
         },
         runInterval (state) {
             if (state.interval) {
