@@ -67,22 +67,19 @@ export default {
             state.client.on("message", async (_channel, user, message) => {
                 const nickname = user["display-name"];
                 const profile = await state.helix.getUser(nickname);
-                const { profile_image_url: avatar } = profile;
-                const { color } = user;
-                const badges = user.badges ? Object.keys(user.badges) : user.badges;
-                
+
                 const data = { 
                     id: (Math.random() * 10000).toFixed(0), 
                     nickname, 
-                    avatar, 
-                    badges, 
+                    avatar: profile.profile_image_url, 
+                    badges: user.badges ? Object.keys(user.badges) : user.badges, 
                     text: message, 
                     emotes: user.emotes, 
-                    color 
+                    color: user.color
                 };
 
                 data.formatted = await this.dispatch("twitch/formatMessage", data);
-                this.dispatch("twitch/pushMessage", data);
+                state.messages = [data, ...state.messages]; 
             });
 
             state.client.on("connected", () => {
@@ -95,9 +92,6 @@ export default {
             });
 
             state.client.on("disconnected", () => this.dispatch("notifications/turnChatDisconnect", true));
-        },
-        pushMessage (state, message) { 
-            state.messages = [message, ...state.messages]; 
         },
         ban (state, nickname) { 
             state.client.ban(state.user.username, nickname, "бан стримером"); 
@@ -284,9 +278,6 @@ export default {
             }
             
             return ready;
-        },
-        pushMessage ({ commit }, message) { 
-            commit("pushMessage", message); 
         },
         listenCommand ({ commit }, command) { 
             commit("listenCommand", command); 
