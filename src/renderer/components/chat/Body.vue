@@ -48,10 +48,6 @@ export default {
             display: inline;
             vertical-align: middle;
 
-            * {
-                vertical-align: middle;
-            }
-
             &:not(:first-child) {
                 margin-left: 5px;
             }
