@@ -93,7 +93,6 @@ export default {
 
             state.client.on("disconnected", () => this.dispatch("notifications/turnChatDisconnect", true));
         },
-        ban: (state, nickname) => state.client.ban(state.user.username, nickname, "бан стримером"),
         removeMessage: (state, id) => {
             const index = state.messages.findIndex(m => m.id === id);
             if (~index) {
@@ -102,7 +101,153 @@ export default {
         },
         setStream: (state, stream) => state.stream = stream,
         setViewers: (state, viewers) => state.viewers = viewers,
-        loadEmotes: async state => {
+        SET_EMOTES: (state, [bGlobal, bChannel, fChannel]) => {
+            state.betterTTV = [...bGlobal, ...bChannel];
+            state.FrankerFaceZ = fChannel;
+        },
+        runInterval (state) {
+            if (state.interval) {
+                clearInterval(state.interval);
+                state.interval = null;
+                this.dispatch("twitch/updateStats");
+            }
+
+            state.interval = setInterval(() => 
+                this.dispatch("twitch/updateStats"), 20 * 1000);
+        }
+    },
+    actions: {
+        createHelix: ({ commit }, twitch) => commit("createHelix", twitch),
+        createChatBot: ({ commit }) => commit("createChatBot"),
+        formatMessage: ({ state }, message) => {
+            const { text, emotes } = message;
+
+            let ready = [];
+            let emojiWords = [];
+
+            const addEmoji = url => {
+                ready = [...ready, {
+                    type: "emoji",
+                    content: url
+                }];
+            };
+            
+            if (emotes) {
+                const positions = Object.values(emotes)
+                    .map(([position]) => 
+                        position.split("-")
+                            .map(Number));
+
+                const ids = Object.keys(emotes);
+
+                emojiWords = positions.map(([start, end], index) => {
+                    return {
+                        url: `http://static-cdn.jtvnw.net/emoticons/v1/${ids[index]}/3.0`,
+                        word: text.substring(start, end + 1)
+                    };
+                });
+            }
+
+
+            const betterTTVMap = state.betterTTV.map(e => e.code),
+                FrankerFaceZMap = state.FrankerFaceZ.map(e => e.code);
+
+            let txt = "";
+
+            const addText = () => {
+                if (txt.length) {
+                    ready = [...ready, {
+                        type: "text",
+                        content: txt
+                    }];
+    
+                    txt = "";
+                }
+            };
+
+            const splitted = text.split(" ");
+            for (let wordIndex in splitted) {
+                wordIndex = Number(wordIndex);
+                const word = splitted[wordIndex];
+
+                const index = emotes 
+                    ? emojiWords.map(({ word }) => word).indexOf(word)
+                    : -1;
+
+                const betterTTVIndex = betterTTVMap.indexOf(word);
+                const FrankerFaceZIndex = FrankerFaceZMap.indexOf(word);
+
+                const isEmote = (~index || ~betterTTVIndex || ~FrankerFaceZIndex) !== 0;
+                const isEnd = wordIndex === splitted.length - 1;
+                // const isStartOrEnd = wordIndex === 0 || wordIndex === splitted.length - 1;
+
+                if (isEmote) {
+                    addText();
+
+                    if (~index) {
+                        addEmoji(emojiWords[index].url);
+                        continue;
+                    } else if (~betterTTVIndex) {
+                        addEmoji(state.betterTTV[betterTTVIndex].url);
+                        continue;
+                    } else if (~FrankerFaceZIndex) {
+                        addEmoji(state.FrankerFaceZ[FrankerFaceZIndex].url);
+                        continue;
+                    }
+                } else {
+                    txt += " " + word;
+
+                    if (isEnd) {
+                        addText();
+                    }
+                }
+            }
+            
+            return ready;
+        },
+        ban: ({ state }, nickname) => state.client.ban(state.user.username, nickname, "бан стримером"),
+        removeMessage: ({ commit }, id) => commit("removeMessage", id),
+        async updateStats ({ commit, dispatch, getters, rootGetters }) { 
+            const helix = getters["getHelix"];
+            const user = getters["getUser"];
+
+            dispatch("followers/GET", user.id, { root: true });
+
+            const { stream } = rootGetters["obs/getStatus"];
+
+            if (stream) {
+                const response = await helix.getStream(user.username).catch(() => commit("setViewers", -1));
+
+                if (response) {
+                    const viewers = !response.error ? response.viewer_count : -1;
+                    commit("setViewers", viewers);
+                }
+            }
+        },
+        updateStream ({ commit, getters }, data) {
+            return new Promise(async resolve => {
+                const helix = getters["getHelix"];
+                const user = getters["getUser"];
+                const { status: _title, game: _game } = await helix.getChannel(user.id);
+            
+                const title_update = data.title !== null ? data.title : _title;
+                const game_update = data.game !== null ? data.game : _game;
+
+                const { success } = 
+                    await helix.updateStream(user.id, title_update, game_update)
+                        .catch(console.error);
+                
+                if (success) {
+                    commit("setStream", {
+                        title: title_update,
+                        game: game_update
+                    });
+                }
+
+                return resolve(success);
+            });
+        },
+        async loadEmotes ({ commit, state }) { 
             const betterttv_global_url = "https://api.betterttv.net/3/cached/emotes/global";
             const betterttv_url = `https://api.betterttv.net/3/cached/users/twitch/${state.user.id}`;
             const frankerfacez_url = `https://api.frankerfacez.com/v1/room/${state.user.username.toLowerCase()}`;
@@ -146,190 +291,11 @@ export default {
                 return resolve([]);
             });
             
-            const [bGlobal, bChannel, fChannel] = await Promise.all([bGlobalPromise, bChannelPromise, fChannelPromise]);
-            state.betterTTV = [...bGlobal, ...bChannel];
-            state.FrankerFaceZ = fChannel;
-        },
-        runInterval (state) {
-            if (state.interval) {
-                this.dispatch("twitch/clearInterval");
-                this.dispatch("twitch/updateStats");
-            }
-
-            state.interval = setInterval(() => 
-                this.dispatch("twitch/updateStats"), 20 * 1000);
-        },
-        clearInterval (state) {
-            if (state.interval) {
-                clearInterval(state.interval);
-                state.interval = null;
-            }
-        },
-        say (state, message) { 
-            state.client.say(state.user.username, message); 
-        },
-        sendToChat (state, data) {
-            state.chatServer.send(data);
-        }
-    },
-    actions: {
-        createHelix ({ commit }, twitch) { 
-            commit("createHelix", twitch);
-        },
-        createChatBot ({ commit }) { 
-            commit("createChatBot"); 
-        },
-        formatMessage ({ getters }, message) {
-            const { text, emotes } = message;
-
-            let ready = [];
-            let emojiWords = [];
-
-            const addEmoji = url => {
-                ready = [...ready, {
-                    type: "emoji",
-                    content: url
-                }];
-            };
-            
-            if (emotes) {
-                const positions = Object.values(emotes)
-                    .map(([position]) => 
-                        position.split("-")
-                            .map(Number));
-
-                const ids = Object.keys(emotes);
-
-                emojiWords = positions.map(([start, end], index) => {
-                    return {
-                        url: `http://static-cdn.jtvnw.net/emoticons/v1/${ids[index]}/3.0`,
-                        word: text.substring(start, end + 1)
-                    };
-                });
-            }
-
-            const betterTTV = getters["getBetterTTV"],
-                FrankerFaceZ = getters["getFrankerFaceZ"];
-
-            const betterTTVMap = betterTTV.map(e => e.code),
-                FrankerFaceZMap = FrankerFaceZ.map(e => e.code);
-
-            let txt = "";
-
-            const addText = () => {
-                if (txt.length) {
-                    ready = [...ready, {
-                        type: "text",
-                        content: txt
-                    }];
-    
-                    txt = "";
-                }
-            };
-
-            const splitted = text.split(" ");
-            for (let wordIndex in splitted) {
-                wordIndex = Number(wordIndex);
-                const word = splitted[wordIndex];
-
-                const index = emotes 
-                    ? emojiWords.map(({ word }) => word).indexOf(word)
-                    : -1;
-
-                const betterTTVIndex = betterTTVMap.indexOf(word);
-                const FrankerFaceZIndex = FrankerFaceZMap.indexOf(word);
-
-                const isEmote = (~index || ~betterTTVIndex || ~FrankerFaceZIndex) !== 0;
-                const isEnd = wordIndex === splitted.length - 1;
-                // const isStartOrEnd = wordIndex === 0 || wordIndex === splitted.length - 1;
-
-                if (isEmote) {
-                    addText();
-
-                    if (~index) {
-                        addEmoji(emojiWords[index].url);
-                        continue;
-                    } else if (~betterTTVIndex) {
-                        addEmoji(betterTTV[betterTTVIndex].url);
-                        continue;
-                    } else if (~FrankerFaceZIndex) {
-                        addEmoji(FrankerFaceZ[FrankerFaceZIndex].url);
-                        continue;
-                    }
-                } else {
-                    txt += " " + word;
-
-                    if (isEnd) {
-                        addText();
-                    }
-                }
-            }
-            
-            return ready;
-        },
-        listenCommand ({ commit }, command) { 
-            commit("listenCommand", command); 
-        },
-        ban ({ commit }, nickname) { 
-            commit("ban", nickname); 
-        },
-        removeMessage ({ commit }, message) { 
-            commit("removeMessage", message); 
-        },
-        async updateStats ({ commit, dispatch, getters, rootGetters }) { 
-            const helix = getters["getHelix"];
-            const user = getters["getUser"];
-
-            dispatch("followers/GET", user.id, { root: true });
-
-            const { stream } = rootGetters["obs/getStatus"];
-
-            if (stream) {
-                const response = await helix.getStream(user.username).catch(() => commit("setViewers", -1));
-
-                if (response) {
-                    const viewers = !response.error ? response.viewer_count : -1;
-                    commit("setViewers", viewers);
-                }
-            }
-        },
-        updateStream ({ commit, getters }, data) {
-            return new Promise(async resolve => {
-                const helix = getters["getHelix"];
-                const user = getters["getUser"];
-                const { status: _title, game: _game } = await helix.getChannel(user.id);
-            
-                const title_update = data.title !== null ? data.title : _title;
-                const game_update = data.game !== null ? data.game : _game;
-
-                const { success } = 
-                    await helix.updateStream(user.id, title_update, game_update)
-                        .catch(console.error);
-                
-                if (success) {
-                    commit("setStream", {
-                        title: title_update,
-                        game: game_update
-                    });
-                }
-
-                return resolve(success);
-            });
-        },
-        loadEmotes ({ commit }) { 
-            commit("loadEmotes");
+            const emotes = await Promise.all([bGlobalPromise, bChannelPromise, fChannelPromise]);
+            commit("SET_EMOTES", emotes);
         },
         runInterval ({ commit }) { 
             commit("runInterval"); 
-        },
-        clearInterval ({ commit }) { 
-            commit("clearInterval"); 
-        },
-        say ({ commit }, message) { 
-            commit("say", message); 
-        },
-        sendToChat ({ commit }, data) {
-            commit("sendToChat", data);
         }
     },
     getters: {

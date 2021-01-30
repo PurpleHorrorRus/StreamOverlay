@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 import Badges from "~/components/chat/Badges";
 import Body from "~/components/chat/Body";
@@ -34,11 +34,8 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({
-            settings: "settings/getSettings",
-
-            betterTTV: "twitch/getBetterTTV",
-            FrankerFaceZ: "twitch/getFrankerFaceZ"
+        ...mapState({
+            settings: state => state.settings.settings
         }),
         messageStyle () {
             return { 
@@ -64,7 +61,7 @@ export default {
     },
     created () { 
         if (this.settings.chat.timeout !== 0) {
-            setTimeout(() => this.removeMessage(this.message), 
+            setTimeout(() => this.removeMessage(this.message.id), 
                 this.settings.chat.timeout * 1000); 
         }
     },
