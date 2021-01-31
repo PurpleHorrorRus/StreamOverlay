@@ -266,6 +266,5 @@ export default {
         setupUpdateInterval: ({ commit }) => commit("setupUpdateInterval"),
         clearUpdateInterval: ({ commit }) => commit("clearUpdateInterval"),
         updateTime: ({ commit }) => commit("updateTime")
-    },
-    getters: {}
+    }
 };

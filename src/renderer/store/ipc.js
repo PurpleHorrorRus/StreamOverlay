@@ -8,6 +8,5 @@ export default {
     },
     actions: {
         TURN_LOCK: ({ commit }, mouse) => commit("TURN_LOCK", mouse)
-    },
-    getters: {}
+    }
 };

@@ -214,7 +214,7 @@ export default {
         },
         ban: ({ state }, nickname) => state.client.ban(state.user.username, nickname, "бан стримером"),
         removeMessage: ({ commit }, id) => commit("removeMessage", id),
-        async updateStats ({ commit, dispatch, state, rootState }) { 
+        updateStats: async ({ commit, dispatch, state, rootState }) => { 
             dispatch("followers/GET", state.user.id, { root: true });
 
             if (rootState.obs.status.stream) {
@@ -226,7 +226,7 @@ export default {
                 }
             }
         },
-        async updateStream ({ commit, state }, data) {
+        updateStream: async ({ commit, state }, data) => {
             const { status: _title, game: _game } = await state.helix.getChannel(state.user.id);
             
             const title_update = data.title !== null ? data.title : _title;
@@ -244,7 +244,7 @@ export default {
 
             return success;
         },
-        async loadEmotes ({ commit, state }) { 
+        loadEmotes: async ({ commit, state }) => { 
             const betterttv_global_url = "https://api.betterttv.net/3/cached/emotes/global";
             const betterttv_url = `https://api.betterttv.net/3/cached/users/twitch/${state.user.id}`;
             const frankerfacez_url = `https://api.frankerfacez.com/v1/room/${state.user.username.toLowerCase()}`;
@@ -291,9 +291,6 @@ export default {
             const emotes = await Promise.all([bGlobalPromise, bChannelPromise, fChannelPromise]);
             commit("SET_EMOTES", emotes);
         },
-        runInterval ({ commit }) { 
-            commit("runInterval"); 
-        }
-    },
-    getters: {}
+        runInterval: ({ commit }) => commit("runInterval")
+    }
 };

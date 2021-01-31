@@ -12,6 +12,5 @@ export default {
             commit("SET_COUNT", count);
             return count;
         }
-    },
-    getters: {}
+    }
 };

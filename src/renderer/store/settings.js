@@ -29,6 +29,5 @@ export default {
                 content: settings.content
             });
         }
-    },
-    getters: {}
+    }
 };

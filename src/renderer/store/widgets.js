@@ -18,6 +18,5 @@ export default {
                 content: widgets
             }, { root: true });
         }
-    },
-    getters: {}
+    }
 };

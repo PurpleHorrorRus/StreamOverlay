@@ -52,6 +52,5 @@ export default {
         turnLowFPS: ({ commit }, show) => commit("turnLowFPS", show),
         turnChatDisconnect: ({ commit }, show) => commit("turnChatDisconnect", show),
         turnUpdate: ({ commit }, show) => commit("turnUpdate", show)
-    },
-    getters: {}
+    }
 };

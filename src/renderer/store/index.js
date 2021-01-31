@@ -21,9 +21,6 @@ const store = () => {
                 commit("SET_CONFIG", config);
             }
         },
-        getters: {
-            GET_CONFIG: state => state.config
-        },
         modules: { 
             followers,
             obs, 
