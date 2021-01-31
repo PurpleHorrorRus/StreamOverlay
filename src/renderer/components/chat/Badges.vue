@@ -34,6 +34,7 @@ export default {
     methods: {
         badgeImage (badge) {
             try {
+                // eslint-disable-next-line no-undef
                 return require(`~/images/${badge}.png`).default;
             } catch (e) {
                 return "";
