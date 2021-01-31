@@ -187,7 +187,8 @@ export default {
                 // const isStartOrEnd = wordIndex === 0 || wordIndex === splitted.length - 1;
 
                 if (isEmote) {
-                    formatted = addText(formatted, txt);
+                    formatted = addText(formatted, txt.trim());
+                    txt = "";
 
                     if (~index) {
                         formatted = addEmoji(formatted, emojiWords[index].url);
@@ -203,7 +204,8 @@ export default {
                     txt += " " + word;
 
                     if (isEnd) {
-                        formatted = addText(formatted, txt);
+                        formatted = addText(formatted, txt.trim());
+                        txt = "";
                     }
                 }
             }
