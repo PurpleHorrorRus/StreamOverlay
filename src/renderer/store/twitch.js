@@ -21,20 +21,38 @@ const syncRequest = async (url, params = {}) => {
     });
 };
 
+const addEmoji = (formatted, url) => {
+    return [...formatted, {
+        type: "emoji",
+        content: url
+    }];
+};
+
+const addText = (formatted, text) => {
+    if (text.length) {
+        return [...formatted, {
+            type: "text",
+            content: text
+        }];
+    }
+
+    return formatted;
+};
+
+let betterTTV = null;
+let FrankerFaceZ = null;
+
 export default {
     namespaced: true,
     state: () => ({
         user: null,
         helix: null,
         client: null,
-        chatServer: null,
         stream: {
             title: null,
             game: null
         },
         messages: [],
-        betterTTV: [],
-        FrankerFaceZ: [],
         interval: null,
         viewers: -1
     }),
@@ -78,7 +96,7 @@ export default {
                     color: user.color
                 };
 
-                data.formatted = await this.dispatch("twitch/formatMessage", data);
+                data.formatted = await this.dispatch("twitch/FORMAT_MESSAGE", data);
                 state.messages = [data, ...state.messages]; 
             });
 
@@ -102,8 +120,17 @@ export default {
         setStream: (state, stream) => state.stream = stream,
         setViewers: (state, viewers) => state.viewers = viewers,
         SET_EMOTES: (state, [bGlobal, bChannel, fChannel]) => {
-            state.betterTTV = [...bGlobal, ...bChannel];
-            state.FrankerFaceZ = fChannel;
+            const bttv = [...bGlobal, ...bChannel];
+
+            betterTTV = {
+                content: bttv,
+                ids: bttv.map(e => e.code)
+            };
+
+            FrankerFaceZ = {
+                content: fChannel,
+                ids: fChannel.map(e => e.code)
+            };
         },
         runInterval (state) {
             if (state.interval) {
@@ -119,18 +146,11 @@ export default {
     actions: {
         createHelix: ({ commit }, twitch) => commit("createHelix", twitch),
         createChatBot: ({ commit }) => commit("createChatBot"),
-        formatMessage: ({ state }, message) => {
+        FORMAT_MESSAGE: (_, message) => {
             const { text, emotes } = message;
 
-            let ready = [];
+            let formatted = [];
             let emojiWords = [];
-
-            const addEmoji = url => {
-                ready = [...ready, {
-                    type: "emoji",
-                    content: url
-                }];
-            };
             
             if (emotes) {
                 const positions = Object.values(emotes)
@@ -148,22 +168,7 @@ export default {
                 });
             }
 
-
-            const betterTTVMap = state.betterTTV.map(e => e.code),
-                FrankerFaceZMap = state.FrankerFaceZ.map(e => e.code);
-
             let txt = "";
-
-            const addText = () => {
-                if (txt.length) {
-                    ready = [...ready, {
-                        type: "text",
-                        content: txt
-                    }];
-    
-                    txt = "";
-                }
-            };
 
             const splitted = text.split(" ");
             for (let wordIndex in splitted) {
@@ -174,36 +179,36 @@ export default {
                     ? emojiWords.map(({ word }) => word).indexOf(word)
                     : -1;
 
-                const betterTTVIndex = betterTTVMap.indexOf(word);
-                const FrankerFaceZIndex = FrankerFaceZMap.indexOf(word);
+                const betterTTVIndex = betterTTV.ids.indexOf(word);
+                const FrankerFaceZIndex = FrankerFaceZ.ids.indexOf(word);
 
                 const isEmote = (~index || ~betterTTVIndex || ~FrankerFaceZIndex) !== 0;
                 const isEnd = wordIndex === splitted.length - 1;
                 // const isStartOrEnd = wordIndex === 0 || wordIndex === splitted.length - 1;
 
                 if (isEmote) {
-                    addText();
+                    formatted = addText(formatted, txt);
 
                     if (~index) {
-                        addEmoji(emojiWords[index].url);
+                        formatted = addEmoji(formatted, emojiWords[index].url);
                         continue;
                     } else if (~betterTTVIndex) {
-                        addEmoji(state.betterTTV[betterTTVIndex].url);
+                        formatted = addEmoji(formatted, betterTTV.content[betterTTVIndex].url);
                         continue;
                     } else if (~FrankerFaceZIndex) {
-                        addEmoji(state.FrankerFaceZ[FrankerFaceZIndex].url);
+                        formatted = addEmoji(formatted, FrankerFaceZ.content[FrankerFaceZIndex].url);
                         continue;
                     }
                 } else {
                     txt += " " + word;
 
                     if (isEnd) {
-                        addText();
+                        formatted = addText(formatted, txt);
                     }
                 }
             }
             
-            return ready;
+            return formatted;
         },
         ban: ({ state }, nickname) => state.client.ban(state.user.username, nickname, "бан стримером"),
         removeMessage: ({ commit }, id) => commit("removeMessage", id),
