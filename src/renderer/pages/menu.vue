@@ -33,11 +33,11 @@ export default {
     methods: {
         openStream() { 
             this.loadingStream = true; 
-            this.$router.replace("/stream"); 
+            this.open("/stream");
         },
         enterEdit() {
             this.active = true;
-            this.$router.replace("/").catch(() => {});
+            this.open("/");
         },
         open (link) {
             this.$router.replace(link).catch(() => {}); 
