@@ -274,7 +274,7 @@ export default {
             const fChannelPromise = new Promise(async resolve => {
                 const res = await syncRequest(frankerfacez_url);
                     
-                if (res.sets[res.room.set]) {
+                if (res.room) {
                     return resolve(res.sets[res.room.set].emoticons.map(emote => {
                         const urls = Object.values(emote.urls);
                             
