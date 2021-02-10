@@ -8,9 +8,9 @@
             @click="openStream" 
         />
         <MenuItem :text="'Редактирование виджетов'" :icon="['fas', 'pen']" @click="enterEdit" />
-        <MenuItem :text="'Настройки OBS'" :icon="['fas', 'wrench']" @click="openOBS" />
-        <MenuItem :text="'Настройки Twitch'" :icon="['fab', 'twitch']" @click="openTwitch" />
-        <MenuItem :text="'Настройки чата'" :icon="['fas', 'comment']" @click="openChat" />
+        <MenuItem :text="'Настройки OBS'" :icon="['fas', 'wrench']" @click="open('/settings/obs')" />
+        <MenuItem :text="'Настройки Twitch'" :icon="['fab', 'twitch']" @click="open('/settings/twitch')" />
+        <MenuItem :text="'Настройки чата'" :icon="['fas', 'comment']" @click="open('/settings/chat')" />
     </div>
 </template>
 
@@ -39,14 +39,8 @@ export default {
             this.active = true;
             this.$router.replace("/").catch(() => {});
         },
-        openOBS () { 
-            this.$router.replace("/settings/obs").catch(() => {}); 
-        },
-        openTwitch () { 
-            this.$router.replace("/settings/twitch").catch(() => {});
-        },
-        openChat () { 
-            this.$router.replace("/settings/chat").catch(() => {});
+        open (link) {
+            this.$router.replace(link).catch(() => {}); 
         }
     }
 };
