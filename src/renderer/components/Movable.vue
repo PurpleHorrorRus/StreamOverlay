@@ -11,7 +11,7 @@
         @resizestop="onResize"
     >
         <span v-if="active && name.length > 0" class="movable_name nowrap" v-text="name" />
-        <slot v-if="!!$slots.default" />
+        <slot v-if="$slots.default" />
     </vue-draggable-resizable>
 </template>
 
@@ -49,7 +49,11 @@ export default {
 </script>
 
 <style lang="scss">
-.vdr { 
+.vdr {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+
     background:
         linear-gradient($secondary,$secondary) top center/calc(100%) 2px,
         linear-gradient($secondary,$secondary) bottom center/calc(100%) 2px,
