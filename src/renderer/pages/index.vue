@@ -126,6 +126,7 @@ export default {
             IPC.on("lock", (_event, mouse) => this.turnLock(mouse));
             IPC.on("viewers_list", () => {
                 this.settings.viewers_list.enable = !this.settings.viewers_list.enable;
+                
                 this.saveSettings({
                     type: "settings",
                     content: this.settings

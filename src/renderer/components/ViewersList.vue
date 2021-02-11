@@ -1,7 +1,13 @@
 <template>
-    <Movable class="viewers-list" :source="vl_settings" name="Список зрителей" @onDrag="onDrag" @onResize="onResize">
+    <Movable 
+        class="viewers-list" 
+        :source="settings.viewers_list" 
+        name="Список зрителей" 
+        @onDrag="onDrag" 
+        @onResize="onResize"
+    >
         <div v-if="!loading" id="viewers-container">
-            <div v-for="category of categories" :key="category" class="category">
+            <div v-for="category of Object.keys(chatters)" :key="category" class="category">
                 <span 
                     v-if="chatters[category].length" 
                     class="category-title" 
@@ -46,14 +52,6 @@ export default {
             vips: "#6900ba"
         }
     }),
-    computed: {
-        vl_settings () { 
-            return this.settings.viewers_list; 
-        },
-        categories () { 
-            return Object.keys(this.chatters); 
-        }
-    },
     async created () {
         this.loading = true;
         this.chatters = await this.get();
@@ -92,6 +90,7 @@ export default {
             this.onDrag(x, y);
         },
         onDrag (x, y) {
+            console.log("new x", x);
             this.settings.viewers_list.x = x;
             this.settings.viewers_list.y = y;
             this.saveSettings({

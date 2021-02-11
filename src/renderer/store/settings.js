@@ -24,10 +24,7 @@ export default {
 
             dispatch("SET_CONFIG", config, { root: true });
             
-            ipcRenderer.send("saveSettings", {
-                type: settings.type,
-                content: settings.content
-            });
+            ipcRenderer.send("saveSettings", settings);
         }
     }
 };
