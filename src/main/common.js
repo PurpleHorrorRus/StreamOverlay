@@ -8,7 +8,7 @@ import os from "os";
 import { DTypes } from "win32-api";
 import ffi from "ffi-napi";
 
-app.getVersion = () => "0.4.3";
+app.getVersion = () => "0.5.0";
 app.commandLine.appendSwitch("js-flags", "--expose_gc --max-old-space-size=128");
 
 const icon = path.join("build", "icons", "icon.ico");
@@ -120,6 +120,19 @@ for (let key of clearKeys) {
 
 keys = clearKeys = null;
 
+const coresCount = os.cpus().length;
+const getAffinityMask = cores => {
+    const mask = new Array(coresCount).fill(0);
+    
+    for (const core of cores) {
+        mask[coresCount - core] = 1;
+    }
+
+    return parseInt(mask.join(""), 2);
+};
+
+const affinityMask = getAffinityMask([coresCount]);
+
 const kernel32 = new ffi.Library("kernel32.dll", {
     OpenProcess: [DTypes.HANDLE, [DTypes.DWORD, DTypes.BOOL, DTypes.DWORD]],
     SetProcessAffinityMask: [DTypes.BOOL, [DTypes.HANDLE, DTypes.DWORD_PTR]]
@@ -131,10 +144,9 @@ const setLowPriority = async () => {
     
     if (electronProcesses.length > 0) {
         electronProcesses.map(pr => pr.pid).forEach(pid => {
-            const handle = kernel32.OpenProcess(0x001F0FFF, true, pid);
-            kernel32.SetProcessAffinityMask(handle, 1);
-
             if (os.getPriority(pid) !== 19) {
+                const handle = kernel32.OpenProcess(0x001F0FFF, true, pid);
+                kernel32.SetProcessAffinityMask(handle, affinityMask);
                 os.setPriority(pid, 19);
             }
         });
