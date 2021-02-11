@@ -1,6 +1,6 @@
 {
     "name": "streamoverlay",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "description": "An overlay for streamers with single display",
     "author": "Maxim <purplehorrorrus@gmail.com>",
     "repository": {
