@@ -5,7 +5,7 @@
             :key="badge" 
             class="badge" 
             :style="badgeStyle"
-            :src="badgeImage(badge)"
+            :src="require(`~/images/${badge}.png`) || ''"
         >
     </div>
 </template>
@@ -30,16 +30,6 @@ export default {
                 width: `${this.settings.chat.font}pt` 
             };
         }
-    },
-    methods: {
-        badgeImage (badge) {
-            try {
-                // eslint-disable-next-line no-undef
-                return require(`~/images/${badge}.png`).default;
-            } catch (e) {
-                return "";
-            }
-        },
     }
 };
 </script>
