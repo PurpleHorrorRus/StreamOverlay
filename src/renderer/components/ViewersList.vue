@@ -24,13 +24,10 @@
 <script>
 import _ from "lodash";
 import fetch from "node-fetch";
-import Promise from "bluebird";
 
 import Movable from "~/components/Movable";
 
 import TwitchMixin from "~/mixins/twitch";
-
-fetch.Promise = Promise;
 
 export default {
     components: { Movable },
