@@ -162,21 +162,20 @@ export default {
                         state.status.tech.fps < state.status.videoSettings.fps
                     );
 
-                state.interval = setInterval(async () => {
+                const check = async () => {
                     if (state.obs._connected) {
-                        send("GetVideoInfo").then(video => {
+                        send("GetVideoInfo").then(async video => {
                             state.status.videoSettings = video;
-                            
-                            send("GetStats").then(({ stats }) => {
-                                state.status.tech = stats;
-                                checkFPS();
-                            });
+
+                            const { stats } = await send("GetStats");
+                            state.status.tech = stats;
+                            checkFPS();
                         });
     
                         const devices = await Promise.all([
                             muted(sources["mic-1"]).catch(handleError),
                             muted(sources["desktop-1"]).catch(handleError),
-                            getVisible(data.camera).catch(handleError),
+                            getVisible(this.state.config.OBS.camera).catch(handleError),
                         ]).catch(handleError);
     
                         state.devices = {
@@ -184,10 +183,15 @@ export default {
                             sound: !devices[1],
                             camera: devices[2]
                         };
+
+                        await Promise.delay(1000);
+                        check();
                     } else { 
                         handleError("Losing connection with OBS..."); 
                     }
-                }, 800);
+                };
+
+                check();
             };
 
             const send = async (...args) => {
