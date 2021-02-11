@@ -2,23 +2,13 @@ import fetch from "node-fetch";
 import Helix from "simple-helix-api";
 import Promise from "bluebird";
 
-fetch.Promise = Promise;
-
 const client_id = "zmin05a65f74rln2g94iv935w58nyq";
 
 const syncRequest = async (url, params = {}) => {
-    return await new Promise((resolve, reject) => {
-        fetch(url, params)
-            .then(res => {
-                if (!params.raw) {
-                    return res.json();
-                } else {
-                    return res.buffer();
-                }
-            })
-            .then(resolve)
-            .catch(reject);
-    });
+    const response = await fetch(url, params);
+    return !params.raw 
+        ? response.json() 
+        : response.buffer();
 };
 
 const addEmoji = (formatted, url) => {
@@ -57,68 +47,18 @@ export default {
         viewers: -1
     }),
     mutations: {
-        createHelix (state, twitch) {
-            return new Promise(async resolve => {
-                state.user = twitch;
-
-                state.helix = new Helix({ 
-                    access_token: twitch.access_token, 
-                    client_id, 
-                    increaseRate: true 
-                });
-
-                return resolve();
-            });
-        },
-        async createChatBot (state) {
-            if (state.client || !state.helix) {
-                return;
-            }
-
-            this.dispatch("followers/GET", state.user.id);
-            this.dispatch("twitch/loadEmotes");
-
-            const { status: title, game } = await state.helix.getChannel(state.user.id);
-            state.stream = { title, game };
-
-            state.client = state.helix.createChatBot(state.user.username, state.user.oauth_token, state.user.username);
-            state.client.on("message", async (_channel, user, message) => {
-                const nickname = user["display-name"];
-                const profile = await state.helix.getUser(nickname);
-
-                const data = { 
-                    id: (Math.random() * 10000).toFixed(0), 
-                    nickname, 
-                    avatar: profile.profile_image_url, 
-                    badges: user.badges ? Object.keys(user.badges) : user.badges, 
-                    text: message, 
-                    emotes: user.emotes, 
-                    color: user.color
-                };
-
-                data.formatted = await this.dispatch("twitch/FORMAT_MESSAGE", data);
-                state.messages = [data, ...state.messages]; 
-            });
-
-            state.client.on("connected", () => {
-                this.dispatch("notifications/turnChatDisconnect", false);
-                this.dispatch("notifications/addNotification", { 
-                    text: "Чат успешно подключен",
-                    color: "lightgreen",
-                    handle: 5
-                });
-            });
-
-            state.client.on("disconnected", () => this.dispatch("notifications/turnChatDisconnect", true));
-        },
-        removeMessage: (state, id) => {
+        SET_HELIX: (state, helix) => state.helix = helix,
+        SET_USER: (state, user) => state.user = user,
+        SET_CLIENT: (state, client) => state.client = client,
+        ADD_MESSAGE: (state, message) => state.messages = [message, ...state.messages],
+        REMOVE_MESSAGE: (state, id) => {
             const index = state.messages.findIndex(m => m.id === id);
             if (~index) {
                 state.messages.splice(index, 1);
             }
         },
-        setStream: (state, stream) => state.stream = stream,
-        setViewers: (state, viewers) => state.viewers = viewers,
+        SET_STREAM: (state, stream) => state.stream = stream,
+        SET_VIEWERS: (state, viewers) => state.viewers = viewers,
         SET_EMOTES: (state, [bGlobal, bChannel, fChannel]) => {
             const bttv = [...bGlobal, ...bChannel];
 
@@ -132,20 +72,71 @@ export default {
                 ids: fChannel.map(e => e.code)
             };
         },
-        runInterval (state) {
+        RUN_INTERVAL (state) {
             if (state.interval) {
                 clearInterval(state.interval);
                 state.interval = null;
-                this.dispatch("twitch/updateStats");
+                this.dispatch("twitch/UPDATE_STATS");
             }
 
             state.interval = setInterval(() => 
-                this.dispatch("twitch/updateStats"), 20 * 1000);
+                this.dispatch("twitch/UPDATE_STATS"), 20 * 1000);
         }
     },
     actions: {
-        createHelix: ({ commit }, twitch) => commit("createHelix", twitch),
-        createChatBot: ({ commit }) => commit("createChatBot"),
+        CREATE_HELIX: ({ commit }, twitch) => {
+            commit("SET_USER", twitch);
+            commit("SET_HELIX", new Helix({ 
+                access_token: twitch.access_token, 
+                client_id, 
+                increaseRate: true 
+            }));
+        },
+        CREATE_CHATBOT: async ({ commit, dispatch, state }) => {
+            if (state.client || !state.helix) {
+                return;
+            }
+
+            dispatch("followers/GET", state.user.id, { root: true });
+            dispatch("LOAD_EMOTES");
+
+            const { status: title, game } = await state.helix.getChannel(state.user.id);
+            commit("SET_STREAM", { title, game });
+
+            const client = state.helix.createChatBot(state.user.username, state.user.oauth_token, state.user.username);
+            client.on("message", async (_channel, user, message) => {
+                const nickname = user["display-name"];
+                const profile = await state.helix.getUser(nickname);
+
+                const data = { 
+                    id: (Math.random() * 10000).toFixed(0), 
+                    nickname, 
+                    avatar: profile.profile_image_url, 
+                    badges: user.badges ? Object.keys(user.badges) : user.badges, 
+                    text: message, 
+                    emotes: user.emotes, 
+                    color: user.color
+                };
+
+                commit("ADD_MESSAGE", {
+                    ...data,
+                    formatted: await dispatch("FORMAT_MESSAGE", data)
+                }); 
+            });
+
+            client.on("connected", () => {
+                dispatch("notifications/turnChatDisconnect", false, { root: true });
+                dispatch("notifications/addNotification", { 
+                    text: "Чат успешно подключен",
+                    color: "lightgreen",
+                    handle: 5
+                }, { root: true });
+            });
+
+            client.on("disconnected", () => dispatch("notifications/turnChatDisconnect", true, { root: true }));
+
+            commit("SET_CLIENT", client);
+        },
         FORMAT_MESSAGE: (_, message) => {
             const { text, emotes } = message;
 
@@ -212,39 +203,31 @@ export default {
             
             return formatted;
         },
-        ban: ({ state }, nickname) => state.client.ban(state.user.username, nickname, "бан стримером"),
-        removeMessage: ({ commit }, id) => commit("removeMessage", id),
-        updateStats: async ({ commit, dispatch, state, rootState }) => { 
+        BAN: ({ state }, nickname) => state.client.ban(state.user.username, nickname, "бан стримером"),
+        REMOVE_MESSAGE: ({ commit }, id) => commit("REMOVE_MESSAGE", id),
+        UPDATE_STATS: async ({ commit, dispatch, state, rootState }) => { 
             dispatch("followers/GET", state.user.id, { root: true });
 
             if (rootState.obs.status.stream) {
-                const response = await state.helix.getStream(state.user.username).catch(() => commit("setViewers", -1));
+                const response = await state.helix.getStream(state.user.username)
+                    .catch(() => commit("SET_VIEWERS", -1));
 
                 if (response) {
                     const viewers = !response.error ? response.viewer_count : -1;
-                    commit("setViewers", viewers);
+                    commit("SET_VIEWERS", viewers);
                 }
             }
         },
-        updateStream: async ({ commit, state }, data) => {
-            const { status: _title, game: _game } = await state.helix.getChannel(state.user.id);
-            
-            const title_update = data.title !== null ? data.title : _title;
-            const game_update = data.game !== null ? data.game : _game;
-
-            const { success } = await state.helix.updateStream(state.user.id, title_update, game_update)
-                .catch(console.error);
+        UPDATE: async ({ commit, state }, data) => {
+            const { success } = await state.helix.updateStream(state.user.id, data.title, data.game);
                 
             if (success) {
-                commit("setStream", {
-                    title: title_update,
-                    game: game_update
-                });
+                commit("SET_STREAM", data);
             }
 
             return success;
         },
-        loadEmotes: async ({ commit, state }) => { 
+        LOAD_EMOTES: async ({ commit, state }) => { 
             const betterttv_global_url = "https://api.betterttv.net/3/cached/emotes/global";
             const betterttv_url = `https://api.betterttv.net/3/cached/users/twitch/${state.user.id}`;
             const frankerfacez_url = `https://api.frankerfacez.com/v1/room/${state.user.username.toLowerCase()}`;
@@ -291,6 +274,6 @@ export default {
             const emotes = await Promise.all([bGlobalPromise, bChannelPromise, fChannelPromise]);
             commit("SET_EMOTES", emotes);
         },
-        runInterval: ({ commit }) => commit("runInterval")
+        RUN_INTERVAL: ({ commit }) => commit("RUN_INTERVAL")
     }
 };

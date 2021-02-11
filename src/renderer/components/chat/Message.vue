@@ -67,8 +67,8 @@ export default {
     },
     methods: {
         ...mapActions({
-            ban: "twitch/ban",
-            removeMessage: "twitch/removeMessage"
+            ban: "twitch/BAN",
+            removeMessage: "twitch/REMOVE_MESSAGE"
         })
     }
 };

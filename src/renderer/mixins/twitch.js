@@ -14,9 +14,9 @@ export default {
     },
     methods: {
         ...mapActions({
-            createHelix: "twitch/createHelix",
-            createChatBot: "twitch/createChatBot",
-            runInterval: "twitch/runInterval"
+            createHelix: "twitch/CREATE_HELIX",
+            createChatBot: "twitch/CREATE_CHATBOT",
+            runInterval: "twitch/RUN_INTERVAL"
         })
     }
 };
