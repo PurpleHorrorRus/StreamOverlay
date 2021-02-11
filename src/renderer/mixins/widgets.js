@@ -1,20 +1,16 @@
-import { mapActions, mapState } from "vuex";
+import { mapActions } from "vuex";
 
 import CoreMixin from "~/mixins/core";
 
 export default {
     mixins: [CoreMixin],
     computed: {
-        ...mapState({
-            _active: state => state.widgets.edit,
-            _widgets: state => state.widgets.widgets
-        }),
         active: {
-            get () { return this._active; },
+            get () { return this.$store.state.widgets.edit; },
             set (value) { this.turnEdit(value); }
         },
         widgets: {
-            get () { return this._widgets; },
+            get () { return this.$store.state.widgets.widgets; },
             set (value) { this.saveWidgets(value); }
         }
     },
