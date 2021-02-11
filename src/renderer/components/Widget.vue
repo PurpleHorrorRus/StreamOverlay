@@ -11,7 +11,7 @@
             ref="webview" 
             class="webview" 
             :src="widget.src"
-            useragent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36"
+            useragent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0"
             webpreferences="allowRunningInsecureContent"
             disablewebsecurity
         />
@@ -38,16 +38,13 @@ export default {
     },
     methods: {
         onResize (x, y, width, height) {
-            this.widget.style.width = width;
-            this.widget.style.height = height;
-            this.onDrag(x, y);
-        },
-        onDrag (x, y) {
-            this.widget.style.x = x;
-            this.widget.style.y = y;
-
             const index = this.widgets.findIndex(r => r.id === this.widget.id);
-            this.widgets[index] = this.widget;
+            this.widgets[index].style = { x, y, width, height };
+            this.onDrag(x, y, index);
+        },
+        onDrag (x, y, index = this.widgets.findIndex(r => r.id === this.widget.id)) {
+            this.widgets[index].style.x = x;
+            this.widgets[index].style.y = y;
 
             this.saveWidgets(this.widgets);
         }
