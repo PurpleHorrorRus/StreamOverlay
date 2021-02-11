@@ -2,7 +2,6 @@
 const cssnano = require("cssnano");
 
 module.exports = {
-    mode: "universal",
     head: {
         title: "Stream Overlay",
         meta: [
