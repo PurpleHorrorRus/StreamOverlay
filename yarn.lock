@@ -2050,6 +2050,15 @@
   resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.5.tgz#b14efa8852b7768d898906613c23f688713e02cd"
   integrity sha512-Q1y515GcOdTHgagaVFhHnIFQ38ygs/kmxdNpvpou+raI9UO3YZcHDngBSYKQklcKlvA7iuQlmIKbzvmxcOE9CQ==
 
+"@types/ffi-napi@*":
+  version "2.4.3"
+  resolved "https://registry.yarnpkg.com/@types/ffi-napi/-/ffi-napi-2.4.3.tgz#8e0194a47f1fc9a2d1e00dcae66c919ae97faa2d"
+  integrity sha512-lkSpnVM3252+IAxwqmX5zPh8Nugzz7rtTcLC8tnGaY48n/5kmrO0AV3OVQDMgSKPI5X4I3vx0yeArfGV6PlwCQ==
+  dependencies:
+    "@types/node" "*"
+    "@types/ref-napi" "*"
+    "@types/ref-struct-di" "*"
+
 "@types/fs-extra@^9.0.1":
   version "9.0.1"
   resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-9.0.1.tgz#91c8fc4c51f6d5dbe44c2ca9ab09310bd00c7918"
@@ -2081,6 +2090,27 @@
   version "1.5.4"
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.4.tgz#15925414e0ad2cd765bfef58842f7e26a7accb24"
   integrity sha512-1HcDas8SEj4z1Wc696tH56G8OlRaH/sqZOynNNB+HF0WOeXPaxTtbYzJY2oEfiUxjSKjhCKr+MvR7dCHcEelug==
+
+"@types/ref-napi@*", "@types/ref-napi@^1.4.0":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@types/ref-napi/-/ref-napi-1.4.1.tgz#cf5a5ae6a90f6cb2a1d4db21ad32ce0e7c59a6fb"
+  integrity sha512-30A5bpOd+403PJCyyarGH8AOW2IowJ5AZySiGG1B4Sad5CRHt8O+cALEbSUZT+0sE456yAwB2+UjXpH+BIVN1g==
+  dependencies:
+    "@types/node" "*"
+
+"@types/ref-struct-di@*":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@types/ref-struct-di/-/ref-struct-di-1.1.0.tgz#4e7a20c8b2f25a6e4b3cb4a0d615835b61ab8d84"
+  integrity sha512-obdtTOGqfV/3MdouZEe2hup7fZwAK6RvusqLIL0hK/MuEBKHWpC3j/NXiC5N6zXdj7p52QB0wsnUEsdkFc+DOw==
+  dependencies:
+    "@types/ref-napi" "*"
+
+"@types/ref-union-di@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/ref-union-di/-/ref-union-di-1.0.0.tgz#e057461e9758b23813a0825e6c30e0eda4122fdf"
+  integrity sha512-naDlc/KKsMvTVcDFW53BY6RitPpzElIHuhZ8TednY2hsam5g0HLxkmYgThabtCLd4fhPX48tKEh0O8RDzu4NiA==
+  dependencies:
+    "@types/ref-napi" "*"
 
 "@types/semver@^7.3.1":
   version "7.3.4"
@@ -2232,6 +2262,11 @@
     vue-template-es2015-compiler "^1.9.0"
   optionalDependencies:
     prettier "^1.18.2"
+
+"@waiting/shared-types@3":
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/@waiting/shared-types/-/shared-types-3.5.1.tgz#7c9b0c38ddeb5ab0fe11731a67aa974a482bc651"
+  integrity sha512-1l20suOx44W1j3J+jGknc+eGYiqJnuRZyArs+f+ZJrw4FJ4mMtZNthSCbtAZWsyAzBg8jzZ39p07OZPVTAC4Rg==
 
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
@@ -4012,6 +4047,13 @@ debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.9:
   dependencies:
     ms "2.0.0"
 
+debug@^3.1.0:
+  version "3.2.7"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.7.tgz#72580b7e9145fb39b6676f9c5e5fb100b934179a"
+  integrity sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==
+  dependencies:
+    ms "^2.1.1"
+
 debug@^4.0.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.1.1.tgz#3b72260255109c6b589cee050f1d516139664791"
@@ -4944,6 +4986,18 @@ fd-slicer@~1.1.0:
   dependencies:
     pend "~1.2.0"
 
+ffi-napi@^3.0.0, ffi-napi@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/ffi-napi/-/ffi-napi-3.1.0.tgz#5bd037a26eaa4234c664e8b9d27be3719505c7bd"
+  integrity sha512-EsHO+sP2p/nUC/3l/l8m9niee1BLm4asUFDzkkBGR4kYVgp2KqdAYUomZhkKtzim4Fq7mcYHjpUaIHsMqs+E1g==
+  dependencies:
+    debug "^4.1.1"
+    get-uv-event-loop-napi-h "^1.0.5"
+    node-addon-api "^2.0.0"
+    node-gyp-build "^4.2.1"
+    ref-napi "^2.0.1"
+    ref-struct-di "^1.1.0"
+
 fibers@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/fibers/-/fibers-5.0.0.tgz#3a60e0695b3ee5f6db94e62726716fa7a59acc41"
@@ -5246,6 +5300,18 @@ get-stream@^5.0.0, get-stream@^5.1.0:
   integrity sha512-nBF+F1rAZVCu/p7rjzgA+Yb4lfYXrpl7a6VmJrU8wF9I1CKvP/QwPNZHnOlwbTkY6dvtFIzFMSyQXbLoTQPRpA==
   dependencies:
     pump "^3.0.0"
+
+get-symbol-from-current-process-h@^1.0.1, get-symbol-from-current-process-h@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/get-symbol-from-current-process-h/-/get-symbol-from-current-process-h-1.0.2.tgz#510af52eaef873f7028854c3377f47f7bb200265"
+  integrity sha512-syloC6fsCt62ELLrr1VKBM1ggOpMdetX9hTrdW77UQdcApPHLmf7CI7OKcN1c9kYuNxKcDe4iJ4FY9sX3aw2xw==
+
+get-uv-event-loop-napi-h@^1.0.5:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/get-uv-event-loop-napi-h/-/get-uv-event-loop-napi-h-1.0.6.tgz#42b0b06b74c3ed21fbac8e7c72845fdb7a200208"
+  integrity sha512-t5c9VNR84nRoF+eLiz6wFrEp1SE2Acg0wS+Ysa2zF0eROes+LzOfuTaVHxGy8AbS8rq7FHEJzjnCZo1BupwdJg==
+  dependencies:
+    get-symbol-from-current-process-h "^1.0.1"
 
 get-value@^2.0.3, get-value@^2.0.6:
   version "2.0.6"
@@ -6875,12 +6941,17 @@ no-case@^3.0.4:
     lower-case "^2.0.2"
     tslib "^2.0.3"
 
+node-addon-api@^2.0.0:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-2.0.2.tgz#432cfa82962ce494b132e9d72a15b29f71ff5d32"
+  integrity sha512-Ntyt4AIXyaLIuMHF6IOoTakB3K+RWxwtsHNRxllEoA6vPwP9o4866g6YWDLUdnucilZhmkxiHwHr11gAENw+QA==
+
 node-fetch@2.6.1, node-fetch@^2.6.1:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
   integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
 
-node-gyp-build@^4.2.0:
+node-gyp-build@^4.2.0, node-gyp-build@^4.2.1:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.2.3.tgz#ce6277f853835f718829efb47db20f3e4d9c4739"
   integrity sha512-MN6ZpzmfNCRM+3t57PTJHgHyw/h4OWnZ6mR8P5j/uZtqQr46RRuDE/P+g3n0YR/AiYXeWixZZzaip77gdICfRg==
@@ -8434,6 +8505,30 @@ readdirp@~3.5.0:
   integrity sha512-cMhu7c/8rdhkHXWsY+osBhfSy0JikwpHK/5+imo+LpeasTF8ouErHrlYkwT0++njiyuDvc7OFY5T3ukvZ8qmFQ==
   dependencies:
     picomatch "^2.2.1"
+
+ref-napi@^2.0.0, ref-napi@^2.0.1:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/ref-napi/-/ref-napi-2.1.2.tgz#5986069d7b0ea83e1fef48239a2bd75318ce341b"
+  integrity sha512-aFl+vrIuLWUXMUTQGAwGAuSNLX3Ub5W3iVP8b7KyFFZUdn4+i4U1TXXTop0kCTUfGNu8glBGVz4lowkwMcPVVA==
+  dependencies:
+    debug "^4.1.1"
+    get-symbol-from-current-process-h "^1.0.2"
+    node-addon-api "^2.0.0"
+    node-gyp-build "^4.2.1"
+
+ref-struct-di@^1.1.0:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/ref-struct-di/-/ref-struct-di-1.1.1.tgz#5827b1d3b32372058f177547093db1fe1602dc10"
+  integrity sha512-2Xyn/0Qgz89VT+++WP0sTosdm9oeowLP23wRJYhG4BFdMUrLj3jhwHZNEytYNYgtPKLNTP3KJX4HEgBvM1/Y2g==
+  dependencies:
+    debug "^3.1.0"
+
+ref-union-di@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/ref-union-di/-/ref-union-di-1.0.1.tgz#e4a27835c8266e7ebbca9932ce9e8d950016b576"
+  integrity sha512-JWSF2BwNVtCgmEfoDGMh8S1KO07oq+T8L7cBHwcsmQmeXDZd9JNlrxU+ebSHs+jsf0qrqFFWXMCmj94Tcl26TA==
+  dependencies:
+    debug "^3.1.0"
 
 regenerate-unicode-properties@^8.2.0:
   version "8.2.0"
@@ -10229,6 +10324,26 @@ widest-line@^3.1.0:
   integrity sha512-NsmoXalsWVDMGupxZ5R08ka9flZjjiLvHVAWYOKtiKM8ujtZWr9cRffak+uSE48+Ob8ObalXpwyeUiyDD6QFgg==
   dependencies:
     string-width "^4.0.0"
+
+win32-api@^9.6.0:
+  version "9.6.0"
+  resolved "https://registry.yarnpkg.com/win32-api/-/win32-api-9.6.0.tgz#d9008d903c4231306f6c5d1843c0d00ddd0447b2"
+  integrity sha512-TN8Tu4qSecavCk5IctcIzDGm9agrmwcS1ieapv7HZmKkJJKXaY0FtPwV1/h1j5Cvt0LBDacaacBqjPk3nigz0g==
+  dependencies:
+    "@types/ffi-napi" "*"
+    "@types/ref-napi" "^1.4.0"
+    "@types/ref-union-di" "^1.0.0"
+    ffi-napi "^3.0.0"
+    ref-napi "^2.0.0"
+    ref-union-di "^1.0.1"
+    win32-def "^9.4.0"
+
+win32-def@^9.4.0:
+  version "9.4.0"
+  resolved "https://registry.yarnpkg.com/win32-def/-/win32-def-9.4.0.tgz#b745b369ff31a905b6c470c010f7b3ffc4dd9ed8"
+  integrity sha512-jYXv/guKqMPFv0I+3iazkF67lFzODvsmUaZLIIxzHQ057tHls9da5RDeYLQEk+8uPxr+U3f9fi/GNbk0TPD23A==
+  dependencies:
+    "@waiting/shared-types" "3"
 
 word-wrap@^1.2.3:
   version "1.2.3"

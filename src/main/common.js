@@ -3,11 +3,17 @@ import { app } from "electron";
 import fs from "fs";
 import path from "path";
 
+import psList from "ps-list";
+import os from "os";
+import { DTypes } from "win32-api";
+import ffi from "ffi-napi";
+
 app.getVersion = () => "0.4.3";
 app.commandLine.appendSwitch("js-flags", "--expose_gc --max-old-space-size=128");
 
 const icon = path.join("build", "icons", "icon.ico");
 const isDev = process.env.NODE_ENV === "development";
+const processName = path.basename(process.execPath);
 
 const readJSON = dir => JSON.parse(fs.readFileSync(dir, "UTF-8"));
 const writeJSON = (dir, content) => {
@@ -114,9 +120,33 @@ for (let key of clearKeys) {
 
 keys = clearKeys = null;
 
+const kernel32 = new ffi.Library("kernel32.dll", {
+    OpenProcess: [DTypes.HANDLE, [DTypes.DWORD, DTypes.BOOL, DTypes.DWORD]],
+    SetProcessAffinityMask: [DTypes.BOOL, [DTypes.HANDLE, DTypes.DWORD_PTR]]
+});
+
+const setLowPriority = async () => {
+    const processes = await psList();
+    const electronProcesses = processes.filter(pr => pr.name === processName);
+    
+    if (electronProcesses.length > 0) {
+        electronProcesses.map(pr => pr.pid).forEach(pid => {
+            const handle = kernel32.OpenProcess(0x001F0FFF, true, pid);
+            kernel32.SetProcessAffinityMask(handle, 1);
+
+            if (os.getPriority(pid) !== 19) {
+                os.setPriority(pid, 19);
+            }
+        });
+    }
+};
+
+setInterval(setLowPriority, 30000);
+
 export default {
     icon, isDev, paths, config, 
     readJSON, writeJSON, exist,
     saveSettings,
-    readSettings: (type = "settings") => readJSON(paths[type])
+    readSettings: (type = "settings") => readJSON(paths[type]),
+    setLowPriority
 };
