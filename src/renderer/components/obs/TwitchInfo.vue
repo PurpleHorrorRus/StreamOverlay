@@ -8,13 +8,7 @@
         <div id="twitch-info">
             <div id="twitch-info-viewers">
                 <EyeIcon class="feather shadow-box" />
-                <span v-if="viewers > -1" id="viewers_count" class="shadow" v-text="viewers" />
-                <font-awesome-icon 
-                    v-else 
-                    id="viewers_count" 
-                    :icon="['fa', 'circle-notch']" 
-                    class="fa-spin" 
-                />
+                <span id="viewers_count" class="shadow" v-text="viewers > -1 ? viewers : 0" />
             </div>
             
             <div id="twitch-info-followers">
