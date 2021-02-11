@@ -58,7 +58,7 @@ export default {
             }
 
             .emoticon {
-                vertical-align: top;
+                vertical-align: middle;
             }
 
             .text, .emoticon {
