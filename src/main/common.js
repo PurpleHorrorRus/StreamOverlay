@@ -2,13 +2,15 @@
 import { app } from "electron";
 import fs from "fs";
 import path from "path";
+import { xor } from "lodash";
+import { map } from "bluebird";
 
 import psList from "ps-list";
-import os from "os";
+import { cpus } from "os";
 import { DTypes } from "win32-api";
 import ffi from "ffi-napi";
 
-app.getVersion = () => "0.5.2";
+app.getVersion = () => "0.5.3";
 app.commandLine.appendSwitch("js-flags", "--expose_gc --max-old-space-size=128");
 
 const icon = path.join("build", "icons", "icon.ico");
@@ -120,7 +122,7 @@ for (let key of clearKeys) {
 
 keys = clearKeys = null;
 
-const coresCount = os.cpus().length;
+const coresCount = cpus().length;
 const getAffinityMask = cores => {
     const mask = new Array(coresCount).fill(0);
     
@@ -135,20 +137,32 @@ const affinityMask = getAffinityMask([coresCount]);
 
 const kernel32 = new ffi.Library("kernel32.dll", {
     OpenProcess: [DTypes.HANDLE, [DTypes.DWORD, DTypes.BOOL, DTypes.DWORD]],
-    SetProcessAffinityMask: [DTypes.BOOL, [DTypes.HANDLE, DTypes.DWORD_PTR]]
+    
+    GetPriorityClass: [DTypes.DWORD, [DTypes.HANDLE]],
+    SetPriorityClass: [DTypes.BOOL, [DTypes.HANDLE, DTypes.DWORD]],
+
+    SetProcessAffinityMask: [DTypes.BOOL, [DTypes.HANDLE, DTypes.DWORD_PTR]],
+
+    CloseHandle: [DTypes.BOOL, [DTypes.HANDLE]]
 });
 
+let pids = [];
 const setLowPriority = async () => {
     const processes = await psList();
-    const electronProcesses = processes.filter(pr => pr.name === processName);
-    
-    if (electronProcesses.length > 0) {
-        electronProcesses.map(pr => pr.pid).forEach(pid => {
-            if (os.getPriority(pid) !== 19) {
-                const handle = kernel32.OpenProcess(0x001F0FFF, true, pid);
+    const newPids = xor(pids, processes.filter(pr => pr.name === processName).map(pr => pr.pid));
+
+    if (newPids.length > 0) {
+        pids = [...pids, ...newPids];
+
+        map(newPids, pid => {
+            const handle = kernel32.OpenProcess(0x001F0FFF, true, pid);
+
+            if (kernel32.GetPriorityClass(handle) !== 64) {
+                kernel32.SetPriorityClass(handle, 0x00000040);
                 kernel32.SetProcessAffinityMask(handle, affinityMask);
-                os.setPriority(pid, 19);
             }
+    
+            kernel32.CloseHandle(handle);
         });
     }
 };
