@@ -187,15 +187,14 @@ export default {
 
                         const { stats } = await send("GetStats");
                         state.status.tech = stats;
-                        
+
                         this.dispatch(
                             "notifications/turnLowFPS", 
                             state.status.tech.fps < state.status.videoSettings.fps
                         );
                     }
                 };
-
-                check();
+                
                 interval = setInterval(check, 1000);
             };
 
