@@ -169,14 +169,18 @@ export default {
                     }
                 });
 
-                state.obs.on("SceneItemVisibilityChanged", ({ itemName, itemVisible }) => {
-                    if (itemName === this.state.config.OBS.camera) {
+                let { name: currentScene } = await send("GetCurrentScene");
+                state.obs.on("SceneItemVisibilityChanged", ({ sceneName, itemName, itemVisible }) => {
+                    if (sceneName === currentScene && itemName === this.state.config.OBS.camera) {
                         state.devices.camera = itemVisible;
                     }
                 });
                 
                 state.obs.on("SwitchScenes", 
-                    async () => state.devices.camera = await getVisible(this.state.config.OBS.camera));
+                    async ({ sceneName }) => {
+                        currentScene = sceneName;
+                        state.devices.camera = await getVisible(this.state.config.OBS.camera);
+                    });
 
                 const check = async () => {
                     if (state.obs._connected) {
