@@ -18,10 +18,7 @@ export default {
             },
             videoSettings: null,
             tech: null,
-            bitrate: 2300,
-            droppedFPS: 0,
-            totalFPS: 0,
-            strain: 0
+            bitrate: 2300
         },
         devices: {
             mic: false,
@@ -30,7 +27,7 @@ export default {
         }
     }),
     mutations: {
-        async connectOBS (state, data) {
+        async CONNECT (state, data) {
             if (state.obs._connected) {
                 return;
             }
@@ -77,7 +74,7 @@ export default {
                 state.status.recording = data.recording;
 
                 if (data.streaming || data.recording) {
-                    this.dispatch("obs/setupUpdateInterval");
+                    this.dispatch("obs/SETUP_UPDATE_INTERVAL");
                 }
 
                 const setTime = timecode => {
@@ -101,7 +98,7 @@ export default {
                     state.status.stream = true;
 
                     if (!state.status.recording) { 
-                        this.dispatch("obs/setupUpdateInterval");
+                        this.dispatch("obs/SETUP_UPDATE_INTERVAL");
                     }
                 });
 
@@ -111,21 +108,21 @@ export default {
                     this.dispatch("notifications/turnLowBitrate", false);
                     this.dispatch("notifications/turnLowFPS", false);
                     if (!state.status.recording) {
-                        this.dispatch("obs/clearUpdateInterval");
+                        this.dispatch("obs/CLEAR_UPDATE_INTERVAL");
                     }
                 });
 
                 state.obs.on("RecordingStarted", () => {
                     state.status.recording = true;
                     if (!state.status.stream) {
-                        this.dispatch("obs/setupUpdateInterval");
+                        this.dispatch("obs/SETUP_UPDATE_INTERVAL");
                     }
                 });
 
                 state.obs.on("RecordingStopping", () => {
                     state.status.recording = false;
                     if (!state.status.stream) {
-                        this.dispatch("obs/clearUpdateInterval");
+                        this.dispatch("obs/CLEAR_UPDATE_INTERVAL");
                     }
                 });
 
@@ -141,10 +138,6 @@ export default {
                             this.dispatch("notifications/turnLowBitrate", false);
                         }
                     }
-
-                    state.status.droppedFPS = data["num-dropped-frames"];
-                    state.status.totalFPS = data["num-total-frames"];
-                    state.status.strain = data.strain;
                 });
 
                 const sources = await send("GetSpecialSources");
@@ -241,15 +234,7 @@ export default {
 
             state.obs.on("Exiting", disconnect);
         },
-        setDevices: (state, devices) => state.devices = devices,
-        setupUpdateInterval: () => {
-            if (updateInterval) {
-                this.dispatch("obs/clearUpdateInterval");
-            }
-
-            updateInterval = setInterval(() => this.dispatch("obs/updateTime"), 1000);
-        },
-        clearUpdateInterval (state) {
+        CLEAR_UPDATE_INTERVAL (state) {
             state.status.time.seconds = 0;
             state.status.time.mins = 0;
             state.status.time.hours = 0;
@@ -258,7 +243,7 @@ export default {
                 updateInterval = null;
             }
         },
-        updateTime (state) {
+        UPDATE_TIME (state) {
             if (state.status.stream || state.status.recording) {
                 state.status.time.seconds++;
                 if (state.status.time.seconds >= 60) {
@@ -275,10 +260,15 @@ export default {
         }
     },
     actions: {
-        connectOBS: ({ commit }, data) => commit("connectOBS", data),
-        setDevices: ({ commit }, devices) => commit("setDevices", devices),
-        setupUpdateInterval: ({ commit }) => commit("setupUpdateInterval"),
-        clearUpdateInterval: ({ commit }) => commit("clearUpdateInterval"),
-        updateTime: ({ commit }) => commit("updateTime")
+        CONNECT: ({ commit }, data) => commit("CONNECT", data),
+        SETUP_UPDATE_INTERVAL: ({ dispatch }) => {
+            if (updateInterval) {
+                dispatch("CLEAR_UPDATE_INTERVAL");
+            }
+
+            updateInterval = setInterval(() => dispatch("UPDATE_TIME"), 1000);
+        },
+        CLEAR_UPDATE_INTERVAL: ({ commit }) => commit("CLEAR_UPDATE_INTERVAL"),
+        UPDATE_TIME: ({ commit }) => commit("UPDATE_TIME")
     }
 };

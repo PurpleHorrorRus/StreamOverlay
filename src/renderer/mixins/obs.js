@@ -38,7 +38,7 @@ export default {
     },
     methods: {
         ...mapActions({
-            connectOBS: "obs/connectOBS"
+            connectOBS: "obs/CONNECT"
         })
     }
 };

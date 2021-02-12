@@ -72,16 +72,6 @@ export default {
                 content: fChannel,
                 ids: fChannel.map(e => e.code)
             };
-        },
-        RUN_INTERVAL (state) {
-            if (interval) {
-                clearInterval(interval);
-                interval = null;
-                this.dispatch("twitch/UPDATE_STATS");
-            }
-
-            interval = setInterval(() => 
-                this.dispatch("twitch/UPDATE_STATS"), 20 * 1000);
         }
     },
     actions: {
@@ -210,13 +200,11 @@ export default {
             dispatch("followers/GET", state.user.id, { root: true });
 
             if (rootState.obs.status.stream) {
-                const response = await state.helix.getStream(state.user.username)
-                    .catch(() => commit("SET_VIEWERS", -1));
-
-                if (response) {
-                    const viewers = !response.error ? response.viewer_count : -1;
-                    commit("SET_VIEWERS", viewers);
-                }
+                const response = await state.helix.getStream(state.user.username);
+                commit("SET_VIEWERS", response 
+                    ? !response.error ? response.viewer_count : -1
+                    : -1
+                );
             }
         },
         UPDATE: async ({ commit, state }, data) => {
@@ -275,6 +263,17 @@ export default {
             const emotes = await Promise.all([bGlobalPromise, bChannelPromise, fChannelPromise]);
             commit("SET_EMOTES", emotes);
         },
-        RUN_INTERVAL: ({ commit }) => commit("RUN_INTERVAL")
+        RUN_INTERVAL: async ({ dispatch }) => {
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
+            }
+
+            interval = setInterval(() => 
+                dispatch("UPDATE_STATS"), 20 * 1000);
+
+            await Promise.delay(1000);
+            dispatch("UPDATE_STATS");
+        }
     }
 };
