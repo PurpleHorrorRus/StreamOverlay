@@ -32,6 +32,8 @@ const addText = (formatted, text) => {
 let betterTTV = null;
 let FrankerFaceZ = null;
 
+let interval = null;
+
 export default {
     namespaced: true,
     state: () => ({
@@ -43,7 +45,6 @@ export default {
             game: null
         },
         messages: [],
-        interval: null,
         viewers: -1
     }),
     mutations: {
@@ -73,13 +74,13 @@ export default {
             };
         },
         RUN_INTERVAL (state) {
-            if (state.interval) {
-                clearInterval(state.interval);
-                state.interval = null;
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
                 this.dispatch("twitch/UPDATE_STATS");
             }
 
-            state.interval = setInterval(() => 
+            interval = setInterval(() => 
                 this.dispatch("twitch/UPDATE_STATS"), 20 * 1000);
         }
     },
