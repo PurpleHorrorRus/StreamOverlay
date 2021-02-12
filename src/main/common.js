@@ -8,7 +8,7 @@ import os from "os";
 import { DTypes } from "win32-api";
 import ffi from "ffi-napi";
 
-app.getVersion = () => "0.5.0";
+app.getVersion = () => "0.5.1";
 app.commandLine.appendSwitch("js-flags", "--expose_gc --max-old-space-size=128");
 
 const icon = path.join("build", "icons", "icon.ico");
