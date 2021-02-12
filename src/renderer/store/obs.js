@@ -47,18 +47,16 @@ export default {
                 });
             };
 
-            const awaitConnection = (timeout = 4 * 1000) => {
-                return new Promise(async resolve => {
-                    let connected = await connect();
+            const awaitConnection = async (timeout = 4 * 1000) => {
+                let connected = await connect();
+                
+                while (!connected) {
+                    await Promise.delay(timeout);
+                    connected = await connect();
+                }
 
-                    while (!connected) {
-                        await Promise.delay(timeout);
-                        connected = await connect();
-                    }
-
-                    console.log("OBS Connected");
-                    return resolve(true);
-                });
+                console.log("OBS Connected");
+                return true;
             };
 
             const muted = async source => {
@@ -73,13 +71,12 @@ export default {
             });
 
             const startStatusChecking = async () => {
-                const _data = await send("GetStreamingStatus").catch(handleError);
-                const { streaming, recording } = _data;
+                const data = await send("GetStreamingStatus");
 
-                state.status.stream = streaming;
-                state.status.recording = recording;
+                state.status.stream = data.streaming;
+                state.status.recording = data.recording;
 
-                if (_data.streaming || _data.recording) {
+                if (data.streaming || data.recording) {
                     this.dispatch("obs/setupUpdateInterval");
                 }
 
@@ -94,10 +91,10 @@ export default {
                     }
                 };
                 
-                if (streaming) {
-                    setTime(_data["stream-timecode"]);
-                } else if (recording) {
-                    setTime(_data["rec-timecode"]);
+                if (data.streaming) {
+                    setTime(data["stream-timecode"]);
+                } else if (data.recording) {
+                    setTime(data["rec-timecode"]);
                 }
  
                 state.obs.on("StreamStarting", async () => {
@@ -152,16 +149,18 @@ export default {
 
                 const sources = await send("GetSpecialSources");
                 const devices = await Promise.all([
-                    muted(sources["mic-1"]).catch(handleError),
-                    muted(sources["desktop-1"]).catch(handleError),
-                    getVisible(this.state.config.OBS.camera).catch(handleError),
-                ]).catch(handleError);
+                    muted(sources["mic-1"]),
+                    muted(sources["desktop-1"]),
+                    getVisible(this.state.config.OBS.camera),
+                ]);
 
-                state.devices = {
-                    mic: !devices[0],
-                    sound: !devices[1],
-                    camera: devices[2]
-                };
+                if (devices) {
+                    state.devices = {
+                        mic: !devices[0],
+                        sound: !devices[1],
+                        camera: devices[2]
+                    };
+                }
 
                 state.obs.on("SourceMuteStateChanged", ({ sourceName, muted }) => {
                     switch (sourceName) {
@@ -188,17 +187,10 @@ export default {
                 state.obs.on("SwitchScenes", 
                     async () => state.devices.camera = await getVisible(this.state.config.OBS.camera));
 
-                const checkFPS = () => {
-                    if (!this.state.notifications.lowfps) {
-                        if (state.status.tech.fps < state.status.videoSettings.fps) {
-                            this.dispatch("notifications/turnLowFPS", true);
-                        }
-                    } else {
-                        if (state.status.tech.fps >= state.status.videoSettings.fps) {
-                            this.dispatch("notifications/turnLowFPS", false);
-                        }
-                    }
-                };
+                const checkFPS = () => this.dispatch(
+                    "notifications/turnLowFPS", 
+                    state.status.tech.fps < state.status.videoSettings.fps
+                );
 
                 const check = async () => {
                     if (state.obs._connected) {
@@ -227,20 +219,19 @@ export default {
                 });
             };
 
-            const handleError = async e => {
-                console.error(e);
+            const disconnect = async () => {
+                state.obs = { _connected: false };
+                state.status.tech = null;
+                state.status.videoSettings = null;
 
                 if (interval) {
                     clearInterval(interval);
                     interval = null;
                 }
-                
-                state.status.tech = null;
-                state.status.videoSettings = null;
-                state.obs = { _connected: false };
 
+                await Promise.delay(1000);
                 state.obs._connected = await awaitConnection();
-
+                
                 startStatusChecking();
                 return;
             };
@@ -248,12 +239,10 @@ export default {
             state.obs._connected = await awaitConnection();
             startStatusChecking();
 
-            state.obs.on("error", handleError);
+            state.obs.on("Exiting", disconnect);
         },
-        setDevices (state, devices) { 
-            state.devices = devices; 
-        },
-        setupUpdateInterval (state) {
+        setDevices: (state, devices) => state.devices = devices,
+        setupUpdateInterval: () => {
             if (updateInterval) {
                 this.dispatch("obs/clearUpdateInterval");
             }
