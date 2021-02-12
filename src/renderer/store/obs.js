@@ -180,11 +180,6 @@ export default {
                 state.obs.on("SwitchScenes", 
                     async () => state.devices.camera = await getVisible(this.state.config.OBS.camera));
 
-                const checkFPS = () => this.dispatch(
-                    "notifications/turnLowFPS", 
-                    state.status.tech.fps < state.status.videoSettings.fps
-                );
-
                 const check = async () => {
                     if (state.obs._connected) {
                         const video = await send("GetVideoInfo");
@@ -192,7 +187,11 @@ export default {
 
                         const { stats } = await send("GetStats");
                         state.status.tech = stats;
-                        checkFPS();
+                        
+                        this.dispatch(
+                            "notifications/turnLowFPS", 
+                            state.status.tech.fps < state.status.videoSettings.fps
+                        );
                     }
                 };
 
