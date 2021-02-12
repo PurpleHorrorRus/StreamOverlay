@@ -32,17 +32,15 @@ export default {
                 return;
             }
 
-            const connect = () => {
-                return new Promise(resolve => {
-                    state.obs = new socket({ 
-                        address: `${data.address}:${data.port}`
-                    });
-
-                    state.obs.connect()
-                        .then(() => resolve(true))
-                        .catch(() => resolve(false));
+            const connect = () => new Promise(resolve => {
+                state.obs = new socket({ 
+                    address: `${data.address}:${data.port}`
                 });
-            };
+
+                state.obs.connect()
+                    .then(() => resolve(true))
+                    .catch(() => resolve(false));
+            });
 
             const awaitConnection = async (timeout = 4 * 1000) => {
                 let connected = await connect();
