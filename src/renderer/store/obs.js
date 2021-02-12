@@ -1,12 +1,13 @@
 import Promise from "bluebird";
 import socket from "obs-websocket-js";
 
+let interval = null;
+let updateInterval = null;
+
 export default {
     namespaced: true,
     state: () => ({
         obs: { _connected: false },
-        interval: null,
-        updateInterval: null,
         status: {
             stream: false,
             recording: false,
@@ -60,21 +61,16 @@ export default {
                 });
             };
 
-            const muted = source => {
-                return new Promise((resolve, reject) => {
-                    send("GetMute", { source })
-                        .then(({ muted }) => resolve(muted))
-                        .catch(reject);
-                });
+            const muted = async source => {
+                const { muted } = await send("GetMute", { source });
+                return muted;
             };
 
-            const getVisible = item => {
-                return new Promise(resolve => {
-                    send("GetSceneItemProperties", { item })
-                        .then(({ visible }) => resolve(visible))
-                        .catch(() => resolve(null));
-                });
-            };
+            const getVisible = item => new Promise(resolve => {
+                send("GetSceneItemProperties", { item })
+                    .then(({ visible }) => resolve(visible))
+                    .catch(() => resolve(null));
+            });
 
             const startStatusChecking = async () => {
                 const _data = await send("GetStreamingStatus").catch(handleError);
@@ -155,43 +151,68 @@ export default {
                 });
 
                 const sources = await send("GetSpecialSources");
+                const devices = await Promise.all([
+                    muted(sources["mic-1"]).catch(handleError),
+                    muted(sources["desktop-1"]).catch(handleError),
+                    getVisible(this.state.config.OBS.camera).catch(handleError),
+                ]).catch(handleError);
 
-                const checkFPS = () => 
-                    this.dispatch(
-                        "notifications/turnLowFPS", 
-                        state.status.tech.fps < state.status.videoSettings.fps
-                    );
+                state.devices = {
+                    mic: !devices[0],
+                    sound: !devices[1],
+                    camera: devices[2]
+                };
+
+                state.obs.on("SourceMuteStateChanged", ({ sourceName, muted }) => {
+                    switch (sourceName) {
+                    case sources["mic-1"]: {
+                        state.devices.mic = !muted;
+                        break;
+                    }
+                    case sources["desktop-1"]: {
+                        state.devices.sound = !muted;
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
+                    }
+                });
+
+                state.obs.on("SceneItemVisibilityChanged", ({ itemName, itemVisible }) => {
+                    if (itemName === this.state.config.OBS.camera) {
+                        state.devices.camera = itemVisible;
+                    }
+                });
+                
+                state.obs.on("SwitchScenes", 
+                    async () => state.devices.camera = await getVisible(this.state.config.OBS.camera));
+
+                const checkFPS = () => {
+                    if (!this.state.notifications.lowfps) {
+                        if (state.status.tech.fps < state.status.videoSettings.fps) {
+                            this.dispatch("notifications/turnLowFPS", true);
+                        }
+                    } else {
+                        if (state.status.tech.fps >= state.status.videoSettings.fps) {
+                            this.dispatch("notifications/turnLowFPS", false);
+                        }
+                    }
+                };
 
                 const check = async () => {
                     if (state.obs._connected) {
-                        send("GetVideoInfo").then(async video => {
-                            state.status.videoSettings = video;
+                        const video = await send("GetVideoInfo");
+                        state.status.videoSettings = video;
 
-                            const { stats } = await send("GetStats");
-                            state.status.tech = stats;
-                            checkFPS();
-                        });
-    
-                        const devices = await Promise.all([
-                            muted(sources["mic-1"]).catch(handleError),
-                            muted(sources["desktop-1"]).catch(handleError),
-                            getVisible(this.state.config.OBS.camera).catch(handleError),
-                        ]).catch(handleError);
-    
-                        state.devices = {
-                            mic: !devices[0],
-                            sound: !devices[1],
-                            camera: devices[2]
-                        };
-
-                        await Promise.delay(1000);
-                        check();
-                    } else { 
-                        handleError("Losing connection with OBS..."); 
+                        const { stats } = await send("GetStats");
+                        state.status.tech = stats;
+                        checkFPS();
                     }
                 };
 
                 check();
+                interval = setInterval(check, 1000);
             };
 
             const send = async (...args) => {
@@ -209,9 +230,9 @@ export default {
             const handleError = async e => {
                 console.error(e);
 
-                if (state.interval) {
-                    clearInterval(state.interval);
-                    state.interval = null;
+                if (interval) {
+                    clearInterval(interval);
+                    interval = null;
                 }
                 
                 state.status.tech = null;
@@ -233,19 +254,19 @@ export default {
             state.devices = devices; 
         },
         setupUpdateInterval (state) {
-            if (state.updateInterval) {
+            if (updateInterval) {
                 this.dispatch("obs/clearUpdateInterval");
             }
 
-            state.updateInterval = setInterval(() => this.dispatch("obs/updateTime"), 1000);
+            updateInterval = setInterval(() => this.dispatch("obs/updateTime"), 1000);
         },
         clearUpdateInterval (state) {
             state.status.time.seconds = 0;
             state.status.time.mins = 0;
             state.status.time.hours = 0;
-            if (state.updateInterval) {
-                clearInterval(state.updateInterval);
-                state.updateInterval = null;
+            if (updateInterval) {
+                clearInterval(updateInterval);
+                updateInterval = null;
             }
         },
         updateTime (state) {
