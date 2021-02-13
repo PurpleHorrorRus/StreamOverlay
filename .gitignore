@@ -5,3 +5,7 @@ build/*
 node_modules
 config
 yarn-error.log
+src/main/addon/.vs
+src/main/addon/build/Release
+*.gypi
+src/main/addon/build

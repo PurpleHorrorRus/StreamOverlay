@@ -25,8 +25,8 @@ module.exports = {
     loading: false,
     build: {
         extend (config, { isClient }) {
-            if (isClient) { 
-                config.target = "electron-renderer"; 
+            if (isClient) {
+                config.target = "electron-renderer";
             }
 
             config.plugins = config.plugins.filter(plugin => plugin.constructor.name !== "UglifyJsPlugin");
