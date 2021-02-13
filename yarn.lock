@@ -7779,7 +7779,7 @@ osenv@^0.1.4:
 
 "overlayaddon@https://github.com/PurpleHorrorRus/StreamOverlayAddon.git":
   version "1.0.0"
-  resolved "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git#f96194fbc84d9e3a03c0d5db3f19526e021db62d"
+  resolved "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git#faa02a1f4bc33be1dc84675c649860de562a5451"
   dependencies:
     bindings "^1.5.0"
     node-addon-api "^3.1.0"
