@@ -2923,7 +2923,7 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.1.0.tgz#30fa40c9e7fe07dbc895678cd287024dea241dd9"
   integrity sha512-1Yj8h9Q+QDF5FzhMs/c9+6UntbD5MkRfRwac8DoEm9ZfUBZ7tZ55YcGVAzEe4bXsdQHEk+s9S5wsOKVdZrw0tQ==
 
-bindings@^1.5.0:
+bindings@1.5.0, bindings@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/bindings/-/bindings-1.5.0.tgz#10353c9e945334bc0511a6d90b38fbc7c9c504df"
   integrity sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==
@@ -4558,13 +4558,6 @@ electron-localshortcut@^3.1.0:
     electron-is-accelerator "^0.1.0"
     keyboardevent-from-electron-accelerator "^2.0.0"
     keyboardevents-areequal "^0.2.1"
-
-electron-node-loader@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/electron-node-loader/-/electron-node-loader-1.2.0.tgz#787d37f20bbb146380ad5182882c7ce847d186cf"
-  integrity sha512-GOKflmsriV90Li6445YcfDQSLf1UUl7K94QEZRq8vskbGH/Go7LPXSNWydU4QTFodCxvOoSxS1GrlVRcQVqrhQ==
-  dependencies:
-    loader-utils "^1.1.0"
 
 electron-publish@22.9.1:
   version "22.9.1"
@@ -7401,11 +7394,6 @@ node-libs-browser@^2.2.1:
     util "^0.11.0"
     vm-browserify "^1.0.1"
 
-node-loader@0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/node-loader/-/node-loader-0.6.0.tgz#c797ef51095ed5859902b157f6384f6361e05ae8"
-  integrity sha1-x5fvUQle1YWZArFX9jhPY2HgWug=
-
 node-object-hash@^1.2.0:
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/node-object-hash/-/node-object-hash-1.4.2.tgz#385833d85b229902b75826224f6077be969a9e94"
@@ -7783,6 +7771,12 @@ osenv@^0.1.4:
   dependencies:
     os-homedir "^1.0.0"
     os-tmpdir "^1.0.0"
+
+"overlayaddon@https://github.com/PurpleHorrorRus/StreamOverlayAddon.git":
+  version "1.0.0"
+  resolved "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git#110ab68e73653c6e9ab996ca27cac9d90f557dcd"
+  dependencies:
+    bindings "1.5.0"
 
 p-cancelable@^1.0.0:
   version "1.1.0"

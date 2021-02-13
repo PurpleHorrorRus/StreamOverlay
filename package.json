@@ -16,8 +16,8 @@
     },
     "scripts": {
         "dev": "node .electron-nuxt/check-engines.js && cross-env-shell NODE_ENV=development node .electron-nuxt/index.js",
-        "build": "npm run rebuild && node .electron-nuxt/check-engines.js && cross-env-shell NODE_ENV=production node --optimize_for_size .electron-nuxt/index.js",
-        "rebuild": "cd src/main/addon && node-gyp rebuild --target=11.2.3 --arch=x64 --dist-url=https://electronjs.org/headers"
+        "build": "yarn rebuild && node .electron-nuxt/check-engines.js && cross-env-shell NODE_ENV=production node --optimize_for_size .electron-nuxt/index.js",
+        "rebuild": "cd node_modules/overlayaddon && node-gyp rebuild --target=11.2.3 --arch=x64 --dist-url=https://electronjs.org/headers"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^1.2.34",
@@ -35,6 +35,7 @@
         "nuxt": "2.14.12",
         "nuxt-fontawesome": "^0.4.0",
         "obs-websocket-js": "4.0.2",
+        "overlayaddon": "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git",
         "simple-helix-api": "^1.2.1",
         "vue-autosuggest": "^2.2.0",
         "vue-draggable-resizable": "2.3.0",
@@ -56,13 +57,11 @@
         "electron": "11.2.3",
         "electron-builder": "^22.9.1",
         "electron-debug": "^3.2.0",
-        "electron-node-loader": "^1.2.0",
         "electron-rebuild": "^2.3.5",
         "eslint": "^7.19.0",
         "eslint-plugin-vue": "^7.5.0",
         "fibers": "^5.0.0",
         "file-loader": "^6.2.0",
-        "node-loader": "0.6.0",
         "sass": "^1.32.7",
         "sass-loader": "10.1.1",
         "url-loader": "^4.1.1",

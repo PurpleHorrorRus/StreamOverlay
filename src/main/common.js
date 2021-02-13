@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 import { difference } from "lodash";
 
-import addon from "./addon/build/Release/addon.node";
+import addon from "overlayaddon";
 
 app.getVersion = () => "0.6.0";
 app.commandLine.appendSwitch("js-flags", "--expose_gc --max-old-space-size=128");

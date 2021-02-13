@@ -17,9 +17,7 @@ const store = () => {
             SET_CONFIG: (state, config) => state.config = config
         },
         actions: {
-            SET_CONFIG ({ commit }, config) {
-                commit("SET_CONFIG", config);
-            }
+            SET_CONFIG: ({ commit }, config) => commit("SET_CONFIG", config)
         },
         modules: { 
             followers,
