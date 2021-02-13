@@ -1,10 +1,10 @@
 /* eslint-disable no-undef */
 import { app } from "electron";
-import fs from "fs";
-import path from "path";
 import { difference } from "lodash";
 
 import addon from "overlayaddon";
+import fs from "fs";
+import path from "path";
 
 app.getVersion = () => "0.6.0";
 app.commandLine.appendSwitch("js-flags", "--expose_gc --max-old-space-size=128");
@@ -20,9 +20,8 @@ const writeJSON = (dir, content) => {
 };
 
 const saveSettings = (type = "settings", content) => {
-    const path = paths[type];
     config[type] = content;
-    writeJSON(path, content);
+    writeJSON(paths[type], content);
 };
 
 const clearSettings = {
