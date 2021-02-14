@@ -1,12 +1,11 @@
 /* eslint-disable no-undef */
 import { app } from "electron";
-import { difference } from "lodash";
 
 import addon from "overlayaddon";
 import fs from "fs";
 import path from "path";
 
-app.getVersion = () => "0.6.1";
+app.getVersion = () => "0.6.2";
 app.commandLine.appendSwitch("js-flags", "--expose_gc --max-old-space-size=128");
 
 const icon = path.join("build", "icons", "icon.ico");
@@ -117,22 +116,10 @@ for (let key of clearKeys) {
 
 keys = clearKeys = null;
 
-let pids = [];
-const setLowPriority = () => difference(
-    addon.ProcessList()
-        .filter(pr => pr.name === processName)
-        .map(pr => pr.pid), pids)
-    .map(pid => {
-        pids = [...pids, pid];
-        addon.SetLowPriority(pid);
-    });
-
-setInterval(setLowPriority, 30000);
-
 export default {
     icon, isDev, paths, config, 
     readJSON, writeJSON, exist,
     saveSettings,
     readSettings: (type = "settings") => readJSON(paths[type]),
-    setLowPriority
+    setLowPriority: () => addon.Run(processName)
 };

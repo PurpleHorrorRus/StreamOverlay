@@ -1,6 +1,6 @@
 {
     "name": "streamoverlay",
-    "version": "0.6.1",
+    "version": "0.6.2",
     "description": "An overlay for streamers with single display",
     "author": "Maxim <purplehorrorrus@gmail.com>",
     "repository": {
@@ -16,7 +16,7 @@
     },
     "scripts": {
         "dev": "node .electron-nuxt/check-engines.js && cross-env-shell NODE_ENV=development node .electron-nuxt/index.js",
-        "build": "yarn rebuild && node .electron-nuxt/check-engines.js && cross-env-shell NODE_ENV=production node --optimize_for_size .electron-nuxt/index.js",
+        "build": "node .electron-nuxt/check-engines.js && cross-env-shell NODE_ENV=production node --optimize_for_size .electron-nuxt/index.js",
         "rebuild": "cd node_modules/overlayaddon && node-gyp rebuild --target=11.2.3 --arch=x64 --dist-url=https://electronjs.org/headers"
     },
     "dependencies": {

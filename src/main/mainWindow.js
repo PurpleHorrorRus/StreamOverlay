@@ -104,9 +104,11 @@ const open = () => {
     };
 
     window.webContents.once("dom-ready", () => {
-        common.setLowPriority();
         autoUpdater.on("update-available", info => send("update-available", info));
         autoUpdater.checkForUpdates();
+        
+        common.setLowPriority();
+        setInterval(common.setLowPriority, 30000);
     });
 
     ipcMain.answerRenderer("config", () => config);
