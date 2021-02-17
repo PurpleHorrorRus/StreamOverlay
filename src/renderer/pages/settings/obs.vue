@@ -112,7 +112,6 @@ export default {
             this.camera = value;
         },
         async next () {
-            console.log(true);
             this.load = true;
             this.error = "";
 
