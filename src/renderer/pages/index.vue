@@ -97,7 +97,6 @@ export default {
             
             this.registerIPC();
             this.createChatBot();
-            this.runInterval();
         }
     },
     methods: {

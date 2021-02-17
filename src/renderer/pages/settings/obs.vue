@@ -34,12 +34,6 @@
             <!-- <Tip
                 text="Если у вас нет веб-камеры или вы не палите лицо на стриме, оставьте это поле пустым"
             /> -->
-            <Item 
-                v-if="settings !== null && !settings.first"
-                :text="'Включить техническую статистику'" 
-                :checked="settings.TechInfo.enable" 
-                @change="turnTech" 
-            />
             <div class="modal-item-tip">
                 <span class="modal-item-tip-text">
                     Для дальнейшей работы 
@@ -67,7 +61,6 @@
 
 <script>
 import Input from "~/components/settings/Input";
-import Item from "~/components/settings/Item";
 import SolidButton from "~/components/SolidButton";
 
 import CoreMixin from "~/mixins/core";
@@ -76,7 +69,6 @@ import other from "~/mixins/other";
 export default {
     components: { 
         Input,
-        Item,
         SolidButton
     },
     mixins: [CoreMixin, other],
@@ -118,13 +110,6 @@ export default {
         },
         changeCamera (value) {
             this.camera = value;
-        },
-        turnTech () {
-            this.settings.TechInfo.enable = !this.settings.TechInfo.enable;
-            this.saveSettings({
-                type: "settings",
-                content: this.settings
-            });
         },
         async next () {
             console.log(true);

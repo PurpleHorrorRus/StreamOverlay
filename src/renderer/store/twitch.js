@@ -32,8 +32,6 @@ const addText = (formatted, text) => {
 let betterTTV = null;
 let FrankerFaceZ = null;
 
-let interval = null;
-
 export default {
     namespaced: true,
     state: () => ({
@@ -196,17 +194,6 @@ export default {
         },
         BAN: ({ state }, nickname) => state.client.ban(state.user.username, nickname, "бан стримером"),
         REMOVE_MESSAGE: ({ commit }, id) => commit("REMOVE_MESSAGE", id),
-        UPDATE_STATS: async ({ commit, dispatch, state, rootState }) => { 
-            dispatch("followers/GET", state.user.id, { root: true });
-
-            if (rootState.obs.status.stream) {
-                const response = await state.helix.getStream(state.user.username);
-                commit("SET_VIEWERS", response 
-                    ? !response.error ? response.viewer_count : -1
-                    : -1
-                );
-            }
-        },
         UPDATE: async ({ commit, state }, data) => {
             const { success } = await state.helix.updateStream(state.user.id, data.title, data.game);
                 
@@ -262,18 +249,6 @@ export default {
             
             const emotes = await Promise.all([bGlobalPromise, bChannelPromise, fChannelPromise]);
             commit("SET_EMOTES", emotes);
-        },
-        RUN_INTERVAL: async ({ dispatch }) => {
-            if (interval) {
-                clearInterval(interval);
-                interval = null;
-            }
-
-            interval = setInterval(() => 
-                dispatch("UPDATE_STATS"), 20 * 1000);
-
-            await Promise.delay(1000);
-            dispatch("UPDATE_STATS");
         }
     }
 };

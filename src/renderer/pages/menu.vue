@@ -11,6 +11,7 @@
         <MenuItem :text="'Настройки OBS'" :icon="['fas', 'wrench']" @click="open('/settings/obs')" />
         <MenuItem :text="'Настройки Twitch'" :icon="['fab', 'twitch']" @click="open('/settings/twitch')" />
         <MenuItem :text="'Настройки чата'" :icon="['fas', 'comment']" @click="open('/settings/chat')" />
+        <MenuItem :text="'Прочие настройки'" :icon="['fas', 'tools']" @click="open('/settings/other')" />
     </div>
 </template>
 
@@ -21,12 +22,12 @@ import MenuItem from "~/components/MenuItem";
 import WidgetsMixin from "~/mixins/widgets";
 
 export default {
-    layout: "modal",
     components: { 
         ModalTitle, 
         MenuItem
     },
     mixins: [WidgetsMixin],
+    layout: "modal",
     data: () => ({ 
         loadingStream: false 
     }),

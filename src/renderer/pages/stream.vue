@@ -57,12 +57,12 @@ import Game from "~/components/Game";
 import SolidButton from "~/components/SolidButton";
 
 export default {
-    layout: "modal",
     components: { 
         Game,
         Input,
         SolidButton
     },
+    layout: "modal",
     async asyncData ({ store }) {
         const { helix, stream } = store.state.twitch;
         const game = await helix.getGame(stream.game);

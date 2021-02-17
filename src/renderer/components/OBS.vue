@@ -1,7 +1,7 @@
 <template>
     <Movable
         ref="OBSStatus"
-        :source="settings.OBSStatus"
+        :source="source"
         :name="''"
         :resizable="false"
         @onDrag="onDrag"
@@ -30,6 +30,15 @@ export default {
         Status 
     },
     mixins: [OBSMixin],
+    computed: {
+        source () {
+            return {
+                ...this.settings.OBSStatus,
+                width: 175,
+                height: 35
+            };
+        }
+    },
     methods: {
         onDrag (x, y) {
             this.settings.OBSStatus.x = x;

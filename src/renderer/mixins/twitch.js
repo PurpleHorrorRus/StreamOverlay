@@ -8,15 +8,13 @@ export default {
         ...mapState({
             helix: state => state.twitch.helix,
             user: state => state.twitch.user,
-            viewers: state => state.twitch.viewers,
             followers: state => state.followers.count
         })
     },
     methods: {
         ...mapActions({
             createHelix: "twitch/CREATE_HELIX",
-            createChatBot: "twitch/CREATE_CHATBOT",
-            runInterval: "twitch/RUN_INTERVAL"
+            createChatBot: "twitch/CREATE_CHATBOT"
         })
     }
 };
