@@ -38,12 +38,11 @@ export default {
         user: null,
         helix: null,
         client: null,
+        messages: [],
         stream: {
             title: null,
             game: null
-        },
-        messages: [],
-        viewers: -1
+        }
     }),
     mutations: {
         SET_HELIX: (state, helix) => state.helix = helix,
@@ -86,7 +85,6 @@ export default {
                 return;
             }
 
-            dispatch("followers/GET", state.user.id, { root: true });
             dispatch("LOAD_EMOTES");
 
             const { status: title, game } = await state.helix.getChannel(state.user.id);

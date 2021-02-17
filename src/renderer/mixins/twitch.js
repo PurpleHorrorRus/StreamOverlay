@@ -7,8 +7,7 @@ export default {
     computed: {
         ...mapState({
             helix: state => state.twitch.helix,
-            user: state => state.twitch.user,
-            followers: state => state.followers.count
+            user: state => state.twitch.user
         })
     },
     methods: {

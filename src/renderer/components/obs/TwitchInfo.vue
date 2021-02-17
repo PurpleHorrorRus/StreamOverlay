@@ -22,6 +22,8 @@
 <script>
 import { mapState } from "vuex";
 
+import Promise from "bluebird";
+
 import { EyeIcon, HeartIcon } from "vue-feather-icons";
 
 import Movable from "~/components/Movable";
@@ -38,7 +40,8 @@ export default {
     },
     mixins: [TwitchMixin],
     data: () => ({
-        viewers: 0
+        viewers: 0,
+        followers: -1
     }),
     computed: {
         ...mapState({
@@ -53,14 +56,19 @@ export default {
         }
     },
     async created () {
-        this.viewers = await this.getViewersCount();
-        interval = setInterval(async () => this.viewers = await this.getViewersCount(), 20000);
+        this.get();
+        interval = setInterval(() => this.get(), 20000);
     },
     destroyed () {
         clearInterval(interval);
         interval = null;
     },
     methods: {
+        async get () {
+            const [viewers, followers] = await Promise.all([this.getViewersCount(), this.getFollowersCount()]);
+            this.viewers = viewers;
+            this.followers = followers;
+        },
         async getViewersCount () {
             if (this.streaming) {
                 const { viewer_count } = await this.helix.getStream(this.user.username);
@@ -68,6 +76,11 @@ export default {
             }
 
             return 0;
+        },
+        async getFollowersCount () {
+            return this.settings.TwitchInfo.enableFollowers
+                ? await this.helix.getFollowersCount(this.user.id)
+                : -1;
         },
         onDrag (x, y) {
             this.settings.TwitchInfo.x = x;

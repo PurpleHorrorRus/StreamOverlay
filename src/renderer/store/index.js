@@ -1,6 +1,5 @@
 import Vuex from "vuex";
 
-import followers from "~/store/followers";
 import obs from "~/store/obs";
 import twitch from "~/store/twitch";
 import widgets from "~/store/widgets";
@@ -19,8 +18,7 @@ const store = () => {
         actions: {
             SET_CONFIG: ({ commit }, config) => commit("SET_CONFIG", config)
         },
-        modules: { 
-            followers,
+        modules: {
             obs, 
             twitch, 
             widgets, 
