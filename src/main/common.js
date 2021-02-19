@@ -1,7 +1,5 @@
 /* eslint-disable no-undef */
 import { app } from "electron";
-
-import addon from "overlayaddon";
 import fs from "fs";
 import path from "path";
 
@@ -10,7 +8,6 @@ app.commandLine.appendSwitch("js-flags", "--expose_gc --max-old-space-size=128")
 
 const icon = path.join("build", "icons", "icon.ico");
 const isDev = process.env.NODE_ENV === "development";
-const processName = path.basename(process.execPath);
 
 const readJSON = dir => JSON.parse(fs.readFileSync(dir, "UTF-8"));
 const writeJSON = (dir, content) => {
@@ -130,7 +127,5 @@ export default {
     icon, isDev, paths, config, 
     readJSON, writeJSON, exist,
     saveSettings,
-    readSettings: (type = "settings") => readJSON(paths[type]),
-    setLowPriority: () => addon.Run(processName),
-    moveTop: handle => addon.MoveTop(handle)
+    readSettings: (type = "settings") => readJSON(paths[type])
 };

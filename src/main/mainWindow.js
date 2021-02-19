@@ -3,6 +3,7 @@
 import { app, BrowserWindow, globalShortcut, Tray, Menu } from "electron";
 import { ipcMain } from "electron-better-ipc";
 
+import addon from "overlayaddon";
 import path from "path";
 
 import { default as common } from "./common";
@@ -13,6 +14,8 @@ const { autoUpdater } = updater;
 
 const INDEX_PATH = path.join(__dirname, "..", "renderer", "index.html");
 const DEV_SERVER_URL = process.env.DEV_SERVER_URL;
+
+const processName = path.basename(process.execPath);
 
 const width = 1920,
     height = 1080;
@@ -57,11 +60,10 @@ const open = () => {
     window.removeMenu();
     window.setIgnoreMouseEvents(true);
     window.setContentProtection(true);
-    window.setVisibleOnAllWorkspaces(true);
     window.setAlwaysOnTop(true, "screen-saver");
 
     handle = window.getNativeWindowHandle();
-    const moveTop = () => window && !menu ? common.moveTop(handle) : null;
+    const moveTop = () => window && !menu ? addon.MoveTop(handle) : null;
 
     moveTop();
     setInterval(moveTop, 4000);
@@ -104,8 +106,8 @@ const open = () => {
         autoUpdater.on("update-available", info => send("update-available", info));
         autoUpdater.checkForUpdates();
         
-        common.setLowPriority();
-        setInterval(common.setLowPriority, 30000);
+        addon.SetLowPriority(processName);
+        setInterval(() => addon.SetLowPriority(processName), 30000);
     });
 
     ipcMain.answerRenderer("config", () => config);
