@@ -7784,7 +7784,7 @@ osenv@^0.1.4:
 
 "overlayaddon@https://github.com/PurpleHorrorRus/StreamOverlayAddon.git":
   version "1.0.0"
-  resolved "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git#710fde41b7c150f258decbace19389e49aeb38fd"
+  resolved "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git#e7dd0baee64bc28afaa9705c4e484bbd39b11b9b"
   dependencies:
     bindings "^1.5.0"
     nan "^2.14.2"
