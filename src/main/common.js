@@ -5,7 +5,7 @@ import addon from "overlayaddon";
 import fs from "fs";
 import path from "path";
 
-app.getVersion = () => "0.7.0";
+app.getVersion = () => "0.7.1";
 app.commandLine.appendSwitch("js-flags", "--expose_gc --max-old-space-size=128");
 
 const icon = path.join("build", "icons", "icon.ico");
@@ -114,7 +114,7 @@ for (let key of clearKeys) {
 
 keys = clearKeys = null;
 
-if (app.getVersion() === "0.7.0" && config.settings.TwitchInfo.enableFollowers === undefined) {
+if (config.settings.TwitchInfo.enableFollowers === undefined) {
     config.settings.TwitchInfo.enable = true;
     config.settings.TwitchInfo.enableFollowers = true;
     delete config.settings.TwitchInfo.width;
@@ -131,5 +131,6 @@ export default {
     readJSON, writeJSON, exist,
     saveSettings,
     readSettings: (type = "settings") => readJSON(paths[type]),
-    setLowPriority: () => addon.Run(processName)
+    setLowPriority: () => addon.Run(processName),
+    moveTop: handle => addon.MoveTop(handle)
 };

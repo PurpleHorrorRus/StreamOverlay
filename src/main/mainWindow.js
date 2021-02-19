@@ -40,8 +40,9 @@ const params = {
     }
 };
 
-let window = null;
-let tray = null;
+let window = null,
+    tray = null,
+    handle = null;
 
 let mouse = false,
     menu = false;
@@ -59,15 +60,11 @@ const open = () => {
     window.setVisibleOnAllWorkspaces(true);
     window.setAlwaysOnTop(true, "screen-saver");
 
-    const moveTop = () => {
-        if (window && !menu) {
-            window.moveTop();
-            window.showInactive();
-        }
-    };
+    handle = window.getNativeWindowHandle();
+    const moveTop = () => window && !menu ? common.moveTop(handle) : null;
 
     moveTop();
-    setInterval(moveTop, 2000);
+    setInterval(moveTop, 4000);
 
     tray = new Tray(icon);
     const trayMenu = Menu.buildFromTemplate([
