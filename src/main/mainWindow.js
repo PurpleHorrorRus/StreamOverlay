@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-import { app, BrowserWindow, globalShortcut, Tray, Menu } from "electron";
+import { app, BrowserWindow, globalShortcut, Tray, Menu, screen } from "electron";
 import { ipcMain } from "electron-better-ipc";
 
 import addon from "overlayaddon";
@@ -17,13 +17,10 @@ const DEV_SERVER_URL = process.env.DEV_SERVER_URL;
 
 const processName = path.basename(process.execPath);
 
-const width = 1920,
-    height = 1080;
-
 const params = {
     icon,
-    width,
-    height,
+    width: 1920,
+    height: 1080,
     show: false,
     resizable: false,
     movable: false,
@@ -34,12 +31,20 @@ const params = {
     alwaysOnTop: true,
     flashFrame: false,
     webPreferences: {
+        webSecurity: false,
+        nodeIntegration: true,
+        nodeIntegrationInWorker: false,
+        backgroundThrottling: true,
         contextIsolation: false,
         webviewTag: true,
-        nodeIntegration: true,
-        webSecurity: false,
         allowRunningInsecureContent: true,
-        devTools: true
+        spellcheck: false,
+        devTools: isDev,
+        enableRemoteModule: false,
+        webgl: false,
+        enableWebSQL: false,
+        v8CacheOptions: "none",
+        additionalArguments: ["--js-flags=--max-old-space-size=128 --stack-size=128"]
     }
 };
 
@@ -53,6 +58,10 @@ let mouse = false,
 app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
 
 const open = () => {
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+    params.width = width;
+    params.height = height;
+
     window = new BrowserWindow(params);
 
     window.setSkipTaskbar(true);

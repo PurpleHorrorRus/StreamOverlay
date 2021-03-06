@@ -3,8 +3,7 @@ import { app } from "electron";
 import fs from "fs";
 import path from "path";
 
-app.getVersion = () => "0.7.1";
-app.commandLine.appendSwitch("js-flags", "--expose_gc --max-old-space-size=128");
+app.getVersion = () => "0.7.2";
 
 const icon = path.join("build", "icons", "icon.ico");
 const isDev = process.env.NODE_ENV === "development";
