@@ -45,7 +45,6 @@ export default {
     .device {
         margin-left: 5px;
         width: 15px;
-        stroke-width: 1px;
 
         &.disabled {
             stroke: red;
