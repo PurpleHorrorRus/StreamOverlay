@@ -104,6 +104,8 @@ const open = () => {
         app.quit();
     });
 
+    window.webContents.on("new-window", event => event.preventDefault());
+
     const send = (event, content) => {
         if (window) {
             window.webContents.send(event, content);
