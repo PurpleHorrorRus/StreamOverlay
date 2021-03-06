@@ -113,7 +113,6 @@ export default {
                     beep.volume = 0.05;
                 }
                 
-                beep.setSinkId(this.settings.outputDeviceId);
                 beep.play();
             });
 
