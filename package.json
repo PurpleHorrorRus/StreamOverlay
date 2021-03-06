@@ -1,6 +1,6 @@
 {
     "name": "streamoverlay",
-    "version": "0.7.1",
+    "version": "0.7.2",
     "description": "An overlay for streamers with single display",
     "author": "Maxim <purplehorrorrus@gmail.com>",
     "repository": {
@@ -17,7 +17,7 @@
     "scripts": {
         "dev": "node .electron-nuxt/check-engines.js && cross-env-shell NODE_ENV=development node .electron-nuxt/index.js",
         "build": "node .electron-nuxt/check-engines.js && cross-env-shell NODE_ENV=production node --optimize_for_size .electron-nuxt/index.js",
-        "rebuild": "cd node_modules/overlayaddon && node-gyp rebuild --target=11.2.3 --arch=x64 --dist-url=https://electronjs.org/headers"
+        "rebuild": "cd node_modules/overlayaddon && node-gyp rebuild --target=12.0.0 --arch=x64 --dist-url=https://electronjs.org/headers"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^1.2.34",
@@ -28,7 +28,7 @@
         "@trevoreyre/autocomplete": "^2.2.0",
         "bluebird": "^3.7.2",
         "electron-better-ipc": "^1.1.1",
-        "electron-updater": "4.3.5",
+        "electron-updater": "4.3.8",
         "express": "^4.17.1",
         "http": "^0.0.1-security",
         "node-fetch": "2.6.1",
@@ -54,15 +54,15 @@
         "bufferutil": "^4.0.3",
         "cross-env": "^7.0.3",
         "cssnano": "^4.1.10",
-        "electron": "11.2.3",
-        "electron-builder": "^22.9.1",
+        "electron": "12.0.0",
+        "electron-builder": "^22.10.5",
         "electron-debug": "^3.2.0",
         "electron-rebuild": "^2.3.5",
-        "eslint": "^7.19.0",
-        "eslint-plugin-vue": "^7.5.0",
+        "eslint": "^7.21.0",
+        "eslint-plugin-vue": "^7.7.0",
         "fibers": "^5.0.0",
         "file-loader": "^6.2.0",
-        "sass": "^1.32.7",
+        "sass": "^1.32.8",
         "sass-loader": "10.1.1",
         "url-loader": "^4.1.1",
         "utf-8-validate": "^5.0.4",
