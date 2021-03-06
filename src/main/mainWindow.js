@@ -49,8 +49,7 @@ const params = {
 };
 
 let window = null,
-    tray = null,
-    handle = null;
+    tray = null;
 
 let mouse = false,
     menu = false;
@@ -71,8 +70,8 @@ const open = () => {
     window.setContentProtection(true);
     window.setAlwaysOnTop(true, "screen-saver");
 
-    handle = window.getNativeWindowHandle();
-    const moveTop = () => window && !menu ? addon.MoveTop(handle) : null;
+    addon.InitWindow(window.getNativeWindowHandle());
+    const moveTop = () => window && !menu ? addon.MoveTop() : null;
 
     moveTop();
     setInterval(moveTop, 4000);
@@ -117,6 +116,7 @@ const open = () => {
         
         addon.SetLowPriority(processName);
         setInterval(() => addon.SetLowPriority(processName), 30000);
+        setInterval(() => addon.ReduceWorkingSet(processName), 60000);
     });
 
     ipcMain.answerRenderer("config", () => config);
