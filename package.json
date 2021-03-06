@@ -2,7 +2,7 @@
     "name": "streamoverlay",
     "version": "0.7.2",
     "description": "An overlay for streamers with single display",
-    "author": "Maxim <purplehorrorrus@gmail.com>",
+    "author": "PurpleHorrorRus <purplehorrorrus@gmail.com>",
     "repository": {
         "type": "git",
         "url": "https://github.com/PurpleHorrorRus/StreamOverlayStandart/"
