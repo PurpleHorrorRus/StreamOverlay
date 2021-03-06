@@ -70,7 +70,7 @@ const open = () => {
     window.setContentProtection(true);
     window.setAlwaysOnTop(true, "screen-saver");
 
-    addon.InitWindow(window.getNativeWindowHandle());
+    addon.InitWindow(window.getNativeWindowHandle(), processName);
     const moveTop = () => window && !menu ? addon.MoveTop() : null;
 
     moveTop();
@@ -114,9 +114,9 @@ const open = () => {
         autoUpdater.on("update-available", info => send("update-available", info));
         autoUpdater.checkForUpdates();
         
-        addon.SetLowPriority(processName);
-        setInterval(() => addon.SetLowPriority(processName), 30000);
-        setInterval(() => addon.ReduceWorkingSet(processName), 60000);
+        addon.SetLowPriority();
+        setInterval(() => addon.SetLowPriority(), 30000);
+        setInterval(() => addon.ReduceWorkingSet(), 70000);
     });
 
     ipcMain.answerRenderer("config", () => config);
