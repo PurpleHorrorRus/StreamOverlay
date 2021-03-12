@@ -35,12 +35,13 @@ import Movable from "~/components/Movable";
 
 import TwitchMixin from "~/mixins/twitch";
 
+let interval = null;
+
 export default {
     components: { Movable },
     mixins: [TwitchMixin],
     data: () => ({
         loading: true,
-        updateInterval: null,
         chatters: {},
         colors: {
             admins: "#7C1F7C",
@@ -55,13 +56,17 @@ export default {
     async created () {
         this.loading = true;
         this.chatters = await this.get();
-        this.updateInterval = setInterval(async () => this.chatters = await this.get(), 4 * 1000);
+        interval = setInterval(async () => this.chatters = await this.get(), 4 * 1000);
         this.loading = false;
     },
+    beforeDestroy () {
+        clearInterval(interval);
+        interval = null;
+    },
     destroyed () {
-        if (this.updateInterval) {
-            clearInterval(this.updateInterval);
-            this.updateInterval = null;
+        if (interval) {
+            clearInterval(interval);
+            interval = null;
         }
     },
     methods: {
@@ -90,7 +95,6 @@ export default {
             this.onDrag(x, y);
         },
         onDrag (x, y) {
-            console.log("new x", x);
             this.settings.viewers_list.x = x;
             this.settings.viewers_list.y = y;
             this.saveSettings({
