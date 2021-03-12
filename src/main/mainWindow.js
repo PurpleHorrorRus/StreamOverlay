@@ -15,8 +15,6 @@ const { autoUpdater } = updater;
 const INDEX_PATH = path.join(__dirname, "..", "renderer", "index.html");
 const DEV_SERVER_URL = process.env.DEV_SERVER_URL;
 
-const processName = path.basename(process.execPath);
-
 const params = {
     icon,
     width: 1920,
@@ -70,7 +68,7 @@ const open = () => {
     window.setContentProtection(true);
     window.setAlwaysOnTop(true, "screen-saver");
 
-    addon.InitWindow(window.getNativeWindowHandle(), processName);
+    addon.InitWindow(window.getNativeWindowHandle(), path.basename(process.execPath));
     const moveTop = () => window && !menu ? addon.MoveTop() : null;
 
     moveTop();
