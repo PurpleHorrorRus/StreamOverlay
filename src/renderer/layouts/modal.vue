@@ -2,8 +2,8 @@
     <div id="modal">
         <Chat />
         <div id="modal-lock">
-            <font-awesome-icon v-if="locked" :icon="['fa', 'lock']" style="color: lightgreen" />
-            <font-awesome-icon v-else :icon="['fa', 'unlock']" style="color: red" />
+            <FontAwesomeIcon v-if="locked" :icon="['fa', 'lock']" style="color: lightgreen" />
+            <FontAwesomeIcon v-else :icon="['fa', 'unlock']" style="color: red" />
         </div>
         <div v-show="locked" id="modal-container">
             <nuxt />

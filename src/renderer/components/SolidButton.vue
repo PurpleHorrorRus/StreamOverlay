@@ -5,7 +5,8 @@
             class="solid-button-label" 
             v-text="label" 
         />
-        <font-awesome-icon v-else class="fa-spin" :icon="['fas', 'circle-notch']" />
+        
+        <FontAwesomeIcon v-else icon="circle-notch" spin />
     </div>
 </template>
 

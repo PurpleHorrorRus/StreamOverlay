@@ -1,7 +1,7 @@
 <template>
     <div class="next-button">
         <span v-if="!loading" class="next-button-icon">Далее</span>
-        <font-awesome-icon v-else id="viewers_count" :icon="['fas', 'circle-notch']" class="fa-spin" />
+        <FontAwesomeIcon v-else icon="circle-notch" spin />
     </div>
 </template>
 

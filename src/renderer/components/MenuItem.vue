@@ -1,7 +1,7 @@
 <template>
     <div class="modal-navigation-link" @click="$emit('click')">
-        <font-awesome-icon v-if="!load" :icon="icon" />
-        <font-awesome-icon v-else class="fa-spin" :icon="['fas', 'circle-notch']" />
+        <FontAwesomeIcon v-if="!load" :icon="icon" />
+        <FontAwesomeIcon v-else icon="circle-notch" spin />
         <span class="modal-navigation-text" v-text="text" />
     </div>
 </template>

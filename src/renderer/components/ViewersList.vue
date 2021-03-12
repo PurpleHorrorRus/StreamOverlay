@@ -22,7 +22,7 @@
             </div>
         </div>
         <div v-else id="loading-block">
-            <font-awesome-icon id="loading-icon" class="fa-spin" :icon="['fas', 'circle-notch']" />
+            <FontAwesomeIcon id="loading-icon" icon="circle-notch" spin />
         </div>
     </Movable>
 </template>
