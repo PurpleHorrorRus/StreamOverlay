@@ -69,7 +69,12 @@ const open = () => {
     window.setAlwaysOnTop(true, "screen-saver");
 
     addon.InitWindow(window.getNativeWindowHandle(), path.basename(process.execPath));
-    const moveTop = () => window && !menu ? addon.MoveTop() : null;
+    const moveTop = () => {
+        if (window && !menu) {
+            addon.MoveTop();
+            window.showInactive();
+        }
+    };
 
     moveTop();
     setInterval(moveTop, 4000);
@@ -85,7 +90,7 @@ const open = () => {
     tray.setContextMenu(trayMenu);
 
     tray.on("double-click", () => {
-        window.showInactive();
+        moveTop();
         window.setAlwaysOnTop(true, "screen-saver");
     });
 
