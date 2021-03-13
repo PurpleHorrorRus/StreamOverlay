@@ -165,4 +165,4 @@ const open = () => {
 };
 
 app.disableHardwareAcceleration();
-app.on("ready", open);
+app.requestSingleInstanceLock() ? app.on("ready", open): app.quit();
