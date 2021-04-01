@@ -9,7 +9,7 @@
     },
     "main": "./dist/main/index.js",
     "engines": {
-        "node": ">=14.16.0"
+        "node": ">=10.16.3"
     },
     "resolutions": {
         "@types/node": "12.12.6"
