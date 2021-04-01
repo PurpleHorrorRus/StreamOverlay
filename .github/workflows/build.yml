@@ -20,5 +20,10 @@ jobs:
       - name: Install deps
         run: yarn
 
-      - name: Build
+      - name: Rebuild addon
+        run: yarn rebuild
+
+      - name: Build application
         run: yarn build
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
