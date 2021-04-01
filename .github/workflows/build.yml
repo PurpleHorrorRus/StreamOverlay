@@ -17,6 +17,5 @@ jobs:
         with:
           node-version: 14.16.0
 
-      - uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: rebuild
+      - name: Rebuild addon
+        run: yarn rebuild
