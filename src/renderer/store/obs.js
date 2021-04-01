@@ -103,8 +103,9 @@ export default {
                 state.obs.on("StreamStopping", () => {
                     state.status.stream = false;
                     
-                    this.dispatch("notifications/turnLowBitrate", false);
-                    this.dispatch("notifications/turnLowFPS", false);
+                    this.dispatch("notifications/TURN", { name: "lowbitrate", show: false });
+                    this.dispatch("notifications/TURN", { name: "lowfps", show: false });
+
                     if (!state.status.recording) {
                         this.dispatch("obs/CLEAR_UPDATE_INTERVAL");
                     }
@@ -125,15 +126,13 @@ export default {
                 });
 
                 state.obs.on("StreamStatus", data => {
-                    state.status.bitrate = data["kbits-per-sec"];
+                    state.status.bitrate = data.kbitsPerSec;
 
-                    if (state.status.bitrate <= 200) {
-                        if (!this.state.notifications.lowbitrate) {
-                            this.dispatch("notifications/turnLowBitrate", true);
-                        }
+                    if (data.kbitsPerSec <= 200) {
+                        this.dispatch("notifications/TURN", { name: "lowbitrate", show: true });
                     } else {
                         if (this.state.notifications.lowbitrate) {
-                            this.dispatch("notifications/turnLowBitrate", false);
+                            this.dispatch("notifications/TURN", { name: "lowbitrate", show: false });
                         }
                     }
                 });

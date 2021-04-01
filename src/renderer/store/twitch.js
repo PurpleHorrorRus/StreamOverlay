@@ -112,15 +112,16 @@ export default {
             });
 
             client.on("connected", () => {
-                dispatch("notifications/turnChatDisconnect", false, { root: true });
-                dispatch("notifications/addNotification", { 
+                dispatch("notifications/TURN", { name: "chatdisconnect", show: false }, { root: true });
+                dispatch("notifications/ADD", { 
                     text: "Чат успешно подключен",
                     color: "lightgreen",
                     handle: 5
                 }, { root: true });
             });
 
-            client.on("disconnected", () => dispatch("notifications/turnChatDisconnect", true, { root: true }));
+            client.on("disconnected", () => 
+                dispatch("notifications/TURN", { name: "chatdisconnect", show: true }, { root: true }));
 
             commit("SET_CLIENT", client);
         },

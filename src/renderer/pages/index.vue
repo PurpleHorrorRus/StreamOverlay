@@ -59,7 +59,10 @@ export default {
         }
     },
     beforeMount () {
-        ipcRenderer.on("update-available", () => this.turnUpdate(true));
+        ipcRenderer.on("update-available", () => this.turnNotification({
+            name: "update",
+            show: true
+        }));
     },
     async mounted () {
         const config = await ipcRenderer.callMain("config");
@@ -104,7 +107,7 @@ export default {
             setConfig: "SET_CONFIG",
             
             turnLock: "ipc/TURN_LOCK",
-            turnUpdate: "notifications/turnUpdate"
+            turnNotification: "notifications/TURN"
         }),
         registerIPC () { 
             IPC.on("beep", () => {
