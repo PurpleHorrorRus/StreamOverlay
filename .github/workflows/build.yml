@@ -17,5 +17,5 @@ jobs:
         with:
           node-version: 14.16.0
 
-      - name: Rebuild addon
-        run: yarn rebuild
+      - name: Build
+        run: yarn build
