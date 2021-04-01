@@ -183,16 +183,18 @@ export default {
 
                 const check = async () => {
                     if (state.obs._connected) {
-                        const video = await send("GetVideoInfo");
-                        state.status.videoSettings = video;
-
+                        state.status.videoSettings = await send("GetVideoInfo");
+    
                         const { stats } = await send("GetStats");
-                        state.status.tech = stats;
-
+                        if (this.state.settings.settings.OBSStatus.enable) {
+                            state.status.tech = stats;
+                        }
+                            
                         this.dispatch(
-                            "notifications/turnLowFPS", 
-                            state.status.tech.fps < state.status.videoSettings.fps
-                        );
+                            "notifications/TURN", { 
+                                name: "lowfps", 
+                                show: stats.fps < state.status.videoSettings.fps
+                            });
                     }
                 };
                 
