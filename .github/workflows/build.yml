@@ -10,23 +10,29 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
-      - name: Install Node.js, NPM and Yarn
+      - name: Initialize Environment
         uses: actions/setup-node@v1
         with:
           node-version: 14.16.0
 
-      - name: Install deps
+      - name: Install Dependencies
         run: yarn
 
-      - name: Rebuild addon
+      - name: Rebuild Addon
         run: yarn rebuild
 
       - name: Clean node_modules
         run: npx modclean -r
 
-      - name: Build application
+      - name: Build Application
         run: yarn build
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: streamoverlay.exe
+          path: build/streamoverlay-*.exe
