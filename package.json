@@ -12,7 +12,7 @@
         "node": ">=10.16.3"
     },
     "resolutions": {
-        "@types/node": "12.12.6"
+        "@types/node": "14.6.2"
     },
     "scripts": {
         "dev": "node .electron-nuxt/check-engines.js && cross-env NODE_ENV=development node .electron-nuxt/index.js",
