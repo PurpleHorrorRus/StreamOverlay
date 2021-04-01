@@ -9,7 +9,7 @@
             />
             <Item 
                 v-if="settings.TwitchInfo.enable"
-                :text="'Показать количество фолловеров'" 
+                :text="'Показать фолловеров'" 
                 :checked="settings.TwitchInfo.enableFollowers" 
                 @change="turnTwitch('enableFollowers')" 
             />
@@ -18,6 +18,12 @@
                 :text="'Включить техническую статистику OBS'" 
                 :checked="settings.TechInfo.enable" 
                 @change="turnTech" 
+            />
+
+            <Item 
+                :text="'Включить время трансляции/записи'" 
+                :checked="settings.time" 
+                @change="turn('time')" 
             />
         </div>
     </div>
@@ -44,6 +50,13 @@ export default {
         ...mapActions({
             saveSettings: "settings/saveSettings"
         }),
+        turn (option) {
+            this.settings[option] = !this.settings[option];
+            this.saveSettings({
+                type: "settings",
+                content: this.settings
+            });
+        },
         turnTwitch (option) {
             this.settings.TwitchInfo[option] = !this.settings.TwitchInfo[option];
             this.saveSettings({

@@ -55,7 +55,8 @@ const clearSettings = {
         y: 0,
         width: 192,
         height: 219
-    }
+    },
+    time: true
 };
 
 const clearTwitch = {};
