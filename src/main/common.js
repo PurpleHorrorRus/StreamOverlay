@@ -3,7 +3,7 @@ import { app } from "electron";
 import fs from "fs";
 import path from "path";
 
-app.getVersion = () => "0.7.5";
+app.getVersion = () => "0.7.6";
 
 const icon = path.join("build", "icons", "icon.ico");
 const isDev = process.env.NODE_ENV === "development";
