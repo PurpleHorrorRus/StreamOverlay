@@ -9,10 +9,10 @@
     },
     "main": "./dist/main/index.js",
     "engines": {
-        "node": ">=10.19.0"
+        "node": ">=14.16.0"
     },
     "resolutions": {
-        "@types/node": "14.6.2"
+        "@types/node": "12.12.6"
     },
     "scripts": {
         "dev": "node .electron-nuxt/check-engines.js && cross-env NODE_ENV=development node .electron-nuxt/index.js",
