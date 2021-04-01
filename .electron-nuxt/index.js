@@ -1,4 +1,3 @@
-
 const path = require('path')
 const webpack = require('webpack')
 const electron = require('electron')
@@ -14,18 +13,18 @@ const NuxtApp = require('./renderer/NuxtApp')
 const isDev = process.env.NODE_ENV === 'development'
 
 const launcher = new ElectronLauncher({
-  electronPath: electron,
-  entryFile: path.join(DIST_DIR, 'main/index.js')
-})
+    electronPath: electron,
+    entryFile: path.join(DIST_DIR, "main/index.js")
+});
 
 const builder = new ElectronBuilder({
-    processArgv: ["--config", "builder.config.js"]
+  processArgv: ["--config", "builder.config.js"]
 })
 
 const webpackConfig = Webpack.getBaseConfig({
-  entry: isDev
-    ? path.join(MAIN_PROCESS_DIR, 'index.dev.js')
-    : path.join(MAIN_PROCESS_DIR, 'index.js'),
+  entry: isDev ?
+    path.join(MAIN_PROCESS_DIR, 'index.dev.js') :
+    path.join(MAIN_PROCESS_DIR, 'index.js'),
   output: {
     filename: 'index.js',
     path: path.join(DIST_DIR, 'main')
@@ -47,11 +46,9 @@ const webpackMain = new Webpack({
 const nuxt = new NuxtApp(new Logger('Nuxt', 'green'))
 
 const pipe = new Pipeline({
-  title: 'Electron-nuxt',
+  title: "Electron-nuxt",
   isDevelopment: isDev,
   steps: [webpackMain, nuxt],
   launcher,
   builder
-})
-
-pipe.run()
+}).run();
