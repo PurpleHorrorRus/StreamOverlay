@@ -60,14 +60,10 @@ export default {
         this.loading = false;
     },
     beforeDestroy () {
-        clearInterval(interval);
-        interval = null;
+        this.exit();
     },
     destroyed () {
-        if (interval) {
-            clearInterval(interval);
-            interval = null;
-        }
+        this.exit();
     },
     methods: {
         async get () {
@@ -101,6 +97,12 @@ export default {
                 type: "settings",
                 content: this.settings
             });
+        },
+        exit () {
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
+            }
         }
     }
 };
