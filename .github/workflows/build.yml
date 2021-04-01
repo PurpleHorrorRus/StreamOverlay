@@ -20,9 +20,6 @@ jobs:
       - name: Install Dependencies
         run: yarn
 
-      - name: Rebuild Addon
-        run: yarn rebuild
-
       - name: Clean node_modules
         run: npx modclean -r
 
