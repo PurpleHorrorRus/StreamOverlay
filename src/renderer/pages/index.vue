@@ -18,8 +18,7 @@
 
 <script>
 import { mapActions } from "vuex";
-import { ipcRenderer as IPC } from "electron";
-import { ipcRenderer } from "electron-better-ipc";
+import { ipcRenderer } from "electron";
 
 import EditMode from "~/components/EditMode";
 
@@ -65,7 +64,7 @@ export default {
         }));
     },
     async mounted () {
-        const config = await ipcRenderer.callMain("config");
+        const config = await ipcRenderer.invoke("config");
         const { settings, overlays, OBS, twitch } = config;
         this.setConfig(config);
         this.setWidgets(overlays);
@@ -110,7 +109,7 @@ export default {
             turnNotification: "notifications/TURN"
         }),
         registerIPC () { 
-            IPC.on("beep", () => {
+            ipcRenderer.on("beep", () => {
                 if (beep === null) {
                     beep = new Audio(BeepSound);
                     beep.volume = 0.05;
@@ -119,13 +118,13 @@ export default {
                 beep.play();
             });
 
-            IPC.on("menu", (_event, sequence) => {
+            ipcRenderer.on("menu", (_event, sequence) => {
                 this.$router.replace(sequence ? "/menu" : "/").catch(() => {});
                 this.active = false;
             });
 
-            IPC.on("lock", (_event, mouse) => this.turnLock(mouse));
-            IPC.on("viewers_list", () => {
+            ipcRenderer.on("lock", (_event, mouse) => this.turnLock(mouse));
+            ipcRenderer.on("viewers_list", () => {
                 this.settings.viewers_list.enable = !this.settings.viewers_list.enable;
                 
                 this.saveSettings({

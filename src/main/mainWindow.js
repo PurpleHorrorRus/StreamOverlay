@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 
-import { app, BrowserWindow, globalShortcut, Tray, Menu, screen } from "electron";
-import { ipcMain } from "electron-better-ipc";
+import { app, BrowserWindow, ipcMain, globalShortcut, Tray, Menu, screen } from "electron";
 
 import addon from "overlayaddon";
 import path from "path";
@@ -124,8 +123,8 @@ const open = () => {
         setInterval(() => addon.ReduceWorkingSet(), 70000);
     });
 
-    ipcMain.answerRenderer("config", () => config);
-
+    ipcMain.handle("config", () => config);
+    
     ipcMain.on("saveSettings", (_, args) =>
         common.saveSettings(args.type, args.content)
     );
