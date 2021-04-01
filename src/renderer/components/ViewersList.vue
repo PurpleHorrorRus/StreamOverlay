@@ -73,7 +73,7 @@ export default {
         async get () {
             const botsRequest = await fetch("https://api.twitchinsights.net/v1/bots/online");
 
-            const { bots } = await botsRequest.json();
+            const { bots } = botsRequest.ok ? await botsRequest.json() : { bots: [] };
             const { chatters } = await this.helix.getViewers(this.user.username);
 
             if (!bots || !chatters) {
