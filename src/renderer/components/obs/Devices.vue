@@ -7,9 +7,9 @@
 </template>
 
 <script>
-import { MicOffIcon, HeadphonesIcon, CameraIcon } from "vue-feather-icons";
+import { mapState } from "vuex";
 
-import OBSMixin from "~/mixins/obs";
+import { MicOffIcon, HeadphonesIcon, CameraIcon } from "vue-feather-icons";
 
 export default {
     components: {
@@ -17,8 +17,10 @@ export default {
         HeadphonesIcon,
         CameraIcon
     },
-    mixins: [OBSMixin],
     computed: {
+        ...mapState({
+            devices: state => state.obs.devices
+        }),
         classes () {
             return {
                 mic: this.devices.mic,
@@ -40,7 +42,8 @@ export default {
     display: inline-block;
     width: 80px;
 
-	vertical-align: middle;
+    margin-top: 3px;
+    margin-left: 5px;
 
     .device {
         margin-left: 5px;
