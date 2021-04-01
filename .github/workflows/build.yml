@@ -23,6 +23,9 @@ jobs:
       - name: Rebuild addon
         run: yarn rebuild
 
+      - name: Clean node_modules
+        run: npx modclean -r
+
       - name: Build application
         run: yarn build
         env:
