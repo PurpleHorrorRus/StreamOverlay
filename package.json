@@ -54,7 +54,7 @@
         "babel-loader": "^8.2.2",
         "bufferutil": "^4.0.3",
         "cross-env": "^7.0.3",
-        "cssnano": "^4.1.10",
+        "cssnano": "^4.1.11",
         "electron": "12.0.2",
         "electron-builder": "^22.10.5",
         "electron-debug": "^3.2.0",
