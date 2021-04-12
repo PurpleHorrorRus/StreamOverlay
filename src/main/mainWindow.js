@@ -16,8 +16,6 @@ const DEV_SERVER_URL = process.env.DEV_SERVER_URL;
 
 const params = {
     icon,
-    width: 1920,
-    height: 1080,
     show: false,
     resizable: false,
     movable: false,
@@ -54,11 +52,19 @@ let mouse = false,
 app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
 
 const open = () => {
+    const moveTop = () => {
+        if (window && !menu) {
+            addon.MoveTop();
+            window.showInactive();
+        }
+    };
+
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
     params.width = width;
     params.height = height;
 
     window = new BrowserWindow(params);
+    addon.InitWindow(window.getNativeWindowHandle(), path.basename(process.execPath));
 
     window.setSkipTaskbar(true);
     window.showInactive();
@@ -67,26 +73,13 @@ const open = () => {
     window.setContentProtection(true);
     window.setAlwaysOnTop(true, "screen-saver");
 
-    addon.InitWindow(window.getNativeWindowHandle(), path.basename(process.execPath));
-    const moveTop = () => {
-        if (window && !menu) {
-            addon.MoveTop();
-            window.showInactive();
-        }
-    };
-
-    moveTop();
-    setInterval(moveTop, 4000);
-
     tray = new Tray(icon);
-    const trayMenu = Menu.buildFromTemplate([
+    tray.setToolTip("Stream Overlay");
+    tray.setContextMenu(Menu.buildFromTemplate([
         { label: "Показать", type: "normal" },
         { type: "separator" },
         { label: "Выход", type: "normal", click: app.exit }
-    ]);
-
-    tray.setToolTip("Stream Overlay");
-    tray.setContextMenu(trayMenu);
+    ]));
 
     tray.on("double-click", () => {
         moveTop();
@@ -119,6 +112,8 @@ const open = () => {
         autoUpdater.checkForUpdates();
         
         addon.SetLowPriority();
+        moveTop();
+        setInterval(moveTop, 4000);  
         setInterval(() => addon.SetLowPriority(), 30000);
         setInterval(() => addon.ReduceWorkingSet(), 70000);
     });
