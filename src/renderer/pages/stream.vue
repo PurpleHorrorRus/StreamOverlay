@@ -249,7 +249,7 @@ export default {
     grid-template-areas: "content recent";
     
     &.autocomplete {
-        grid-template-rows: 150px 300px;
+        grid-template-rows: 150px minmax(0px, max-content);
         grid-template-areas: "content recent"
                             "games games";
     }
