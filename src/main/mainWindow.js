@@ -70,7 +70,7 @@ const open = () => {
     window.showInactive();
     window.removeMenu();
     window.setIgnoreMouseEvents(true);
-    window.setContentProtection(true);
+    window.setContentProtection(config.settings.contentProtection);
     window.setAlwaysOnTop(true, "screen-saver");
 
     tray = new Tray(icon);

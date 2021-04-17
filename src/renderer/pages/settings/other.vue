@@ -25,6 +25,12 @@
                 :checked="settings.time" 
                 @change="turn('time')" 
             />
+
+            <Item 
+                :text="'Включить Content Protection'" 
+                :checked="settings.contentProtection" 
+                @change="turn('contentProtection')" 
+            />
         </div>
     </div>
 </template>
