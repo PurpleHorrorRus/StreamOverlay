@@ -1,5 +1,5 @@
 <template>
-    <div id="modal-stream-container">
+    <div id="modal-stream-container" :class="{ autocomplete: show_autocomplete }">
         <div id="modal-stream-content">
             <div class="modal-title">
                 <span class="modal-title-text" v-text="'Трансляция'" />
@@ -28,7 +28,8 @@
                 />
             </div>
         </div>
-        <div v-show="show_autocomplete" id="autocomplete-container">
+        <Recent v-show="recent.length > 0" :recent="recent" />
+        <div v-if="show_autocomplete" id="autocomplete-container">
             <div id="filtered-top">
                 <Game 
                     v-for="game of filteredTopGames" 
@@ -56,11 +57,17 @@ import Input from "~/components/settings/Input";
 import Game from "~/components/Game";
 import SolidButton from "~/components/SolidButton";
 
+import Recent from "~/components/Recent";
+
+import misc from "~/plugins/misc";
+
 export default {
     components: { 
         Game,
         Input,
-        SolidButton
+        SolidButton,
+
+        Recent
     },
     layout: "modal",
     async asyncData ({ store }) {
@@ -98,8 +105,18 @@ export default {
     computed: {
         ...mapState({
             user: state => state.twitch.user,
-            helix: state => state.twitch.helix
+            helix: state => state.twitch.helix,
+            _recent: state => state.config.recent
         }),
+        recent: {
+            get () { return this._recent; },
+            set (value) {
+                this.saveSettings({
+                    type: "recent",
+                    content: value
+                });
+            }
+        },
         empty () {
             return this.resizeArt("https://static-cdn.jtvnw.net/ttv-static/404_boxart-{width}x{height}.jpg");
         },
@@ -155,8 +172,9 @@ export default {
         this.art = this.resizeArt(this.art);
     },
     methods: {
-        ...mapActions({ 
-            updateStream: "twitch/UPDATE" 
+        ...mapActions({
+            updateStream: "twitch/UPDATE",
+            saveSettings: "settings/saveSettings"
         }),
         findCache (array, game) {
             const index = array.map(g => g.name).indexOf(game);
@@ -184,6 +202,18 @@ export default {
             this.local.game = game.name;
             setTimeout(() => this.show_autocomplete = false, 300);
         },
+        updateRecent () {
+            const index = this.recent.findIndex(
+                item => item.title === this.local.title && item.game === this.local.game);
+            
+            this.recent = ~index ? misc.array_move(this.recent, index, 0) : [{
+                title: this.local.title,
+                game: this.local.game
+            }, ...this.recent];
+            if (this.recent.length > 5) {
+                this.recent.splice(this.recent.length - 1, 1);
+            }
+        },
         async update () {
             if (this.disabled) {
                 return;
@@ -198,6 +228,8 @@ export default {
                 game: this.local.game 
             });
 
+            this.updateRecent();
+
             this.loading = false;
             setTimeout(() => {
                 this.success = false;
@@ -210,10 +242,17 @@ export default {
 
 <style lang="scss">
 #modal-stream-container {
-    grid-template-columns: 1fr;
-    grid-template-rows: 210px 300px;
-    grid-template-areas: "content"
-                        "games";
+    display: grid;
+
+    grid-template-columns: 600px 300px;
+    grid-template-rows: 150px;
+    grid-template-areas: "content recent";
+    
+    &.autocomplete {
+        grid-template-rows: 150px 300px;
+        grid-template-areas: "content recent"
+                            "games games";
+    }
 
     width: 100%;
 

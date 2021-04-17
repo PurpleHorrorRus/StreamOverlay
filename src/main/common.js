@@ -3,7 +3,7 @@ import { app } from "electron";
 import fs from "fs";
 import path from "path";
 
-app.getVersion = () => "0.7.7";
+app.getVersion = () => "0.7.8";
 
 const icon = path.join("build", "icons", "icon.ico");
 const isDev = process.env.NODE_ENV === "development";
@@ -21,6 +21,7 @@ const saveSettings = (type = "settings", content) => {
 
 const clearSettings = {
     first: true,
+    contentProtection: true,
     chat: {
         enable: true,
         timeout: 80,
@@ -62,6 +63,7 @@ const clearSettings = {
 const clearTwitch = {};
 const clearOBS = {};
 const clearOverlays = [];
+const clearRecent = [];
 
 const appdata = app.getPath("userData");
 const configPath = path.join(appdata, "config");
@@ -87,14 +89,16 @@ const paths = {
     settings: dataPath("settings.json"),
     twitch: dataPath("twitch.json"),
     OBS: dataPath("obs.json"),
-    overlays: dataPath("overlays.json")
+    overlays: dataPath("overlays.json"),
+    recent: dataPath("recent.json")
 };
 
 const config = {
     settings: data(paths.settings, clearSettings),
     twitch: data(paths.twitch, clearTwitch),
     OBS: data(paths.OBS, clearOBS),
-    overlays: data(paths.overlays, clearOverlays)
+    overlays: data(paths.overlays, clearOverlays),
+    recent: data(paths.recent, clearRecent)
 };
 
 let keys = Object.keys(config.settings),
