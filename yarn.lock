@@ -6787,7 +6787,7 @@ os-tmpdir@~1.0.2:
 
 "overlayaddon@https://github.com/PurpleHorrorRus/StreamOverlayAddon.git":
   version "1.0.0"
-  resolved "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git#97b309254b6e095e4d8ae1af13a80a514b924393"
+  resolved "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git#3d25f2a3dc8ac53e8ae865e1f6a6ed841003f266"
   dependencies:
     bindings "^1.5.0"
     nan "^2.14.2"
