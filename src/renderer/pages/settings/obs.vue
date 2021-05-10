@@ -28,12 +28,16 @@
             <Input
                 text="Название источника с веб-камерой"
                 :value="camera"
-                :tip="'Если у вас нет веб-камеры или вы не палите лицо на стриме, оставьте это поле пустым'"
+                :tip="'Впишите сюда названия источников с веб-камерой.\n\
+                Если у вас веб-камера находтися в группе, то впишите название группы.\n\
+                Если у вас нет веб-камеры или вы не палите лицо на стриме, оставьте это поле пустым.\n\
+                Если у вас несколько источников или групп с камерой в OBS, то впишите их названия через запятую.'"
                 @input="changeCamera"
             />
             <!-- <Tip
                 text="Если у вас нет веб-камеры или вы не палите лицо на стриме, оставьте это поле пустым"
             /> -->
+            
             <div class="modal-item-tip">
                 <span class="modal-item-tip-text">
                     Для дальнейшей работы 
@@ -78,24 +82,25 @@ export default {
         address: "localhost",
         port: 4444,
         password: "",
-        camera: "",
+        camera: [],
         error: ""
     }),
     computed: {
         disabled () {
-            if (this.address) {
-                return this.address.length === 0;
-            }
-
-            return true;
+            return this.address.length === 0 ||
+                this.port.length === 0;
         }
     },
     async created () {
         if (this.config.OBS) {
+            if (typeof this.config.OBS.camera === "string") {
+                this.config.OBS.camera = [this.config.OBS.camera];
+            }
+
             this.address = this.config.OBS.address;
             this.port = this.config.OBS.port;
             this.password = this.config.OBS.password;
-            this.camera = this.config.OBS.camera;
+            this.camera = this.config.OBS.camera?.join(", ") || "";
         }
     },
     methods: {
@@ -122,7 +127,7 @@ export default {
                         address: this.address, 
                         port: this.port, 
                         password: this.password, 
-                        camera: this.camera 
+                        camera: Array.from(new Set(this.camera.split(",").map(c => c.trim())))
                     }
                 });
 
