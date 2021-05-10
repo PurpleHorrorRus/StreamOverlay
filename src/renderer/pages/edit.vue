@@ -117,8 +117,9 @@ export default {
     display: grid;
     grid-template-columns: 200px 1fr;
     grid-template-rows: 30px 1fr;
-    grid-template-areas: "title title"
-                        "navigation inputs";
+    grid-template-areas:
+        "title title"
+        "navigation inputs";
     grid-gap: 5px;
 
     &-title {
@@ -130,7 +131,7 @@ export default {
 
         &-list {
             height: 215px;
-            
+
             overflow-x: hidden;
             overflow-y: auto;
 
