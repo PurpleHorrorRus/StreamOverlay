@@ -4,11 +4,11 @@
             <span class="modal-title-text" v-text="'Редактирование виджетов'" />
         </div>
         <div id="modal-edit-content-navigation">
-            <div id="modal-edit-content-navigation-widgets">
+            <div id="modal-edit-content-navigation-list">
                 <div
                     v-for="(_widget, index) of widgets"
                     :key="_widget.id + index"
-                    class="modal-navigation-item"
+                    class="modal-navigation-item nowrap"
                     :class="{ 'item-active': _widget.id === widget.id }"
                     @click="select(index)"
                 >
@@ -20,7 +20,7 @@
                 <SolidButton :label="'Удалить'" :disabled="disabled" @clicked="del" />
             </div>
         </div>
-        <div v-if="widget" id="modal-edit-content-navigation-content">
+        <div v-if="widget" id="modal-edit-content-inputs">
             <Input :value="widget.name" :placeholder="'Название'" @input="changeName" />
             <Input :value="widget.src" :placeholder="'Ссылка'" @input="changeSrc" />
             <span v-if="error" class="error" v-text="error" />
@@ -113,79 +113,57 @@ export default {
 </script>
 
 <style lang="scss">
-#modal {
-    .modal-edit-content {
-        display: grid;
-        grid-template-columns: 200px 1fr;
-        grid-template-rows: 30px 1fr;
-        gap: 1px 1px;
-        grid-template-areas:
-            "title title"
-            "modal-navigation modal-navigation-content";
+#modal-edit-content {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: 30px 1fr;
+    grid-template-areas: "title title"
+                        "navigation inputs";
+    grid-gap: 5px;
 
-        .modal-title {
-            grid-area: modal-title;
-        }
+    &-title {
+        grid-area: title;
+    }
 
-        #modal-navigation {
-            grid-area: modal-navigation;
+    &-navigation {
+        grid-area: navigation;
 
-            &-widgets-list {
-                height: 100px;
-
-                overflow: auto;
-            }
-
-            &-actions {
-                display: flex;
-                justify-content: space-evenly;
-                justify-items: flex-start;
-                align-items: center;
-            }
+        &-list {
+            height: 215px;
+            
+            overflow-x: hidden;
+            overflow-y: auto;
 
             .modal-navigation-item {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+
+                height: 30px;
+
+                padding: 5px;
+
                 &:not(.item-active) {
                     &:hover {
                         cursor: pointer;
-                        background: $secondary;
+                        background: #ffffff60;
                     }
                 }
 
-                &-text {
-                    display: block;
-                    width: 100%;
-
-                    padding: 5px;
-
-                    font-size: 10pt;
+                &.item-active {
+                    background: $secondary;
                 }
             }
         }
 
-        #modal-navigation-content {
-            grid-area: modal-navigation-content;
-
+        &-actions {
             display: flex;
-            justify-content: flex-end;
-            align-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-
-            padding-left: 10px;
+            justify-content: space-evenly;
         }
     }
-}
 
-#save {
-    float: right;
-    margin-top: 2%;
-}
-
-.item-active {
-    background: $outline;
-}
-
-.add-new {
-    margin-top: 3%;
+    &-inputs {
+        grid-area: inputs;
+    }
 }
 </style>
