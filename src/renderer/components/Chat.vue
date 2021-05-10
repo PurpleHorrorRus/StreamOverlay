@@ -1,11 +1,7 @@
 <template>
     <Movable v-if="settings" class="chat" :source="settings.chat" name="Чат" @onResize="onResize" @onDrag="onDrag">
         <div id="chat-block">
-            <Message 
-                v-for="(message, index) of messages" 
-                :key="message.id + index" 
-                :message="message" 
-            />
+            <Message v-for="(message, index) of messages" :key="message.id + index" :message="message" />
         </div>
     </Movable>
 </template>
@@ -19,9 +15,9 @@ import Message from "~/components/chat/Message";
 import CoreMixin from "~/mixins/core";
 
 export default {
-    components: { 
-        Movable, 
-        Message 
+    components: {
+        Movable,
+        Message
     },
     mixins: [CoreMixin],
     computed: {
@@ -30,12 +26,12 @@ export default {
         })
     },
     methods: {
-        onResize (x, y, width, height) {
+        onResize(x, y, width, height) {
             this.settings.chat.width = width;
             this.settings.chat.height = height;
             this.onDrag(x, y);
         },
-        onDrag (x, y) {
+        onDrag(x, y) {
             this.settings.chat.x = x;
             this.settings.chat.y = y;
             this.saveSettings({
@@ -48,12 +44,7 @@ export default {
 </script>
 
 <style lang="scss">
-#chat-block { 
-    position: absolute; 
-    
-    width: 100%; 
-    height: 100%; 
-
+#chat-block {
     border-radius: 5px;
 
     overflow: hidden;
