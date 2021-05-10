@@ -61,7 +61,13 @@ const clearSettings = {
 };
 
 const clearTwitch = {};
-const clearOBS = {};
+const clearOBS = {
+    address: "localhost",
+    port: 4444,
+    password: "",
+    camera: []
+};
+
 const clearOverlays = [];
 const clearRecent = [];
 

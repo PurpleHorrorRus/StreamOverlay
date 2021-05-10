@@ -1,5 +1,11 @@
 /* eslint-disable no-undef */
 import { app } from "electron";
-app.on("window-all-closed", app.quit);
-require("./updater");
-require("./mainWindow");
+
+if (app.requestSingleInstanceLock()) {
+    app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
+    app.disableHardwareAcceleration();
+    app.on("window-all-closed", app.quit);
+    app.on("ready", () => require("./mainWindow"));
+} else {
+    app.quit();
+}
