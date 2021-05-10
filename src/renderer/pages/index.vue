@@ -8,11 +8,7 @@
         <Chat v-if="settings.chat.enable" />
         <ViewersList v-if="settings.viewers_list.enable" />
 
-        <Widget
-            v-for="widget of widgets" 
-            :key="widget.id"
-            :widget="widget"
-        />
+        <Widget v-for="widget of widgets" :key="widget.id" :widget="widget" />
     </div>
 </template>
 
@@ -41,29 +37,31 @@ import BeepSound from "~/static/beep.mp3";
 let beep = null;
 
 export default {
-    components: { 
+    components: {
         EditMode,
-        OBS, 
+        OBS,
         TwitchInfo,
         TechInfo,
-        Notifications, 
-        Chat, 
+        Notifications,
+        Chat,
         ViewersList,
         Widget
     },
     mixins: [OBSMixin, TwitchMixin, WidgetsMixin, other],
     computed: {
-        connected () { 
+        connected() {
             return this.obs._connected;
         }
     },
-    beforeMount () {
-        ipcRenderer.on("update-available", () => this.turnNotification({
-            name: "update",
-            show: true
-        }));
+    beforeMount() {
+        ipcRenderer.on("update-available", () =>
+            this.turnNotification({
+                name: "update",
+                show: true
+            })
+        );
     },
-    async mounted () {
+    async mounted() {
         const config = await ipcRenderer.invoke("config");
         const { settings, OBS, twitch } = config;
         this.setConfig(config);
@@ -98,7 +96,7 @@ export default {
                     content: settings
                 });
             }
-            
+
             this.connectOBS(OBS);
 
             if (!this.helix) {
@@ -111,21 +109,20 @@ export default {
     methods: {
         ...mapActions({
             setConfig: "SET_CONFIG",
-            
+
             turnLock: "ipc/TURN_LOCK",
             turnNotification: "notifications/TURN"
         }),
-        registerIPC () { 
+        registerIPC() {
             ipcRenderer.on("beep", () => {
                 if (beep === null) {
                     beep = new Audio(BeepSound);
                     beep.volume = 0.05;
                 }
-                
-                beep.setSinkId(this.settings.outputDeviceId);
+
                 beep.play();
             });
-            
+
             ipcRenderer.on("menu", (_event, sequence) => {
                 this.$router.replace(sequence ? "/stream" : "/").catch(() => {});
                 this.active = false;
@@ -147,28 +144,28 @@ export default {
 #overlays {
     position: absolute;
 
-	width: 100%;
-	height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 #editNotification {
     position: absolute;
-	top: 0px;
+    top: 0px;
     left: 45%;
-    
-	width: 200px;
+
+    width: 200px;
     height: 60px;
-    
+
     background: rgba(0, 0, 0, 0.4);
-	text-align: center;
-	border-bottom-left-radius: 10px;
-	border-bottom-right-radius: 10px;
+    text-align: center;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
     z-index: 9;
 }
 
 #editText {
     display: inline-block;
-    
-	margin-bottom: 5px;
+
+    margin-bottom: 5px;
 }
 </style>
