@@ -73,7 +73,7 @@ export default {
                 };
 
                 data.formatted = await dispatch("FORMAT_MESSAGE", data);
-                state.messages = [message, ...state.messages];
+                state.messages = [data, ...state.messages];
             });
 
             client.on("connected", () => {
