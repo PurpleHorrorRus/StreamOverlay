@@ -1,64 +1,37 @@
 <template>
     <div class="modal-content">
         <div class="modal-title">
-            <span 
-                class="modal-title-text" 
-                v-text="'Настройка OBS'" 
-            />
+            <span class="modal-title-text" v-text="'Настройка OBS'" />
         </div>
         <div class="modal-body">
-            <!-- <Tip
-                text="Для того, чтобы включить и отключить фокус на оверлее, нажмите комбинацию клавиш Alt + A"
-            /> -->
-            <Input
-                text="Адрес подключения"
-                :value="address"
-                @input="changeAddress"
-            />
-            <Input
-                text="Порт подключения"
-                :value="port"
-                @input="changePort"
-            />
-            <Input
-                text="Пароль"
-                :value="password"
-                @input="changePassword"
-            />
+            <Input text="Адрес подключения" :value="address" @input="changeAddress" />
+            <Input text="Порт подключения" :value="port" @input="changePort" />
+            <Input text="Пароль" :value="password" @input="changePassword" />
             <Input
                 text="Название источника с веб-камерой"
                 :value="camera"
-                :tip="'Впишите сюда названия источников с веб-камерой.\n\
-                Если у вас веб-камера находтися в группе, то впишите название группы.\n\
-                Если у вас нет веб-камеры или вы не палите лицо на стриме, оставьте это поле пустым.\n\
-                Если у вас несколько источников или групп с камерой в OBS, то впишите их названия через запятую.'"
+                :tip="
+                    'Впишите сюда названия источников с веб-камерой.\
+                Если у вас веб-камера находтися в группе, то впишите название группы.\
+                Если у вас нет веб-камеры или вы не палите лицо на стриме, оставьте это поле пустым.\
+                Если у вас несколько источников или групп с камерой в OBS, то впишите их названия через запятую.'
+                "
                 @input="changeCamera"
             />
-            <!-- <Tip
-                text="Если у вас нет веб-камеры или вы не палите лицо на стриме, оставьте это поле пустым"
-            /> -->
-            
+
             <div class="modal-item-tip">
                 <span class="modal-item-tip-text">
-                    Для дальнейшей работы 
+                    Для дальнейшей работы
                     <strong style="color: red" v-text="'ОБЯЗАТЕЛЬНО'" />
-                    установите 
-                    <strong 
-                        class="link" 
-                        @click="install"
-                        v-text="'OBS Websocket'"
-                    />
+                    установите
+                    <strong class="link" @click="install" v-text="'OBS Websocket'" />
                 </span>
             </div>
             <div v-if="error.length" class="modal-item-tip">
                 <span style="color: red" class="modal-item-tip-text">Ошибка: {{ error }}</span>
             </div>
-            
-            <SolidButton 
-                :label="'Продолжить'"
-                :disabled="disabled"
-                @clicked="next" 
-            />
+
+            <SolidButton :label="'Продолжить'" :disabled="disabled" @clicked="next" />
         </div>
     </div>
 </template>
@@ -71,7 +44,7 @@ import CoreMixin from "~/mixins/core";
 import other from "~/mixins/other";
 
 export default {
-    components: { 
+    components: {
         Input,
         SolidButton
     },
@@ -86,12 +59,11 @@ export default {
         error: ""
     }),
     computed: {
-        disabled () {
-            return this.address.length === 0 ||
-                this.port.length === 0;
+        disabled() {
+            return this.address.length === 0 || this.port.length === 0;
         }
     },
-    async created () {
+    async created() {
         if (this.config.OBS) {
             if (typeof this.config.OBS.camera === "string") {
                 this.config.OBS.camera = [this.config.OBS.camera];
@@ -104,29 +76,29 @@ export default {
         }
     },
     methods: {
-        changeAddress (value) {
+        changeAddress(value) {
             this.address = value;
         },
-        changePort (value) {
+        changePort(value) {
             this.port = value;
         },
-        changePassword (value) {
+        changePassword(value) {
             this.password = value;
         },
-        changeCamera (value) {
+        changeCamera(value) {
             this.camera = value;
         },
-        async next () {
+        async next() {
             this.load = true;
             this.error = "";
 
             if (await this.checkConnection()) {
                 this.saveSettings({
                     type: "OBS",
-                    content: { 
-                        address: this.address, 
-                        port: this.port, 
-                        password: this.password, 
+                    content: {
+                        address: this.address,
+                        port: this.port,
+                        password: this.password,
                         camera: Array.from(new Set(this.camera.split(",").map(c => c.trim())))
                     }
                 });
@@ -134,9 +106,11 @@ export default {
                 this.$router.replace("/settings/twitch").catch(() => {});
             }
         },
-        install () { 
+        install() {
             // eslint-disable-next-line max-len
-            this.openLink("https://obsproject.com/forum/resources/obs-websocket-remote-control-of-obs-studio-made-easy.466/"); 
+            this.openLink(
+                "https://obsproject.com/forum/resources/obs-websocket-remote-control-of-obs-studio-made-easy.466/"
+            );
         }
     }
 };

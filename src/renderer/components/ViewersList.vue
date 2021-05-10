@@ -1,24 +1,20 @@
 <template>
-    <Movable 
-        class="viewers-list" 
-        :source="settings.viewers_list" 
-        name="Список зрителей" 
-        @onDrag="onDrag" 
+    <Movable
+        class="viewers-list"
+        :source="settings.viewers_list"
+        name="Список зрителей"
+        @onDrag="onDrag"
         @onResize="onResize"
     >
         <div v-if="!loading" id="viewers-container">
             <div v-for="category of Object.keys(chatters)" :key="category" class="category">
-                <span 
-                    v-if="chatters[category].length" 
-                    class="category-title" 
-                    :style="{ color: colors[category] }" 
-                    v-text="`${category} (${chatters[category].length})`" 
+                <span
+                    v-if="chatters[category].length"
+                    class="category-title"
+                    :style="{ color: colors[category] }"
+                    v-text="`${category} (${chatters[category].length})`"
                 />
-                <span 
-                    v-for="viewer of chatters[category]" 
-                    :key="viewer" 
-                    class="viewer-name" v-text="viewer" 
-                />
+                <span v-for="viewer of chatters[category]" :key="viewer" class="viewer-name" v-text="viewer" />
             </div>
         </div>
         <div v-else id="loading-block">
@@ -53,20 +49,20 @@ export default {
             vips: "#6900ba"
         }
     }),
-    async created () {
+    async created() {
         this.loading = true;
         this.chatters = await this.get();
-        interval = setInterval(async () => this.chatters = await this.get(), 4 * 1000);
+        interval = setInterval(async () => (this.chatters = await this.get()), 4 * 1000);
         this.loading = false;
     },
-    beforeDestroy () {
+    beforeDestroy() {
         this.exit();
     },
-    destroyed () {
+    destroyed() {
         this.exit();
     },
     methods: {
-        async get () {
+        async get() {
             const botsRequest = await fetch("https://api.twitchinsights.net/v1/bots/online");
 
             const { bots } = botsRequest.ok ? await botsRequest.json() : { bots: [] };
@@ -77,20 +73,17 @@ export default {
             }
 
             for (const category in chatters) {
-                chatters[category] = _.without(
-                    chatters[category], 
-                    ...bots.map(([name]) => name)
-                );
+                chatters[category] = _.without(chatters[category], ...bots.map(([name]) => name));
             }
 
             return chatters;
         },
-        onResize  (x, y, width, height) {
+        onResize(x, y, width, height) {
             this.settings.viewers_list.width = width;
             this.settings.viewers_list.height = height;
             this.onDrag(x, y);
         },
-        onDrag (x, y) {
+        onDrag(x, y) {
             this.settings.viewers_list.x = x;
             this.settings.viewers_list.y = y;
             this.saveSettings({
@@ -98,7 +91,7 @@ export default {
                 content: this.settings
             });
         },
-        exit () {
+        exit() {
             if (interval) {
                 clearInterval(interval);
                 interval = null;
@@ -119,12 +112,12 @@ export default {
     z-index: 50;
 
     &:not(.vdr.active) {
-        background: rgba(0, 0, 0, .4) !important;
+        background: rgba(0, 0, 0, 0.4) !important;
     }
 
     span {
         display: block;
-        
+
         color: #fff;
         font-family: Roboto;
         font-size: 11pt;
@@ -142,7 +135,7 @@ export default {
 
         .category {
             margin-bottom: 5px;
-            
+
             &-title {
                 font-weight: 600;
             }

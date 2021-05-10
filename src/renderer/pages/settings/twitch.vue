@@ -7,44 +7,35 @@
             <!-- <Tip
                 text="Для того, чтобы включить и отключить фокус на оверлее, нажмите комбинацию клавиш Alt + A"
             /> -->
-            <Input
-                text="Имя пользователя Twitch"
-                :value="username"
-                @input="changeUsername"
-            />
+            <Input text="Имя пользователя Twitch" :value="username" @input="changeUsername" />
 
             <div class="modal-item-tip">
                 <span class="modal-item-tip-text">
-                    Access Token - нужен для того, чтобы менять название стрима и игру через оверлей
-                    (<span class="link" @click="getToken" v-text="'Получить'" />)
+                    Access Token - нужен для того, чтобы менять название стрима и игру через оверлей (<span
+                        class="link"
+                        @click="getToken"
+                        v-text="'Получить'"
+                    />)
                 </span>
             </div>
-            <Input
-                :value="access_token"
-                @input="changeAccessToken"
-            />
+            <Input :value="access_token" @input="changeAccessToken" />
 
             <div class="modal-item-tip">
                 <span class="modal-item-tip-text">
-                    OAuth Token - нужен для того, чтобы получать сообщения из чата
-                    (<span class="link" @click="getOAuth" v-text="'Получить'" />)
+                    OAuth Token - нужен для того, чтобы получать сообщения из чата (<span
+                        class="link"
+                        @click="getOAuth"
+                        v-text="'Получить'"
+                    />)
                 </span>
             </div>
-            <Input
-                :value="oauth_token"
-                @input="changeOAuth"
-            />
+            <Input :value="oauth_token" @input="changeOAuth" />
 
             <div v-if="error.length" class="modal-item-tip">
                 <span style="color: red" class="modal-item-tip-text">Ошибка: {{ error }}</span>
             </div>
-            
-            <SolidButton 
-                :label="'Продолжить'"
-                :disabled="disabled"
-                :load="validating"
-                @clicked="next" 
-            />
+
+            <SolidButton :label="'Продолжить'" :disabled="disabled" :load="validating" @clicked="next" />
         </div>
     </div>
 </template>
@@ -65,7 +56,7 @@ const client_id = "zmin05a65f74rln2g94iv935w58nyq";
 let helix;
 
 export default {
-    components: { 
+    components: {
         Input,
         SolidButton
     },
@@ -79,19 +70,17 @@ export default {
         validating: false
     }),
     computed: {
-        disabled () {
-            return this.username.length === 0 ||
-                    this.access_token.length === 0 ||
-                    this.oauth_token.length === 0;
+        disabled() {
+            return this.username.length === 0 || this.access_token.length === 0 || this.oauth_token.length === 0;
         }
     },
     watch: {
-        access_token (newVal) {
+        access_token(newVal) {
             if (~newVal.indexOf("http://")) {
                 this.access_token = newVal.match(/access_token=(.*?)&/)[1];
             }
         },
-        oauth_token (newVal) {
+        oauth_token(newVal) {
             if (!newVal.length) {
                 this.oauth_token = "oauth:";
                 return;
@@ -101,7 +90,7 @@ export default {
             }
         }
     },
-    async created () {
+    async created() {
         if (this.config.twitch.username) {
             this.username = this.config.twitch.username;
             this.access_token = this.config.twitch.access_token;
@@ -109,16 +98,16 @@ export default {
         }
     },
     methods: {
-        changeUsername (value) {
+        changeUsername(value) {
             this.username = value;
         },
-        changeAccessToken (value) {
+        changeAccessToken(value) {
             this.access_token = value;
         },
-        changeOAuth (value) {
+        changeOAuth(value) {
             this.oauth_token = value;
         },
-        async next () {
+        async next() {
             this.validating = true;
             this.error = "";
 
@@ -126,13 +115,13 @@ export default {
                 this.access_token = this.access_token.match(/access_token=(.*?)&/)[1];
             }
 
-            const valid = await this.validate().catch(e => { 
-                this.validating = false; 
-                this.error = e.error; 
+            const valid = await this.validate().catch(e => {
+                this.validating = false;
+                this.error = e.error;
                 return;
             });
 
-            if (!valid.success) { 
+            if (!valid.success) {
                 this.validating = false;
                 return;
             }
@@ -151,37 +140,37 @@ export default {
             this.validating = false;
             this.$router.replace("/");
         },
-        async validate () {
-            helix = new Helix({ 
-                client_id, 
+        async validate() {
+            helix = new Helix({
+                client_id,
                 access_token: this.access_token,
                 increaseRate: true
             });
 
-            const user = await helix.getUser(this.username)
-                .catch(() => ({ 
-                    success: false, 
-                    error: "Пользователь с таким ником не найден" 
-                }));
+            const user = await helix.getUser(this.username).catch(() => ({
+                success: false,
+                error: "Пользователь с таким ником не найден"
+            }));
 
             const data = await helix.getChannel(user.id);
             const title = data.status,
                 game = data.game;
 
-            const { success } = await helix.updateStream(user.id, "test overlay", "League of Legends")
+            const { success } = await helix
+                .updateStream(user.id, "test overlay", "League of Legends")
                 .catch(() => ({ success: false, error: "Неверный Access Token" }));
 
             if (success) {
                 helix.updateStream(user.id, title, game);
                 return { success: true };
             } else {
-                return { 
-                    success: false, 
-                    error: "Неверный Access Token" 
+                return {
+                    success: false,
+                    error: "Неверный Access Token"
                 };
             }
         },
-        getToken () {
+        getToken() {
             let tempHelix = new Helix({
                 client_id,
                 redirect_uri: "http://localhost:3000/token",
@@ -198,16 +187,17 @@ export default {
 
             app = express();
 
-            app.get("/token", (req, res) => 
-                res.send("Ваш Access Token находится в ссылке. Просто скопируйте её и вставьте в поле"));
+            app.get("/token", (req, res) =>
+                res.send("Ваш Access Token находится в ссылке. Просто скопируйте её и вставьте в поле")
+            );
 
             const server = app.listen(3000);
             this.openLink(url);
 
             setTimeout(() => server.close(), 10000);
         },
-        getOAuth () { 
-            this.openLink("https://twitchapps.com/tmi/"); 
+        getOAuth() {
+            this.openLink("https://twitchapps.com/tmi/");
         }
     }
 };

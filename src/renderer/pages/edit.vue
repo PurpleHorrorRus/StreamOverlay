@@ -1,53 +1,31 @@
 <template>
-    <div class="modal-edit-content">
-        <div class="modal-title">
+    <div id="modal-edit-content" class="modal-content">
+        <div id="modal-edit-content-title" class="modal-title">
             <span class="modal-title-text" v-text="'Редактирование виджетов'" />
         </div>
-        <div id="modal-navigation">
-            <div id="modal-navigation-widgets-list">
-                <div 
-                    v-for="(_widget, index) of widgets" 
-                    :key="_widget.id + index" 
-                    class="modal-navigation-item" 
-                    :class="{ 'item-active': _widget.id === widget.id }" 
+        <div id="modal-edit-content-navigation">
+            <div id="modal-edit-content-navigation-widgets">
+                <div
+                    v-for="(_widget, index) of widgets"
+                    :key="_widget.id + index"
+                    class="modal-navigation-item"
+                    :class="{ 'item-active': _widget.id === widget.id }"
                     @click="select(index)"
                 >
-                    <span 
-                        class="modal-navigation-item-text nowrap" 
-                        v-text="_widget.name" 
-                    />
+                    <span class="modal-navigation-item-text nowrap" v-text="_widget.name" />
                 </div>
             </div>
-            <div id="modal-navigation-actions">
-                <SolidButton
-                    :label="'Добавить'"
-                    @clicked="add"
-                />
-                <SolidButton
-                    :label="'Удалить'"
-                    :disabled="disabled"
-                    @clicked="del"
-                />
+            <div id="modal-edit-content-navigation-actions">
+                <SolidButton :label="'Добавить'" @clicked="add" />
+                <SolidButton :label="'Удалить'" :disabled="disabled" @clicked="del" />
             </div>
         </div>
-        <div v-if="widget" id="modal-navigation-content">
-            <Input
-                :value="widget.name"
-                :placeholder="'Название'"
-                @input="changeName"
-            />
-            <Input
-                :value="widget.src"
-                :placeholder="'Ссылка'"
-                @input="changeSrc"
-            />
+        <div v-if="widget" id="modal-edit-content-navigation-content">
+            <Input :value="widget.name" :placeholder="'Название'" @input="changeName" />
+            <Input :value="widget.src" :placeholder="'Ссылка'" @input="changeSrc" />
             <span v-if="error" class="error" v-text="error" />
-            
-            <SolidButton
-                :label="'Сохранить'"
-                :disabled="disabled"
-                @clicked="save"
-            />
+
+            <SolidButton :label="'Сохранить'" :disabled="disabled" @clicked="save" />
         </div>
     </div>
 </template>
@@ -71,22 +49,21 @@ export default {
         error: ""
     }),
     computed: {
-        disabled () {
+        disabled() {
             if (this.widget) {
-                return this.widget.name.length === 0 ||
-                    this.widget.src.length === 0;
+                return this.widget.name.length === 0 || this.widget.src.length === 0;
             }
 
             return true;
         }
     },
-    async created () {
+    async created() {
         if (this.widgets.length) {
             this.widget = this.widgets[0];
         }
     },
     methods: {
-        empty () {
+        empty() {
             return {
                 id: Number((Math.random() * 1000).toFixed(0)),
                 name: "",
@@ -99,13 +76,13 @@ export default {
                 }
             };
         },
-        select (index) { 
+        select(index) {
             this.widget = this.widgets[index];
         },
-        add () { 
+        add() {
             this.widget = this.empty();
         },
-        del () {
+        del() {
             const index = this.widgets.findIndex(o => o.id === this.widget.id);
             if (~index) {
                 const temp = [...this.widgets];
@@ -114,13 +91,13 @@ export default {
                 this.widget = this.empty();
             }
         },
-        changeName (value) {
+        changeName(value) {
             this.widget.name = value;
         },
-        changeSrc (value) {
+        changeSrc(value) {
             this.widget.src = value;
         },
-        save () {
+        save() {
             const index = this.widgets.findIndex(o => o.id === this.widget.id);
 
             if (~index) {
@@ -143,7 +120,7 @@ export default {
         grid-template-rows: 30px 1fr;
         gap: 1px 1px;
         grid-template-areas:
-            "modal-title modal-title"
+            "title title"
             "modal-navigation modal-navigation-content";
 
         .modal-title {
@@ -177,7 +154,7 @@ export default {
                 &-text {
                     display: block;
                     width: 100%;
-                        
+
                     padding: 5px;
 
                     font-size: 10pt;
