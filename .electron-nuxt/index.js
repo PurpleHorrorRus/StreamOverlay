@@ -22,7 +22,7 @@ const builder = new ElectronBuilder({
 });
 
 const webpackConfig = Webpack.getBaseConfig({
-    entry: isDev ? path.join(MAIN_PROCESS_DIR, "index.dev.js") : path.join(MAIN_PROCESS_DIR, "index.js"),
+    entry: path.join(MAIN_PROCESS_DIR, "index.js"),
     output: {
         filename: "index.js",
         path: path.join(DIST_DIR, "main")
