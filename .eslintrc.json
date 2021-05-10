@@ -16,7 +16,7 @@
         "sourceType": "module"
     },
     "rules": {
-        "max-len": ["error", { "code": 120}],
+        "max-len": ["error", { "code": 120 }],
         "no-console": "off",
         "arrow-parens": ["error", "as-needed"],
         "curly": ["error", "multi-line"],
@@ -35,7 +35,7 @@
         "no-async-promise-executor": 0,
         "semi": ["error", "always"],
         "quotes": ["error", "double"],
-        "indent": ["error", 4],
+        "indent": ["error", 4, { "SwitchCase": 1 }],
         "eol-last": 0,
         "no-trailing-spaces": 0,
         "vue/html-indent": ["warn", 4],
