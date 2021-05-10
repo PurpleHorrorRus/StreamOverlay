@@ -1,17 +1,8 @@
 <template>
     <div class="message" :style="messageStyle">
-        <img 
-            :style="pictureStyle" 
-            :src="message.avatar"
-            class="avatar"
-        >
+        <img :style="pictureStyle" :src="message.avatar" class="avatar">
         <Badges :badges="message.badges" />
-        <span 
-            :style="nicknameStyle" 
-            class="nickname stroke" 
-            @click="ban(message.nickname)" 
-            v-text="message.nickname" 
-        />
+        <span :style="nicknameStyle" class="nickname stroke" @click="ban(message.nickname)" v-text="message.nickname" />
         <Body :items="message.formatted" />
     </div>
 </template>
@@ -23,7 +14,7 @@ import Badges from "~/components/chat/Badges";
 import Body from "~/components/chat/Body";
 
 export default {
-    components: { 
+    components: {
         Badges,
         Body
     },
@@ -37,32 +28,31 @@ export default {
         ...mapState({
             settings: state => state.settings.settings
         }),
-        messageStyle () {
-            return { 
+        messageStyle() {
+            return {
                 background: `rgba(0, 0, 0, ${this.settings.chat.opacity / 100})`
             };
         },
-        pictureStyle () {
-            return { 
+        pictureStyle() {
+            return {
                 width: `${this.settings.chat.font}pt`
             };
         },
-        nicknameStyle () {
+        nicknameStyle() {
             return {
                 color: this.message.color,
                 ...this.textStyle
             };
         },
-        textStyle () {
-            return { 
-                fontSize: `${this.settings.chat.font}pt` 
+        textStyle() {
+            return {
+                fontSize: `${this.settings.chat.font}pt`
             };
         }
     },
-    created () { 
+    created() {
         if (this.settings.chat.timeout !== 0) {
-            setTimeout(() => this.removeMessage(this.message.id), 
-                this.settings.chat.timeout * 1000); 
+            setTimeout(() => this.removeMessage(this.message.id), this.settings.chat.timeout * 1000);
         }
     },
     methods: {
@@ -77,11 +67,12 @@ export default {
 <style lang="scss">
 .message {
     display: inline-block;
-    
+
     width: 100%;
     padding: 5px;
 
-    .avatar, .nickname {
+    .avatar,
+    .nickname {
         display: inline;
     }
 

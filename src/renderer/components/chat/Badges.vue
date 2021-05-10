@@ -1,9 +1,9 @@
 <template>
     <div class="badges">
-        <img 
-            v-for="badge of badges" 
-            :key="badge" 
-            class="badge" 
+        <img
+            v-for="badge of badges"
+            :key="badge"
+            class="badge"
             :style="badgeStyle"
             :src="require(`~/images/${badge}.png`) || ''"
         >
@@ -25,9 +25,9 @@ export default {
         ...mapState({
             settings: state => state.settings.settings
         }),
-        badgeStyle () {
-            return { 
-                width: `${this.settings.chat.font}pt` 
+        badgeStyle() {
+            return {
+                width: `${this.settings.chat.font}pt`
             };
         }
     }
@@ -38,7 +38,7 @@ export default {
 .badges {
     display: inline;
     vertical-align: middle;
-    
+
     .badge {
         margin-right: 2px;
         margin-left: 2px;
