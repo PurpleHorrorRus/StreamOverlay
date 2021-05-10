@@ -1,8 +1,6 @@
 import Promise from "bluebird";
 import socket from "obs-websocket-js";
 
-import misc from "~/plugins/misc";
-
 let interval = null;
 let updateInterval = null;
 
