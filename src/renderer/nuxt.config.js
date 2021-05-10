@@ -134,7 +134,6 @@ module.exports = {
     ],
     plugins: [
         { src: "~plugins/vue-draggable-resizable", mode: "client" },
-        { src: "~plugins/autocomplete", mode: "client"  },
         { src: "~plugins/font-awesome", mode: "client" },
         { src: "~plugins/vue-range-component.js", mode: "client" },
         { src: "~plugins/vue-toggle-button.js", mode: "client" },
