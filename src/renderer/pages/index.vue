@@ -65,40 +65,47 @@ export default {
     },
     async mounted () {
         const config = await ipcRenderer.invoke("config");
-        const { settings, overlays, OBS, twitch } = config;
+        const { settings, OBS, twitch } = config;
         this.setConfig(config);
-        this.setWidgets(overlays);
+
+        ipcRenderer.on("lock", (_event, mouse) => this.turnLock(mouse));
+
+        if (this.$route.query?.edit) {
+            this.setWidgets(config.overlays);
+            this.active = true;
+            return;
+        }
 
         if (!OBS.address || !OBS.port) {
-            this.registerIPC();
-            this.setSettings(settings); 
+            this.turnLock(true);
             this.$router.replace("/settings/obs").catch(() => {});
             return;
         }
 
         if (!twitch.id || !twitch.username || !twitch.access_token || !twitch.oauth_token) {
-            this.registerIPC();
-            this.setSettings(settings); 
+            this.turnLock(true);
             this.$router.replace("/settings/twitch").catch(() => {});
             return;
         }
 
-        if (settings.first) {
-            settings.first = false;
-            this.saveSettings({
-                type: "settings",
-                content: settings
-            });
-        } else {
-            this.setSettings(settings); 
-        }
+        this.setWidgets(config.overlays);
 
-        if (!this.helix) {
-            this.connectOBS(OBS);
-            this.createHelix(twitch);
+        if (!this.connected) {
+            if (settings.first) {
+                settings.first = false;
+                this.saveSettings({
+                    type: "settings",
+                    content: settings
+                });
+            }
             
-            this.registerIPC();
-            this.createChatBot();
+            this.connectOBS(OBS);
+
+            if (!this.helix) {
+                this.registerIPC();
+                this.createHelix(twitch);
+                this.createChatBot();
+            }
         }
     },
     methods: {
@@ -115,31 +122,22 @@ export default {
                     beep.volume = 0.05;
                 }
                 
+                beep.setSinkId(this.settings.outputDeviceId);
                 beep.play();
             });
-
+            
             ipcRenderer.on("menu", (_event, sequence) => {
-                this.$router.replace(sequence ? "/menu" : "/").catch(() => {});
+                this.$router.replace(sequence ? "/stream" : "/").catch(() => {});
                 this.active = false;
             });
 
-            ipcRenderer.on("lock", (_event, mouse) => this.turnLock(mouse));
             ipcRenderer.on("viewers_list", () => {
                 this.settings.viewers_list.enable = !this.settings.viewers_list.enable;
-                
                 this.saveSettings({
                     type: "settings",
                     content: this.settings
                 });
             });
-        },
-        openFullEdit () {
-            this.$router.replace("/edit").catch(() => {});
-            this.active = false;
-        },
-        exitEdit () {
-            this.$router.replace("/menu").catch(() => {});
-            this.active = false;
         }
     }
 };

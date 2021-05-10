@@ -4,9 +4,18 @@
         <div id="modal-lock">
             <FontAwesomeIcon v-if="locked" :icon="['fa', 'lock']" style="color: lightgreen" />
             <FontAwesomeIcon v-else :icon="['fa', 'unlock']" style="color: red" />
-        </div>
+        </div> 
         <div v-show="locked" id="modal-container">
-            <nuxt />
+            <div v-show="!settings.first" id="modal-container-items">
+                <div v-for="item of items" :key="item.link" v-tooltip="item.text" class="menu-item">
+                    <nuxt-link :to="item.link" active-class="active" class="menu-item-link">
+                        <FontAwesomeIcon :icon="item.icon" />
+                    </nuxt-link>
+                </div>
+            </div>
+            <div id="modal-container-page">
+                <nuxt />
+            </div>
         </div>
     </div>
 </template>
@@ -24,6 +33,33 @@ export default {
         Chat
     },
     mixins: [CoreMixin],
+    data: () => ({
+        items: [{
+            text: "Трансляция",
+            link: "/stream",
+            icon: ["fas", "signal"]
+        }, {
+            text: "Редактирование виджетов",
+            icon: ["fas", "pen"],
+            link: "/?edit=true"
+        }, {
+            text: "Настройки OBS",
+            icon: ["fas", "wrench"],
+            link: "/settings/obs"
+        }, {
+            text: "Настройки Twitch",
+            icon: ["fab", "twitch"],
+            link: "/settings/twitch"
+        }, {
+            text: "Настройки чата",
+            icon: ["fas", "comment"],
+            link: "/settings/chat"
+        }, {
+            text: "Прочие настройки",
+            icon: ["fas", "tools"],
+            link: "/settings/other"
+        }]
+    }),
     computed: {
         ...mapState({
             locked: state => state.ipc.locked
@@ -63,17 +99,53 @@ export default {
     }
 
     &-container {
-        display: flex;
-        justify-content: flex-start;
-        align-content: center;
-        align-items: center;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: 50px 900px;
+        grid-template-rows: max-content;
+        grid-template-areas: "items page";
+
+        grid-gap: 20px 10px;
 
         min-width: 600px;
 
-        padding: 15px;
-
         background: #141414;
+
+        &-items {
+            grid-area: items;
+
+            .menu-item {
+                width: 50px;
+                height: 50px;
+
+                &-link {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    width: 100%;
+                    height: 100%;
+
+                    &.active {
+                        background: $secondary;
+                    }
+
+                    &:not(.active) {
+                        &:hover {
+                            background: #ffffff40;
+                        }
+                    }
+
+                    svg {
+                        color: #fff;
+                    }
+                }
+            }
+        }
+
+        &-page {
+            grid-area: page;
+            width: 98%;
+        }
     }
 
     .modal-content {
@@ -92,12 +164,14 @@ export default {
             padding: 5px;
 
             .modal-item-tip {
+                padding: 10px;
+
                 &-text {
-                    position: relative;
-                    left: 5px;
+                    display: block;
+                    max-width: 600px;
 
                     color: #ccc;
-                    font-size: 9pt;    
+                    font-size: 9pt;
                 }
             }
         }

@@ -1,5 +1,5 @@
 <template>
-    <div id="modal-stream-container" :class="{ autocomplete: show_autocomplete }">
+    <div v-if="!firstLoad" id="modal-stream-container">
         <div id="modal-stream-content">
             <div class="modal-title">
                 <span class="modal-title-text" v-text="'Трансляция'" />
@@ -29,7 +29,7 @@
             </div>
         </div>
         <Recent v-show="recent.length > 0" :recent="recent" />
-        <div v-if="show_autocomplete" id="autocomplete-container">
+        <div id="autocomplete-container">
             <div id="filtered-top">
                 <Game 
                     v-for="game of filteredTopGames" 
@@ -48,6 +48,7 @@
             </div>
         </div>
     </div>
+    <FontAwesomeIcon v-else id="modal-stream-load" icon="circle-notch" spin />
 </template>
 
 <script>
@@ -59,7 +60,13 @@ import SolidButton from "~/components/SolidButton";
 
 import Recent from "~/components/Recent";
 
-import misc from "~/plugins/misc";
+const noArt = "https://static-cdn.jtvnw.net/ttv-static/404_boxart-75x115.jpg";
+const artSize = {
+    width: 90,
+    height: 115
+};
+
+let inputDelay = null;
 
 export default {
     components: { 
@@ -70,62 +77,38 @@ export default {
         Recent
     },
     layout: "modal",
-    async asyncData ({ store }) {
-        const { helix, stream } = store.state.twitch;
-        const game = await helix.getGame(stream.game);
-        const top_games = await helix.getTopGames();
-
-        const art_size = {
-            width: 90,
-            height: 115
-        };
-
-        const art = game 
-            ? game.box_art_url
-            : "https://static-cdn.jtvnw.net/ttv-static/404_boxart-75x115.jpg";
-
-        return { 
-            art_size,
-            local: { 
-                title: stream.title, 
-                game: stream.game 
-            },
-            games: top_games,
-            search: [],
-            input_delay: null,
-            art,
-            top_games, 
-            show_autocomplete: false, 
-            reset: true,
-            loading: false, 
-            success: false, 
-            error: "" 
-        };
-    },
+    data: () => ({
+        firstLoad: true,
+        local: { 
+            title: "", 
+            game: ""
+        },
+        games: [],
+        search: [],
+        art: "",
+        topGames: [], 
+        showAutocomplete: false, 
+        reset: true,
+        loading: false, 
+        success: false, 
+        error: "" 
+    }),
     computed: {
         ...mapState({
             user: state => state.twitch.user,
             helix: state => state.twitch.helix,
-            _recent: state => state.config.recent
+            stream: state => state.twitch.stream,
+            recent: state => state.config.recent
         }),
-        recent: {
-            get () { return this._recent; },
-            set (value) {
-                this.saveSettings({
-                    type: "recent",
-                    content: value
-                });
-            }
-        },
         empty () {
             return this.resizeArt("https://static-cdn.jtvnw.net/ttv-static/404_boxart-{width}x{height}.jpg");
         },
         filteredTopGames () {
             if (!this.local.game.length) {
-                return this.top_games;
+                return this.topGames;
             }
 
-            return this.top_games.filter(r => 
+            return this.topGames.filter(r => 
                 ~r.name.toLowerCase()
                     .indexOf(this.local.game.toLowerCase()));
         },
@@ -141,25 +124,24 @@ export default {
             // eslint-disable-next-line max-len
             this.art = this.empty;
 
-            if (this.input_delay) {
-                clearTimeout(this.input_delay);
-                this.input_delay = null;
+            if (inputDelay) {
+                clearTimeout(inputDelay);
+                inputDelay = null;
             }
 
-            if (!this.show_autocomplete) {
-                this.show_autocomplete = true;
+            if (!this.showAutocomplete) {
+                this.showAutocomplete = true;
             }
 
             if (newVal.length === 0) {
                 this.search = [];
-                this.top_games = this.games;
                 return;
             } else if (
                 this.findCache(this.games, this.local.game) || 
                 this.findCache(this.search, this.local.game
                 )) return;
 
-            this.input_delay = setTimeout(async () => {
+            inputDelay = setTimeout(async () => {
                 const { data: games } = await this.helix.searchCategories(newVal);
                 if (games && games.length) {
                     this.search = games;
@@ -168,8 +150,18 @@ export default {
             }, 200);
         }
     },
-    mounted () {
-        this.art = this.resizeArt(this.art);
+    async created () {
+        const channel = await this.helix.getChannel(this.user.id);
+        this.local = {
+            title: channel.status,
+            game: channel.game
+        };
+        
+        const game = await this.helix.getGame(this.stream.game);
+        this.topGames = await this.helix.getTopGames();
+
+        this.art = this.resizeArt(game?.box_art_url || noArt);
+        this.firstLoad = false;
     },
     methods: {
         ...mapActions({
@@ -181,16 +173,16 @@ export default {
 
             if (~index) {
                 const game = array[index];
-                this.show_autocomplete = false;
+                this.showAutocomplete = false;
                 this.art = game.box_art_url;
             }
 
             return index !== -1;
         },
         resizeArt (art) {
-            return art.replace("{width}", this.art_size.width)
-                .replace("{height}", this.art_size.height)
-                .replace("52x72", `${this.art_size.width}x${this.art_size.height}`);
+            return art.replace("{width}", artSize.width)
+                .replace("{height}", artSize.height)
+                .replace("52x72", `${artSize.width}x${artSize.height}`);
         },
         changeTitle (value) {
             this.local.title = value;
@@ -200,19 +192,7 @@ export default {
         },
         select (game) {
             this.local.game = game.name;
-            setTimeout(() => this.show_autocomplete = false, 300);
-        },
-        updateRecent () {
-            const index = this.recent.findIndex(
-                item => item.title === this.local.title && item.game === this.local.game);
-            
-            this.recent = ~index ? misc.array_move(this.recent, index, 0) : [{
-                title: this.local.title,
-                game: this.local.game
-            }, ...this.recent];
-            if (this.recent.length > 5) {
-                this.recent.splice(this.recent.length - 1, 1);
-            }
+            setTimeout(() => this.showAutocomplete = false, 300);
         },
         async update () {
             if (this.disabled) {
@@ -228,8 +208,6 @@ export default {
                 game: this.local.game 
             });
 
-            this.updateRecent();
-
             this.loading = false;
             setTimeout(() => {
                 this.success = false;
@@ -241,18 +219,19 @@ export default {
 </script>
 
 <style lang="scss">
+#modal-stream-load {
+    position: relative;
+    top: 50%;
+    left: 50%;
+}
+
 #modal-stream-container {
     display: grid;
 
     grid-template-columns: 600px 300px;
-    grid-template-rows: 150px;
-    grid-template-areas: "content recent";
-    
-    &.autocomplete {
-        grid-template-rows: 150px minmax(0px, max-content);
-        grid-template-areas: "content recent"
+    grid-template-rows: 150px 300px;
+    grid-template-areas: "content recent"
                             "games games";
-    }
 
     width: 100%;
 
