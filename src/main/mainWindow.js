@@ -48,8 +48,6 @@ let window = null,
 let mouse = false,
     menu = false;
 
-app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
-
 const registerHandler = (event, handler) => {
     try {
         ipcMain.handle(event, handler);
