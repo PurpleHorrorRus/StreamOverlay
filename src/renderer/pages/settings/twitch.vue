@@ -150,7 +150,6 @@ export default {
 
             this.validating = false;
             this.$router.replace("/");
-            
         },
         async validate () {
             helix = new Helix({ 
@@ -202,7 +201,7 @@ export default {
             app.get("/token", (req, res) => 
                 res.send("Ваш Access Token находится в ссылке. Просто скопируйте её и вставьте в поле"));
 
-            app.listen(3000);
+            app.listen(3002);
             this.openLink(url);
         },
         getOAuth () { 
