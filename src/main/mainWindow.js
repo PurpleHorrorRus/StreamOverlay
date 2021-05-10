@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-import { app, BrowserWindow, ipcMain, globalShortcut, Tray, Menu, screen } from "electron";
+import { app, dialog, BrowserWindow, globalShortcut, Menu, Tray, ipcMain, screen } from "electron";
 
 import addon from "overlayaddon";
 import path from "path";
@@ -46,10 +46,18 @@ const params = {
 let window = null,
     tray = null;
 
-let mouse = false,
-    menu = false;
+let mouse = false;
+let menu = false;
 
 app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
+
+const registerHandler = (event, handler) => {
+    try {
+        ipcMain.handle(event, handler);
+    } catch (e) {
+        //
+    }
+};
 
 const open = () => {
     const moveTop = () => {
@@ -75,11 +83,13 @@ const open = () => {
 
     tray = new Tray(icon);
     tray.setToolTip("Stream Overlay");
-    tray.setContextMenu(Menu.buildFromTemplate([
-        { label: "Показать", type: "normal" },
-        { type: "separator" },
-        { label: "Выход", type: "normal", click: app.exit }
-    ]));
+    tray.setContextMenu(
+        Menu.buildFromTemplate([
+            { label: "Показать", type: "normal" },
+            { type: "separator" },
+            { label: "Выход", type: "normal", click: app.exit }
+        ])
+    );
 
     tray.on("double-click", () => {
         moveTop();
@@ -99,7 +109,7 @@ const open = () => {
         app.quit();
     });
 
-    window.webContents.on("new-window", event => event.preventDefault());
+    window.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
 
     const send = (event, content) => {
         if (window) {
@@ -149,9 +159,11 @@ const open = () => {
 
     globalShortcut.register("Alt+A", () => {
         if (window) {
-            window.setIgnoreMouseEvents(mouse);
-            send("lock", !mouse);
-            mouse = !mouse;
+            if (menu) {
+                window.setIgnoreMouseEvents(mouse);
+                mouse = !mouse;
+                send("lock", mouse);
+            }
         }
     });
 
