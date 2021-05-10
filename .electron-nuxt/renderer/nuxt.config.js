@@ -20,22 +20,18 @@ const baseConfig = {
     generate: {
         dir: path.join(DIST_DIR, "renderer")
     },
-    plugins: [
-        {
-            ssr: true,
-            src: path.join(__dirname, "resources-plugin.js")
-        }
-    ]
+    plugins: [{
+        ssr: true,
+        src: path.join(__dirname, "resources-plugin.js")
+    }]
 };
 
 const baseExtend = (config, { isClient }) => {
-    config.externals = [
-        nodeExternals({
-            modulesFromFile: {
-                include: ["dependencies"]
-            }
-        })
-    ];
+    config.externals = [nodeExternals({
+        modulesFromFile: {
+            include: ["dependencies"]
+        }
+    })];
 
     config.target = "electron-renderer";
 
@@ -58,25 +54,27 @@ const baseExtend = (config, { isClient }) => {
         new webpack.DefinePlugin({
             INCLUDE_RESOURCES_PATH: isClient ? resourcesPath.nuxtClient() : resourcesPath.nuxtServer()
         })
-    );
-};
+    )
+
+}
 
 const mergeConfig = customConfig => {
-    const hasExtendFunction = customConfig.build !== undefined && customConfig.build.extend !== undefined;
-
+    const hasExtendFunction = (customConfig.build !== undefined && customConfig.build.extend !== undefined);
+    
     if (hasExtendFunction) {
         const userExtend = customConfig.build.extend;
-        customConfig.build.extend = function() {
-            baseExtend(...arguments); // eslint-disable-line prefer-rest-params
-            userExtend(...arguments); // eslint-disable-line prefer-rest-params
-        };
+        customConfig.build.extend = function () {
+            baseExtend(...arguments) // eslint-disable-line prefer-rest-params
+            userExtend(...arguments) // eslint-disable-line prefer-rest-params
+        }
     } else {
         if (baseConfig.build === undefined) baseConfig.build = {};
         baseConfig.build.extend = baseExtend;
     }
 
     return deepmerge(baseConfig, customConfig);
-};
+}
+
 
 module.exports = mergeConfig(userNuxtConfig);
 module.exports.mergeConfig = mergeConfig;
