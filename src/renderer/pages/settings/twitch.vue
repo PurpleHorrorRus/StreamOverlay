@@ -201,8 +201,10 @@ export default {
             app.get("/token", (req, res) => 
                 res.send("Ваш Access Token находится в ссылке. Просто скопируйте её и вставьте в поле"));
 
-            app.listen(3002);
+            const server = app.listen(3000);
             this.openLink(url);
+
+            setTimeout(() => server.close(), 10000);
         },
         getOAuth () { 
             this.openLink("https://twitchapps.com/tmi/"); 
