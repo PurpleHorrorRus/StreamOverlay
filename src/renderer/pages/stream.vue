@@ -174,7 +174,7 @@ export default {
     methods: {
         ...mapActions({
             updateStream: "twitch/UPDATE",
-            saveSettings: "settings/saveSettings"
+            saveSettings: "settings/SAVE"
         }),
         findCache (array, game) {
             const index = array.map(g => g.name).indexOf(game);

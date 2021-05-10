@@ -13,7 +13,7 @@ export default {
         SET: ({ commit }, widgets) => commit("SET", widgets),
         SAVE: ({ commit, dispatch }, widgets) => {
             commit("SET", widgets);
-            dispatch("settings/saveSettings", {
+            dispatch("settings/SAVE", {
                 type: "overlays",
                 content: widgets
             }, { root: true });

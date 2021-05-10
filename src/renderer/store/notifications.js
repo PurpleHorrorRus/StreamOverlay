@@ -4,19 +4,18 @@ export default {
         notifications: [],
         lowbitrate: false,
         lowfps: false,
-        chatdisconnect: false,
-        update: false
+        chatdisconnect: false
     }),
     mutations: {
         ADD: (state, notification) => {
-            setTimeout(() =>
-                state.notifications.splice(state.notifications.indexOf(notification), 1), 
-            notification.handle ? notification.handle * 1000 : 4 * 1000
+            setTimeout(
+                () => state.notifications.splice(state.notifications.indexOf(notification), 1),
+                notification.handle ? notification.handle * 1000 : 4 * 1000
             );
 
             state.notifications = [...state.notifications, notification];
         },
-        TURN: (state, data) => state[data.name] = data.show
+        TURN: (state, data) => (state[data.name] = data.show)
     },
     actions: {
         ADD: ({ commit }, notification) => commit("ADD", notification),

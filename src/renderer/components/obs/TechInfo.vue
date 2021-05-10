@@ -94,7 +94,7 @@ export default {
     },
     methods: {
         ...mapActions({
-            saveSettings: "settings/saveSettings"
+            saveSettings: "settings/SAVE"
         }),
         onResize (x, y, width, height) {
             this.settings.TechInfo.width = width;

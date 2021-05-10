@@ -54,7 +54,7 @@ export default {
     },
     methods: {
         ...mapActions({
-            saveSettings: "settings/saveSettings"
+            saveSettings: "settings/SAVE"
         }),
         turn (option) {
             this.settings[option] = !this.settings[option];

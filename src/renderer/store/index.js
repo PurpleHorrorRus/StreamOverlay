@@ -12,11 +12,11 @@ const store = () => {
         state: () => ({
             config: {}
         }),
-        mutations: {
-            SET_CONFIG: (state, config) => state.config = config
-        },
         actions: {
-            SET_CONFIG: ({ commit }, config) => commit("SET_CONFIG", config)
+            SET_CONFIG: ({ dispatch, state }, config) => {
+                state.config = config;
+                dispatch("settings/SET", config.settings, { root: true });
+            }
         },
         modules: {
             obs, 

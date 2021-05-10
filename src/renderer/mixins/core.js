@@ -9,8 +9,8 @@ export default {
     },
     methods: {
         ...mapActions({
-            setSettings: "settings/setSettings",
-            saveSettings: "settings/saveSettings"
+            setSettings: "settings/SET",
+            saveSettings: "settings/SAVE"
         })
     }
 };
