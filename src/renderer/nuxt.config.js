@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 const cssnano = require("cssnano");
+const isDev = process.env.NODE_ENV === "development";
 
 module.exports = {
     head: {
@@ -22,13 +23,24 @@ module.exports = {
             }
         ]
     },
+    telemetry: false,
+    dev: isDev,
     loading: false,
     build: {
         extend (config, { isClient }) {
-            if (isClient) {
+            if (isClient) { 
                 config.target = "electron-renderer";
+                config.optimization.splitChunks.maxSize = 51200;
             }
-            
+
+            config.mode = process.env.NODE_ENV;
+            config.devtool = isDev ? "inline-source-map" : false,
+            config.performance = {
+                hints: false,
+                maxEntrypointSize: 512000,
+                maxAssetSize: 512000
+            };
+
             config.module.rules.push(
                 {
                     test: /\.js$/,
@@ -47,30 +59,86 @@ module.exports = {
                 }
             });
         },
-        cache: true,
-        parallel: true,
+
+        html:{
+            minify:{
+                collapseBooleanAttributes: true,
+                decodeEntities: true,
+                minifyCSS: true,
+                minifyJS: true,
+                processConditionalComments: true,
+                removeEmptyAttributes: true,
+                removeRedundantAttributes: true,
+                trimCustomFragments: true,
+                useShortDoctype: true,
+                minifyURLs: true,
+                removeComments: true,
+                removeEmptyElements: true
+            }
+        },
+
         optimization: {
             minimize: true,
-            minimizer: []
+            splitChunks: {
+                chunks: "async"
+            }
         },
+
+        splitChunks: {
+            pages: false,
+            vendor: false,
+            commons: false,
+            runtime: false,
+            layouts: false
+        },
+
+        filenames: !isDev ? {
+            app: () => "[contenthash:7].js",
+            chunk: () =>  "[contenthash:7].js",
+            css: () => "[contenthash:7].css",
+        } : {},
+
+        extractCSS: true,
+
         postcss: {
             plugins: [
-                cssnano({ preset: "default" })
-            ]
+                cssnano({
+                    preset: ["default", {
+                        autoprefixer: false,
+                        cssDeclarationSorter: false,
+                        zindex: false,
+                        discardComments: {
+                            removeAll: true
+                        }
+                    }]
+                })
+            ],
+            preset: {
+                autoprefixer: true
+            },
+            order: "cssnanoLast"
+        },
+    },
+    vue: {
+        config: {
+            productionTip: false,
+            devtools: false,
+            silent: !isDev,
+            performance: isDev
         }
     },
-    dev: process.env.NODE_ENV === "development",
     css: [
         "~assets/css/global.scss",
         "vue-draggable-resizable/dist/VueDraggableResizable.css",
         "vue-range-component/dist/vue-range-slider.css"
     ],
     plugins: [
-        { src: "~plugins/vue-draggable-resizable", ssr: true },
-        { src: "~plugins/autocomplete", ssr: true },
+        { src: "~plugins/vue-draggable-resizable", mode: "client" },
+        { src: "~plugins/autocomplete", mode: "client"  },
         { src: "~plugins/font-awesome", mode: "client" },
         { src: "~plugins/vue-range-component.js", mode: "client" },
-        { src: "~plugins/vue-toggle-button.js", mode: "client" }
+        { src: "~plugins/vue-toggle-button.js", mode: "client" },
+        { src: "~plugins/tooltip.js", mode: "client" }
     ],
     buildModules: ["@nuxtjs/style-resources"],
     modules: [
