@@ -1,5 +1,5 @@
 <template>
-    <div class="setting-item">
+    <div class="setting-item" :class="{ checked, unchecked: !checked }">
         <span class="setting-item-name" v-text="text" />
 
         <VueToggleButton 
@@ -45,5 +45,17 @@ export default {
     align-content: center;
 
     margin-bottom: 10px;
+
+    &.checked {
+        .v-switch-core {
+            background-color: $secondary !important;
+        }
+    }
+
+    &.unchecked {
+        .v-switch-core {
+            background-color: $primary !important;
+        }
+    }
 }
 </style>
