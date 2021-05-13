@@ -60,7 +60,13 @@ const clearSettings = {
     time: true
 };
 
-const clearTwitch = {};
+const clearTwitch = {
+    id: 0,
+    username: "",
+    access_token: "",
+    oauth_token: ""
+};
+
 const clearOBS = {
     address: "localhost",
     port: 4444,
@@ -78,17 +84,35 @@ if (!fs.existsSync(configPath)) {
     fs.mkdirSync(configPath);
 }
 
-const spath = isDev
-    ? path.join(configPath, "StreamOverlayStandart")
-    : configPath;
+const spath = isDev ? path.join(configPath, "StreamOverlayStandart") : configPath;
 
 if (!fs.existsSync(spath)) {
     fs.mkdirSync(spath);
 }
-    
+
+const nested = (settings, clear) => {
+    for (const key of Object.keys(clear)) {
+        if (settings[key] === undefined) {
+            settings[key] = clear[key];
+        } else if (typeof settings[key] === "object" && !Array.isArray(settings[key])) {
+            settings[key] = nested(settings[key], clear[key]);
+        }
+    }
+
+    if (!Array.isArray(settings)) {
+        for (const key of Object.keys(settings)) {
+            if (clear[key] === undefined) {
+                delete settings[key];
+            }
+        }
+    }
+
+    return settings;
+};
+
 const dataPath = filename => path.join(spath, filename);
 const exist = path => fs.existsSync(path);
-const data = (path, clear) => exist(path) ? readJSON(path) : writeJSON(path, clear);
+const data = (path, clear) => exist(path) ? nested(readJSON(path), clear) : writeJSON(path, clear);
 
 const paths = {
     spath,
@@ -107,35 +131,14 @@ const config = {
     recent: data(paths.recent, clearRecent)
 };
 
-let keys = Object.keys(config.settings),
-    clearKeys = Object.keys(clearSettings);
-    
-for (let key of clearKeys) {
-    if (!~keys.indexOf(key)) {
-        config.settings[key] = clearSettings[key];
-        saveSettings("settings", config.settings);
-    }
-
-    key = null;
-}
-
-keys = clearKeys = null;
-
-if (config.settings.TwitchInfo.enableFollowers === undefined) {
-    config.settings.TwitchInfo.enable = true;
-    config.settings.TwitchInfo.enableFollowers = true;
-    delete config.settings.TwitchInfo.width;
-    delete config.settings.TwitchInfo.height;
-
-    delete config.settings.OBSStatus.width;
-    delete config.settings.OBSStatus.height;
-
-    saveSettings("settings", config.settings);
-}
-
 export default {
-    icon, isDev, paths, config, 
-    readJSON, writeJSON, exist,
+    icon,
+    isDev,
+    paths,
+    config,
+    readJSON,
+    writeJSON,
+    exist,
     saveSettings,
     readSettings: (type = "settings") => readJSON(paths[type])
 };
