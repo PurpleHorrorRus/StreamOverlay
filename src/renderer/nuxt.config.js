@@ -5,9 +5,7 @@ const isDev = process.env.NODE_ENV === "development";
 module.exports = {
     head: {
         title: "Stream Overlay",
-        meta: [
-            { charset: "utf-8" }
-        ],
+        meta: [{ charset: "utf-8" }],
         link: [
             {
                 rel: "preconnect",
@@ -27,29 +25,28 @@ module.exports = {
     dev: isDev,
     loading: false,
     build: {
-        extend (config, { isClient }) {
-            if (isClient) { 
+        publicPath: "./_nuxt/",
+        extend(config, { isClient }) {
+            if (isClient) {
                 config.target = "electron-renderer";
                 config.optimization.splitChunks.maxSize = 51200;
             }
 
             config.mode = process.env.NODE_ENV;
-            config.devtool = isDev ? "inline-source-map" : false,
-            config.performance = {
+            (config.devtool = isDev ? "inline-source-map" : false),
+            (config.performance = {
                 hints: false,
                 maxEntrypointSize: 512000,
                 maxAssetSize: 512000
-            };
+            });
 
-            config.module.rules.push(
-                {
-                    test: /\.js$/,
-                    exclude: /node_modules/,
-                    use: {
-                        loader: "babel-loader"
-                    }
+            config.module.rules.push({
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader"
                 }
-            );
+            });
 
             config.module.rules.push({
                 test: /\.(ogg|mp3|wav|mpe?g)$/i,
@@ -60,8 +57,8 @@ module.exports = {
             });
         },
 
-        html:{
-            minify:{
+        html: {
+            minify: {
                 collapseBooleanAttributes: true,
                 decodeEntities: true,
                 minifyCSS: true,
@@ -92,32 +89,37 @@ module.exports = {
             layouts: false
         },
 
-        filenames: !isDev ? {
-            app: () => "[contenthash:7].js",
-            chunk: () =>  "[contenthash:7].js",
-            css: () => "[contenthash:7].css",
-        } : {},
+        filenames: !isDev
+            ? {
+                app: () => "[contenthash:7].js",
+                chunk: () => "[contenthash:7].js",
+                css: () => "[contenthash:7].css"
+            }
+            : {},
 
         extractCSS: true,
 
         postcss: {
             plugins: [
                 cssnano({
-                    preset: ["default", {
-                        autoprefixer: false,
-                        cssDeclarationSorter: false,
-                        zindex: false,
-                        discardComments: {
-                            removeAll: true
+                    preset: [
+                        "default",
+                        {
+                            autoprefixer: false,
+                            cssDeclarationSorter: false,
+                            zindex: false,
+                            discardComments: {
+                                removeAll: true
+                            }
                         }
-                    }]
+                    ]
                 })
             ],
             preset: {
                 autoprefixer: true
             },
             order: "cssnanoLast"
-        },
+        }
     },
     vue: {
         config: {
@@ -142,7 +144,8 @@ module.exports = {
     buildModules: ["@nuxtjs/style-resources"],
     modules: [
         [
-            "nuxt-fontawesome", {
+            "nuxt-fontawesome",
+            {
                 imports: [
                     {
                         set: "@fortawesome/free-solid-svg-icons",
@@ -161,8 +164,6 @@ module.exports = {
         ]
     ],
     styleResources: {
-        scss: [
-            "~assets/css/colors.scss"
-        ]
+        scss: ["~assets/css/colors.scss"]
     }
 };
