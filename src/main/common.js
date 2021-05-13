@@ -24,6 +24,8 @@ const clearSettings = {
     contentProtection: true,
     chat: {
         enable: true,
+        avatar: true,
+        badges: true,
         timeout: 80,
         opacity: 30,
         font: 12,

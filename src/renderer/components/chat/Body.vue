@@ -21,32 +21,27 @@ export default {
         ...mapState({
             settings: state => state.settings.settings
         }),
-        textStyle () {
+        textStyle() {
             return {
                 fontSize: `${this.settings.chat.font}pt`
             };
         },
-        emoticionStyle () {
-            return { 
+        emoticionStyle() {
+            return {
                 height: `${this.settings.chat.font}pt`
-            }; 
-        },
+            };
+        }
     }
 };
 </script>
 
 <style lang="scss">
 .message {
-    vertical-align: middle;
-
     .items {
         display: inline;
-        align-items: center;
-        vertical-align: middle;
 
         .item {
             display: inline;
-            vertical-align: middle;
 
             &:not(:first-child) {
                 margin-left: 5px;
@@ -61,7 +56,8 @@ export default {
                 vertical-align: middle;
             }
 
-            .text, .emoticon {
+            .text,
+            .emoticon {
                 display: inline;
             }
         }

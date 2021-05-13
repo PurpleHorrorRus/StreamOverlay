@@ -1,8 +1,18 @@
 <template>
     <div class="message" :style="messageStyle">
-        <img :style="pictureStyle" :src="message.avatar" class="avatar">
-        <Badges :badges="message.badges" />
-        <span :style="nicknameStyle" class="nickname stroke" @click="ban(message.nickname)" v-text="message.nickname" />
+        <img v-if="settings.chat.avatar" :style="pictureStyle" :src="message.avatar" class="avatar">
+        <Badges v-if="settings.chat.badges" :badges="message.badges" />
+        <span
+            :style="nicknameStyle"
+            class="nickname stroke"
+            @click="
+                ban({
+                    nickname: message.nickname,
+                    reason: 'бан стримером'
+                })
+            "
+            v-text="message.nickname"
+        />
         <Body :items="message.formatted" />
     </div>
 </template>
@@ -30,7 +40,8 @@ export default {
         }),
         messageStyle() {
             return {
-                background: `rgba(0, 0, 0, ${this.settings.chat.opacity / 100})`
+                background: `rgba(0, 0, 0, ${this.settings.chat.opacity / 100})`,
+                lineHeight: `${this.settings.chat.font}pt`
             };
         },
         pictureStyle() {
@@ -69,7 +80,11 @@ export default {
     display: inline-block;
 
     width: 100%;
-    padding: 5px;
+    padding: 10px;
+
+    * {
+        vertical-align: bottom;
+    }
 
     .avatar,
     .nickname {
@@ -77,12 +92,10 @@ export default {
     }
 
     .avatar {
-        vertical-align: middle;
         border-radius: 100px;
     }
 
     .nickname {
-        vertical-align: bottom;
         pointer-events: all;
 
         font-family: "Roboto Condensed", sans-serif;

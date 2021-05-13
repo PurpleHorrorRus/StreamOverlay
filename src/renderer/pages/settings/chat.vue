@@ -1,16 +1,21 @@
 <template>
     <div class="modal-content">
         <div class="modal-title">
-            <span 
-                class="modal-title-text"
-                v-text="'Настройка чата'" 
-            />
+            <span class="modal-title-text" v-text="'Настройка чата'" />
         </div>
         <div class="modal-body">
-            <Item 
-                :text="'Включить чат'" 
-                :checked="settings.chat.enable"
-                @change="turnChat" 
+            <Item :text="'Включить чат'" :checked="settings.chat.enable" @change="turn('enable')" />
+            <Item
+                v-if="settings.chat.enable"
+                :text="'Включить аватарки'"
+                :checked="settings.chat.avatar"
+                @change="turn('avatar')"
+            />
+            <Item
+                v-if="settings.chat.enable"
+                :text="'Включить бейджики'"
+                :checked="settings.chat.badges"
+                @change="turn('badges')"
             />
             <Range
                 text="Время сообщения в чате (в секундах)"
@@ -49,25 +54,25 @@ export default {
     mixins: [CoreMixin],
     layout: "modal",
     methods: {
-        turnChat () {
-            this.settings.chat.enable = !this.settings.chat.enable;
-            this.save();
-        },
-        save () {
+        save() {
             this.saveSettings({
                 type: "settings",
                 content: this.settings
             });
         },
-        changeTimeout (value) {
+        turn(field) {
+            this.settings.chat[field] = !this.settings.chat[field];
+            this.save();
+        },
+        changeTimeout(value) {
             this.settings.chat.timeout = Number(value);
             this.save();
         },
-        changeOpactiy (value) {
+        changeOpactiy(value) {
             this.settings.chat.opacity = Number(value);
             this.save();
         },
-        changeFont (value) {
+        changeFont(value) {
             this.settings.chat.font = Number(value);
             this.save();
         }
