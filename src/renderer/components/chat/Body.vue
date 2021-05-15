@@ -28,7 +28,7 @@ export default {
         },
         emoticionStyle() {
             return {
-                height: `${this.settings.chat.font}pt`
+                height: `${this.settings.chat.font - 1}pt`
             };
         }
     }

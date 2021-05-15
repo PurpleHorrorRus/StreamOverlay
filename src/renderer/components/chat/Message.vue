@@ -42,7 +42,7 @@ export default {
         messageStyle() {
             return {
                 background: `rgba(0, 0, 0, ${this.settings.chat.opacity / 100})`,
-                lineHeight: `${this.settings.chat.font}pt`
+                lineHeight: `${this.settings.chat.font + 2}pt`
             };
         },
         pictureStyle() {
