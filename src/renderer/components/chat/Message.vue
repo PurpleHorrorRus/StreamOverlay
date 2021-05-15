@@ -84,7 +84,7 @@ export default {
     padding: 10px;
 
     * {
-        vertical-align: text-bottom;
+        vertical-align: bottom;
     }
 
     .avatar,
