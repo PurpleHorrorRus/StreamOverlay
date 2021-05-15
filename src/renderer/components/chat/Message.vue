@@ -81,7 +81,7 @@ export default {
     display: inline-block;
 
     width: 100%;
-    padding: 10px;
+    padding: 5px;
 
     * {
         vertical-align: bottom;
