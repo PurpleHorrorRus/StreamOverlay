@@ -99,12 +99,7 @@ export default {
         },
         save() {
             const index = this.widgets.findIndex(o => o.id === this.widget.id);
-
-            if (~index) {
-                this.widgets[index] = this.widget;
-            } else {
-                this.widgets = [...this.widgets, this.widget];
-            }
+            ~index ? (this.widgets[index] = this.widget) : (this.widgets = [...this.widgets, this.widget]);
 
             this.saveWidgets(this.widgets);
         }

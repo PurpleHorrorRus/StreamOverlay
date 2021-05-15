@@ -54,12 +54,6 @@ export default {
     mixins: [CoreMixin],
     layout: "modal",
     methods: {
-        save() {
-            this.saveSettings({
-                type: "settings",
-                content: this.settings
-            });
-        },
         turn(field) {
             this.settings.chat[field] = !this.settings.chat[field];
             this.save();

@@ -11,6 +11,12 @@ export default {
         ...mapActions({
             setSettings: "settings/SET",
             saveSettings: "settings/SAVE"
-        })
+        }),
+        save() {
+            this.saveSettings({
+                type: "settings",
+                content: this.settings
+            });
+        }
     }
 };

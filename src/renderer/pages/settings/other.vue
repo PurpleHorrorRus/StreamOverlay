@@ -2,34 +2,26 @@
     <div class="modal-content">
         <ModalTitle :text="'Прочие настройки'" />
         <div class="modal-body">
-            <Item 
-                :text="'Статистика Twitch'" 
-                :checked="settings.TwitchInfo.enable" 
-                @change="turnTwitch('enable')" 
-            />
-            <Item 
+            <Item :text="'Статистика Twitch'" :checked="settings.TwitchInfo.enable" @change="turnTwitch('enable')" />
+            <Item
                 v-if="settings.TwitchInfo.enable"
-                :text="'Показать фолловеров'" 
-                :checked="settings.TwitchInfo.enableFollowers" 
-                @change="turnTwitch('enableFollowers')" 
+                :text="'Показать фолловеров'"
+                :checked="settings.TwitchInfo.enableFollowers"
+                @change="turnTwitch('enableFollowers')"
             />
 
-            <Item 
-                :text="'Включить техническую статистику OBS'" 
-                :checked="settings.TechInfo.enable" 
-                @change="turnTech" 
+            <Item
+                :text="'Включить техническую статистику OBS'"
+                :checked="settings.TechInfo.enable"
+                @change="turnTech"
             />
 
-            <Item 
-                :text="'Включить время трансляции/записи'" 
-                :checked="settings.time" 
-                @change="turn('time')" 
-            />
+            <Item :text="'Включить время трансляции/записи'" :checked="settings.time" @change="turn('time')" />
 
-            <Item 
-                :text="'Включить Content Protection'" 
-                :checked="settings.contentProtection" 
-                @change="turn('contentProtection')" 
+            <Item
+                :text="'Включить Content Protection'"
+                :checked="settings.contentProtection"
+                @change="turn('contentProtection')"
             />
         </div>
     </div>
@@ -41,11 +33,14 @@ import { mapActions, mapState } from "vuex";
 import ModalTitle from "~/components/ModalTitle";
 import Item from "~/components/settings/Item";
 
+import CoreMixin from "~/mixins/core";
+
 export default {
-    components: { 
-        ModalTitle, 
+    components: {
+        ModalTitle,
         Item
     },
+    mixins: [CoreMixin],
     layout: "modal",
     computed: {
         ...mapState({
@@ -56,26 +51,17 @@ export default {
         ...mapActions({
             saveSettings: "settings/SAVE"
         }),
-        turn (option) {
+        turn(option) {
             this.settings[option] = !this.settings[option];
-            this.saveSettings({
-                type: "settings",
-                content: this.settings
-            });
+            this.save();
         },
-        turnTwitch (option) {
+        turnTwitch(option) {
             this.settings.TwitchInfo[option] = !this.settings.TwitchInfo[option];
-            this.saveSettings({
-                type: "settings",
-                content: this.settings
-            });
+            this.save();
         },
-        turnTech () {
+        turnTech() {
             this.settings.TechInfo.enable = !this.settings.TechInfo.enable;
-            this.saveSettings({
-                type: "settings",
-                content: this.settings
-            });
+            this.save();
         }
     }
 };
