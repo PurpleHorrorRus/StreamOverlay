@@ -58,6 +58,8 @@ export default {
         }
     },
     async created() {
+        this.active = false;
+
         if (this.widgets.length) {
             this.widget = this.widgets[0];
         }
