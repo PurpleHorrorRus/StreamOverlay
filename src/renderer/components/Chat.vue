@@ -51,6 +51,11 @@ export default {
 
     overflow: hidden;
 
+    .message:first-child {
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+    }
+
     .message:last-child {
         border-bottom-right-radius: 5px;
         border-bottom-left-radius: 5px;
