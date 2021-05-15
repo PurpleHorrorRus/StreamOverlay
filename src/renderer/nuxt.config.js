@@ -121,6 +121,9 @@ module.exports = {
             order: "cssnanoLast"
         }
     },
+    router: {
+        prefetchLinks: false
+    },
     vue: {
         config: {
             productionTip: false,
