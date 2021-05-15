@@ -147,7 +147,7 @@ export default {
 
             return formatted;
         },
-        BAN: ({ state }, nickname) => state.client.ban(state.user.username, nickname, "бан стримером"),
+        BAN: ({ state }, data) => client.ban(state.user.username, data.nickname, data.reason),
         REMOVE_MESSAGE: ({ state }, id) => {
             const index = state.messages.findIndex(m => m.id === id);
             if (~index) {
