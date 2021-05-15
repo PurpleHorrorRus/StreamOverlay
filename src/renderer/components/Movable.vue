@@ -71,6 +71,7 @@ export default {
 
     &.nonactive {
         background: none;
+        cursor: default;
     }
 
     .name {
