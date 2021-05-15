@@ -3,6 +3,7 @@
         <img v-if="settings.chat.avatar" :style="pictureStyle" :src="message.avatar" class="avatar">
         <Badges v-if="settings.chat.badges" :badges="message.badges" />
         <span
+            v-tooltip="'Забанить'"
             :style="nicknameStyle"
             class="nickname stroke"
             @click="
