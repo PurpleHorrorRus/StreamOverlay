@@ -45,6 +45,8 @@ export default {
 
 <style lang="scss">
 #chat-block {
+    height: 100%;
+
     border-radius: 5px;
 
     overflow: hidden;
