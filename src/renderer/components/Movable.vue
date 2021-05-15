@@ -11,10 +11,10 @@
         :h="source.height"
         :x="source.x || source.left"
         :y="source.y || source.top"
-        @dragstop="onDrag" 
+        @dragstop="onDrag"
         @resizestop="onResize"
     >
-        <span v-if="active && name.length > 0" class="movable_name nowrap" v-text="name" />
+        <span v-if="active && name.length > 0" class="name nowrap" v-text="name" />
         <slot v-if="$slots.default" />
     </vue-draggable-resizable>
 </template>
@@ -38,18 +38,17 @@ export default {
             type: Boolean,
             required: false,
             default: true
-        } 
+        }
     },
     methods: {
-        onResize (...args) { 
-            this.$emit("onResize", ...args); 
+        onResize(...args) {
+            this.$emit("onResize", ...args);
         },
-        onDrag (...args) {
-            this.$emit("onDrag", ...args); 
+        onDrag(...args) {
+            this.$emit("onDrag", ...args);
         }
     }
 };
-
 </script>
 
 <style lang="scss">
@@ -58,31 +57,38 @@ export default {
     left: 0px;
     top: 0px;
 
-    background:
-        linear-gradient($secondary,$secondary) top center/calc(100%) 2px,
-        linear-gradient($secondary,$secondary) bottom center/calc(100%) 2px,
-        linear-gradient($secondary,$secondary) left center/2px calc(100%),
-        linear-gradient($secondary,$secondary) right center/2px calc(100%);
-
-    background-repeat: no-repeat;
-    cursor: move;
-
     border: none;
-}
 
-.nonactive.vdr {
-    background: none;
-}
+    &.active {
+        background: linear-gradient($secondary, $secondary) top center/calc(100%) 2px,
+            linear-gradient($secondary, $secondary) bottom center/calc(100%) 2px,
+            linear-gradient($secondary, $secondary) left center/2px calc(100%),
+            linear-gradient($secondary, $secondary) right center/2px calc(100%);
 
-.movable_name {
-    position: absolute;
-    top: 0px;
+        background-repeat: no-repeat;
+        cursor: move;
+    }
 
-    width: 100%;
+    &.nonactive {
+        background: none;
+    }
 
-    padding: 5px;
+    .name {
+        position: absolute;
+        top: -22px;
 
-    background: rgba(255, 255, 255, .4);
-    user-select: none; 
+        width: 100%;
+        height: 22px;
+
+        padding: 5px;
+
+        background: $secondary;
+        border-radius: 10px 10px 0px 0px;
+
+        text-align: center;
+
+        font-size: 9pt !important;
+        user-select: none;
+    }
 }
 </style>
