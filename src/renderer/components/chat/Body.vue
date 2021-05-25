@@ -38,6 +38,9 @@ export default {
 <style lang="scss">
 .message {
     .items {
+        position: relative;
+        top: 2px;
+
         display: inline;
 
         .item {
@@ -48,8 +51,8 @@ export default {
             }
 
             .text {
-                font-family: "Roboto Condensed", sans-serif;
-                font-weight: 400;
+                font-family: "Roboto Condensed";
+                font-weight: bold;
             }
 
             .emoticon {

@@ -41,7 +41,7 @@ export default {
         }),
         messageStyle() {
             return {
-                background: `rgba(0, 0, 0, ${this.settings.chat.opacity / 100})`,
+                background: `rgba(23, 23, 23, ${this.settings.chat.opacity / 100})`,
                 lineHeight: `${this.settings.chat.font + 2}pt`
             };
         },
@@ -97,10 +97,13 @@ export default {
     }
 
     .nickname {
+        position: relative;
+        top: 2px;
+
         pointer-events: all;
 
-        font-family: "Roboto Condensed", sans-serif;
-        font-weight: 700;
+        font-family: Roboto;
+        font-weight: bold;
 
         &:hover {
             cursor: pointer;
