@@ -1,6 +1,6 @@
 <template>
     <div id="modal">
-        <Chat />
+        <Chat :input="true" />
         <div id="modal-lock">
             <FontAwesomeIcon v-if="locked" :icon="['fa', 'lock']" style="color: lightgreen" />
             <FontAwesomeIcon v-else :icon="['fa', 'unlock']" style="color: red" />
@@ -109,6 +109,7 @@ export default {
         min-width: 600px;
 
         background: #141414;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, .16), 0 3px 6px rgba(0, 0, 0, .23);
 
         &-items {
             grid-area: items;

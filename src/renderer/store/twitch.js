@@ -29,6 +29,7 @@ export default {
     state: () => ({
         user: null,
         helix: null,
+        connected: false,
         messages: [],
         stream: {
             title: null,
@@ -69,7 +70,8 @@ export default {
                     text: message,
                     emotes: user.emotes,
                     color: user.color,
-                    mode: user["msg-id"]
+                    mode: user["msg-id"],
+                    show: true
                 };
 
                 data.formatted = await dispatch("FORMAT_MESSAGE", data);
@@ -77,6 +79,7 @@ export default {
             });
 
             client.on("connected", () => {
+                state.connected = true;
                 dispatch("notifications/TURN", { name: "chatdisconnect", show: false }, { root: true });
                 dispatch(
                     "notifications/ADD",
@@ -89,9 +92,10 @@ export default {
                 );
             });
 
-            client.on("disconnected", () =>
-                dispatch("notifications/TURN", { name: "chatdisconnect", show: true }, { root: true })
-            );
+            client.on("disconnected", () => {
+                state.connected = false;
+                dispatch("notifications/TURN", { name: "chatdisconnect", show: true }, { root: true });
+            });
         },
         FORMAT_MESSAGE: (_, message) => {
             const { text, emotes } = message;
@@ -151,7 +155,7 @@ export default {
         REMOVE_MESSAGE: ({ state }, id) => {
             const index = state.messages.findIndex(m => m.id === id);
             if (~index) {
-                state.messages.splice(index, 1);
+                state.messages[index].show = false;
             }
         },
         UPDATE: async ({ dispatch, state }, data) => {
@@ -244,6 +248,11 @@ export default {
                 content: fChannel,
                 ids: fChannel.map(e => e.code)
             };
+        },
+        SAY: ({ state }, message) => {
+            if (state.connected) {
+                client.say(state.user.username, message);
+            }
         }
     }
 };
