@@ -227,7 +227,7 @@ export default {
 
                             return {
                                 code: emote.name,
-                                url: urls[urls.length - 1]
+                                url: "https://" + urls[urls.length - 1]
                             };
                         })
                     );
