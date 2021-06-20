@@ -3,7 +3,7 @@
         <EditMode v-if="active" />
         <Notifications />
         <div v-if="!settings.first" id="content-valid">
-            <OBS />
+            <OBS v-if="connected" />
             <TwitchInfo />
             <TechInfo v-if="settings.TechInfo.enable && connected && status.tech !== null" />
             <Chat v-if="settings.chat.enable" />

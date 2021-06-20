@@ -56,7 +56,6 @@ export default {
 $borderWidth: 2px;
 
 $connected: lightgreen;
-$disconnected: #ccc;
 $streaming: purple;
 $recording: red;
 
@@ -107,18 +106,6 @@ $recording: red;
 
         &.right {
             border-right: $borderWidth solid $connected;
-        }
-    }
-
-    &.disconnected { 
-        min-width: 135px;
-
-        &.left {
-            border-left: $borderWidth solid $disconnected;
-        }
-
-        &.right {
-            border-right: $borderWidth solid $disconnected;
         }
     }
 
