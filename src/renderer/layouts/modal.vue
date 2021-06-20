@@ -35,56 +35,63 @@ export default {
     },
     mixins: [CoreMixin],
     data: () => ({
-        items: [{
-            text: "Трансляция",
-            link: "/stream",
-            icon: ["fas", "signal"]
-        }, {
-            text: "Редактирование виджетов",
-            icon: ["fas", "pen"],
-            link: "/?edit=true"
-        }, {
-            text: "Настройки OBS",
-            icon: ["fas", "wrench"],
-            link: "/settings/obs"
-        }, {
-            text: "Настройки Twitch",
-            icon: ["fab", "twitch"],
-            link: "/settings/twitch"
-        }, {
-            text: "Настройки чата",
-            icon: ["fas", "comment"],
-            link: "/settings/chat"
-        }, {
-            text: "Прочие настройки",
-            icon: ["fas", "tools"],
-            link: "/settings/other"
-        }]
+        items: [
+            {
+                text: "Трансляция",
+                link: "/stream",
+                icon: ["fas", "signal"]
+            },
+            {
+                text: "Редактирование виджетов",
+                icon: ["fas", "pen"],
+                link: "/?edit=true"
+            },
+            {
+                text: "Настройки OBS",
+                icon: ["fas", "wrench"],
+                link: "/settings/obs"
+            },
+            {
+                text: "Настройки Twitch",
+                icon: ["fab", "twitch"],
+                link: "/settings/twitch"
+            },
+            {
+                text: "Настройки чата",
+                icon: ["fas", "comment"],
+                link: "/settings/chat"
+            },
+            {
+                text: "Прочие настройки",
+                icon: ["fas", "tools"],
+                link: "/settings/other"
+            }
+        ]
     }),
     computed: {
         ...mapState({
             locked: state => state.ipc.locked
         })
     },
-    mounted () { 
-        ipcRenderer.send("turnMouse", true); 
+    mounted() {
+        ipcRenderer.send("turnMouse", true);
     },
     methods: {
-        exit () {
+        exit() {
             if (!this.settings.first) {
                 this.$router.replace("/").catch(() => {});
-            } 
+            }
         }
     }
 };
 </script>
 
 <style lang="scss">
-#modal { 
+#modal {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    
+
     height: 100%;
 
     margin-top: 5%;
@@ -97,6 +104,16 @@ export default {
         right: 10px;
 
         font-size: 15pt;
+
+        &-tip {
+            padding: 5px;
+
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.7);
+
+            font-size: 10pt;
+            font-weight: 600;
+        }
     }
 
     &-container {
@@ -110,7 +127,7 @@ export default {
         min-width: 600px;
 
         background: #141414;
-        box-shadow: 0 3px 6px rgba(0, 0, 0, .16), 0 3px 6px rgba(0, 0, 0, .23);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 
         &-items {
             grid-area: items;
