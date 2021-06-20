@@ -2,13 +2,14 @@
     <div v-if="settings" id="content">
         <EditMode v-if="active" />
         <Notifications />
-        <OBS />
-        <TwitchInfo />
-        <TechInfo v-if="settings.TechInfo.enable && connected && status.tech !== null" />
-        <Chat v-if="settings.chat.enable" />
-        <ViewersList v-if="settings.viewers_list.enable" />
-
-        <Widget v-for="widget of widgets" :key="widget.id" :widget="widget" />
+        <div v-if="!settings.first" id="content-valid">
+            <OBS />
+            <TwitchInfo />
+            <TechInfo v-if="settings.TechInfo.enable && connected && status.tech !== null" />
+            <Chat v-if="settings.chat.enable" />
+            <ViewersList v-if="settings.viewers_list.enable" />
+            <Widget v-for="widget of widgets" :key="widget.id" :widget="widget" />
+        </div>
     </div>
 </template>
 
