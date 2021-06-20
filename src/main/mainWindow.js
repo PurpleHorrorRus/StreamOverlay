@@ -71,7 +71,7 @@ export default {
         const { width, height } = screen.getPrimaryDisplay().bounds;
         params.width = width;
         params.height = height;
-        
+
         window = new BrowserWindow(params);
         addon.InitWindow(window.getNativeWindowHandle(), path.basename(process.execPath));
 
@@ -123,8 +123,6 @@ export default {
                 send("lock", sequence);
             }
         });
-
-        ipcMain.on("exit", () => app.quit());
 
         globalShortcut.register("Alt+R", () => {
             if (window) {
