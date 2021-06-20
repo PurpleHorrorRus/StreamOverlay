@@ -33,10 +33,6 @@ import TwitchMixin from "~/mixins/twitch";
 import WidgetsMixin from "~/mixins/widgets";
 import other from "~/mixins/other";
 
-import BeepSound from "~/static/beep.mp3";
-
-let beep = null;
-
 export default {
     components: {
         EditMode,
@@ -125,15 +121,6 @@ export default {
             turnNotification: "notifications/TURN"
         }),
         registerIPC() {
-            ipcRenderer.on("beep", () => {
-                if (beep === null) {
-                    beep = new Audio(BeepSound);
-                    beep.volume = 0.05;
-                }
-
-                beep.play();
-            });
-
             ipcRenderer.on("menu", (_event, sequence) => {
                 this.$router.replace(sequence ? "/stream" : "/").catch(() => {});
                 this.active = false;
