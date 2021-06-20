@@ -126,11 +126,6 @@ export default {
 
         ipcMain.on("exit", () => app.quit());
 
-        globalShortcut.register("Alt+T", () => {
-            send("beep");
-            moveTop();
-        });
-
         globalShortcut.register("Alt+R", () => {
             if (window) {
                 window.setIgnoreMouseEvents(menu);
