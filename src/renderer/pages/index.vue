@@ -100,6 +100,15 @@ export default {
             this.connectOBS(OBS);
 
             if (!this.helix) {
+                this.addNotification({
+                    text: "Управление:<br/>\
+                        Alt + R - меню<br/>\
+                        Alt + K - список зрителей",
+                    
+                    color: "#171717f2",
+                    handle: 15
+                });
+
                 this.registerIPC();
                 this.createHelix(twitch);
                 this.createChatBot();
@@ -111,6 +120,8 @@ export default {
             setConfig: "SET_CONFIG",
 
             turnLock: "ipc/TURN_LOCK",
+
+            addNotification: "notifications/ADD",
             turnNotification: "notifications/TURN"
         }),
         registerIPC() {
