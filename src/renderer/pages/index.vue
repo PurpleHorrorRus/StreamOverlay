@@ -106,7 +106,7 @@ export default {
                         Alt + K - список зрителей",
                     
                     color: "#343a40",
-                    handle: 15
+                    handle: 10
                 });
 
                 this.registerIPC();
