@@ -7,7 +7,7 @@
         <input 
             v-model="mutated" 
             type="text"
-            :placeholder="placeholder"
+            :placeholder="placeholder || text"
             @input="$emit('input', mutated)"
             @change="$emit('input', mutated)"
         >
