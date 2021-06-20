@@ -105,7 +105,7 @@ export default {
                         Alt + R - меню<br/>\
                         Alt + K - список зрителей",
                     
-                    color: "#171717f2",
+                    color: "#343a40",
                     handle: 15
                 });
 

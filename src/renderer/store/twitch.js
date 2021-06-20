@@ -85,7 +85,7 @@ export default {
                     "notifications/ADD",
                     {
                         text: "Чат успешно подключен",
-                        color: "lightgreen",
+                        color: "#28a745",
                         handle: 5
                     },
                     { root: true }
