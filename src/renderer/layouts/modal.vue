@@ -2,9 +2,10 @@
     <div id="modal">
         <Chat :input="true" />
         <div id="modal-lock">
+            <span id="modal-lock-tip" v-text="'Alt+A'" />
             <FontAwesomeIcon v-if="locked" :icon="['fa', 'lock']" style="color: lightgreen" />
             <FontAwesomeIcon v-else :icon="['fa', 'unlock']" style="color: red" />
-        </div> 
+        </div>
         <div v-show="locked" id="modal-container">
             <div v-show="!settings.first" id="modal-container-items">
                 <div v-for="item of items" :key="item.link" v-tooltip="item.text" class="menu-item">
