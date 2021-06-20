@@ -9,27 +9,33 @@
             /> -->
             <Input text="Имя пользователя Twitch" :value="username" @input="changeUsername" />
 
-            <div class="modal-item-tip">
-                <span class="modal-item-tip-text">
-                    Access Token - нужен для того, чтобы менять название стрима и игру через оверлей (<span
-                        class="link"
-                        @click="getToken"
-                        v-text="'Получить'"
-                    />)
-                </span>
-            </div>
-            <Input :value="access_token" @input="changeAccessToken" />
+            <div id="twitch-settings-access-token" class="twitch-settings">
+                <div class="modal-item-tip">
+                    <span
+                        class="modal-item-tip-text"
+                        v-text="'Access Token - нужен для того, чтобы менять название стрима и игру через оверлей'"
+                    />
+                </div>
 
-            <div class="modal-item-tip">
-                <span class="modal-item-tip-text">
-                    OAuth Token - нужен для того, чтобы получать сообщения из чата (<span
-                        class="link"
-                        @click="getOAuth"
-                        v-text="'Получить'"
-                    />)
-                </span>
+                <div class="twitch-settings-form">
+                    <Input :value="access_token" @input="changeAccessToken" />
+                    <SolidButton :label="'Получить'" @clicked="getToken" />
+                </div>
             </div>
-            <Input :value="oauth_token" @input="changeOAuth" />
+
+            <div id="twitch-settings-oauth" class="twitch-settings">
+                <div class="modal-item-tip">
+                    <span
+                        class="modal-item-tip-text"
+                        v-text="'OAuth Token - нужен для того, чтобы получать сообщения из чата'"
+                    />
+                </div>
+
+                <div class="twitch-settings-form">
+                    <Input :value="oauth_token" @input="changeOAuth" />
+                    <SolidButton :label="'Получить'" @clicked="getOAuth" />
+                </div>
+            </div>
 
             <div v-if="error.length" class="modal-item-tip">
                 <span style="color: red" class="modal-item-tip-text">Ошибка: {{ error }}</span>
@@ -204,11 +210,15 @@ export default {
 </script>
 
 <style lang="scss">
-.link {
-    &:hover {
-        cursor: pointer;
-        color: $secondary;
-        text-decoration: underline;
+.twitch-settings {
+    &-form {
+        display: flex;
+
+        gap: 10px;
+
+        .solid-button {
+            min-width: 85px;
+        }
     }
 }
 </style>

@@ -8,9 +8,10 @@
                 <span class="modal-item-tip-text">
                     Для дальнейшей работы
                     <strong style="color: red" v-text="'ОБЯЗАТЕЛЬНО'" />
-                    установите
-                    <strong class="link" @click="install" v-text="'OBS Websocket'" />
+                    установите OBS Websocket
                 </span>
+
+                <SolidButton :label="'Установить OBS Websocket'" @clicked="install" />
             </div>
 
             <Input text="Адрес подключения" :value="address" @input="changeAddress" />
@@ -43,6 +44,9 @@ import SolidButton from "~/components/SolidButton";
 
 import CoreMixin from "~/mixins/core";
 import other from "~/mixins/other";
+
+const OBSWebsocketInstallerURL =
+    "https://github.com/Palakis/obs-websocket/releases/download/4.9.1/obs-websocket-4.9.1-Windows-Installer.exe";
 
 export default {
     components: {
@@ -108,10 +112,7 @@ export default {
             }
         },
         install() {
-            // eslint-disable-next-line max-len
-            this.openLink(
-                "https://obsproject.com/forum/resources/obs-websocket-remote-control-of-obs-studio-made-easy.466/"
-            );
+            this.openLink(OBSWebsocketInstallerURL);
         }
     }
 };
