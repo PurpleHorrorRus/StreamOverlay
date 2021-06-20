@@ -47,8 +47,8 @@ import Recent from "~/components/Recent";
 
 const noArt = "https://static-cdn.jtvnw.net/ttv-static/404_boxart-{width}x{height}.jpg";
 const artSize = {
-    width: 90,
-    height: 115
+    width: 250,
+    height: 320
 };
 
 let inputDelay = null;
