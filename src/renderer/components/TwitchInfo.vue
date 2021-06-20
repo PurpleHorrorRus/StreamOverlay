@@ -108,7 +108,7 @@ export default {
     justify-content: space-evenly;
     align-items: center;
 
-    background: #00000098;
+    // background: #00000098;
 
     border-radius: 2px;
 
@@ -116,7 +116,7 @@ export default {
         span {
             color: $viewersColor;
         }
-        
+
         .feather {
             stroke: $viewersColor;
         }
@@ -125,12 +125,16 @@ export default {
     span {
         font-family: "Roboto Condensed", sans-serif;
         font-weight: 800;
+
+        // text-shadow: 1px 1px 1px rgb(0, 0, 0);
     }
 
-    svg, span {
+    svg,
+    span {
         vertical-align: middle;
 
         font-size: $infoSize;
+        filter: drop-shadow(1px 1px 0px rgba(0,0,0,.7));
     }
 
     .feather {
