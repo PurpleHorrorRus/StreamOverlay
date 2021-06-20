@@ -124,6 +124,8 @@ export default {
             }
         });
 
+        ipcMain.on("exit", () => app.quit());
+
         globalShortcut.register("Alt+T", () => {
             send("beep");
             moveTop();
