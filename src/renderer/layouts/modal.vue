@@ -1,6 +1,6 @@
 <template>
     <div id="modal">
-        <Chat :input="true" />
+        <Chat v-if="!settings.first && locked" :input="true" />
         <div id="modal-lock">
             <span id="modal-lock-tip" v-text="'Alt+A'" />
             <FontAwesomeIcon v-if="locked" :icon="['fa', 'lock']" style="color: lightgreen" />
