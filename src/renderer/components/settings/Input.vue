@@ -4,8 +4,8 @@
             <span class="modal-item-tip-text" v-text="text" />
         </div>
 
-        <input 
-            v-model="mutated" 
+        <input
+            v-model="mutated"
             type="text"
             :placeholder="placeholder || text"
             @input="$emit('input', mutated)"
@@ -46,11 +46,11 @@ export default {
         mutated: ""
     }),
     watch: {
-        value (newVal) {
+        value(newVal) {
             this.mutated = newVal;
         }
     },
-    created () {
+    created() {
         this.mutated = this.value;
     }
 };
@@ -69,9 +69,9 @@ export default {
         border: none;
         border-bottom: 1px solid $outline;
         border-radius: 0px;
-        
+
         color: $text;
-        
+
         outline: none;
     }
 }
