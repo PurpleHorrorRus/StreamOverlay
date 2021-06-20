@@ -1,12 +1,14 @@
 <template>
     <div id="notifications">
-        <Notification v-for="(notification, index) of notifications" :key="index" :notification="notification" />
+        <transition-group name="fade" tag="div">
+            <Notification v-for="(notification, index) of notifications" :key="index" :notification="notification" />
+        </transition-group>
+
         <LowBitrate v-if="showLowBitrate" :notification="{ color: 'red' }" />
         <LowFPS v-if="showLowFPS" :notification="{ color: 'red' }" />
-        <Notification 
-            v-if="showUpdate" 
-            :notification="{ text: 'Доступно новое обновление. Скачивание...', 
-                             color: '#171717' }" 
+        <Notification
+            v-if="showUpdate"
+            :notification="{ text: 'Доступно новое обновление. Скачивание...', color: '#171717' }"
         />
         <Notification v-if="showChatDisconnect" :notification="{ text: 'Чат отключен', color: 'red' }" />
     </div>
@@ -20,9 +22,9 @@ import LowBitrate from "~/components/notifications/lowbitrate";
 import LowFPS from "~/components/notifications/lowfps";
 
 export default {
-    components: { 
-        Notification, 
-        LowBitrate, 
+    components: {
+        Notification,
+        LowBitrate,
         LowFPS
     },
     computed: {
@@ -39,12 +41,12 @@ export default {
 
 <style>
 #notifications {
-	display: block;
-	position: absolute;
-	bottom: 25px;
-	right: 5px;
-	width: 300px;
-	height: auto;
+    position: absolute;
+    bottom: 25px;
+    right: 15px;
+
+    width: 300px;
+    height: auto;
 }
 
 .notification {
@@ -54,9 +56,13 @@ export default {
 
     margin-bottom: 10px;
     padding: 15px;
-    
-	background: rgba(0, 0, 0, 0.4);
+
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    border-radius: 3px;
 }
 
-.error { color: red; }
+.error {
+    color: red;
+}
 </style>
