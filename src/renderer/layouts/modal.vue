@@ -183,11 +183,10 @@ export default {
             padding: 5px;
 
             .modal-item-tip {
-                padding: 10px;
+                padding: 10px 10px 0px 10px;
 
                 &-text {
                     display: block;
-                    max-width: 600px;
 
                     color: #ccc;
                     font-size: 9pt;
