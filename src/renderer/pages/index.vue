@@ -55,6 +55,7 @@ export default {
         }
     },
     beforeMount() {
+        ipcRenderer.on("lock", (_event, mouse) => this.turnLock(mouse));
         ipcRenderer.on("update-available", () =>
             this.turnNotification({
                 name: "update",
@@ -64,11 +65,9 @@ export default {
     },
     async mounted() {
         const config = await ipcRenderer.invoke("config");
-        const { settings, OBS, twitch } = config;
         this.setConfig(config);
 
-        ipcRenderer.on("lock", (_event, mouse) => this.turnLock(mouse));
-
+        const { settings, OBS, twitch } = config;
         if (this.$route.query?.edit) {
             this.setWidgets(config.overlays);
             this.active = true;
