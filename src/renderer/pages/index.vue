@@ -20,7 +20,7 @@ import { ipcRenderer } from "electron";
 import EditMode from "~/components/EditMode";
 
 import OBS from "~/components/OBS";
-import TwitchInfo from "~/components/obs/TwitchInfo";
+import TwitchInfo from "~/components/TwitchInfo";
 import TechInfo from "~/components/obs/TechInfo";
 
 import Notifications from "~/components/Notifications/Notifications";
