@@ -136,6 +136,10 @@ export default {
                 window.setIgnoreMouseEvents(menu);
                 menu = !menu;
                 send("menu", menu);
+
+                if (menu) {
+                    window.focus();
+                }
             }
         });
 
