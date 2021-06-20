@@ -22,13 +22,11 @@ const params = {
     frame: false,
     fullscreenable: true,
     fullscreen: true,
-    alwaysOnTop: true,
     flashFrame: false,
     webPreferences: {
         webSecurity: false,
         nodeIntegration: true,
-        nodeIntegrationInWorker: false,
-        backgroundThrottling: true,
+        backgroundThrottling: false,
         contextIsolation: false,
         webviewTag: true,
         allowRunningInsecureContent: true,
@@ -70,10 +68,10 @@ const send = (event, content) => {
 
 export default {
     create: () => {
-        const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+        const { width, height } = screen.getPrimaryDisplay().bounds;
         params.width = width;
         params.height = height;
-
+        
         window = new BrowserWindow(params);
         addon.InitWindow(window.getNativeWindowHandle(), path.basename(process.execPath));
 
