@@ -4,6 +4,15 @@
             <span class="modal-title-text" v-text="'Настройка OBS'" />
         </div>
         <div class="modal-body">
+            <div class="modal-item-tip">
+                <span class="modal-item-tip-text">
+                    Для дальнейшей работы
+                    <strong style="color: red" v-text="'ОБЯЗАТЕЛЬНО'" />
+                    установите
+                    <strong class="link" @click="install" v-text="'OBS Websocket'" />
+                </span>
+            </div>
+
             <Input text="Адрес подключения" :value="address" @input="changeAddress" />
             <Input text="Порт подключения" :value="port" @input="changePort" />
             <Input text="Пароль" :value="password" @input="changePassword" />
@@ -19,14 +28,6 @@
                 @input="changeCamera"
             />
 
-            <div class="modal-item-tip">
-                <span class="modal-item-tip-text">
-                    Для дальнейшей работы
-                    <strong style="color: red" v-text="'ОБЯЗАТЕЛЬНО'" />
-                    установите
-                    <strong class="link" @click="install" v-text="'OBS Websocket'" />
-                </span>
-            </div>
             <div v-if="error.length" class="modal-item-tip">
                 <span style="color: red" class="modal-item-tip-text">Ошибка: {{ error }}</span>
             </div>
