@@ -2,8 +2,8 @@
     <div id="notifications">
         <transition-group name="fade" tag="div">
             <Notification
-                v-for="(notification, index) of notifications"
-                :key="notification.text + '' + index"
+                v-for="notification of notifications"
+                :key="notification.text"
                 :notification="notification"
             />
         </transition-group>
