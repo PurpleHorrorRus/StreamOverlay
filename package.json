@@ -30,7 +30,7 @@
         "express": "^4.17.1",
         "http": "^0.0.1-security",
         "node-fetch": "2.6.1",
-        "nuxt": "2.15.6",
+        "nuxt": "^2.15.7",
         "nuxt-fontawesome": "^0.4.0",
         "obs-websocket-js": "4.0.2",
         "overlayaddon": "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git",
@@ -42,7 +42,7 @@
         "vue-range-component": "^1.0.3"
     },
     "devDependencies": {
-        "@nuxtjs/style-resources": "^1.1.0",
+        "@nuxtjs/style-resources": "^1.2.0",
         "@xpda-dev/core": "^0.1.6",
         "@xpda-dev/electron-builder": "^0.2.1",
         "@xpda-dev/electron-launcher": "^0.3.0",
@@ -51,15 +51,15 @@
         "babel-loader": "^8.2.2",
         "cross-env": "^7.0.3",
         "cssnano": "4.1.11",
-        "electron": "^13.1.2",
+        "electron": "^13.1.6",
         "electron-builder": "22.11.7",
         "electron-debug": "^3.2.0",
-        "eslint": "^7.29.0",
-        "eslint-plugin-vue": "^7.11.1",
+        "eslint": "^7.30.0",
+        "eslint-plugin-vue": "^7.13.0",
         "file-loader": "^6.2.0",
         "sass": "^1.35.1",
         "sass-loader": "10.1.1",
         "url-loader": "^4.1.1",
-        "vue-loader": "^15.9.7"
+        "vue-loader": "15.9.7"
     }
 }
