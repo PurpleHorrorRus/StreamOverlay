@@ -102,8 +102,15 @@ export default {
 
             if (!common.isDev) {
                 addon.SetLowPriority();
-                setInterval(() => addon.SetLowPriority(), 30000);
-                setInterval(() => addon.ReduceWorkingSet(), 70000);
+                addon.ReduceWorkingSet();
+
+                setInterval(() => {
+                    addon.SetLowPriority();
+
+                    if (common.config.settings.RAMClean) {
+                        addon.ReduceWorkingSet();
+                    }
+                }, 70000);
             }
 
             moveTop();

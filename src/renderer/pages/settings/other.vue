@@ -23,6 +23,16 @@
                 :checked="settings.contentProtection"
                 @change="turn('contentProtection')"
             />
+
+            <Item
+                :text="'Включить очистку ОЗУ'"
+                :tip="
+                    'Выполняет очистку памяти приложения каждые 70 секунд.\
+                    Отключите эту опцию, если приложение вылетает'
+                "
+                :checked="settings.RAMClean"
+                @change="turn('RAMClean')"
+            />
         </div>
     </div>
 </template>

@@ -22,6 +22,7 @@ const saveSettings = (type = "settings", content) => {
 const clearSettings = {
     first: true,
     contentProtection: true,
+    RAMClean: false,
     chat: {
         enable: true,
         avatar: true,
@@ -114,7 +115,7 @@ const nested = (settings, clear) => {
 
 const dataPath = filename => path.join(spath, filename);
 const exist = path => fs.existsSync(path);
-const data = (path, clear) => exist(path) ? nested(readJSON(path), clear) : writeJSON(path, clear);
+const data = (path, clear) => (exist(path) ? nested(readJSON(path), clear) : writeJSON(path, clear));
 
 const paths = {
     spath,
