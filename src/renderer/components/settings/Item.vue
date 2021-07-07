@@ -1,13 +1,10 @@
 <template>
     <div class="setting-item" :class="{ checked, unchecked: !checked }">
-        <span class="setting-item-name" v-text="text" />
+        <div class="setting-item-block">
+            <span class="setting-item-block-name" v-text="text" />
 
-        <VueToggleButton 
-            ref="toggle-button"
-            :value="checked" 
-            :height="25"
-            @change="$emit('change')" 
-        />
+            <VueToggleButton ref="toggle-button" :value="checked" :height="25" @change="$emit('change')" />
+        </div>
 
         <div v-if="tip.length > 0" class="modal-item-tip">
             <span class="modal-item-tip-text" v-text="tip" />
@@ -43,8 +40,16 @@ export default {
     justify-content: space-between;
     align-items: center;
     align-content: center;
+    flex-wrap: wrap;
 
     margin-bottom: 10px;
+
+    &-block {
+        display: flex;
+        justify-content: space-between;
+
+        width: 100%;
+    }
 
     &.checked {
         .v-switch-core {
@@ -54,7 +59,7 @@ export default {
 
     &.unchecked {
         .v-switch-core {
-            background-color: $primary !important;
+            background-color: #242424 !important;
         }
     }
 }
