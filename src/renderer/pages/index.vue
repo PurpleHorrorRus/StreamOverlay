@@ -1,8 +1,9 @@
 <template>
     <div v-if="settings" id="content">
         <EditMode v-if="active" />
-        <Notifications />
+
         <div v-if="!settings.first" id="content-valid">
+            <Notifications />
             <OBS v-if="connected" />
             <TwitchInfo />
             <TechInfo v-if="settings.TechInfo.enable && connected && status.tech !== null" />
@@ -97,10 +98,11 @@ export default {
 
             if (!this.helix) {
                 this.addNotification({
-                    text: "Управление:<br/>\
+                    text:
+                        "Управление:<br/>\
                         Alt + R - меню<br/>\
                         Alt + K - список зрителей",
-                    
+
                     color: "#343a40",
                     handle: 10
                 });
@@ -139,6 +141,13 @@ export default {
 </script>
 
 <style lang="scss">
+#content {
+    &-valid {
+        width: 100%;
+        height: 100%;
+    }
+}
+
 #overlays {
     position: absolute;
 
