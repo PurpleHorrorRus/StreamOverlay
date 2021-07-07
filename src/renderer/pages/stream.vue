@@ -58,7 +58,6 @@ export default {
         Game,
         Input,
         SolidButton,
-
         Recent
     },
     layout: "modal",
@@ -125,15 +124,17 @@ export default {
         }
     },
     async created() {
-        const channel = await this.helix.getChannel(this.user.id);
-        this.local = {
-            title: channel.status,
-            game: channel.game
-        };
+        this.helix.getChannel(this.user.id).then(
+            channel =>
+                (this.local = {
+                    title: channel.status,
+                    game: channel.game
+                })
+        );
+
+        this.helix.getTopGames().then(games => (this.topGames = games));
 
         const game = await this.helix.getGame(this.stream.game);
-        this.topGames = await this.helix.getTopGames();
-
         this.art = this.resizeArt(game?.box_art_url || noArt);
         this.firstLoad = false;
     },

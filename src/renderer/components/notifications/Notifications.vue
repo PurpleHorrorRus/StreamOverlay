@@ -1,11 +1,7 @@
 <template>
     <div id="notifications">
         <transition-group name="fade" tag="div">
-            <Notification
-                v-for="notification of notifications"
-                :key="notification.text"
-                :notification="notification"
-            />
+            <Notification v-for="notification of notifications" :key="notification.text" :notification="notification" />
         </transition-group>
 
         <LowBitrate v-if="showLowBitrate" :notification="{ color: 'red' }" />
