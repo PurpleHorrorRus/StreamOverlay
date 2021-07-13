@@ -130,18 +130,6 @@ export default {
             }
         });
 
-        globalShortcut.register("Alt+R", () => {
-            if (window) {
-                window.setIgnoreMouseEvents(menu);
-                menu = !menu;
-                send("menu", menu);
-
-                if (menu) {
-                    window.focus();
-                }
-            }
-        });
-
         globalShortcut.register("Alt+A", () => {
             if (window) {
                 if (menu) {
@@ -152,7 +140,32 @@ export default {
             }
         });
 
-        globalShortcut.register("Alt+K", () => send("viewers_list"));
+        const registerViewersListHotkey = () => globalShortcut.register("Alt+K", () => send("viewers_list"));
+
+        globalShortcut.register("Alt+R", () => {
+            if (window) {
+                window.setIgnoreMouseEvents(menu);
+                menu = !menu;
+                send("menu", menu);
+
+                if (menu) {
+                    globalShortcut.register("Alt+A", () => {
+                        window.setIgnoreMouseEvents(mouse);
+                        mouse = !mouse;
+                        send("lock", mouse);
+                    });
+
+                    globalShortcut.unregister("Alt+K");
+
+                    window.focus();
+                } else {
+                    globalShortcut.unregister("Alt+A");
+                    registerViewersListHotkey();
+                }
+            }
+        });
+
+        registerViewersListHotkey();
 
         return window;
     }
