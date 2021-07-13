@@ -22,6 +22,7 @@ const params = {
     frame: false,
     fullscreenable: true,
     fullscreen: true,
+    focusable: true,
     flashFrame: false,
     webPreferences: {
         webSecurity: false,
