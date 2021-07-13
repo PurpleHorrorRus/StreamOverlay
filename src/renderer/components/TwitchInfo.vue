@@ -69,18 +69,18 @@ export default {
             this.viewers = viewers;
             this.followers = followers;
         },
-        async getViewersCount () {
-            if (this.streaming) {
-                const { viewer_count } = await this.helix.getStream(this.user.username);
-                return viewer_count || 0;
-            }
-
-            return 0;
+        async getViewersCount() {
+            if (!this.streaming) return 0;
+            const { viewer_count } = await this.helix.stream.streams({ user_id: this.user.id });
+            return viewer_count || 0;
         },
         async getFollowersCount () {
-            return this.settings.TwitchInfo.enableFollowers
-                ? await this.helix.getFollowersCount(this.user.id)
-                : -1;
+            if (this.settings.TwitchInfo.enableFollowers) {
+                const { total } = await this.helix.users.follows(this.user.id);
+                return total || -1;
+            }
+
+            return -1;
         },
         onDrag (x, y) {
             this.settings.TwitchInfo.x = x;
@@ -105,8 +105,9 @@ export default {
     $viewersColor: #ff3838;
 
     display: flex;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     align-items: center;
+    column-gap: 10px;
 
     // background: #00000098;
 

@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 import _ from "lodash";
 import fetch from "node-fetch";
 
@@ -62,11 +64,14 @@ export default {
         this.exit();
     },
     methods: {
+        ...mapActions({
+            getChatters: "twitch/CHATTERS"
+        }),
         async get() {
             const botsRequest = await fetch("https://api.twitchinsights.net/v1/bots/online");
 
             const { bots } = botsRequest.ok ? await botsRequest.json() : { bots: [] };
-            const { chatters } = await this.helix.getViewers(this.user.username);
+            const { chatters } = await this.getChatters();
 
             if (!bots || !chatters) {
                 return this.chatters;

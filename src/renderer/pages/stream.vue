@@ -99,8 +99,7 @@ export default {
             this.art = this.resizeArt(newVal);
         },
         "local.game": async function(newVal) {
-            // eslint-disable-next-line max-len
-            this.art = this.resizeArt(noArt);
+            this.art = noArt;
 
             if (inputDelay) {
                 clearTimeout(inputDelay);
@@ -115,27 +114,26 @@ export default {
             }
 
             inputDelay = setTimeout(async () => {
-                const { data: games } = await this.helix.searchCategories(newVal);
-                if (games && games.length) {
-                    this.search = games;
-                    this.findCache(this.search, this.local.game);
-                }
+                const games = await this.helix.search.categories(newVal);
+                this.search = Array.isArray(games) ? games : games.data || [];
+
+                if (this.search.length === 0) {
+                    const game = await this.helix.games.get(newVal);
+                    this.art = game.box_art_url || noArt;
+                } else this.findCache(this.search, newVal);
             }, 200);
         }
     },
     async created() {
-        this.helix.getChannel(this.user.id).then(
-            channel =>
-                (this.local = {
-                    title: channel.status,
-                    game: channel.game
-                })
-        );
+        const channel = await this.helix.channel.get(this.user.id);
+        this.local = {
+            title: channel.title,
+            game: channel.game_name
+        };
 
-        this.helix.getTopGames().then(games => (this.topGames = games));
+        this.helix.games.top().then(({ data: topGames }) => (this.topGames = topGames));
+        this.helix.games.get(this.stream.game).then(game => (this.art = game?.box_art_url || noArt));
 
-        const game = await this.helix.getGame(this.stream.game);
-        this.art = this.resizeArt(game?.box_art_url || noArt);
         this.firstLoad = false;
     },
     methods: {

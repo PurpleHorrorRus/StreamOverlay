@@ -1,15 +1,9 @@
-import fetch from "node-fetch";
 import Helix from "simple-helix-api";
-import Promise from "bluebird";
+import tmi from "tmi.js";
 
 import misc from "~/plugins/misc";
 
 const client_id = "zmin05a65f74rln2g94iv935w58nyq";
-
-const syncRequest = async (url, params = {}) => {
-    const response = await fetch(url, params);
-    return !params.raw ? response.json() : response.buffer();
-};
 
 const addPart = (formatted, type, content) => {
     if (content.length > 0) {
@@ -38,13 +32,12 @@ export default {
     }),
     actions: {
         CREATE_HELIX: ({ state }, twitch) => {
-            twitch.id = Number(twitch.id);
             state.user = twitch;
 
             state.helix = new Helix({
-                access_token: twitch.access_token,
                 client_id,
-                increaseRate: true
+                access_token: twitch.access_token,
+                language: "ru"
             });
         },
         CREATE_CHATBOT: async ({ dispatch, state }) => {
@@ -54,28 +47,40 @@ export default {
 
             await dispatch("LOAD_EMOTES");
 
-            const { status: title, game } = await state.helix.getChannel(state.user.id);
-            state.stream = { title, game };
+            const { title, game_name } = await state.helix.channel.get(state.user.id);
+            state.stream = { title, game: game_name };
 
-            client = state.helix.createChatBot(state.user.username, state.user.oauth_token, state.user.username);
+            client = new tmi.Client({
+                connection: { reconnect: true },
+                identity: {
+                    username: state.user.username,
+                    password: state.user.oauth_token
+                },
+                channels: [state.user.username]
+            });
+
+            client.connect();
+
             client.on("message", async (_channel, user, message) => {
-                const nickname = user["display-name"];
-                const profile = await state.helix.getUser(nickname);
+                const profile = await state.helix.users.get({ login: user["display-name"] });
 
-                const data = {
-                    id: Math.random() * 1000,
-                    nickname,
-                    avatar: profile.profile_image_url,
-                    badges: user.badges ? Object.keys(user.badges) : [],
-                    text: message,
-                    emotes: user.emotes,
-                    color: user.color,
-                    mode: user["msg-id"],
-                    show: true
-                };
+                if (user.color === "#000000") {
+                    user.color = "#FFFFFF";
+                }
 
-                data.formatted = await dispatch("FORMAT_MESSAGE", data);
-                state.messages = [data, ...state.messages];
+                state.messages = [
+                    {
+                        id: Math.random() * 1000,
+                        nickname: profile.display_name,
+                        avatar: profile.profile_image_url,
+                        badges: user.badges ? Object.keys(user.badges) : [],
+                        formatted: await dispatch("FORMAT_MESSAGE", { text: message.trim(), emotes: user.emotes }),
+                        color: user.color,
+                        mode: user["msg-id"],
+                        show: true
+                    },
+                    ...state.messages
+                ];
             });
 
             client.on("connected", () => {
@@ -97,9 +102,7 @@ export default {
                 dispatch("notifications/TURN", { name: "chatdisconnect", show: true }, { root: true });
             });
         },
-        FORMAT_MESSAGE: (_, message) => {
-            const { text, emotes } = message;
-
+        FORMAT_MESSAGE: (_, { text, emotes }) => {
             let formatted = [];
             let emojiWords = [];
 
@@ -159,14 +162,14 @@ export default {
             }
         },
         UPDATE: async ({ dispatch, state }, data) => {
-            const { success } = await state.helix.updateStream(state.user.id, data.title, data.game);
+            if (!data.title) data.title = state.stream.title;
+            if (!data.game) data.game = state.stream.game;
 
-            if (success) {
-                state.stream = data;
-                dispatch("UPDATE_RECENT", data);
-            }
+            state.stream = data;
+            await state.helix.updateStream(state.user.id, data.title, data.game);
+            dispatch("UPDATE_RECENT", data);
 
-            return success;
+            return true;
         },
         UPDATE_RECENT: ({ dispatch, rootState }, data) => {
             let recent = [...rootState.config.recent];
@@ -192,7 +195,7 @@ export default {
             const frankerfacez_url = `https://api.frankerfacez.com/v1/room/${state.user.username.toLowerCase()}`;
 
             const bGlobalPromise = new Promise(async resolve => {
-                const res = await syncRequest(betterttv_global_url);
+                const res = await misc.syncRequest(betterttv_global_url);
 
                 return resolve(
                     res.map(emote => ({
@@ -203,7 +206,7 @@ export default {
             });
 
             const bChannelPromise = new Promise(async resolve => {
-                const res = await syncRequest(betterttv_url);
+                const res = await misc.syncRequest(betterttv_url);
 
                 if (res.sharedEmotes) {
                     return resolve(
@@ -218,7 +221,7 @@ export default {
             });
 
             const fChannelPromise = new Promise(async resolve => {
-                const res = await syncRequest(frankerfacez_url);
+                const res = await misc.syncRequest(frankerfacez_url);
 
                 if (res.room) {
                     return resolve(
@@ -249,6 +252,7 @@ export default {
                 ids: fChannel.map(e => e.code)
             };
         },
+        CHATTERS: async ({ state }) => await state.helix.other.getViewers(state.user.username),
         SAY: ({ state }, message) => {
             if (state.connected) {
                 client.say(state.user.username, message);

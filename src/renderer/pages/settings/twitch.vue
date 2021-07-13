@@ -47,8 +47,8 @@
 </template>
 
 <script>
-import express from "express";
 import Helix from "simple-helix-api";
+import express from "express";
 
 import Input from "~/components/settings/Input";
 import SolidButton from "~/components/SolidButton";
@@ -132,7 +132,7 @@ export default {
                 return;
             }
 
-            const user = await helix.getUser(this.username);
+            const user = await helix.users.get({ login: this.username });
             this.saveSettings({
                 type: "twitch",
                 content: {
@@ -149,46 +149,28 @@ export default {
         async validate() {
             helix = new Helix({
                 client_id,
-                access_token: this.access_token,
-                increaseRate: true
+                access_token: this.access_token
             });
 
-            const user = await helix.getUser(this.username).catch(() => ({
+            const user = await helix.users.get({ login: this.username }).catch(() => ({
                 success: false,
                 error: "Пользователь с таким ником не найден"
             }));
 
-            const data = await helix.getChannel(user.id);
-            const title = data.status,
-                game = data.game;
-
-            const { success } = await helix
-                .updateStream(user.id, "test overlay", "League of Legends")
+            const data = await helix.channel.get(user.id);
+            const success = await helix.updateStream(user.id, data.title, data.game_name)
                 .catch(() => ({ success: false, error: "Неверный Access Token" }));
 
-            if (success) {
-                helix.updateStream(user.id, title, game);
-                return { success: true };
-            } else {
-                return {
-                    success: false,
-                    error: "Неверный Access Token"
-                };
-            }
+            return { success };
         },
         getToken() {
-            let tempHelix = new Helix({
+            const url = new Helix({
                 client_id,
-                redirect_uri: "http://localhost:3000/token",
-                disableWarns: true
-            });
-
-            const url = tempHelix.getAuthLink();
-            tempHelix = null;
+                redirect_uri: "http://localhost:3000/token"
+            }).getAuthLink();
 
             if (app) {
-                this.openLink(url);
-                return;
+                return this.openLink(url);
             }
 
             app = express();
