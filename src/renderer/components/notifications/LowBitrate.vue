@@ -21,7 +21,7 @@ export default {
         ...mapState({
             status: state => state.obs.status
         }),
-        percent () {
+        percent() {
             return (this.status.bitrate / 5500) * 100;
         }
     }
@@ -30,12 +30,12 @@ export default {
 
 <style>
 #bitrate-line {
-    background: rgba(255, 255, 255, .8);
+    background: rgba(255, 255, 255, 0.8);
     height: 3px;
     margin-top: 10px;
 }
 
 #bitrate-line.enter-active {
-  transition: all 0.5s linear;
+    transition: all 0.5s linear;
 }
 </style>
