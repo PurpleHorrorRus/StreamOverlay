@@ -4,13 +4,10 @@
             <Notification v-for="notification of notifications" :key="notification.text" :notification="notification" />
         </transition-group>
 
-        <LowBitrate v-if="showLowBitrate" :notification="{ color: 'red' }" />
-        <LowFPS v-if="showLowFPS" :notification="{ color: 'red' }" />
-        <Notification
-            v-if="showUpdate"
-            :notification="{ text: 'Доступно новое обновление. Скачивание...', color: '#171717' }"
-        />
-        <Notification v-if="showChatDisconnect" :notification="{ text: 'Чат отключен', color: 'red' }" />
+        <LowBitrate v-if="showLowBitrate" :notification="solidNotifications.LOW" />
+        <LowFPS v-if="showLowFPS" :notification="solidNotifications.LOW" />
+        <Notification v-if="showUpdate" :notification="solidNotifications.UPDATE" />
+        <Notification v-if="showChatDisconnect" :notification="solidNotifications.CHAT_DISCONNECT" />
     </div>
 </template>
 
@@ -34,7 +31,22 @@ export default {
             showLowFPS: state => state.notifications.lowfps,
             showUpdate: state => state.notifications.update,
             showChatDisconnect: state => state.notifications.chatdisconnect
-        })
+        }),
+        solidNotifications() {
+            return {
+                LOW: {
+                    color: "red"
+                },
+                CHAT_DISCONNECT: {
+                    text: "Чат отключен",
+                    color: "red"
+                },
+                UPDATE: {
+                    text: "Доступно новое обновление. Скачивание...",
+                    color: "#171717"
+                }
+            };
+        }
     }
 };
 </script>
