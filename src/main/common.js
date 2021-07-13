@@ -23,6 +23,7 @@ const clearSettings = {
     first: true,
     contentProtection: true,
     RAMClean: false,
+    devtools: false,
     chat: {
         enable: true,
         avatar: true,

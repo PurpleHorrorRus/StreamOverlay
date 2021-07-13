@@ -32,7 +32,7 @@ const params = {
         webviewTag: true,
         allowRunningInsecureContent: true,
         spellcheck: false,
-        devTools: common.isDev,
+        devTools: true,
         enableRemoteModule: false,
         webgl: false,
         enableWebSQL: false,
@@ -82,12 +82,10 @@ export default {
         window.setIgnoreMouseEvents(true);
         window.setContentProtection(common.config.settings.contentProtection);
         window.setAlwaysOnTop(true, "screen-saver");
+        common.isDev ? window.loadURL(DEV_SERVER_URL) : window.loadFile(INDEX_PATH);
 
-        if (common.isDev) {
-            window.loadURL(DEV_SERVER_URL);
+        if (common.isDev || common.config.settings.devtools) {
             window.openDevTools();
-        } else {
-            window.loadFile(INDEX_PATH);
         }
 
         window.on("close", () => {
