@@ -41,7 +41,7 @@ export default {
         }),
         messageStyle() {
             return {
-                background: `rgba(23, 23, 23, ${this.settings.chat.opacity / 100})`,
+                background: `rgba(20, 20, 19, ${this.settings.chat.opacity / 100})`,
                 lineHeight: `${this.settings.chat.font + 2}pt`
             };
         },
@@ -81,7 +81,8 @@ export default {
     display: inline-block;
 
     width: 100%;
-    padding: 5px;
+
+    padding: 10px;
 
     * {
         vertical-align: bottom;

@@ -3,16 +3,14 @@
         <div v-if="input" id="chat-block-messages-all">
             <Message v-for="(message, index) of messages" :key="message.id" :data-index="index" :message="message" />
         </div>
-        <div v-else id="chat-block-messages-visible">
-            <transition-group name="fade" tag="div">
-                <Message
-                    v-for="(message, index) of messages.filter(m => m.show)"
-                    :key="message.id"
-                    :data-index="index"
-                    :message="message"
-                />
-            </transition-group>
-        </div>
+        <transition-group v-else id="chat-block-messages-visible" name="fade" tag="div">
+            <Message
+                v-for="(message, index) of messages.filter(m => m.show)"
+                :key="message.id"
+                :data-index="index"
+                :message="message"
+            />
+        </transition-group>
     </div>
 </template>
 
