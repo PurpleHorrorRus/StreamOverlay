@@ -77,7 +77,7 @@ export default {
 
                 state.messages = [
                     {
-                        id: Math.random() * 1000,
+                        id: Date.now(),
                         nickname: profile.display_name,
                         avatar: profile.profile_image_url,
                         badges: user.badges ? Object.keys(user.badges) : [],
