@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div id="modal-polls-content-container-buttons">
-                <SolidButton v-if="!isActive" label="Старт" :load="load" :disabled="!canCreate" @clicked="start" />
+                <SolidButton v-if="!isActive" label="Начать" :load="load" :disabled="!canCreate" @clicked="start" />
                 <SolidButton v-else label="Закончить" :load="load" @clicked="end" />
             </div>
         </div>

@@ -65,7 +65,7 @@ export default {
 
     height: 100%;
 
-    padding-top: 100px;
+    padding-top: 60px;
 
     justify-content: center;
 
