@@ -17,11 +17,11 @@ export default {
 
 <style lang="scss">
 .modal-title {
-    padding: 5px;
+    padding-top: 3px;
 
     font-size: 14pt;
     font-weight: bold;
 
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid $secondary;
 }
 </style>

@@ -17,6 +17,8 @@ export default {
 
 <style lang="scss">
 .menu-header-actions-link {
+    border-radius: 2px;
+
     transition: 0.3s all;
 }
 </style>
