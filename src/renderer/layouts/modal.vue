@@ -72,7 +72,7 @@ export default {
     background: none;
 
     &.first {
-        grid-template-rows: 950px;
+        grid-template-rows: max-content;
         grid-template-areas: "container";
     }
 
