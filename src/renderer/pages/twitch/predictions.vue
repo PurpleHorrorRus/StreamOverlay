@@ -75,7 +75,7 @@ export default {
         async get() {
             const response = await this.helix.predictions.get(this.user.id);
 
-            if (!response.poll) {
+            if (!response[0]) {
                 this.denied = true;
                 return this.addNotification({
                     // eslint-disable-next-line max-len
