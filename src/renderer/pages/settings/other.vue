@@ -1,6 +1,6 @@
 <template>
     <div class="modal-content">
-        <ModalTitle :text="'Прочие настройки'" />
+        <Title title="Прочие настройки" />
         <div class="modal-body">
             <Item :text="'Статистика Twitch'" :checked="settings.TwitchInfo.enable" @change="turnTwitch('enable')" />
             <Item
@@ -40,14 +40,14 @@
 <script>
 import { mapActions, mapState } from "vuex";
 
-import ModalTitle from "~/components/ModalTitle";
+import Title from "~/components/menu/Title";
 import Item from "~/components/settings/Item";
 
 import CoreMixin from "~/mixins/core";
 
 export default {
     components: {
-        ModalTitle,
+        Title,
         Item
     },
     mixins: [CoreMixin],

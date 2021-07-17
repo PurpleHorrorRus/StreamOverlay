@@ -1,8 +1,6 @@
 <template>
     <div id="modal-edit-content" class="modal-content">
-        <div id="modal-edit-content-title" class="modal-title">
-            <span class="modal-title-text" v-text="'Редактирование виджетов'" />
-        </div>
+        <Title title="Редактирование виджетов" />
         <div id="modal-edit-content-navigation">
             <div id="modal-edit-content-navigation-list">
                 <div
@@ -31,6 +29,7 @@
 </template>
 
 <script>
+import Title from "~/components/menu/Title";
 import Input from "~/components/settings/Input";
 import SolidButton from "~/components/SolidButton";
 
@@ -39,6 +38,7 @@ import other from "~/mixins/other";
 
 export default {
     components: {
+        Title,
         Input,
         SolidButton
     },

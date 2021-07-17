@@ -1,8 +1,6 @@
 <template>
     <div class="modal-content">
-        <div class="modal-title">
-            <span class="modal-title-text" v-text="'Настройка чата'" />
-        </div>
+        <Title id="modal-stream-content-title" title="Настройка чата" />
         <div class="modal-body">
             <Item :text="'Включить чат'" :checked="settings.chat.enable" @change="turn('enable')" />
             <Item
@@ -41,6 +39,7 @@
 </template>
 
 <script>
+import Title from "~/components/menu/Title";
 import Item from "~/components/settings/Item";
 import Range from "~/components/settings/Range";
 
@@ -48,6 +47,7 @@ import CoreMixin from "~/mixins/core";
 
 export default {
     components: {
+        Title,
         Item,
         Range
     },

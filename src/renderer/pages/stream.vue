@@ -1,9 +1,7 @@
 <template>
     <div v-if="!firstLoad" id="modal-stream-container">
         <div id="modal-stream-content" class="modal-content">
-            <div id="modal-stream-content-title" class="modal-title">
-                <span class="modal-title-text" v-text="'Трансляция'" />
-            </div>
+            <Title id="modal-stream-content-title" title="Трансляция" />
             <div id="modal-stream-content-art">
                 <img id="modal-stream-content-art-image" :src="art">
             </div>
@@ -55,8 +53,9 @@ let inputDelay = null;
 
 export default {
     components: {
-        Game,
+        Title,
         Input,
+        Game,
         SolidButton,
         Recent
     },

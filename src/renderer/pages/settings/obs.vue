@@ -1,8 +1,6 @@
 <template>
     <div class="modal-content">
-        <div class="modal-title">
-            <span class="modal-title-text" v-text="'Настройка OBS'" />
-        </div>
+        <Title id="modal-stream-content-title" title="Настройка OBS" />
         <div class="modal-body">
             <div class="modal-item-tip">
                 <span class="modal-item-tip-text">
@@ -39,6 +37,7 @@
 </template>
 
 <script>
+import Title from "~/components/menu/Title";
 import Input from "~/components/settings/Input";
 import SolidButton from "~/components/SolidButton";
 
@@ -50,6 +49,7 @@ const OBSWebsocketInstallerURL =
 
 export default {
     components: {
+        Title,
         Input,
         SolidButton
     },

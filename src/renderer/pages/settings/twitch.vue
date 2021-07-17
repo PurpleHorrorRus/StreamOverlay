@@ -1,8 +1,6 @@
 <template>
     <div class="modal-content">
-        <div class="modal-title">
-            <span class="modal-title-text" v-text="'Настройка Twitch'" />
-        </div>
+        <Title title="Настройки Twitch" />
         <div class="modal-body">
             <!-- <Tip
                 text="Для того, чтобы включить и отключить фокус на оверлее, нажмите комбинацию клавиш Alt + A"
@@ -50,6 +48,7 @@
 import Helix from "simple-helix-api";
 import express from "express";
 
+import Title from "~/components/menu/Title";
 import Input from "~/components/settings/Input";
 import SolidButton from "~/components/SolidButton";
 
@@ -63,6 +62,7 @@ let helix;
 
 export default {
     components: {
+        Title,
         Input,
         SolidButton
     },
@@ -158,7 +158,8 @@ export default {
             }));
 
             const data = await helix.channel.get(user.id);
-            const success = await helix.updateStream(user.id, data.title, data.game_name)
+            const success = await helix
+                .updateStream(user.id, data.title, data.game_name)
                 .catch(() => ({ success: false, error: "Неверный Access Token" }));
 
             return { success };
