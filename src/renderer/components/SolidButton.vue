@@ -46,7 +46,6 @@ export default {
     max-width: 400px;
     height: 30px;
 
-    margin-top: 10px;
     padding: 8px;
 
     background: $secondary;
