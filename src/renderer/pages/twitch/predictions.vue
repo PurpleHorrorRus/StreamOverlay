@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!firstLoad" id="modal-prediction-content" class="modal-content">
+    <div v-if="!firstLoad && !denied" id="modal-prediction-content" class="modal-content">
         <Title id="modal-prediction-title" title="Предсказание" />
         <div id="modal-prediction-content-container">
             <Input
@@ -47,6 +47,7 @@ export default {
     layout: "modal",
     data: () => ({
         prediction: empty,
+        denied: false,
         firstLoad: true,
         load: false
     }),
@@ -72,7 +73,18 @@ export default {
     },
     methods: {
         async get() {
-            const [prediction] = await this.helix.predictions.get(this.user.id);
+            const response = await this.helix.predictions.get(this.user.id);
+
+            if (!response.poll) {
+                this.denied = true;
+                return this.addNotification({
+                    text: "Для использования этой функции необходимо сгенерировать новый API ключ в настройках Twitch",
+                    color: "red",
+                    handle: 15
+                });
+            }
+
+            const [prediction] = response;
             if (prediction.status === "ACTIVE" || prediction.status === "LOCKED") {
                 this.prediction = prediction;
             }

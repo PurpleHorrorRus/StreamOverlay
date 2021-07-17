@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!firstLoad" id="modal-polls-content" class="modal-content">
+    <div v-if="!firstLoad && !denied" id="modal-polls-content" class="modal-content">
         <Title id="modal-polls-title" title="Голосование" />
         <div id="modal-polls-content-container">
             <div id="modal-polls-content-container-inputs">
@@ -54,6 +54,7 @@ export default {
     layout: "modal",
     data: () => ({
         poll: empty,
+        denied: false,
         firstLoad: true,
         load: false
     }),
@@ -85,7 +86,18 @@ export default {
             });
         },
         async get() {
-            const [poll] = await this.helix.polls.get(this.user.id);
+            const response = await this.helix.polls.get(this.user.id);
+
+            if (!response.poll) {
+                this.denied = true;
+                return this.addNotification({
+                    text: "Для использования этой функции необходимо сгенерировать новый API ключ в настройках Twitch",
+                    color: "red",
+                    handle: 15
+                });
+            }
+
+            const [poll] = response;
             if (poll.status === "ACTIVE") {
                 if (poll.choices.length < 5) {
                     for (let i = poll.choices.length; i < 5; i++) {
