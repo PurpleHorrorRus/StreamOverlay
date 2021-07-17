@@ -33,7 +33,7 @@ const empty = {
     outcomes: [{ title: "" }, { title: "" }]
 };
 
-const updateTimeout = 5;
+const updateRate = 10;
 let updateInterval = null;
 
 export default {
@@ -62,7 +62,7 @@ export default {
         await this.get();
 
         if (this.isActive) {
-            updateInterval = setInterval(() => this.get(), updateTimeout * 1000);
+            updateInterval = setInterval(() => this.get(), updateRate * 1000);
         }
 
         this.firstLoad = false;
@@ -77,12 +77,6 @@ export default {
                 this.prediction = prediction;
             }
         },
-        clear() {
-            if (updateInterval) {
-                clearInterval(updateInterval);
-                updateInterval = null;
-            }
-        },
         async start() {
             this.load = true;
 
@@ -93,7 +87,7 @@ export default {
                 60
             );
 
-            updateInterval = setInterval(() => this.get(), updateTimeout * 1000);
+            updateInterval = setInterval(() => this.get(), updateRate * 1000);
 
             this.load = false;
         },
@@ -116,6 +110,12 @@ export default {
             this.prediction = empty;
             this.clear();
             this.load = false;
+        },
+        clear() {
+            if (updateInterval) {
+                clearInterval(updateInterval);
+                updateInterval = null;
+            }
         }
     }
 };
