@@ -18,7 +18,7 @@ export default {
         items: [
             {
                 title: "Голосование",
-                to: "/twitch/poll"
+                to: "/twitch/polls"
             },
             {
                 title: "Предсказание",
