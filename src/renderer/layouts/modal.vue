@@ -54,9 +54,10 @@ export default {
     display: grid;
     grid-template-columns: 950px;
     grid-template-rows: 150px minmax(300px, max-content);
-    grid-template-areas: "header"
-                        "container";
-    
+    grid-template-areas:
+        "header"
+        "container";
+
     row-gap: 5px;
 
     height: 100%;
@@ -64,7 +65,7 @@ export default {
     padding-top: 100px;
 
     justify-content: center;
-    
+
     background: none;
 
     &.first {

@@ -31,12 +31,13 @@
             </div>
         </div>
     </div>
-    <FontAwesomeIcon v-else id="modal-stream-load" icon="circle-notch" spin />
+    <FontAwesomeIcon v-else class="modal-load" icon="circle-notch" spin />
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex";
 
+import Title from "~/components/menu/Title";
 import Input from "~/components/settings/Input";
 import Game from "~/components/Game";
 import SolidButton from "~/components/SolidButton";
@@ -188,12 +189,6 @@ export default {
 </script>
 
 <style lang="scss">
-#modal-stream-load {
-    position: relative;
-    top: 50%;
-    left: 50%;
-}
-
 #modal-stream-content {
     display: grid;
     grid-template-columns: 100px 1fr 220px;
