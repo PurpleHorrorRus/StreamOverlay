@@ -70,7 +70,7 @@ export default {
 
         &-stream {
             position: absolute;
-            bottom: 20px;
+            bottom: 30px;
             left: 45px;
 
             padding: 5px;
