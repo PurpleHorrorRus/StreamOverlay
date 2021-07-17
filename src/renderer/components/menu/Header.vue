@@ -6,15 +6,14 @@
         </div>
         <div id="menu-header-info">
             <span id="menu-header-info-name" v-text="user.display_name" />
-            <span id="menu-header-info-description" v-text="user.description" />
+            <span v-if="user.description" id="menu-header-info-description" v-text="user.description" />
         </div>
         <Actions />
     </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
-
+import TwitchMixin from "~/mixins/twitch";
 import OBSMixin from "~/mixins/obs";
 
 import Actions from "~/components/menu/header/Actions";
@@ -23,12 +22,7 @@ export default {
     components: {
         Actions
     },
-    mixins: [OBSMixin],
-    computed: {
-        ...mapState({
-            user: state => state.twitch.user
-        })
-    }
+    mixins: [TwitchMixin, OBSMixin]
 };
 </script>
 
