@@ -5,7 +5,7 @@
         <div v-if="!settings.first" id="content-valid">
             <Notifications />
             <OBS v-if="connected" />
-            <TwitchInfo />
+            <TwitchInfo v-if="user" />
             <TechInfo v-if="settings.TechInfo.enable && connected && status.tech !== null" />
             <Chat v-if="settings.chat.enable" />
             <ViewersList v-if="settings.viewers_list.enable" />
@@ -124,6 +124,10 @@ export default {
         }),
         registerIPC() {
             ipcRenderer.on("menu", (_event, sequence) => {
+                if (!this.user) {
+                    return;
+                }
+
                 this.$router.replace(sequence ? "/stream" : "/").catch(() => {});
                 this.active = false;
             });
