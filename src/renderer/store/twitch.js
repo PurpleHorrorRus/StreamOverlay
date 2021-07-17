@@ -21,7 +21,9 @@ let betterTTV = null,
 export default {
     namespaced: true,
     state: () => ({
+        credits: {},
         user: null,
+        channel: null,
         helix: null,
         connected: false,
         messages: [],
@@ -31,12 +33,12 @@ export default {
         }
     }),
     actions: {
-        CREATE_HELIX: ({ state }, twitch) => {
-            state.user = twitch;
+        CREATE_HELIX: ({ state }, credits) => {
+            state.credits = credits;
 
             state.helix = new Helix({
                 client_id,
-                access_token: twitch.access_token,
+                access_token: credits.access_token,
                 language: "ru"
             });
         },
@@ -47,16 +49,21 @@ export default {
 
             await dispatch("LOAD_EMOTES");
 
-            const { title, game_name } = await state.helix.channel.get(state.user.id);
-            state.stream = { title, game: game_name };
+            state.user = await state.helix.users.get({ id: state.credits.id });
+            state.channel = await state.helix.channel.get(state.credits.id);
+
+            state.stream = {
+                title: state.channel.title,
+                game: state.channel.game_name
+            };
 
             client = new tmi.Client({
                 connection: { reconnect: true },
                 identity: {
-                    username: state.user.username,
-                    password: state.user.oauth_token
+                    username: state.credits.username,
+                    password: state.credits.oauth_token
                 },
-                channels: [state.user.username]
+                channels: [state.credits.username]
             });
 
             client.connect();
@@ -154,7 +161,7 @@ export default {
 
             return formatted;
         },
-        BAN: ({ state }, data) => client.ban(state.user.username, data.nickname, data.reason),
+        BAN: ({ state }, data) => client.ban(state.credits.username, data.nickname, data.reason),
         REMOVE_MESSAGE: ({ state }, id) => {
             const index = state.messages.findIndex(m => m.id === id);
             if (~index) {
@@ -166,7 +173,7 @@ export default {
             if (!data.game) data.game = state.stream.game;
 
             state.stream = data;
-            await state.helix.updateStream(state.user.id, data.title, data.game);
+            await state.helix.updateStream(state.credits.id, data.title, data.game);
             dispatch("UPDATE_RECENT", data);
 
             return true;
@@ -191,8 +198,8 @@ export default {
         },
         LOAD_EMOTES: async ({ state }) => {
             const betterttv_global_url = "https://api.betterttv.net/3/cached/emotes/global";
-            const betterttv_url = `https://api.betterttv.net/3/cached/users/twitch/${state.user.id}`;
-            const frankerfacez_url = `https://api.frankerfacez.com/v1/room/${state.user.username.toLowerCase()}`;
+            const betterttv_url = `https://api.betterttv.net/3/cached/users/twitch/${state.credits.id}`;
+            const frankerfacez_url = `https://api.frankerfacez.com/v1/room/${state.credits.username.toLowerCase()}`;
 
             const bGlobalPromise = new Promise(async resolve => {
                 const res = await misc.syncRequest(betterttv_global_url);
@@ -252,10 +259,10 @@ export default {
                 ids: fChannel.map(e => e.code)
             };
         },
-        CHATTERS: async ({ state }) => await state.helix.other.getViewers(state.user.username),
+        CHATTERS: async ({ state }) => await state.helix.other.getViewers(state.credits.username),
         SAY: ({ state }, message) => {
             if (state.connected) {
-                client.say(state.user.username, message);
+                client.say(state.credits.username, message);
             }
         }
     }

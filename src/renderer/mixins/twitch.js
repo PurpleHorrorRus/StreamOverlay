@@ -7,7 +7,7 @@ export default {
     computed: {
         ...mapState({
             helix: state => state.twitch.helix,
-            user: state => state.twitch.user
+            user: state => state.twitch.credits
         })
     },
     methods: {

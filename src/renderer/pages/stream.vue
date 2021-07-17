@@ -78,7 +78,7 @@ export default {
     }),
     computed: {
         ...mapState({
-            user: state => state.twitch.user,
+            user: state => state.twitch.credits,
             helix: state => state.twitch.helix,
             stream: state => state.twitch.stream,
             recent: state => state.config.recent
