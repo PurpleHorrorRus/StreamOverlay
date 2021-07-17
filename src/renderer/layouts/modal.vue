@@ -3,6 +3,7 @@
         <Chat v-if="!settings.first && locked" :input="true" />
         <Lock :locked="locked" />
         <Header v-if="!settings.first && locked" />
+        <Notifications />
         <div v-show="locked" id="modal-container">
             <Navigation v-show="!settings.first" />
             <div id="modal-container-page">
@@ -20,6 +21,7 @@ import Header from "~/components/menu/Header";
 import Navigation from "~/components/menu/Navigation";
 import Lock from "~/components/menu/Lock";
 import Chat from "~/components/Chat";
+import Notifications from "~/components/Notifications/Notifications";
 
 import CoreMixin from "~/mixins/core";
 
@@ -28,7 +30,8 @@ export default {
         Header,
         Navigation,
         Lock,
-        Chat
+        Chat,
+        Notifications
     },
     mixins: [CoreMixin],
     computed: {
