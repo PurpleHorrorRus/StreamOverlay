@@ -2,7 +2,7 @@
     <div id="modal" :class="{ first: settings.first }">
         <Chat v-if="!settings.first && locked" :input="true" />
         <Lock :locked="locked" />
-        <Header />
+        <Header v-if="!settings.first && locked" />
         <div v-show="locked" id="modal-container">
             <Navigation v-show="!settings.first" />
             <div id="modal-container-page">
