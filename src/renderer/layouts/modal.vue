@@ -1,7 +1,8 @@
 <template>
-    <div id="modal">
+    <div id="modal" :class="{ first: settings.first }">
         <Chat v-if="!settings.first && locked" :input="true" />
         <Lock :locked="locked" />
+        <Header />
         <div v-show="locked" id="modal-container">
             <Navigation v-show="!settings.first" />
             <div id="modal-container-page">
@@ -15,6 +16,7 @@
 import { ipcRenderer } from "electron";
 import { mapState } from "vuex";
 
+import Header from "~/components/menu/Header";
 import Navigation from "~/components/menu/Navigation";
 import Lock from "~/components/menu/Lock";
 import Chat from "~/components/Chat";
@@ -23,6 +25,7 @@ import CoreMixin from "~/mixins/core";
 
 export default {
     components: {
+        Header,
         Navigation,
         Lock,
         Chat
@@ -31,9 +34,9 @@ export default {
     computed: {
         ...mapState({
             locked: state => state.ipc.locked
-        }),
+        })
     },
-    mounted() {
+    created() {
         ipcRenderer.send("turnMouse", true);
     },
     methods: {
@@ -48,17 +51,30 @@ export default {
 
 <style lang="scss">
 #modal {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: 950px;
+    grid-template-rows: 150px minmax(300px, max-content);
+    grid-template-areas: "header"
+                        "container";
+    
+    row-gap: 5px;
 
     height: 100%;
 
-    margin-top: 5%;
+    padding-top: 100px;
 
+    justify-content: center;
+    
     background: none;
 
+    &.first {
+        grid-template-rows: 950px;
+        grid-template-areas: "container";
+    }
+
     &-container {
+        grid-area: "container";
+
         display: grid;
         grid-template-columns: 50px 900px;
         grid-template-rows: max-content;
@@ -68,7 +84,7 @@ export default {
 
         min-width: 600px;
 
-        background: #141414;
+        background: $primary;
         box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 
         &-page {
@@ -80,15 +96,6 @@ export default {
     .modal-content {
         width: 100%;
 
-        .modal-title {
-            padding: 5px;
-
-            font-size: 14pt;
-            font-weight: bold;
-
-            border-bottom: 1px solid #ccc;
-        }
-
         .modal-body {
             padding: 5px;
 
@@ -98,11 +105,19 @@ export default {
                 &-text {
                     display: block;
 
+                    margin-bottom: 10px;
+
                     color: #ccc;
                     font-size: 9pt;
                 }
             }
         }
+    }
+
+    .modal-load {
+        position: relative;
+        top: 50%;
+        left: 50%;
     }
 }
 </style>
