@@ -83,7 +83,8 @@ export default {
     }
 
     &-text {
-        &-icon, &-label {
+        &-icon,
+        &-label {
             display: inline-block;
             color: $text;
         }

@@ -13,7 +13,7 @@
                     <Input
                         v-for="(choice, index) of poll.choices"
                         :key="index"
-                        :value="!isActive ? (choice.title || '') : `${choice.title} (Проголосовало: ${choice.votes})`"
+                        :value="!isActive ? choice.title || '' : `${choice.title} (Проголосовало: ${choice.votes})`"
                         :placeholder="index < 2 ? `Вариант №${index + 1}` : `Вариант №${index + 1} (необязательно)`"
                         :disabled="isActive"
                         @input="setChoice(index, $event)"
