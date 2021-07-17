@@ -91,7 +91,8 @@ export default {
             if (!response.poll) {
                 this.denied = true;
                 return this.addNotification({
-                    text: "Для использования этой функции необходимо сгенерировать новый API ключ в настройках Twitch",
+                    // eslint-disable-next-line max-len
+                    text: "Для использования этой функции необходимо сгенерировать новый Access Token в настройках Twitch",
                     color: "red",
                     handle: 15
                 });
