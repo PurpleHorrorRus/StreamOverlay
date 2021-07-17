@@ -84,6 +84,8 @@ export default {
         align-content: center;
         flex-wrap: wrap;
 
+        width: 98%;
+
         span {
             width: 100%;
         }
