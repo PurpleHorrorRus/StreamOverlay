@@ -52,6 +52,8 @@ export default {
             state.user = await state.helix.users.get({ id: state.credits.id });
             state.channel = await state.helix.channel.get(state.credits.id);
 
+            console.log(state.user);
+
             state.stream = {
                 title: state.channel.title,
                 game: state.channel.game_name

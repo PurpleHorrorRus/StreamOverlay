@@ -1,19 +1,35 @@
 <template>
     <div id="menu-header-actions">
         <Link v-for="item of items" :key="item.to" :item="item" />
+        <ActionsAd v-if="streaming && isPartner" />
+        <div id="menu-header-actions-other">
+            <Button
+                v-if="streaming"
+                :icon="['fas', 'film']"
+                :load="loadClip"
+                label="Клип"
+                tooltip="Создать клип на 15 секунд"
+                @clicked="createClip"
+            />
+        </div>
     </div>
 </template>
 
 <script>
 import Link from "~/components/menu/header/Link";
+import ActionsAd from "~/components/menu/header/ActionsAd";
+import Button from "~/components/menu/header/Button";
 
+import OBSMixin from "~/mixins/obs";
 import TwitchMixin from "~/mixins/twitch";
 
 export default {
     components: {
-        Link
+        Link,
+        ActionsAd,
+        Button
     },
-    mixins: [TwitchMixin],
+    mixins: [OBSMixin, TwitchMixin],
     data: () => ({
         items: [
             {
@@ -24,11 +40,32 @@ export default {
                 title: "Предсказание",
                 to: "/twitch/predictions"
             }
-        ]
+        ],
+        loadAd: false,
+        loadClip: false
     }),
+    computed: {
+        isPartner() {
+            return this.user.broadcaster_type.length > 0;
+        }
+    },
     created() {
-        if (this.user.broadcaster_type.length === 0) {
+        if (!this.isPartner) {
             this.items.splice(1, 1);
+        }
+    },
+    methods: {
+        async createClip() {
+            this.loadClip = true;
+            await this.helix.clips.create(this.user.id);
+
+            this.addNotification({
+                text: "Клип успешно создан",
+                color: "#28a745",
+                handle: 5
+            });
+
+            this.loadClip = false;
         }
     }
 };
@@ -39,6 +76,19 @@ export default {
     grid-area: actions;
 
     border-left: 1px solid $secondary;
+
+    &-other {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 5px;
+
+        margin-top: 5px;
+
+        .solid-button {
+            width: 65px;
+        }
+    }
 }
 
 .menu-header-action {

@@ -9,6 +9,7 @@ export default {
     },
     methods: {
         ...mapActions({
+            addNotification: "notifications/ADD",
             setSettings: "settings/SET",
             saveSettings: "settings/SAVE"
         }),

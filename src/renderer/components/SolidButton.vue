@@ -1,11 +1,10 @@
 <template>
     <div class="solid-button" :class="{ disabled }" @click.stop="click">
-        <span 
-            v-if="!load"
-            class="solid-button-label" 
-            v-text="label" 
-        />
-        
+        <div v-if="!load" class="solid-button-text">
+            <FontAwesomeIcon v-if="icon.length > 0" class="solid-button-text-icon" :icon="icon" />
+            <span class="solid-button-text-label" v-text="label" />
+        </div>
+
         <FontAwesomeIcon v-else icon="circle-notch" spin />
     </div>
 </template>
@@ -18,6 +17,11 @@ export default {
             required: false,
             default: false
         },
+        icon: {
+            type: Array,
+            required: false,
+            default: () => []
+        },
         label: {
             type: String,
             required: true
@@ -29,7 +33,7 @@ export default {
         }
     },
     methods: {
-        click () {
+        click() {
             if (!this.load && !this.disabled) {
                 this.$emit("clicked");
             }
@@ -54,7 +58,7 @@ export default {
     font-size: 9pt;
     text-align: center;
 
-    transition: all .5s ease;
+    transition: all 0.5s ease;
 
     &.disabled {
         cursor: not-allowed;
@@ -71,15 +75,18 @@ export default {
         span {
             cursor: pointer;
         }
-        
+
         &:hover {
             cursor: pointer;
             background: $secondary-hover;
         }
     }
 
-    &-label {
-        color: $text;
+    &-text {
+        &-icon, &-label {
+            display: inline-block;
+            color: $text;
+        }
     }
 }
 </style>

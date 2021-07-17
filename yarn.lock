@@ -8752,7 +8752,7 @@ signal-exit@^3.0.2, signal-exit@^3.0.3:
 
 "simple-helix-api@https://github.com/PurpleHorrorRus/simple-helix-api#v2":
   version "2.0.0"
-  resolved "https://github.com/PurpleHorrorRus/simple-helix-api#96eb8f6fbeeb87348782931240ed5908c8803377"
+  resolved "https://github.com/PurpleHorrorRus/simple-helix-api#b39b7266444d689dfb64921a3b96b76b435ebac0"
   dependencies:
     node-fetch "^2.6.1"
 
