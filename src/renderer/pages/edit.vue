@@ -1,6 +1,6 @@
 <template>
     <div id="modal-edit-content" class="modal-content">
-        <Title title="Редактирование виджетов" />
+        <Title id="modal-edit-content-title" title="Редактирование виджетов" />
         <div id="modal-edit-content-navigation">
             <div id="modal-edit-content-navigation-list">
                 <div
