@@ -20,8 +20,8 @@ import OBSMixin from "~/mixins/obs";
 import Actions from "~/components/menu/header/Actions";
 
 export default {
-    components: { 
-        Actions 
+    components: {
+        Actions
     },
     mixins: [OBSMixin],
     computed: {
@@ -74,7 +74,7 @@ export default {
             left: 45px;
 
             padding: 5px;
-            
+
             border-radius: 5px;
 
             background: $secondary;
@@ -89,6 +89,10 @@ export default {
         display: flex;
         align-content: center;
         flex-wrap: wrap;
+
+        span {
+            width: 100%;
+        }
 
         &-name {
             font-size: 14pt;
