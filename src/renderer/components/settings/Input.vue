@@ -1,13 +1,16 @@
 <template>
-    <div class="modal-item-input">
+    <div class="modal-item-input" :class="{ disabled }">
         <div v-if="text.length > 0" class="modal-item-tip">
             <span class="modal-item-tip-text" v-text="text" />
         </div>
 
         <input
             v-model="mutated"
+            class="modal-item-input-field"
             type="text"
             :placeholder="placeholder || text"
+            :disabled="disabled"
+            :maxlength="maxLength"
             @input="$emit('input', mutated)"
             @change="$emit('input', mutated)"
         >
@@ -36,6 +39,16 @@ export default {
             required: false,
             default: ""
         },
+        disabled: {
+            type: Boolean,
+            required: false,
+            default: false
+        },
+        maxLength: {
+            type: Number,
+            required: false,
+            default: Infinity
+        },
         tip: {
             type: String,
             required: false,
@@ -61,7 +74,7 @@ export default {
     width: 100%;
     margin-bottom: 5px;
 
-    input {
+    &-field {
         width: 100%;
         padding: 10px;
 
@@ -73,6 +86,10 @@ export default {
         color: $text;
 
         outline: none;
+
+        &:focus {
+            border-bottom: 1px solid $secondary;
+        }
     }
 }
 </style>
