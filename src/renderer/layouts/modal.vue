@@ -56,7 +56,7 @@ export default {
 #modal {
     display: grid;
     grid-template-columns: 950px;
-    grid-template-rows: 150px minmax(300px, max-content);
+    grid-template-rows: 170px minmax(300px, max-content);
     grid-template-areas:
         "header"
         "container";

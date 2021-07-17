@@ -14,3 +14,9 @@ export default {
     }
 };
 </script>
+
+<style lang="scss">
+.menu-header-actions-link {
+    transition: 0.3s all;
+}
+</style>

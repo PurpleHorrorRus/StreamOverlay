@@ -230,7 +230,7 @@ export default {
         overflow-y: auto;
 
         &-search {
-            border-top: 2px solid $outline;
+            border-top: 1px solid $secondary;
         }
     }
 }

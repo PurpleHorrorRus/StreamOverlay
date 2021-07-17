@@ -37,7 +37,7 @@ export default {
     grid-area: header;
 
     display: grid;
-    grid-template-columns: 150px 1fr 150px;
+    grid-template-columns: 150px 1fr 160px;
     grid-template-rows: 1fr;
     grid-template-areas: "avatar info actions";
 

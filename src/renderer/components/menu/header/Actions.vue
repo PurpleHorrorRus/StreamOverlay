@@ -75,7 +75,9 @@ export default {
 #menu-header-actions {
     grid-area: actions;
 
-    border-left: 1px solid $secondary;
+    padding: 10px;
+
+    border-left: 1px solid $outline;
 
     &-other {
         display: flex;
