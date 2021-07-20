@@ -80,10 +80,50 @@ button {
 }
 
 svg {
+    color: #fff;
+
     &.clickable {
         &:hover {
             stroke: $secondary;
             cursor: pointer;
+        }
+    }
+}
+
+div {
+    &.clickable {
+        border-radius: 3px;
+
+        transition: .2s ease-in;
+
+        &:hover, *:hover {
+            cursor: pointer;
+        }
+
+        &:hover {
+            background: $secondary;
+        }
+    }
+}
+
+a {
+    &.active {
+        background: $secondary;
+    }
+
+    &.clickable {
+        border-radius: 3px;
+
+        transition: .2s all;
+
+        &:not(.active) {
+            &:hover, *:hover {
+                cursor: pointer;
+            }
+    
+            &:hover {
+                background: $secondary;
+            }
         }
     }
 }
@@ -144,6 +184,6 @@ svg {
     transition: opacity .5s;
 }
 
-.fade-enter, .fade-leave-to {
+.fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
     opacity: 0;
 }

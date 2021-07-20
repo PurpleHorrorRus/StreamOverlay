@@ -148,6 +148,8 @@ export default {
             "outcomes"
             "buttons";
 
+        row-gap: 10px;
+
         &-buttons {
             grid-area: buttons;
 

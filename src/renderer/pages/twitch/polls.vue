@@ -143,6 +143,8 @@ export default {
             "inputs"
             "buttons";
 
+        row-gap: 10px;
+
         &-inputs {
             grid-area: inputs;
         }

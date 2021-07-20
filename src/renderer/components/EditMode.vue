@@ -14,11 +14,11 @@ import WidgetsMixin from "~/mixins/widgets";
 export default {
     mixins: [WidgetsMixin],
     methods: {
-        openFullEdit () {
+        openFullEdit() {
             this.$router.replace("/edit").catch(() => {});
             this.active = false;
         },
-        exitEdit () {
+        exitEdit() {
             this.$router.replace("/").catch(() => {});
             this.active = false;
         }
@@ -36,19 +36,19 @@ export default {
         position: absolute;
         top: 0px;
         left: 45%;
-        
+
         width: 200px;
         height: 60px;
-        
-        background: rgba(0, 0, 0, 0.4);
+
+        background: $backdrop;
         text-align: center;
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
         z-index: 9;
 
         &-label {
             display: inline-block;
-            
+
             margin-bottom: 5px;
         }
     }

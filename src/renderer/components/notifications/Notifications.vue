@@ -60,21 +60,4 @@ export default {
     width: 300px;
     height: auto;
 }
-
-.notification {
-    display: block;
-    width: 300px;
-    height: auto;
-
-    margin-bottom: 10px;
-    padding: 15px;
-
-    background: rgba(0, 0, 0, 0.4);
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-    border-radius: 3px;
-}
-
-.error {
-    color: red;
-}
 </style>

@@ -1,9 +1,9 @@
 <template>
     <div id="recent-streams">
-        <div 
-            v-for="(item, index) of recent" 
-            :key="item.title + '' + item.game" 
-            class="recent-streams-item" 
+        <div
+            v-for="(item, index) of recent"
+            :key="item.title + '' + item.game"
+            class="recent-streams-item clickable"
             @click="select(index)"
         >
             <span class="recent-streams-item-title" v-text="item.title" />
@@ -34,6 +34,8 @@ export default {
 #recent-streams {
     grid-area: recent;
 
+    padding: 5px;
+
     overflow-y: auto;
 
     .recent-streams-item {
@@ -47,14 +49,6 @@ export default {
         padding: 5px;
 
         margin-bottom: 2px;
-
-        &:hover, *:hover {
-            cursor: pointer;
-        }
-
-        &:hover {
-            background: $secondary;
-        }
 
         &-title {
             width: 100%;

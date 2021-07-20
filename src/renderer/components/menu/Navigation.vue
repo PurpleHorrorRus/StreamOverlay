@@ -1,6 +1,6 @@
 <template>
     <div id="modal-container-items">
-        <div v-for="item of items" :key="item.link" v-tooltip="item.text" class="menu-item">
+        <div v-for="item of items" :key="item.link" v-tooltip="item.text" class="menu-item clickable">
             <nuxt-link :to="item.link" active-class="active" class="menu-item-link">
                 <FontAwesomeIcon :icon="item.icon" />
             </nuxt-link>
@@ -62,20 +62,6 @@ export default {
 
             width: 100%;
             height: 100%;
-
-            &.active {
-                background: $secondary;
-            }
-
-            &:not(.active) {
-                &:hover {
-                    background: #ffffff40;
-                }
-            }
-
-            svg {
-                color: #fff;
-            }
         }
     }
 }

@@ -30,12 +30,8 @@ export default {
 
 <style>
 #bitrate-line {
-    background: rgba(255, 255, 255, 0.8);
+    background: #ffffffcc;
     height: 3px;
     margin-top: 10px;
-}
-
-#bitrate-line.enter-active {
-    transition: all 0.5s linear;
 }
 </style>

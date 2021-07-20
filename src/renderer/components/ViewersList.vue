@@ -12,7 +12,7 @@
                     v-if="chatters[category].length"
                     class="category-title"
                     :style="{ color: colors[category] }"
-                    v-text="`${category} (${chatters[category].length})`"
+                    v-text="category"
                 />
                 <span v-for="viewer of chatters[category]" :key="viewer" class="viewer-name" v-text="viewer" />
             </div>
@@ -113,11 +113,11 @@ export default {
     width: 100%;
     height: 100%;
 
-    border-radius: 5px;
+    border-radius: 3px;
     z-index: 50;
 
     &:not(.vdr.active) {
-        background: rgba(0, 0, 0, 0.4) !important;
+        background: $backdrop !important;
     }
 
     span {
@@ -134,12 +134,13 @@ export default {
         height: 100%;
 
         padding: 5px;
+        padding-top: 10px;
 
         overflow-x: hidden;
         overflow-y: auto;
 
         .category {
-            margin-bottom: 5px;
+            margin-bottom: 10px;
 
             &-title {
                 font-weight: 600;

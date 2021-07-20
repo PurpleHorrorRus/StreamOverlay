@@ -124,6 +124,6 @@ export default {
 
     padding: 10px;
 
-    background: #00000080;
+    background: $backdrop;
 }
 </style>

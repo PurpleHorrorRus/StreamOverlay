@@ -1,5 +1,5 @@
 <template>
-    <div id="modal" :class="{ first: settings.first }">
+    <div id="modal" :class="{ first: settings.first, locked }">
         <Chat v-if="!settings.first && locked" :input="true" />
         <Notifications />
         <Lock :locked="locked" />
@@ -70,6 +70,10 @@ export default {
     justify-content: center;
 
     background: none;
+
+    &.locked {
+        background: #111111cc;
+    }
 
     &.first {
         grid-template-rows: max-content;
