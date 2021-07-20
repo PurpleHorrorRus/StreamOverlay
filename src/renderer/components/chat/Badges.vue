@@ -43,6 +43,8 @@ export default {
         margin-right: 2px;
         margin-left: 2px;
 
+        border-radius: 3px;
+
         vertical-align: middle;
     }
 }
