@@ -51,17 +51,6 @@ export default {
             return this.obs._connected;
         }
     },
-    beforeMount() {
-        if (!this.helix) {
-            ipcRenderer.on("update-available", info =>
-                this.turnNotification({
-                    name: "update",
-                    show: true,
-                    content: info.releaseNotes
-                })
-            );
-        }
-    },
     async created() {
         if (this.$route.query?.edit) {
             this.active = true;
@@ -100,9 +89,10 @@ export default {
                 });
             }
 
-            this.connectOBS(OBS);
-
             if (!this.helix) {
+                this.connectOBS(OBS);
+                this.registerIPC();
+
                 this.addNotification({
                     text:
                         "Управление:<br/>\
@@ -110,10 +100,10 @@ export default {
                         Alt + K - список зрителей",
 
                     color: "#343a40",
+                    icon: ["fas", "keyboard"],
                     handle: 10
                 });
 
-                this.registerIPC();
                 await this.createHelix(config.twitch);
                 this.createChatBot();
             }
@@ -129,6 +119,13 @@ export default {
             turnNotification: "notifications/TURN"
         }),
         registerIPC() {
+            ipcRenderer.on("update-available", () => {
+                this.turnNotification({
+                    name: "update",
+                    show: true
+                });
+            });
+
             ipcRenderer.on("lock", (_event, mouse) => this.turnLock(mouse));
             ipcRenderer.on("menu", (_event, sequence) => {
                 if (!this.user) {
