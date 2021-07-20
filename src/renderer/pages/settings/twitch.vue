@@ -5,7 +5,7 @@
             <!-- <Tip
                 text="Для того, чтобы включить и отключить фокус на оверлее, нажмите комбинацию клавиш Alt + A"
             /> -->
-            <Input text="Имя пользователя Twitch" :value="username" @input="changeUsername" />
+            <Input text="Имя пользователя Twitch" :value="username" @input="username = $event" />
 
             <div id="twitch-settings-access-token" class="twitch-settings">
                 <div class="modal-item-tip">
@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="twitch-settings-form">
-                    <Input :value="access_token" @input="changeAccessToken" />
+                    <Input :value="access_token" @input="access_token = $event" />
                     <SolidButton :label="'Получить'" @clicked="getToken" />
                 </div>
             </div>
@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="twitch-settings-form">
-                    <Input :value="oauth_token" @input="changeOAuth" />
+                    <Input :value="oauth_token" @input="oauth_token = $event" />
                     <SolidButton :label="'Получить'" @clicked="getOAuth" />
                 </div>
             </div>
@@ -77,7 +77,7 @@ export default {
     }),
     computed: {
         disabled() {
-            return this.username.length === 0 || this.access_token.length === 0 || this.oauth_token.length === 0;
+            return !this.username.length || !this.access_token.length || !this.oauth_token.length;
         }
     },
     watch: {
@@ -104,15 +104,6 @@ export default {
         }
     },
     methods: {
-        changeUsername(value) {
-            this.username = value;
-        },
-        changeAccessToken(value) {
-            this.access_token = value;
-        },
-        changeOAuth(value) {
-            this.oauth_token = value;
-        },
         async next() {
             this.validating = true;
             this.error = "";
@@ -132,7 +123,7 @@ export default {
                 return;
             }
 
-            const user = await helix.users.get({ login: this.username });
+            const user = await helix.users.getByLogin(this.username);
             this.saveSettings({
                 type: "twitch",
                 content: {
@@ -152,7 +143,7 @@ export default {
                 access_token: this.access_token
             });
 
-            const user = await helix.users.get({ login: this.username }).catch(() => ({
+            const user = await helix.users.getByLogin(this.username).catch(() => ({
                 success: false,
                 error: "Пользователь с таким ником не найден"
             }));

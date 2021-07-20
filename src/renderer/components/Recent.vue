@@ -21,9 +21,9 @@ export default {
         }
     },
     methods: {
-        select (index) {
-            this.$parent.changeTitle(this.recent[index].title);
-            this.$parent.changeGame(this.recent[index].game);
+        select(index) {
+            this.$parent.local.title = this.recent[index].title;
+            this.$parent.local.game = this.recent[index].game;
             this.$parent.update();
         }
     }

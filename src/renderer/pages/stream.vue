@@ -8,25 +8,30 @@
             <div id="modal-stream-content-edit">
                 <Input
                     :value="local.title"
-                    :placeholder="'Название трансляции'"
-                    @input="changeTitle"
+                    placeholder="Название трансляции"
+                    @input="local.title = $event"
                     @keypress.enter.native="update"
                 />
                 <Input
                     :value="local.game"
                     :placeholder="'Название игры'"
-                    @input="changeGame"
+                    @input="local.game = $event"
                     @keypress.enter.native="update"
                 />
-                <SolidButton :label="'Обновить'" :disabled="disabled" :load="loading" @clicked="update" />
+                <SolidButton label="Обновить" :disabled="disabled" :load="loading" @clicked="update" />
             </div>
             <Recent v-show="recent.length > 0" :recent="recent" />
             <div id="modal-stream-content-games">
                 <div id="modal-stream-content-games-filtered">
-                    <Game v-for="game of filteredTopGames" :key="game.id" :game="game" @click.native="select(game)" />
+                    <Game
+                        v-for="game of filteredTopGames"
+                        :key="game.id"
+                        :game="game"
+                        @click.native="local.game = game.name"
+                    />
                 </div>
                 <div v-if="search.length > 0" id="modal-stream-content-games-search">
-                    <Game v-for="game of search" :key="game.id" :game="game" @click.native="select(game)" />
+                    <Game v-for="game of search" :key="game.id" :game="game" @click.native="local.game = game.name" />
                 </div>
             </div>
         </div>
@@ -44,6 +49,8 @@ import SolidButton from "~/components/SolidButton";
 
 import Recent from "~/components/Recent";
 
+import TwitchMixin from "~/mixins/twitch";
+
 const noArt = "https://static-cdn.jtvnw.net/ttv-static/404_boxart-{width}x{height}.jpg";
 const artSize = {
     width: 250,
@@ -60,6 +67,7 @@ export default {
         SolidButton,
         Recent
     },
+    mixins: [TwitchMixin],
     layout: "modal",
     data: () => ({
         firstLoad: true,
@@ -78,8 +86,6 @@ export default {
     }),
     computed: {
         ...mapState({
-            user: state => state.twitch.credits,
-            helix: state => state.twitch.helix,
             stream: state => state.twitch.stream,
             recent: state => state.config.recent
         }),
@@ -118,7 +124,7 @@ export default {
                 this.search = Array.isArray(games) ? games : games.data || [];
 
                 if (this.search.length === 0) {
-                    const game = await this.helix.games.get(newVal);
+                    const game = await this.helix.games.getByName(newVal);
                     this.art = game.box_art_url || noArt;
                 } else this.findCache(this.search, newVal);
             }, 200);
@@ -132,7 +138,7 @@ export default {
         };
 
         this.helix.games.top().then(({ data: topGames }) => (this.topGames = topGames));
-        this.helix.games.get(this.stream.game).then(game => (this.art = game?.box_art_url || noArt));
+        this.helix.games.getByName(channel.game_name).then(game => (this.art = game?.box_art_url || noArt));
 
         this.firstLoad = false;
     },
@@ -149,20 +155,11 @@ export default {
 
             return index !== -1;
         },
-        resizeArt(art) {
+        resizeArt(art, sizes = artSize) {
             return art
-                .replace("{width}", artSize.width)
-                .replace("{height}", artSize.height)
-                .replace("52x72", `${artSize.width}x${artSize.height}`);
-        },
-        changeTitle(value) {
-            this.local.title = value;
-        },
-        changeGame(value) {
-            this.local.game = value;
-        },
-        select(game) {
-            this.local.game = game.name;
+                .replace("{width}", sizes.width)
+                .replace("{height}", sizes.height)
+                .replace("52x72", `${sizes.width}x${sizes.height}`);
         },
         async update() {
             if (this.disabled) {
@@ -197,7 +194,7 @@ export default {
         "title title title"
         "art edit recent"
         "games games games";
-    grid-gap: 5px;
+    grid-gap: 10px;
 
     &-title {
         grid-area: title;
@@ -223,6 +220,8 @@ export default {
     &-games {
         grid-area: games;
 
+        padding: 10px;
+
         margin-top: 10px;
         margin-bottom: 10px;
 
@@ -230,7 +229,7 @@ export default {
         overflow-y: auto;
 
         &-search {
-            border-top: 1px solid $secondary;
+            border-top: 1px solid $outline;
         }
     }
 }

@@ -52,32 +52,38 @@ export default {
         }
     },
     beforeMount() {
-        ipcRenderer.on("lock", (_event, mouse) => this.turnLock(mouse));
-        ipcRenderer.on("update-available", () =>
-            this.turnNotification({
-                name: "update",
-                show: true
-            })
-        );
+        if (!this.helix) {
+            ipcRenderer.on("update-available", info =>
+                this.turnNotification({
+                    name: "update",
+                    show: true,
+                    content: info.releaseNotes
+                })
+            );
+        }
+    },
+    async created() {
+        if (this.$route.query?.edit) {
+            this.active = true;
+        }
     },
     async mounted() {
-        const config = await ipcRenderer.invoke("config");
-        this.setConfig(config);
-
-        const { settings, OBS, twitch } = config;
         if (this.$route.query?.edit) {
-            this.setWidgets(config.overlays);
-            this.active = true;
             return;
         }
 
-        if (!OBS.address || !OBS.port) {
+        const config = await ipcRenderer.invoke("config");
+        this.setConfig(config);
+
+        if (!config.OBS.address || !config.OBS.port) {
+            config.settings.first = true;
             this.turnLock(true);
             this.$router.replace("/settings/obs").catch(() => {});
             return;
         }
 
-        if (!twitch.id || !twitch.username || !twitch.access_token || !twitch.oauth_token) {
+        if (!config.twitch.username || !config.twitch.access_token || !config.twitch.oauth_token) {
+            config.settings.first = true;
             this.turnLock(true);
             this.$router.replace("/settings/twitch").catch(() => {});
             return;
@@ -86,11 +92,11 @@ export default {
         this.setWidgets(config.overlays);
 
         if (!this.connected) {
-            if (settings.first) {
-                settings.first = false;
+            if (config.settings.first) {
+                config.settings.first = false;
                 this.saveSettings({
                     type: "settings",
-                    content: settings
+                    content: config.settings
                 });
             }
 
@@ -108,7 +114,7 @@ export default {
                 });
 
                 this.registerIPC();
-                this.createHelix(twitch);
+                await this.createHelix(config.twitch);
                 this.createChatBot();
             }
         }
@@ -123,6 +129,7 @@ export default {
             turnNotification: "notifications/TURN"
         }),
         registerIPC() {
+            ipcRenderer.on("lock", (_event, mouse) => this.turnLock(mouse));
             ipcRenderer.on("menu", (_event, sequence) => {
                 if (!this.user) {
                     return;
