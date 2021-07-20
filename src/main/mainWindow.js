@@ -6,7 +6,6 @@ import addon from "overlayaddon";
 import path from "path";
 
 import { default as common } from "./common";
-
 import { default as updater } from "./updater";
 
 const { autoUpdater } = updater;
