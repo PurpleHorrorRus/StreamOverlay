@@ -223,7 +223,7 @@ export default {
                                     "notifications/TURN",
                                     {
                                         name: "lowfps",
-                                        show: true
+                                        show: false
                                     },
                                     { root: true }
                                 );
