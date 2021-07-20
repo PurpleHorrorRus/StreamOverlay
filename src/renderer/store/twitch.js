@@ -33,7 +33,7 @@ export default {
         }
     }),
     actions: {
-        CREATE_HELIX: ({ state }, credits) => {
+        CREATE_HELIX: async ({ dispatch, state }, credits) => {
             state.credits = credits;
 
             state.helix = new Helix({
@@ -41,21 +41,21 @@ export default {
                 access_token: credits.access_token,
                 language: "ru"
             });
-        },
-        CREATE_CHATBOT: async ({ dispatch, state }) => {
-            if (client || !state.helix) {
-                return;
-            }
 
-            await dispatch("LOAD_EMOTES");
-
-            state.user = await state.helix.users.get({ id: state.credits.id });
-            state.channel = await state.helix.channel.get(state.credits.id);
+            state.user = await state.helix.users.getByLogin(state.credits.username);
+            state.channel = await state.helix.channel.get(state.user.id);
 
             state.stream = {
                 title: state.channel.title,
                 game: state.channel.game_name
             };
+
+            dispatch("LOAD_EMOTES");
+        },
+        CREATE_CHATBOT: async ({ dispatch, state }) => {
+            if (client || !state.helix) {
+                return;
+            }
 
             client = new tmi.Client({
                 connection: { reconnect: true },
@@ -69,7 +69,7 @@ export default {
             client.connect();
 
             client.on("message", async (_channel, user, message) => {
-                const profile = await state.helix.users.get({ login: user["display-name"] });
+                const profile = await state.helix.users.getByLogin(user["display-name"]);
 
                 if (user.color === "#000000") {
                     user.color = "#FFFFFF";
@@ -161,7 +161,7 @@ export default {
 
             return formatted;
         },
-        BAN: ({ state }, data) => client.ban(state.credits.username, data.nickname, data.reason),
+        BAN: ({ state }, data) => client.ban(state.user.display_name, data.nickname, data.reason),
         REMOVE_MESSAGE: ({ state }, id) => {
             const index = state.messages.findIndex(m => m.id === id);
             if (~index) {
