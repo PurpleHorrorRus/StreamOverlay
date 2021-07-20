@@ -4,7 +4,8 @@ export default {
         notifications: [],
         lowbitrate: false,
         lowfps: false,
-        chatdisconnect: false
+        chatdisconnect: false,
+        update: false
     }),
     actions: {
         ADD: ({ state }, notification) => {
