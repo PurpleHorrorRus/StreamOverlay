@@ -32,19 +32,21 @@ export default {
                 return;
             }
 
-            const connect = () => new Promise(resolve => {
-                state.obs = new socket({ 
-                    address: `${data.address}:${data.port}`
-                });
+            const connect = () =>
+                new Promise(resolve => {
+                    state.obs = new socket({
+                        address: `${data.address}:${data.port}`
+                    });
 
-                state.obs.connect()
-                    .then(() => resolve(true))
-                    .catch(() => resolve(false));
-            });
+                    state.obs
+                        .connect()
+                        .then(() => resolve(true))
+                        .catch(() => resolve(false));
+                });
 
             const awaitConnection = async (timeout = 4 * 1000) => {
                 let connected = await connect();
-                
+
                 while (!connected) {
                     await Promise.delay(timeout);
                     connected = await connect();
@@ -66,7 +68,7 @@ export default {
 
                 await Promise.delay(1000);
                 state.obs._connected = await awaitConnection();
-                
+
                 startStatusChecking();
                 return;
             };
@@ -76,11 +78,12 @@ export default {
                 return muted;
             };
 
-            const getVisible = item => new Promise(resolve => {
-                send("GetSceneItemProperties", { item })
-                    .then(({ visible }) => resolve(visible))
-                    .catch(() => resolve(null));
-            });
+            const getVisible = item =>
+                new Promise(resolve => {
+                    send("GetSceneItemProperties", { item })
+                        .then(({ visible }) => resolve(visible))
+                        .catch(() => resolve(null));
+                });
 
             const startStatusChecking = async () => {
                 const data = await send("GetStreamingStatus");
@@ -95,14 +98,14 @@ export default {
                 const setTime = timecode => {
                     if (timecode) {
                         const [hours, mins, seconds] = timecode.split(":");
-                        state.status.time = { 
-                            hours: Number(hours), 
-                            mins: Number(mins), 
-                            seconds: parseInt(seconds) 
+                        state.status.time = {
+                            hours: Number(hours),
+                            mins: Number(mins),
+                            seconds: parseInt(seconds)
                         };
                     }
                 };
-                
+
                 if (data.streaming) {
                     setTime(data["stream-timecode"]);
                 } else if (data.recording) {
@@ -110,11 +113,11 @@ export default {
                 }
 
                 state.obs.on("ConnectionClosed", disconnect);
- 
+
                 state.obs.on("StreamStarting", async () => {
                     state.status.stream = true;
 
-                    if (!state.status.recording) { 
+                    if (!state.status.recording) {
                         dispatch("SETUP_UPDATE_INTERVAL");
                     }
                 });
@@ -124,7 +127,7 @@ export default {
 
                     dispatch("notifications/TURN", { name: "lowbitrate", show: false }, { root: true });
                     dispatch("notifications/TURN", { name: "lowfps", show: false }, { root: true });
-                    
+
                     if (!state.status.recording) {
                         dispatch("CLEAR_UPDATE_INTERVAL");
                     }
@@ -164,8 +167,8 @@ export default {
 
                 const sources = await send("GetSpecialSources");
                 state.devices = {
-                    mic: !await muted(sources["mic-1"]),
-                    sound: !await muted(sources["desktop-1"]),
+                    mic: !(await muted(sources["mic-1"])),
+                    sound: !(await muted(sources["desktop-1"])),
                     camera: await getCameraVisible()
                 };
 
@@ -188,12 +191,11 @@ export default {
                         state.devices.camera = itemVisible;
                     }
                 });
-                
-                state.obs.on("SwitchScenes", 
-                    async ({ sceneName }) => {
-                        currentScene = sceneName;
-                        state.devices.camera = await getCameraVisible();
-                    });
+
+                state.obs.on("SwitchScenes", async ({ sceneName }) => {
+                    currentScene = sceneName;
+                    state.devices.camera = await getCameraVisible();
+                });
 
                 const check = async () => {
                     if (state.obs._connected) {
@@ -203,15 +205,33 @@ export default {
                         if (rootState.settings.settings.OBSStatus.enable) {
                             state.status.tech = stats;
                         }
-                        
-                        dispatch(
-                            "notifications/TURN", { 
-                                name: "lowfps", 
-                                show: stats.fps < state.status.videoSettings.fps
-                            }, { root: true });
+
+                        if (stats.fps < state.status.videoSettings.fps) {
+                            if (!rootState.notifications.lowfps) {
+                                dispatch(
+                                    "notifications/TURN",
+                                    {
+                                        name: "lowfps",
+                                        show: true
+                                    },
+                                    { root: true }
+                                );
+                            }
+                        } else {
+                            if (rootState.notifications.lowfps) {
+                                dispatch(
+                                    "notifications/TURN",
+                                    {
+                                        name: "lowfps",
+                                        show: true
+                                    },
+                                    { root: true }
+                                );
+                            }
+                        }
                     }
                 };
-                
+
                 interval = setInterval(check, 1000);
             };
 
@@ -221,7 +241,8 @@ export default {
                 }
 
                 return new Promise((resolve, reject) => {
-                    state.obs.send(...args)
+                    state.obs
+                        .send(...args)
                         .then(resolve)
                         .catch(reject);
                 });
@@ -254,7 +275,7 @@ export default {
                 state.status.time.seconds = 0;
                 state.status.time.mins++;
             }
-                
+
             if (state.status.time.mins >= 60) {
                 state.status.time.seconds = 0;
                 state.status.time.mins = 0;

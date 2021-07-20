@@ -6,7 +6,7 @@ export default {
         settings: null
     }),
     actions: {
-        SET: ({ state }, settings) => state.settings = settings,
+        SET: ({ state }, settings) => (state.settings = settings),
         SAVE: ({ state, dispatch, rootState }, settings) => {
             if (!settings.type) {
                 return console.error("You must to specify settings type", settings);
@@ -16,10 +16,9 @@ export default {
                 state.settings = settings.content;
             }
 
-            const config = rootState.config;
-            config[settings.type] = settings.content;
+            rootState.config[settings.type] = settings.content;
 
-            dispatch("SET_CONFIG", config, { root: true });
+            dispatch("SET_CONFIG", rootState.config, { root: true });
             ipcRenderer.send("saveSettings", settings);
         }
     }
