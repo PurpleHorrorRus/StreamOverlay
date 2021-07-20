@@ -1,5 +1,10 @@
 <template>
-    <div :style="{ background: notification.color }" class="notification">
+    <div :style="{ background: notification.color }" class="notification" :class="{ icon: notification.icon }">
+        <FontAwesomeIcon
+            v-if="notification.icon"
+            :icon="notification.icon"
+            :spin="Boolean(notification.spin)"
+        />
         <div class="notification-content">
             <span class="notification-text" v-html="notification.text" />
         </div>
@@ -19,9 +24,11 @@ export default {
 
 <style lang="scss">
 .notification {
-    display: block;
-    width: 300px;
-    height: auto;
+    display: grid;
+    grid-template-columns: 300px;
+    grid-template-rows: auto;
+
+    align-items: center;
 
     margin-bottom: 10px;
     padding: 15px;
@@ -29,5 +36,9 @@ export default {
     background: $backdrop;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     border-radius: 3px;
+
+    &.icon {
+        grid-template-columns: 30px 270px;
+    }
 }
 </style>

@@ -98,6 +98,7 @@ export default {
                     {
                         text: "Чат успешно подключен",
                         color: "#28a745",
+                        icon: ["fas", "comment"],
                         handle: 5
                     },
                     { root: true }
