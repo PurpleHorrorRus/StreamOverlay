@@ -91,7 +91,7 @@ export default {
         }
 
         &-name {
-            font-size: 14pt;
+            font-size: 18pt;
         }
 
         &-description {

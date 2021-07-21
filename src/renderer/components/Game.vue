@@ -1,5 +1,5 @@
 <template>
-    <div class="game">
+    <div class="game clickable">
         <img class="game-image" :src="box_art_url">
         <span class="game-name nowrap" v-text="game.name" />
     </div>
