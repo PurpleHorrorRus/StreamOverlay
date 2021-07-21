@@ -22,13 +22,8 @@ let betterTTV = null,
 let utterQuery = [];
 let utter = null;
 
-let beepSound = null;
-
 // eslint-disable-next-line no-undef
 if (process.client) {
-    beepSound = new Audio(notification);
-    beepSound.volume = 0.5;
-
     utter = new SpeechSynthesisUtterance();
     utter.lang = "ru-RU";
     utter.onend = async () => {
@@ -114,7 +109,9 @@ export default {
                 ];
 
                 if (rootState.settings.settings.chat.sound) {
-                    beepSound.play();
+                    const sound = new Audio(notification);
+                    sound.volume = 0.6;
+                    sound.play();
                 }
 
                 if (rootState.settings.settings.chat.tts.enable) {
