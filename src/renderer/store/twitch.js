@@ -87,6 +87,10 @@ export default {
             client.connect();
 
             client.on("message", async (_channel, user, message) => {
+                if (!rootState.settings.settings.chat.enable) {
+                    return;
+                }
+
                 const profile = await state.helix.users.getByLogin(user["display-name"]);
 
                 if (user.color === "#000000") {
