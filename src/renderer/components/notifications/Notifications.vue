@@ -6,7 +6,7 @@
 
         <LowBitrate v-if="showLowBitrate" :notification="solidNotifications.LOW" />
         <LowFPS v-if="showLowFPS" :notification="solidNotifications.LOW" />
-        <Notification v-if="showUpdate" :notification="solidNotifications.UPDATE" />
+        <Update v-if="update.show" :release="update.release" />
         <Notification v-if="showChatDisconnect" :notification="solidNotifications.CHAT_DISCONNECT" />
     </div>
 </template>
@@ -17,20 +17,22 @@ import { mapState } from "vuex";
 import Notification from "~/components/notifications/notification";
 import LowBitrate from "~/components/notifications/lowbitrate";
 import LowFPS from "~/components/notifications/lowfps";
+import Update from "~/components/notifications/update";
 
 export default {
     components: {
         Notification,
         LowBitrate,
-        LowFPS
+        LowFPS,
+        Update
     },
     computed: {
         ...mapState({
             notifications: state => state.notifications.notifications,
             showLowBitrate: state => state.notifications.lowbitrate,
             showLowFPS: state => state.notifications.lowfps,
-            showUpdate: state => state.notifications.update,
-            showChatDisconnect: state => state.notifications.chatdisconnect
+            showChatDisconnect: state => state.notifications.chatdisconnect,
+            update: state => state.notifications.update
         }),
         solidNotifications() {
             return {

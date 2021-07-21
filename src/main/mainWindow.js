@@ -95,6 +95,7 @@ export default {
         window.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
 
         window.webContents.once("dom-ready", () => {
+            autoUpdater.on("download-progress", progress => send("download-progress", progress));
             autoUpdater.on("update-available", info => send("update-available", info));
             autoUpdater.checkForUpdates();
 
@@ -123,6 +124,7 @@ export default {
         ipcMain.on("turnMouse", (_event, sequence) => {
             if (window) {
                 window.setIgnoreMouseEvents(!sequence);
+                window.focus();
                 mouse = sequence;
                 menu = sequence;
                 send("lock", sequence);
@@ -155,8 +157,6 @@ export default {
                     });
 
                     globalShortcut.unregister("Alt+K");
-
-                    window.focus();
                 } else {
                     globalShortcut.unregister("Alt+A");
                     registerViewersListHotkey();

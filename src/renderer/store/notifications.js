@@ -5,7 +5,9 @@ export default {
         lowbitrate: false,
         lowfps: false,
         chatdisconnect: false,
-        update: false
+        update: {
+            show: false
+        }
     }),
     actions: {
         ADD: ({ state }, notification) => {
@@ -22,6 +24,12 @@ export default {
             }
 
             state[data.name] = data.show;
+        },
+        TURN_UPDATE: ({ state }, release) => {
+            state.update = {
+                show: true,
+                release
+            };
         }
     }
 };

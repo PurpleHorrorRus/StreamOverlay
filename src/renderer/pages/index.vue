@@ -116,15 +116,11 @@ export default {
             turnLock: "ipc/TURN_LOCK",
 
             addNotification: "notifications/ADD",
-            turnNotification: "notifications/TURN"
+            turnNotification: "notifications/TURN",
+            turnUpdate: "notifications/TURN_UPDATE"
         }),
         registerIPC() {
-            ipcRenderer.on("update-available", () => {
-                this.turnNotification({
-                    name: "update",
-                    show: true
-                });
-            });
+            ipcRenderer.on("update-available", (_, release) => this.turnUpdate(release));
 
             ipcRenderer.on("lock", (_event, mouse) => this.turnLock(mouse));
             ipcRenderer.on("menu", (_event, sequence) => {
