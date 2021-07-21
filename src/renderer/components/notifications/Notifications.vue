@@ -42,12 +42,6 @@ export default {
                 CHAT_DISCONNECT: {
                     text: "Чат отключен",
                     color: "red"
-                },
-                UPDATE: {
-                    text: "Доступно новое обновление. Скачивание...",
-                    icon: ["fa", "circle-notch"],
-                    spin: true,
-                    color: "#171717"
                 }
             };
         }
