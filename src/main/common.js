@@ -34,7 +34,12 @@ const clearSettings = {
         x: 0,
         y: 0,
         width: 143,
-        height: 160
+        height: 160,
+        sound: false,
+        tts: {
+            enable: false,
+            readName: false
+        }
     },
     OBSStatus: {
         enable: true,

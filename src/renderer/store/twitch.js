@@ -2,6 +2,7 @@ import Helix from "simple-helix-api";
 import tmi from "tmi.js";
 
 import misc from "~/plugins/misc";
+import notification from "~/static/notification.mp3";
 
 const client_id = "zmin05a65f74rln2g94iv935w58nyq";
 
@@ -17,6 +18,28 @@ let client = null;
 
 let betterTTV = null,
     FrankerFaceZ = null;
+
+let utterQuery = [];
+let utter = null;
+
+let beepSound = null;
+
+// eslint-disable-next-line no-undef
+if (process.client) {
+    beepSound = new Audio(notification);
+    beepSound.volume = 0.5;
+
+    utter = new SpeechSynthesisUtterance();
+    utter.lang = "ru-RU";
+    utter.onend = async () => {
+        utterQuery.splice(0, 1);
+        if (utterQuery.length > 0) {
+            utter.text = utterQuery[0];
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            speechSynthesis.speak(utter);
+        }
+    };
+}
 
 export default {
     namespaced: true,
@@ -52,7 +75,7 @@ export default {
 
             dispatch("LOAD_EMOTES");
         },
-        CREATE_CHATBOT: async ({ dispatch, state }) => {
+        CREATE_CHATBOT: async ({ dispatch, state, rootState }) => {
             if (client || !state.helix) {
                 return;
             }
@@ -75,19 +98,36 @@ export default {
                     user.color = "#FFFFFF";
                 }
 
+                message = message.trim();
                 state.messages = [
                     {
                         id: Date.now(),
                         nickname: profile.display_name,
                         avatar: profile.profile_image_url,
                         badges: user.badges ? Object.keys(user.badges) : [],
-                        formatted: await dispatch("FORMAT_MESSAGE", { text: message.trim(), emotes: user.emotes }),
+                        formatted: await dispatch("FORMAT_MESSAGE", { text: message, emotes: user.emotes }),
                         color: user.color,
                         mode: user["msg-id"],
                         show: true
                     },
                     ...state.messages
                 ];
+
+                if (rootState.settings.settings.chat.sound) {
+                    beepSound.play();
+                }
+
+                if (rootState.settings.settings.chat.tts.enable) {
+                    utter.text = rootState.settings.settings.chat.tts.readName
+                        ? `${profile.display_name} сказал ${message.trim()}`
+                        : message.trim();
+
+                    utterQuery = [...utterQuery, utter.text];
+
+                    if (utterQuery.length === 1) {
+                        speechSynthesis.speak(utter);
+                    }
+                }
             });
 
             client.on("connected", () => {

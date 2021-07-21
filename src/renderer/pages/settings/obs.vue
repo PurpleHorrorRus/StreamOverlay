@@ -1,6 +1,6 @@
 <template>
     <div class="modal-content">
-        <Title id="modal-stream-content-title" title="Настройка OBS" />
+        <Title id="modal-obs-content-title" title="Настройка OBS" />
         <div class="modal-body">
             <div class="modal-item-tip">
                 <span class="modal-item-tip-text">
