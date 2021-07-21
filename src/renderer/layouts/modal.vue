@@ -1,6 +1,6 @@
 <template>
     <div id="modal" :class="{ first: settings.first, locked }">
-        <Chat v-if="!settings.first && locked" :input="true" />
+        <Chat v-if="!settings.first && settings.chat.enable && locked" :input="true" />
         <Notifications />
         <Lock :locked="locked" />
         <Header v-if="!settings.first && locked" />
