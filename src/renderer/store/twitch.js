@@ -116,8 +116,8 @@ export default {
 
                 if (rootState.settings.settings.chat.tts.enable) {
                     utter.text = rootState.settings.settings.chat.tts.readName
-                        ? `${profile.display_name} сказал ${message.trim()}`
-                        : message.trim();
+                        ? `${profile.display_name} сказал ${message}`
+                        : message;
 
                     utterQuery = [...utterQuery, utter.text];
 
