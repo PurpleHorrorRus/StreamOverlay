@@ -235,9 +235,10 @@ export default {
             );
         },
         LOAD_EMOTES: async ({ state }) => {
-            const betterttv_global_url = "https://api.betterttv.net/3/cached/emotes/global";
-            const betterttv_url = `https://api.betterttv.net/3/cached/users/twitch/${state.credits.id}`;
-            const frankerfacez_url = `https://api.frankerfacez.com/v1/room/${state.credits.username.toLowerCase()}`;
+            const betterttv_global_url = "https://api.betterttv.net/3/cached/emotes/global",
+                betterttv_url = `https://api.betterttv.net/3/cached/users/twitch/${state.credits.id}`,
+                frankerfacez_global_url = "https://api.frankerfacez.com/v1/set/global",
+                frankerfacez_url = `https://api.frankerfacez.com/v1/room/${state.credits.username.toLowerCase()}`;
 
             const bGlobalPromise = new Promise(async resolve => {
                 const res = await misc.syncRequest(betterttv_global_url);
@@ -265,6 +266,24 @@ export default {
                 return resolve([]);
             });
 
+            const fGlobalPromise = new Promise(async resolve => {
+                const res = await misc.syncRequest(frankerfacez_global_url);
+                return resolve(
+                    Object.values(res.sets)
+                        .map(set => {
+                            return set.emoticons.map(emote => {
+                                const urls = Object.values(emote.urls);
+
+                                return {
+                                    code: emote.name,
+                                    url: "https:" + urls[urls.length - 1]
+                                };
+                            });
+                        })
+                        .flat(1)
+                );
+            });
+
             const fChannelPromise = new Promise(async resolve => {
                 const res = await misc.syncRequest(frankerfacez_url);
 
@@ -275,7 +294,7 @@ export default {
 
                             return {
                                 code: emote.name,
-                                url: "https://" + urls[urls.length - 1]
+                                url: "https:" + urls[urls.length - 1]
                             };
                         })
                     );
@@ -284,17 +303,23 @@ export default {
                 return resolve([]);
             });
 
-            const [bGlobal, bChannel, fChannel] = await Promise.all([bGlobalPromise, bChannelPromise, fChannelPromise]);
-            const bttv = [...bGlobal, ...bChannel];
+            const [bGlobal, bChannel, fGlobal, fChannel] = await Promise.all([
+                bGlobalPromise,
+                bChannelPromise,
+                fGlobalPromise,
+                fChannelPromise
+            ]);
 
+            const bttv = [...bGlobal, ...bChannel];
             betterTTV = {
                 content: bttv,
                 ids: bttv.map(e => e.code)
             };
 
+            const ffz = [...fGlobal, ...fChannel];
             FrankerFaceZ = {
-                content: fChannel,
-                ids: fChannel.map(e => e.code)
+                content: ffz,
+                ids: ffz.map(e => e.code)
             };
         },
         CHATTERS: async ({ state }) => await state.helix.other.getViewers(state.credits.username),
