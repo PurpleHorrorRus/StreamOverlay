@@ -134,21 +134,27 @@ export default {
             client.on("connected", () => {
                 state.connected = true;
                 dispatch("notifications/TURN", { name: "chatdisconnect", show: false }, { root: true });
-                dispatch(
-                    "notifications/ADD",
-                    {
-                        text: "Чат успешно подключен",
-                        color: "#28a745",
-                        icon: ["fas", "comment"],
-                        handle: 5
-                    },
-                    { root: true }
-                );
+
+                if (rootState.settings.settings.chat.enable) {
+                    dispatch(
+                        "notifications/ADD",
+                        {
+                            text: "Чат успешно подключен",
+                            color: "#28a745",
+                            icon: ["fas", "comment"],
+                            handle: 5
+                        },
+                        { root: true }
+                    );
+                }
             });
 
             client.on("disconnected", () => {
                 state.connected = false;
-                dispatch("notifications/TURN", { name: "chatdisconnect", show: true }, { root: true });
+
+                if (rootState.settings.settings.chat.enable) {
+                    dispatch("notifications/TURN", { name: "chatdisconnect", show: true }, { root: true });
+                }
             });
         },
         FORMAT_MESSAGE: (_, { text, emotes }) => {
