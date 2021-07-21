@@ -35,7 +35,7 @@ if (process.client) {
         utterQuery.splice(0, 1);
         if (utterQuery.length > 0) {
             utter.text = utterQuery[0];
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 500));
             speechSynthesis.speak(utter);
         }
     };
