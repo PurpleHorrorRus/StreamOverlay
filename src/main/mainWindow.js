@@ -83,7 +83,7 @@ export default {
         window.setAlwaysOnTop(true, "screen-saver");
         common.isDev ? window.loadURL(DEV_SERVER_URL) : window.loadFile(INDEX_PATH);
 
-        if (common.isDev || common.config.settings.devtools) {
+        if (common.config.settings.devtools) {
             window.openDevTools();
         }
 
@@ -130,6 +130,10 @@ export default {
                 send("lock", sequence);
             }
         });
+
+        ipcMain.on("devTools", (_event, sequence) =>
+            sequence ? window.openDevTools({ mode: "undocked" }) : window.closeDevTools()
+        );
 
         globalShortcut.register("Alt+A", () => {
             if (window) {

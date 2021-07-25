@@ -24,6 +24,8 @@
                 @change="turn('contentProtection')"
             />
 
+            <Item :text="'Включить инструменты разработчика'" :checked="settings.devtools" @change="turnDevtools" />
+
             <Item
                 :text="'Включить очистку ОЗУ'"
                 :tip="
@@ -38,6 +40,7 @@
 </template>
 
 <script>
+import { ipcRenderer } from "electron";
 import { mapActions, mapState } from "vuex";
 
 import Title from "~/components/menu/Title";
@@ -71,6 +74,11 @@ export default {
         },
         turnTech() {
             this.settings.TechInfo.enable = !this.settings.TechInfo.enable;
+            this.save();
+        },
+        turnDevtools() {
+            this.settings.devtools = !this.settings.devtools;
+            ipcRenderer.send("devTools", this.settings.devtools);
             this.save();
         }
     }
