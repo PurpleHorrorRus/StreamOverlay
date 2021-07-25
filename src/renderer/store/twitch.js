@@ -263,13 +263,11 @@ export default {
             );
         },
         LOAD_BADGES: async ({ state }) => {
-            const badges = {
-                ...(await state.helix.badges.global()),
-                ...(await state.helix.badges.channel(state.user.id))
-            };
-
             state.badges = Object.fromEntries(
-                Object.values(badges)
+                Object.values({
+                    ...(await state.helix.badges.global()),
+                    ...(await state.helix.badges.channel(state.user.id))
+                })
                     .map(({ set_id, versions }) =>
                         Object.entries({
                             [set_id]: versions ? versions[0].image_url_1x : ""
