@@ -22,6 +22,8 @@ let betterTTV = null,
 let utterQuery = [];
 let utter = null;
 
+let profilesCache = {};
+
 // eslint-disable-next-line no-undef
 if (process.client) {
     utter = new SpeechSynthesisUtterance();
@@ -62,6 +64,7 @@ export default {
 
             state.user = await state.helix.users.getByLogin(state.credits.username);
             state.channel = await state.helix.channel.get(state.user.id);
+            profilesCache[state.user.username] = state.user;
 
             state.stream = {
                 title: state.channel.title,
@@ -91,7 +94,12 @@ export default {
                     return;
                 }
 
-                const profile = await state.helix.users.getByLogin(user["display-name"]);
+                const username = user["display-name"];
+                if (!profilesCache[username]) {
+                    profilesCache[username] = await state.helix.users.getByLogin(username);
+                }
+
+                const profile = profilesCache[username];
 
                 if (user.color === "#000000") {
                     user.color = "#FFFFFF";
