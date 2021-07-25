@@ -134,13 +134,16 @@ export default {
         height: 100%;
 
         padding: 5px;
-        padding-top: 10px;
 
         overflow-x: hidden;
         overflow-y: auto;
 
         .category {
             margin-bottom: 10px;
+
+            &:first {
+                margin-bottom: 0px;
+            }
 
             &-title {
                 font-weight: 600;
