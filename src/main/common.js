@@ -70,7 +70,6 @@ const clearSettings = {
 };
 
 const clearTwitch = {
-    id: 0,
     username: "",
     access_token: "",
     oauth_token: ""
