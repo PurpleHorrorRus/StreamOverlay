@@ -50,7 +50,7 @@ export default {
 #chat-block {
     display: grid;
     grid-template-columns: 100%;
-    grid-template-rows: 92% 30px;
+    grid-template-rows: 1fr 30px;
     grid-template-areas:
         "messages"
         "input";
