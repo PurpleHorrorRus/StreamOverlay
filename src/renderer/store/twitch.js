@@ -22,6 +22,8 @@ let betterTTV = null,
 let utterQuery = [];
 let utter = null;
 
+const profilesCacheMax = 50;
+let profilesCacheSize = 0;
 let profilesCache = {};
 
 // eslint-disable-next-line no-undef
@@ -97,6 +99,12 @@ export default {
                 const username = user["display-name"];
                 if (!profilesCache[username]) {
                     profilesCache[username] = await state.helix.users.getByLogin(username);
+
+                    if (profilesCacheSize > profilesCacheMax - 1) {
+                        profilesCache = Object.fromEntries(
+                            Object.entries(profilesCache).splice(Object.values(profilesCache).length - profilesCacheMax)
+                        );
+                    } else profilesCacheSize++;
                 }
 
                 const profile = profilesCache[username];
