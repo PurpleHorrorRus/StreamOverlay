@@ -48,6 +48,7 @@ export default {
         channel: null,
         helix: null,
         connected: false,
+        badges: {},
         messages: [],
         stream: {
             title: null,
@@ -73,6 +74,7 @@ export default {
                 game: state.channel.game_name
             };
 
+            dispatch("LOAD_BADGES");
             dispatch("LOAD_EMOTES");
         },
         CREATE_CHATBOT: async ({ dispatch, state, rootState }) => {
@@ -119,7 +121,7 @@ export default {
                         id: Date.now(),
                         nickname: profile.display_name,
                         avatar: profile.profile_image_url,
-                        badges: user.badges ? Object.keys(user.badges) : [],
+                        badges: user.badges ? Object.keys(user.badges).filter(badge => state.badges[badge]) : [],
                         formatted: await dispatch("FORMAT_MESSAGE", { text: message, emotes: user.emotes }),
                         color: user.color,
                         mode: user["msg-id"],
@@ -258,6 +260,22 @@ export default {
                     content: recent
                 },
                 { root: true }
+            );
+        },
+        LOAD_BADGES: async ({ state }) => {
+            const badges = {
+                ...(await state.helix.badges.global()),
+                ...(await state.helix.badges.channel(state.user.id))
+            };
+
+            state.badges = Object.fromEntries(
+                Object.values(badges)
+                    .map(({ set_id, versions }) =>
+                        Object.entries({
+                            [set_id]: versions ? versions[0].image_url_1x : ""
+                        })
+                    )
+                    .flat(1)
             );
         },
         LOAD_EMOTES: async ({ state }) => {

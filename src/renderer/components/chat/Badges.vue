@@ -1,12 +1,6 @@
 <template>
     <div class="badges">
-        <img
-            v-for="badge of badges"
-            :key="badge"
-            class="badge"
-            :style="badgeStyle"
-            :src="require(`~/images/${badge}.png`) || ''"
-        >
+        <img v-for="badge of badges" :key="badge" class="badge" :style="badgeStyle" :src="badgesUrls[badge] || ''">
     </div>
 </template>
 
@@ -23,7 +17,8 @@ export default {
     },
     computed: {
         ...mapState({
-            settings: state => state.settings.settings
+            settings: state => state.settings.settings,
+            badgesUrls: state => state.twitch.badges
         }),
         badgeStyle() {
             return {
@@ -40,7 +35,10 @@ export default {
     vertical-align: middle;
 
     .badge {
-        margin-right: 2px;
+        &:not(:last-child) {
+            margin-right: 2px;
+        }
+        
         margin-left: 2px;
 
         border-radius: 3px;
