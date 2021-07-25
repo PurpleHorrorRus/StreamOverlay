@@ -113,12 +113,9 @@ export default {
     width: 100%;
     height: 100%;
 
+    background: $backdrop !important;
     border-radius: 3px;
     z-index: 50;
-
-    &:not(.vdr.active) {
-        background: $backdrop !important;
-    }
 
     span {
         display: block;
