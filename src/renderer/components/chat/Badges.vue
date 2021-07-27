@@ -1,6 +1,6 @@
 <template>
     <div class="badges">
-        <img v-for="badge of badges" :key="badge" class="badge" :style="badgeStyle" :src="badgesUrls[badge] || ''">
+        <img v-for="badge of badges" :key="badge" class="badge" :style="badgeStyle" :src="badge">
     </div>
 </template>
 
@@ -17,8 +17,7 @@ export default {
     },
     computed: {
         ...mapState({
-            settings: state => state.settings.settings,
-            badgesUrls: state => state.twitch.badges
+            settings: state => state.settings.settings
         }),
         badgeStyle() {
             return {
@@ -38,7 +37,7 @@ export default {
         &:not(:last-child) {
             margin-right: 2px;
         }
-        
+
         margin-left: 2px;
 
         border-radius: 3px;

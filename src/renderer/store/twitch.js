@@ -121,7 +121,7 @@ export default {
                         id: Date.now(),
                         nickname: profile.display_name,
                         avatar: profile.profile_image_url,
-                        badges: user.badges ? Object.keys(user.badges).filter(badge => state.badges[badge]) : [],
+                        badges: user.badges ? await dispatch("FORMAT_BADGES", user.badges) : [],
                         formatted: await dispatch("FORMAT_MESSAGE", { text: message, emotes: user.emotes }),
                         color: user.color,
                         mode: user["msg-id"],
@@ -175,6 +175,10 @@ export default {
                 }
             });
         },
+        FORMAT_BADGES: ({ state }, badges) =>
+            Object.keys(badges)
+                .map(badge => state.badges[badge] || null)
+                .filter(badge => badge !== null),
         FORMAT_MESSAGE: (_, { text, emotes }) => {
             let formatted = [];
             let emojiWords = [];
