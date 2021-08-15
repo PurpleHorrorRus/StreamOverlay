@@ -1,8 +1,8 @@
 <template>
-    <div :style="{ border: `2px solid ${notification.color}` }" class="notification">
+    <div class="notification lowbitrate">
         <div class="notification-content">
-            <span class="notification-text">Обнаружен низкий битрейт: {{ status.bitrate }}</span>
-            <div id="bitrate-line" :style="{ width: `${percent}%` }" class="enter-active" />
+            <span class="notification-text" v-text="text" />
+            <div id="bitrate-line" :style="line" />
         </div>
     </div>
 </template>
@@ -11,27 +11,34 @@
 import { mapState } from "vuex";
 
 export default {
-    props: {
-        notification: {
-            required: true,
-            type: Object
-        }
-    },
     computed: {
         ...mapState({
             status: state => state.obs.status
         }),
-        percent() {
-            return (this.status.bitrate / 5500) * 100;
+        text() {
+            return `Обнаружен низкий битрейт: ${this.status.bitrate}`;
+        },
+        line() {
+            return {
+                width: `${(this.status.bitrate / 5500) * 100}%`
+            };
         }
     }
 };
 </script>
 
 <style>
+.lowbitrate {
+    border: 2px solid #ff0000;
+}
+
 #bitrate-line {
-    background: #ffffffcc;
     height: 3px;
+
     margin-top: 10px;
+
+    background: #ffffffcc;
+
+    transition: 0.2s all ease-in;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div :style="{ border: `2px solid ${notification.color}` }" class="notification">
+    <div class="notification lowfps">
         <div class="notification-content">
             <span class="notification-text" v-text="'Обнаружен нестабильный FPS'" />
         </div>
@@ -7,12 +7,11 @@
 </template>
 
 <script>
-export default {
-    props: {
-        notification: {
-            required: true,
-            type: Object
-        }
-    }
-};
+export default {};
 </script>
+
+<style lang="scss">
+.lowfps {
+    border: 2px solid #ff0000;
+}
+</style>
