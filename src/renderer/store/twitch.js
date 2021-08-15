@@ -1,5 +1,7 @@
 import Helix from "simple-helix-api";
 import tmi from "tmi.js";
+import { lookup } from "dns";
+import { delay } from "bluebird";
 
 import misc from "~/plugins/misc";
 import notification from "~/static/notification.mp3";
@@ -49,6 +51,7 @@ export default {
         helix: null,
         tags: null,
         connected: false,
+        online: true,
         badges: {},
         messages: [],
         stream: {
@@ -57,6 +60,21 @@ export default {
         }
     }),
     actions: {
+        CHECK_CONNECTION: (_, options = {}) =>
+            new Promise(resolve => lookup("twitch.tv", options, err => resolve(!(err && err.code)))),
+
+        AWAIT_CONNECTION: ({ dispatch, state }) => {
+            return new Promise(async resolve => {
+                state.online = await dispatch("CHECK_CONNECTION");
+
+                if (!state.online) {
+                    await delay(2000);
+                    return resolve(await dispatch("AWAIT_CONNECTION"));
+                }
+
+                return resolve(true);
+            });
+        },
         CREATE_HELIX: async ({ dispatch, state }, credits) => {
             state.credits = credits;
 
@@ -65,6 +83,8 @@ export default {
                 access_token: credits.access_token,
                 language: "ru"
             });
+
+            await dispatch("AWAIT_CONNECTION");
 
             state.user = await state.helix.users.getByLogin(state.credits.username);
             state.channel = await state.helix.channel.get(state.user.id);
