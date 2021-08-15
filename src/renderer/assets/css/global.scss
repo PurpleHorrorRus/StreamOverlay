@@ -82,6 +82,8 @@ button {
 svg {
     color: #fff;
 
+    outline: none;
+
     &.clickable {
         &:hover {
             stroke: $secondary;

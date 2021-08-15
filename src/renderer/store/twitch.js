@@ -47,6 +47,7 @@ export default {
         user: null,
         channel: null,
         helix: null,
+        tags: null,
         connected: false,
         badges: {},
         messages: [],
@@ -149,7 +150,17 @@ export default {
                 }
             });
 
+            client.on("raw_message", (_, message) => {
+                if (message.command === "ROOMSTATE" && !state.tags) {
+                    state.tags = message.tags;
+                }
+            });
+
+            client.on("followersonly", (_, enabled) => (state.tags["followers-only"] = enabled ? "0" : "-1"));
+
             client.on("connected", () => {
+                client.raw("CAP REQ :twitch.tv/tags");
+
                 state.connected = true;
                 dispatch("notifications/TURN", { name: "chatdisconnect", show: false }, { root: true });
 
@@ -164,6 +175,15 @@ export default {
                         },
                         { root: true }
                     );
+                }
+            });
+
+            client.on("disconnected", () => {
+                state.connected = false;
+                state.tags = null;
+
+                if (rootState.settings.settings.chat.enable) {
+                    dispatch("notifications/TURN", { name: "chatdisconnect", show: true }, { root: true });
                 }
             });
 
@@ -372,6 +392,13 @@ export default {
         SAY: ({ state }, message) => {
             if (state.connected) {
                 client.say(state.credits.username, message);
+            }
+        },
+        TURN_FOLLOWERS_ONLY: ({ state }, duration = 0) => {
+            if (state.connected) {
+                state.tags["followers-only"] !== "-1"
+                    ? client.followersonlyoff(state.credits.username)
+                    : client.followersonly(state.credits.username, duration);
             }
         }
     }
