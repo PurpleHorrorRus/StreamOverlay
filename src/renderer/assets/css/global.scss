@@ -51,6 +51,11 @@ button {
     overflow: hidden;
 }
 
+.small-text {
+    color: $small-text;
+    font-size: 9pt;
+}
+
 .link {
     color: $outline;
     cursor: pointer;
@@ -81,11 +86,11 @@ button {
 
 svg {
     color: #fff;
-
     outline: none;
 
     &.clickable {
         &:hover {
+            color: $secondary;
             stroke: $secondary;
             cursor: pointer;
         }
@@ -93,17 +98,23 @@ svg {
 }
 
 div {
-    &.clickable {
-        border-radius: 3px;
+    &.active {
+        background: $secondary;
+    }
 
-        transition: .2s ease-in;
-
-        &:hover, *:hover {
-            cursor: pointer;
-        }
-
-        &:hover {
-            background: $secondary;
+    &:not(.active) {
+        &.clickable {
+            border-radius: 3px;
+    
+            transition: .2s ease-in;
+    
+            &:hover, *:hover {
+                cursor: pointer;
+            }
+    
+            &:hover {
+                background: $outline;
+            }
         }
     }
 }
