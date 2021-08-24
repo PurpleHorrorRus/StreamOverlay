@@ -137,19 +137,17 @@ export default {
                 }
 
                 message = message.trim();
-                state.messages = [
-                    {
-                        id: Date.now(),
-                        nickname: profile.display_name,
-                        avatar: profile.profile_image_url,
-                        badges: user.badges ? await dispatch("FORMAT_BADGES", user.badges) : [],
-                        formatted: await dispatch("FORMAT_MESSAGE", { text: message, emotes: user.emotes }),
-                        color: user.color,
-                        mode: user["msg-id"],
-                        show: true
-                    },
-                    ...state.messages
-                ];
+                state.messages.unshift({
+                    id: Date.now(),
+                    nickname: profile.display_name,
+                    avatar: profile.profile_image_url,
+                    badges: user.badges ? await dispatch("FORMAT_BADGES", user.badges) : [],
+                    formatted: await dispatch("FORMAT_MESSAGE", { text: message, emotes: user.emotes }),
+                    color: user.color,
+                    mode: user["msg-id"],
+                    show: true,
+                    banned: false
+                });
 
                 if (rootState.settings.settings.chat.sound) {
                     const sound = new Audio(notification);
