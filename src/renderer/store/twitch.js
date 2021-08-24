@@ -206,14 +206,6 @@ export default {
                     dispatch("notifications/TURN", { name: "chatdisconnect", show: true }, { root: true });
                 }
             });
-
-            client.on("disconnected", () => {
-                state.connected = false;
-
-                if (rootState.settings.settings.chat.enable) {
-                    dispatch("notifications/TURN", { name: "chatdisconnect", show: true }, { root: true });
-                }
-            });
         },
         FORMAT_BADGES: ({ state }, badges) =>
             Object.keys(badges)
