@@ -136,9 +136,15 @@ export default {
                     user.color = "#FFFFFF";
                 }
 
+                const time = new Date();
                 message = message.trim();
                 state.messages.unshift({
                     id: Date.now(),
+                    time: misc.formatTime({
+                        hours: time.getHours(),
+                        mins: time.getMinutes(),
+                        seconds: time.getSeconds()
+                    }),
                     nickname: profile.display_name,
                     avatar: profile.profile_image_url,
                     badges: user.badges ? await dispatch("FORMAT_BADGES", user.badges) : [],

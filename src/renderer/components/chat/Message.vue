@@ -1,34 +1,34 @@
 <template>
     <div class="message" :style="messageStyle">
+        <span v-if="$parent.input" class="message-time" :style="textStyle" v-text="`[${message.time}]`" />
         <img v-if="settings.chat.avatar" :style="pictureStyle" :src="message.avatar" class="avatar">
         <Badges v-if="settings.chat.badges" :badges="message.badges" />
         <span
             v-tooltip="'Забанить'"
             :style="nicknameStyle"
             class="nickname stroke"
-            @click="
-                ban({
-                    nickname: message.nickname,
-                    reason: 'бан стримером'
-                })
-            "
+            @click="banUser"
             v-text="message.nickname"
         />
-        <Body :items="message.formatted" />
+        <Body v-if="!message.banned" :items="message.formatted" />
+        <span v-else class="message-banned stroke" :style="textStyle" v-text="'Сообщение удалено'" />
     </div>
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions } from "vuex";
 
 import Badges from "~/components/chat/Badges";
 import Body from "~/components/chat/Body";
+
+import MessageMixin from "~/components/chat/mixin";
 
 export default {
     components: {
         Badges,
         Body
     },
+    mixins: [MessageMixin],
     props: {
         message: {
             type: Object,
@@ -36,42 +36,23 @@ export default {
         }
     },
     computed: {
-        ...mapState({
-            settings: state => state.settings.settings
-        }),
         messageStyle() {
             return {
                 background: `rgba(20, 20, 19, ${this.settings.chat.opacity / 100})`,
                 lineHeight: `${this.settings.chat.font + 2}pt`
             };
-        },
-        pictureStyle() {
-            return {
-                width: `${this.settings.chat.font}pt`
-            };
-        },
-        nicknameStyle() {
-            return {
-                color: this.message.color,
-                ...this.textStyle
-            };
-        },
-        textStyle() {
-            return {
-                fontSize: `${this.settings.chat.font}pt`
-            };
-        }
-    },
-    created() {
-        if (this.settings.chat.timeout !== 0) {
-            setTimeout(() => this.removeMessage(this.message.id), this.settings.chat.timeout * 1000);
         }
     },
     methods: {
         ...mapActions({
-            ban: "twitch/BAN",
-            removeMessage: "twitch/REMOVE_MESSAGE"
-        })
+            ban: "twitch/BAN"
+        }),
+        banUser() {
+            this.ban({
+                nickname: this.message.nickname,
+                reason: "бан стримером"
+            });
+        }
     }
 };
 </script>
@@ -82,19 +63,22 @@ export default {
 
     width: 100%;
 
-    padding: 10px;
+    padding: 5px 10px 5px 10px;
 
-    * {
-        vertical-align: bottom;
-    }
-
+    &-time,
     .avatar,
-    .nickname {
+    .nickname,
+    &-banned {
         display: inline;
     }
 
     .avatar {
+        position: relative;
+        top: 1px;
+
         border-radius: 100px;
+
+        vertical-align: middle;
     }
 
     .nickname {
@@ -110,6 +94,15 @@ export default {
             cursor: pointer;
             text-decoration: underline;
         }
+    }
+
+    &-time,
+    &-banned {
+        position: relative;
+        top: 2px;
+
+        color: $small-text;
+        font-family: "Roboto Condensed";
     }
 }
 </style>
