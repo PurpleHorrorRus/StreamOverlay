@@ -17,7 +17,7 @@ export default {
 
         return `${m}:${s}`;
     },
-    array_move(arr, oldIndex, newIndex) {
+    arrayMove(arr, oldIndex, newIndex) {
         if (newIndex >= arr.length) {
             let k = newIndex - arr.length + 1;
             while (k--) arr.push(undefined);

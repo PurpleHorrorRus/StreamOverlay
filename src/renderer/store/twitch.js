@@ -287,7 +287,7 @@ export default {
         UPDATE_RECENT: ({ dispatch, rootState }, data) => {
             let recent = [...rootState.config.recent];
             const index = recent.findIndex(item => item.title === data.title && item.game === data.game);
-            recent = ~index ? misc.array_move(recent, index, 0) : [data, ...recent];
+            recent = ~index ? misc.arrayMove(recent, index, 0) : [data, ...recent];
 
             if (recent.length > 5) {
                 recent = recent.splice(0, 5);
