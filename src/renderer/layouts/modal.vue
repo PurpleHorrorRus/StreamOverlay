@@ -42,12 +42,8 @@ export default {
     created() {
         ipcRenderer.send("turnMouse", true);
     },
-    methods: {
-        exit() {
-            if (!this.settings.first) {
-                this.$router.replace("/").catch(() => {});
-            }
-        }
+    destroyed() {
+        ipcRenderer.send("turnMouse", false);
     }
 };
 </script>
