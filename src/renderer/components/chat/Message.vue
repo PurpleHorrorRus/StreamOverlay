@@ -1,7 +1,7 @@
 <template>
     <div class="message" :style="messageStyle">
         <span v-if="$parent.input" class="message-time" :style="textStyle" v-text="`[${message.time}]`" />
-        <img v-if="settings.chat.avatar" :style="pictureStyle" :src="message.avatar" class="avatar">
+        <img v-if="settings.chat.avatar" v-lazy-load :style="pictureStyle" :data-src="message.avatar" class="avatar">
         <Badges v-if="settings.chat.badges" :badges="message.badges" />
         <span
             v-tooltip="'Забанить'"

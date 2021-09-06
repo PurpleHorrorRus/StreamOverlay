@@ -148,6 +148,20 @@ module.exports = {
     buildModules: ["@nuxtjs/style-resources"],
     modules: [
         [
+            "nuxt-lazy-load",
+            {
+                images: true,
+                videos: false,
+                audios: false,
+                iframes: false,
+                native: false,
+                polyfill: false,
+                directiveOnly: true,
+
+                defaultImage: "/lazy_avatar.png"
+            }
+        ],
+        [
             "nuxt-fontawesome",
             {
                 imports: [
