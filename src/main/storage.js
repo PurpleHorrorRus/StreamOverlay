@@ -114,6 +114,10 @@ const dataPath = filename => path.join(spath, filename);
 const exist = path => fs.existsSync(path);
 const data = (path, clear) => (exist(path) ? nested(readJSON(path), clear) : writeJSON(path, clear));
 
+if (exist(path.join(spath, "overlays.json"))) {
+    fs.renameSync(path.join(spath, "overlays.json"), path.join(spath, "widgets.json"));
+}
+
 const paths = {
     spath,
     settings: dataPath("settings.json"),
