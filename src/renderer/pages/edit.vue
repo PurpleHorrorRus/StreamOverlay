@@ -6,11 +6,12 @@
                 <div
                     v-for="(_widget, index) of widgets"
                     :key="_widget.id + index"
-                    class="modal-navigation-item nowrap"
-                    :class="{ 'item-active': _widget.id === widget.id }"
+                    class="modal-navigation-item nowrap clickable"
+                    :class="{ active: _widget.id === widget.id }"
                     @click="select(index)"
                 >
                     <span class="modal-navigation-item-text nowrap" v-text="_widget.name" />
+                    <span class="modal-navigation-item-url nowrap small-text" v-text="_widget.src" />
                 </div>
             </div>
             <div id="modal-edit-content-navigation-actions">
@@ -21,9 +22,7 @@
         <div v-if="widget" id="modal-edit-content-inputs">
             <Input :value="widget.name" :placeholder="'Название'" @input="changeName" />
             <Input :value="widget.src" :placeholder="'Ссылка'" @input="changeSrc" />
-            <span v-if="error" class="error" v-text="error" />
-
-            <SolidButton :label="'Сохранить'" :disabled="disabled" @clicked="save" />
+            <SolidButton :label="'Сохранить'" :disabled="disabled" @clicked="_save" />
         </div>
     </div>
 </template>
@@ -45,8 +44,7 @@ export default {
     mixins: [WidgetsMixin, other],
     layout: "modal",
     data: () => ({
-        widget: null,
-        error: ""
+        widget: null
     }),
     computed: {
         disabled() {
@@ -99,7 +97,7 @@ export default {
         changeSrc(value) {
             this.widget.src = value;
         },
-        save() {
+        _save() {
             const index = this.widgets.findIndex(o => o.id === this.widget.id);
             ~index ? (this.widgets[index] = this.widget) : (this.widgets = [...this.widgets, this.widget]);
 
@@ -136,20 +134,12 @@ export default {
                 display: flex;
                 justify-content: flex-start;
                 align-items: center;
-
-                height: 30px;
+                flex-wrap: wrap;
 
                 padding: 5px;
 
-                &:not(.item-active) {
-                    &:hover {
-                        cursor: pointer;
-                        background: #ffffff60;
-                    }
-                }
-
-                &.item-active {
-                    background: $secondary;
+                span {
+                    width: 100%;
                 }
             }
         }
@@ -162,6 +152,10 @@ export default {
 
     &-inputs {
         grid-area: inputs;
+
+        .solid-button {
+            margin: 10px;
+        }
     }
 }
 </style>
