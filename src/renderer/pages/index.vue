@@ -97,6 +97,8 @@ export default {
                 this.connectOBS(OBS);
                 this.registerIPC();
 
+                ipcRenderer.send("finish-load");
+
                 this.addNotification({
                     text:
                         "Управление:<br/>\

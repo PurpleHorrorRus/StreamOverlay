@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-import { app, BrowserWindow, screen } from "electron";
+import { app, BrowserWindow, ipcMain, screen } from "electron";
 import path from "path";
 
 import common from "./common";
@@ -63,7 +63,7 @@ export default {
             window.openDevTools({ mode: "undocked" });
         }
 
-        window.webContents.once("dom-ready", () => {
+        ipcMain.once("finish-load", () => {
             updater.init(window).interval(60 * 1000 * 5);
             addonInstance.moveTop(window).interval(4000);
             addonInstance.clearMemory().interval(70000);

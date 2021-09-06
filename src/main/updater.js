@@ -12,7 +12,7 @@ autoUpdater.on("error", () => {
 });
 
 autoUpdater.on("update-downloaded", () => autoUpdater.quitAndInstall(false, true));
-// 60 * 1000 * 5
+
 export default {
     init: window => {
         autoUpdater.on("download-progress", progress => common.windows.send(window, "download-progress", progress));
