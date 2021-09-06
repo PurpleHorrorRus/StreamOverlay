@@ -8,7 +8,7 @@
     >
         <div id="obs" :class="OBSClass">
             <div v-if="connected" id="obs-panel">
-                <Status v-if="settings.time" />
+                <Status v-if="settings.OBSStatus.time" />
                 <Devices />
             </div>
         </div>

@@ -16,7 +16,11 @@
                 @change="turnTech"
             />
 
-            <Item :text="'Включить время трансляции/записи'" :checked="settings.time" @change="turn('time')" />
+            <Item
+                :text="'Включить время трансляции/записи'"
+                :checked="settings.OBSStatus.time"
+                @change="turnOBS('time')"
+            />
 
             <Item
                 :text="'Включить Content Protection'"
@@ -66,6 +70,10 @@ export default {
         }),
         turn(option) {
             this.settings[option] = !this.settings[option];
+            this.save();
+        },
+        turnOBS(option) {
+            this.settings.OBSStatus[option] = !this.settings.OBSStatus[option];
             this.save();
         },
         turnTwitch(option) {
