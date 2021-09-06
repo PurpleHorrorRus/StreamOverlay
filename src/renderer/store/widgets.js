@@ -4,19 +4,19 @@ export default {
         edit: false,
         widgets: []
     }),
-    mutations: {
-        TURN_EDIT: (state, sequence) => state.edit = sequence,
-        SET: (state, widgets) => state.widgets = widgets
-    },
     actions: {
-        TURN_EDIT: ({ commit }, seq) => commit("TURN_EDIT", seq),
-        SET: ({ commit }, widgets) => commit("SET", widgets),
-        SAVE: ({ commit, dispatch }, widgets) => {
-            commit("SET", widgets);
-            dispatch("settings/SAVE", {
-                type: "widgets",
-                content: widgets
-            }, { root: true });
+        TURN_EDIT: ({ state }, sequence) => (state.edit = sequence),
+        SET: ({ state }, widgets) => (state.widgets = widgets),
+        SAVE: ({ dispatch, state }, widgets) => {
+            state.widgets = widgets;
+            dispatch(
+                "settings/SAVE",
+                {
+                    type: "widgets",
+                    content: widgets
+                },
+                { root: true }
+            );
         }
     }
 };
