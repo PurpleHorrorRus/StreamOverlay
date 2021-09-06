@@ -13,10 +13,10 @@ export default {
             setSettings: "settings/SET",
             saveSettings: "settings/SAVE"
         }),
-        save() {
+        save(content = this.settings) {
             this.saveSettings({
                 type: "settings",
-                content: this.settings
+                content
             });
         }
     }

@@ -43,10 +43,7 @@ export default {
         onDrag (x, y) {
             this.settings.OBSStatus.x = x;
             this.settings.OBSStatus.y = y;
-            this.saveSettings({
-                type: "settings",
-                content: this.settings
-            });
+            this.save();
         }
     }
 };

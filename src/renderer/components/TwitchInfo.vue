@@ -85,10 +85,7 @@ export default {
         onDrag (x, y) {
             this.settings.TwitchInfo.x = x;
             this.settings.TwitchInfo.y = y;
-            this.saveSettings({
-                type: "settings",
-                content: this.settings
-            });
+            this.save();
         },
         onResize (width, height, x, y) {
             this.settings.TwitchInfo.width = width;

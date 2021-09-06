@@ -105,10 +105,7 @@ export default {
         onDrag (x, y) {
             this.settings.TechInfo.x = x;
             this.settings.TechInfo.y = y;
-            this.saveSettings({
-                type: "settings",
-                content: this.settings
-            });
+            this.save();
         }
     }
 };

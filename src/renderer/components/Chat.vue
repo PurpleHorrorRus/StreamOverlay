@@ -37,10 +37,7 @@ export default {
         onDrag(x, y) {
             this.settings.chat.x = x;
             this.settings.chat.y = y;
-            this.saveSettings({
-                type: "settings",
-                content: this.settings
-            });
+            this.save();
         }
     }
 };

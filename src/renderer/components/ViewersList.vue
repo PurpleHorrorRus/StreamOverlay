@@ -1,7 +1,7 @@
 <template>
     <Movable
         class="viewers-list"
-        :source="settings.viewers_list"
+        :source="settings.ViewersList"
         name="Список зрителей"
         @onDrag="onDrag"
         @onResize="onResize"
@@ -84,17 +84,14 @@ export default {
             return chatters;
         },
         onResize(x, y, width, height) {
-            this.settings.viewers_list.width = width;
-            this.settings.viewers_list.height = height;
+            this.settings.ViewersList.width = width;
+            this.settings.ViewersList.height = height;
             this.onDrag(x, y);
         },
         onDrag(x, y) {
-            this.settings.viewers_list.x = x;
-            this.settings.viewers_list.y = y;
-            this.saveSettings({
-                type: "settings",
-                content: this.settings
-            });
+            this.settings.ViewersList.x = x;
+            this.settings.ViewersList.y = y;
+            this.save();
         },
         exit() {
             if (interval) {

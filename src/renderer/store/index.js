@@ -10,7 +10,7 @@ import ipc from "~/store/ipc";
 const store = () => {
     return new Vuex.Store({
         state: () => ({
-            config: {}
+            config: null
         }),
         actions: {
             SET_CONFIG: ({ dispatch, state }, config) => {
