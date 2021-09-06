@@ -8,7 +8,7 @@
             <TwitchInfo v-if="user" />
             <TechInfo v-if="settings.TechInfo.enable && connected && status.tech !== null" />
             <Chat v-if="settings.chat.enable" />
-            <ViewersList v-if="settings.viewers_list.enable" />
+            <ViewersList v-if="settings.ViewersList.enable" />
             <Widget v-for="widget of widgets" :key="widget.id" :widget="widget" />
         </div>
     </div>
@@ -61,32 +61,35 @@ export default {
             return;
         }
 
-        const config = await ipcRenderer.invoke("config");
-        this.setConfig(config);
+        if (!this.config) {
+            this.setConfig(await ipcRenderer.invoke("config"));
+            this.setWidgets(this.config.widgets);
+        }
 
-        if (!config.OBS.address || !config.OBS.port) {
-            config.settings.first = true;
+        if (!this.config.OBS.address || !this.config.OBS.port) {
+            this.config.settings.first = true;
+            this.setConfig(this.config);
+
+            this.registerLock();
             this.turnLock(true);
             this.$router.replace("/settings/obs").catch(() => {});
             return;
         }
 
-        if (!config.twitch.username || !config.twitch.access_token || !config.twitch.oauth_token) {
-            config.settings.first = true;
+        if (!this.config.twitch.username || !this.config.twitch.access_token || !this.config.twitch.oauth_token) {
+            this.config.settings.first = true;
+            this.setConfig(this.config);
+
+            this.registerLock();
             this.turnLock(true);
             this.$router.replace("/settings/twitch").catch(() => {});
             return;
         }
 
-        this.setWidgets(config.overlays);
-
         if (!this.connected) {
-            if (config.settings.first) {
-                config.settings.first = false;
-                this.saveSettings({
-                    type: "settings",
-                    content: config.settings
-                });
+            if (this.config.settings.first) {
+                this.config.settings.first = false;
+                this.save(this.config.settings);
             }
 
             if (!this.helix) {
@@ -104,7 +107,7 @@ export default {
                     handle: 10
                 });
 
-                await this.createHelix(config.twitch);
+                await this.createHelix(this.config.twitch);
                 this.createChatBot();
             }
         }
@@ -120,25 +123,26 @@ export default {
             turnUpdate: "notifications/TURN_UPDATE"
         }),
         registerIPC() {
+            this.registerLock();
             ipcRenderer.on("update-available", (_, release) => this.turnUpdate(release));
 
-            ipcRenderer.on("lock", (_event, mouse) => this.turnLock(mouse));
-            ipcRenderer.on("menu", (_event, sequence) => {
+            ipcRenderer.on("turnMenu", (_event, sequence) => {
                 if (!this.user) {
                     return;
                 }
 
+                this.turnLock(sequence);
                 this.$router.replace(sequence ? "/stream" : "/").catch(() => {});
                 this.active = false;
             });
 
-            ipcRenderer.on("viewers_list", () => {
-                this.settings.viewers_list.enable = !this.settings.viewers_list.enable;
-                this.saveSettings({
-                    type: "settings",
-                    content: this.settings
-                });
+            ipcRenderer.on("turnViewersList", () => {
+                this.settings.ViewersList.enable = !this.settings.ViewersList.enable;
+                this.save();
             });
+        },
+        registerLock() {
+            ipcRenderer.on("turnLock", (_event, mouse) => this.turnLock(mouse));
         }
     }
 };
