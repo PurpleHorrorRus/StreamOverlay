@@ -138,6 +138,7 @@ module.exports = {
         "vue-range-component/dist/vue-range-slider.css"
     ],
     plugins: [
+        "~/plugins/errors.js",
         { src: "~plugins/vue-draggable-resizable", mode: "client" },
         { src: "~plugins/font-awesome", mode: "client" },
         { src: "~plugins/vue-range-component.js", mode: "client" },
