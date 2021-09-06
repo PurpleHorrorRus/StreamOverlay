@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { app } from "electron";
 
-import { default as mainWindow } from "./mainWindow";
+import { default as mainWindow } from "./main";
 import { default as tray } from "./tray";
 
 if (app.requestSingleInstanceLock()) {
@@ -9,7 +9,7 @@ if (app.requestSingleInstanceLock()) {
     app.on("window-all-closed", app.quit);
     app.whenReady().then(() => {
         mainWindow.create();
-        tray.create();
+        tray.create(mainWindow);
     });
 } else {
     app.quit();
