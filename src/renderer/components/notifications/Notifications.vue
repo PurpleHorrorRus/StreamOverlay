@@ -18,12 +18,14 @@ import { mapState } from "vuex";
 import Notification from "~/components/notifications/notification";
 import LowBitrate from "~/components/notifications/lowbitrate";
 import LowFPS from "~/components/notifications/lowfps";
+import Update from "~/components/notifications/update";
 
 export default {
     components: {
         Notification,
         LowBitrate,
-        LowFPS
+        LowFPS,
+        Update
     },
     computed: {
         ...mapState({
