@@ -58,6 +58,7 @@ export default {
     },
     async mounted() {
         if (this.$route.query?.edit) {
+            ipcRenderer.send("turnMouse", true);
             return;
         }
 
