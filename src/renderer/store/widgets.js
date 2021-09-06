@@ -14,7 +14,7 @@ export default {
         SAVE: ({ commit, dispatch }, widgets) => {
             commit("SET", widgets);
             dispatch("settings/SAVE", {
-                type: "overlays",
+                type: "widgets",
                 content: widgets
             }, { root: true });
         }
