@@ -59,15 +59,7 @@ export default {
     },
     mixins: [CoreMixin],
     layout: "modal",
-    computed: {
-        ...mapState({
-            settings: state => state.settings.settings
-        })
-    },
     methods: {
-        ...mapActions({
-            saveSettings: "settings/SAVE"
-        }),
         turn(option) {
             this.settings[option] = !this.settings[option];
             this.save();
