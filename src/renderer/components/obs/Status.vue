@@ -1,29 +1,28 @@
 <template>
     <div id="status">
-        <span 
-            id="time" 
-            v-text="formatTime" 
-        />
+        <Dot />
+        <span v-if="settings.OBSStatus.time" id="status-time" v-text="formatTime" />
     </div>
 </template>
 
 <script>
-import OBSMixin from "~/mixins/obs";
+import { mapState } from "vuex";
+
+import Dot from "~/components/obs/Dot";
+
 import misc from "~/plugins/misc";
 
 export default {
-    mixins: [OBSMixin],
+    components: {
+        Dot
+    },
     computed: {
-        fpsStyle () {
-            return {
-                color: this.status.tech.fps.toFixed(0) < status.videoSettings.fps ? "red" : "white"
-            };
-        },
-        FPS () {
-            return `FPS: ${this.status.tech.fps.toFixed(0)}`;
-        },
-        formatTime () { 
-            return misc.formatTime(this.status.time); 
+        ...mapState({
+            status: state => state.obs.status,
+            settings: state => state.settings.settings
+        }),
+        formatTime() {
+            return misc.formatTime(this.status.time);
         }
     }
 };
@@ -31,21 +30,15 @@ export default {
 
 <style lang="scss">
 #status {
-	display: inline-block;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    column-gap: 5px;
 
-	margin-left: 10px;
+    width: max-content;
 
-    vertical-align: middle;
-
-    font-size: 9pt;
-
-    #time {
-        display: inline-block;
-        width: 50px;
-        
-        margin-right: 5px;
-
-        font-family: "Roboto Condensed", sans-serif;
+    &-time {
+        font-size: 11px;
         font-weight: 400;
     }
 }

@@ -1,16 +1,9 @@
 <template>
-    <Movable
-        ref="OBSStatus"
-        :source="source"
-        :name="''"
-        :resizable="false"
-        @onDrag="onDrag"
-    >
-        <div id="obs" :class="OBSClass">
-            <div v-if="connected" id="obs-panel">
-                <Status v-if="settings.OBSStatus.time" />
-                <Devices />
-            </div>
+    <Movable :source="{ ...settings.OBSStatus, width, height }" :name="''" :resizable="false" @onDrag="onDrag">
+        <div id="obs" ref="OBSStatus" :class="OBSClass">
+            <Status v-if="connected" />
+            <TwitchInfo v-if="showTwitch" />
+            <Devices v-if="connected" />
         </div>
     </Movable>
 </template>
@@ -19,28 +12,44 @@
 import Movable from "~/components/Movable";
 
 import Devices from "~/components/OBS/Devices";
+import TwitchInfo from "~/components/OBS/TwitchInfo";
 import Status from "~/components/OBS/Status";
 
 import OBSMixin from "~/mixins/obs";
+import TwitchMixin from "~/mixins/twitch";
 
 export default {
-    components: { 
+    components: {
         Movable,
-        Devices, 
-        Status 
+        TwitchInfo,
+        Devices,
+        Status
     },
-    mixins: [OBSMixin],
+    mixins: [OBSMixin, TwitchMixin],
+    data: () => ({
+        width: 125,
+        height: 25
+    }),
     computed: {
-        source () {
-            return {
-                ...this.settings.OBSStatus,
-                width: 175,
-                height: 35
-            };
+        showTwitch() {
+            return this.user 
+                && (this.settings.OBSStatus.TwitchInfo.enable || this.settings.OBSStatus.TwitchInfo.enableFollowers);
+        }
+    },
+    mounted() {
+        this.adaptive();
+        if (this.isLeft) {
+            new ResizeObserver(() => this.adaptive()).observe(this.$refs.OBSStatus);
         }
     },
     methods: {
-        onDrag (x, y) {
+        adaptive() {
+            if (this.$refs.OBSStatus) {
+                this.width = this.$refs.OBSStatus.clientWidth;
+                this.height = this.$refs.OBSStatus.clientHeight;
+            }
+        },
+        onDrag(x, y) {
             this.settings.OBSStatus.x = x;
             this.settings.OBSStatus.y = y;
             this.save();
@@ -50,79 +59,29 @@ export default {
 </script>
 
 <style lang="scss">
-$borderWidth: 2px;
-
-$connected: lightgreen;
-$streaming: purple;
-$recording: red;
-
 #obs {
-	position: absolute;
-	bottom: 0px;
+    position: absolute;
+    bottom: 0px;
     right: 0px;
 
     display: flex;
-    align-items: center;
-    
-	width: 174px;
-    height: 25px;
-    
-    &.left {
-        background: -webkit-gradient(
-            linear, left top, right bottom, from(rgb(0 0 0 / 100%)),
-            to(rgb(80 80 80 / 0%)), color-stop(.6, #33333300)
-        );
-    }
+    column-gap: 10px;
+
+    justify-content: flex-start;
+
+    width: max-content;
+    height: 26px;
+
+    padding-left: 10px;
+    padding-right: 10px;
+
+    background: #000000bb;
 
     &.right {
-        justify-content: flex-end;
+        flex-direction: row-reverse;
 
-        background: -webkit-gradient(
-            linear, right top, left bottom, from(rgb(0 0 0 / 100%)),
-            to(rgb(80 80 80 / 0%)), color-stop(.8, #33333300)
-        );
-
-        #obs-panel {
+        #status {
             flex-direction: row-reverse;
-        }
-    }
-    
-    &-panel {
-        display: flex;
-
-        justify-content: center;
-        align-items: center;
-    }
-
-    &.connected {
-        min-width: 135px;
-
-        &.left {
-            border-left: $borderWidth solid $connected;
-        }
-
-        &.right {
-            border-right: $borderWidth solid $connected;
-        }
-    }
-
-    &.streaming {
-         &.left {
-            border-left: $borderWidth solid $streaming;
-        }
-
-        &.right {
-            border-right: $borderWidth solid $streaming;
-        }
-    }
-
-    &.recording {
-        &.left {
-            border-left: $borderWidth solid $recording;
-        }
-
-        &.right {
-            border-right: $borderWidth solid $recording;
         }
     }
 }

@@ -1,8 +1,12 @@
 <template>
     <div id="devices">
-        <MicOffIcon v-if="!devices.mic" class="device disabled feather shadow-box" />
-        <HeadphonesIcon v-if="!devices.sound" class="device disabled feather shadow-box" />
-        <CameraIcon v-if="devices.camera !== null" :class="cameraClass" class="device feather shadow-box" />
+        <MicOffIcon v-if="!devices.mic" class="device disabled icon shadow-box" />
+        <HeadphonesIcon v-if="!devices.sound" class="device disabled icon shadow-box" />
+        <CameraIcon
+            v-if="devices.camera !== null"
+            :class="{ disabled: devices.camera === false }"
+            class="device icon shadow-box"
+        />
     </div>
 </template>
 
@@ -21,16 +25,11 @@ export default {
         ...mapState({
             devices: state => state.obs.devices
         }),
-        classes () {
+        classes() {
             return {
                 mic: this.devices.mic,
                 sound: this.devices.sound,
                 camera: this.devices.camera
-            };
-        },
-        cameraClass () {
-            return {
-                disabled: this.devices.camera === false
             };
         }
     }
@@ -39,18 +38,18 @@ export default {
 
 <style lang="scss">
 #devices {
-    display: inline-block;
-    width: 80px;
+    position: relative;
+    top: 1px;
 
-    margin-top: 3px;
-    margin-left: 5px;
+    display: flex;
+    justify-content: space-between;
+    column-gap: 5px;
 
     .device {
-        margin-left: 5px;
-        width: 15px;
+        width: 13px;
 
         &.disabled {
-            stroke: red;
+            stroke: #ff0000;
         }
     }
 }

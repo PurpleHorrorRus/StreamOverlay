@@ -34,7 +34,6 @@ export default {
     width: 100%;    
 
     &-text {
-        font-family: "Roboto Condensed" sans-serif;
         font-weight: 300;
         font-size: 9pt;
     }

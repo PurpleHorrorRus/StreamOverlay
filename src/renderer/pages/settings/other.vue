@@ -2,11 +2,14 @@
     <div class="modal-content">
         <Title title="Прочие настройки" />
         <div class="modal-body">
-            <Item :text="'Статистика Twitch'" :checked="settings.TwitchInfo.enable" @change="turnTwitch('enable')" />
             <Item
-                v-if="settings.TwitchInfo.enable"
-                :text="'Показать фолловеров'"
-                :checked="settings.TwitchInfo.enableFollowers"
+                :text="'Показывать количество зрителей'"
+                :checked="settings.OBSStatus.TwitchInfo.enable"
+                @change="turnTwitch('enable')"
+            />
+            <Item
+                :text="'Показать количество фолловеров'"
+                :checked="settings.OBSStatus.TwitchInfo.enableFollowers"
                 @change="turnTwitch('enableFollowers')"
             />
 
@@ -45,7 +48,6 @@
 
 <script>
 import { ipcRenderer } from "electron";
-import { mapActions, mapState } from "vuex";
 
 import Title from "~/components/menu/Title";
 import Item from "~/components/settings/Item";
@@ -69,7 +71,7 @@ export default {
             this.save();
         },
         turnTwitch(option) {
-            this.settings.TwitchInfo[option] = !this.settings.TwitchInfo[option];
+            this.settings.OBSStatus.TwitchInfo[option] = !this.settings.OBSStatus.TwitchInfo[option];
             this.save();
         },
         turnTech() {

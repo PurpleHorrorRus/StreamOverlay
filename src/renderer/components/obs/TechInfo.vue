@@ -4,8 +4,12 @@
             <TechInfoItem v-if="status.stream" :label="'Bitrate'" :value="formatBitrate" :valueStyle="bitrateStyle" />
             <TechInfoItem :label="'FPS'" :value="formatFPS" :valueStyle="FPSStyle" />
             <TechInfoItem :label="'Frametime'" :value="formatFrametime" />
-            <TechInfoItem :label="'Encoding'" :value="formatEncoding" />
-            <TechInfoItem v-if="status.stream || status.recording" :label="'Network'" :value="formatNetwork" />
+            <TechInfoItem :label="'Render Frames Missed'" :value="formatRender" />
+            <TechInfoItem
+                v-if="status.stream || status.recording"
+                :label="'Output Frames Skipped'"
+                :value="formatOutput"
+            />
             <TechInfoItem :label="'CPU Usage'" :value="formatCPU" />
             <TechInfoItem :label="'Memory Usage'" :value="formatMemory" />
         </div>
@@ -13,21 +17,18 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
-
 import Movable from "~/components/Movable";
 import TechInfoItem from "~/components/obs/TechInfoItem";
+
+import OBSMixin from "~/mixins/obs";
 
 export default {
     components: {
         Movable,
         TechInfoItem
     },
+    mixins: [OBSMixin],
     computed: {
-        ...mapState({
-            settings: state => state.settings.settings,
-            status: state => state.obs.status
-        }),
         formatBitrate() {
             return `${(this.status.bitrate / 1024).toFixed(1)} MB/s`;
         },
@@ -42,11 +43,13 @@ export default {
         formatFrametime() {
             return `${this.status.tech["average-frame-time"].toFixed(2)} ms`;
         },
-        formatEncoding() {
-            return `${this.status.tech["render-missed-frames"]} / ${this.status.tech["render-total-frames"]}`;
+        formatRender() {
+            const percent = (this.status.tech["render-missed-frames"] / this.status.tech["render-total-frames"]) * 100;
+            return `${percent.toFixed(2)}%`;
         },
-        formatNetwork() {
-            return `${this.status.tech["output-skipped-frames"]} / ${this.status.tech["output-total-frames"]}`;
+        formatOutput() {
+            const percent = (this.status.tech["output-skipped-frames"] / this.status.tech["output-total-frames"]) * 100;
+            return `${percent.toFixed(2)}%`;
         },
         formatCPU() {
             return this.status.tech["cpu-usage"] ? this.status.tech["cpu-usage"].toFixed(2) + "%" : "-";
@@ -61,13 +64,9 @@ export default {
         }
     },
     methods: {
-        ...mapActions({
-            saveSettings: "settings/SAVE"
-        }),
         onResize(x, y, width, height) {
             this.settings.TechInfo.width = width;
             this.settings.TechInfo.height = height;
-
             this.onDrag(x, y);
         },
         onDrag(x, y) {
@@ -89,6 +88,6 @@ export default {
 
     padding: 10px;
 
-    background: $backdrop;
+    background: #00000080;
 }
 </style>

@@ -33,14 +33,10 @@ const clear = {
             time: true,
             x: -37,
             y: 1022,
-            width: 174,
-            height: 35
-        },
-        TwitchInfo: {
-            enable: true,
-            enableFollowers: true,
-            x: -3,
-            y: 996
+            TwitchInfo: {
+                enable: true,
+                enableFollowers: true
+            }
         },
         TechInfo: {
             enable: true,
