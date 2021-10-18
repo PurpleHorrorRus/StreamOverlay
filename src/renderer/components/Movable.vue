@@ -87,13 +87,16 @@ export default {
         this.x = this.source.x ?? this.source.left;
         this.y = this.source.y ?? this.source.top;
 
-        if (this.active) {
-            this.rightBorder = this.display.width - this.source.width - snapOffset;
-            this.downBorder = this.display.height - this.source.height - snapOffset;
+        this.rightBorder = this.display.width - this.source.width - snapOffset;
+        this.downBorder = this.display.height - this.source.height - snapOffset;
 
+        if (this.active) {
             emitDebounce = debounce(() => this.$emit("onDrag", ...[this.x, this.y]), 1000);
             mouseDebounce = debounce(() => (this.mouse = true), 500);
         }
+    },
+    mounted() {
+        this.normalizePosition(this.x, this.y);
     },
     beforeDestroy() {
         if (this.active) {
@@ -101,12 +104,15 @@ export default {
         }
     },
     methods: {
+        normalizePosition(x, y) {
+            this.x = Math.max(Math.min(x, this.rightBorder + snapOffset), -1);
+            this.y = Math.max(Math.min(y, this.downBorder + snapOffset), -1);
+        },
         onResize(...args) {
             this.$emit("onResize", ...args);
         },
         onDragging(x, y) {
-            this.x = Math.max(Math.min(x, this.rightBorder + snapOffset), -1);
-            this.y = Math.max(Math.min(y, this.downBorder + snapOffset), -1);
+            this.normalizePosition(x, y);
 
             if (this.mouse) {
                 if (x !== this.x) {
