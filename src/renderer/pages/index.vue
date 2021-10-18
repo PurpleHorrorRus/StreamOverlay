@@ -4,7 +4,7 @@
 
         <div v-if="!settings.first" id="content-valid">
             <Notifications />
-            <OBS v-if="connected" />
+            <OBS v-if="user" />
             <TechInfo v-if="settings.TechInfo.enable && connected && status.tech !== null" />
             <Chat v-if="settings.chat.enable" />
             <ViewersList v-if="settings.ViewersList.enable" />

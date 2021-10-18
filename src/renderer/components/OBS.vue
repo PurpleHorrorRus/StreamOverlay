@@ -2,7 +2,7 @@
     <Movable :source="{ ...settings.OBSStatus, width, height }" :name="''" :resizable="false" @onDrag="onDrag">
         <div id="obs" ref="OBSStatus" :class="OBSClass">
             <Status v-if="connected" />
-            <TwitchInfo v-if="showTwitch" />
+            <TwitchInfo v-if="settings.OBSStatus.TwitchInfo.enable || settings.OBSStatus.TwitchInfo.enableFollowers" />
             <Devices v-if="connected" />
         </div>
     </Movable>
@@ -30,12 +30,6 @@ export default {
         width: 125,
         height: 25
     }),
-    computed: {
-        showTwitch() {
-            return this.user 
-                && (this.settings.OBSStatus.TwitchInfo.enable || this.settings.OBSStatus.TwitchInfo.enableFollowers);
-        }
-    },
     mounted() {
         this.adaptive();
         if (this.isLeft) {
