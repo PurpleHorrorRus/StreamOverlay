@@ -28,6 +28,8 @@ const profilesCacheMax = 50;
 let profilesCacheSize = 0;
 let profilesCache = {};
 
+const visibleMessagesMax = 15;
+
 // eslint-disable-next-line no-undef
 if (process.client) {
     utter = new SpeechSynthesisUtterance();
@@ -125,7 +127,8 @@ export default {
 
                     if (profilesCacheSize > profilesCacheMax - 1) {
                         profilesCache = Object.fromEntries(
-                            Object.entries(profilesCache).splice(Object.values(profilesCache).length - profilesCacheMax)
+                            Object.entries(profilesCache)
+                                .splice(Object.values(profilesCache).length - profilesCacheMax)
                         );
                     } else profilesCacheSize++;
                 }
@@ -154,6 +157,12 @@ export default {
                     show: true,
                     banned: false
                 });
+
+                if (state.messages.filter(m => m.show).length > visibleMessagesMax) {
+                    [...state.messages]
+                        .splice(visibleMessagesMax, state.messages.filter(m => m.show).length - 1)
+                        .map(m => state.messages.find(_m => _m.id === m.id).show = false);
+                }
 
                 if (rootState.settings.settings.chat.sound) {
                     const sound = new Audio(notification);
