@@ -1,5 +1,6 @@
 <template>
     <vue-draggable-resizable
+        ref="movable"
         :class="{ active, nonactive: !active }"
         :draggable="active"
         :resizable="resizable && active"
@@ -11,15 +12,21 @@
         :h="source.height"
         :x="x"
         :y="y"
-        :axis="axis"
         @activated="onActivated"
         @deactivated="onDeactivated"
         @dragging="onDragging"
         @dragstop="onDrag"
         @resizestop="onResize"
     >
-        <span v-if="active && name.length > 0" class="name nowrap" v-text="name" />
-        <slot v-if="$slots.default" />
+        <div v-if="active && name.length > 0" class="movable-title" :class="{ widget: visible !== undefined }">
+            <div v-if="visible !== undefined" class="movable-title-visible" @click="$emit('turnVisible')">
+                <EyeIcon v-if="visible" class="icon clickable" />
+                <EyeCrossedIcon v-else class="icon clickable" />
+            </div>
+
+            <span class="movable-title-name nowrap" v-text="name" />
+        </div>
+        <slot v-if="$slots.default" />    
     </vue-draggable-resizable>
 </template>
 
@@ -27,12 +34,21 @@
 import { mapState } from "vuex";
 import { debounce } from "lodash";
 
+import EyeIcon from "~/assets/icons/eye.svg";
+import EyeCrossedIcon from "~/assets/icons/eye-crossed.svg";
+
 import WidgetsMixin from "~/mixins/widgets";
+
+const snapOffset = 15;
 
 let emitDebounce = null;
 let mouseDebounce = null;
 
 export default {
+    components: {
+        EyeIcon,
+        EyeCrossedIcon
+    },
     mixins: [WidgetsMixin],
     props: {
         source: {
@@ -48,6 +64,11 @@ export default {
             type: Boolean,
             required: false,
             default: true
+        },
+        visible: {
+            type: Boolean,
+            required: false,
+            default: undefined
         }
     },
     data: () => ({
@@ -55,7 +76,6 @@ export default {
         y: 0,
         rightBorder: 0,
         downBorder: 0,
-        axis: "both",
         mouse: true
     }),
     computed: {
@@ -68,8 +88,8 @@ export default {
         this.y = this.source.y ?? this.source.top;
 
         if (this.active) {
-            this.rightBorder = this.display.width - this.source.width;
-            this.downBorder = this.display.height - this.source.height;
+            this.rightBorder = this.display.width - this.source.width - snapOffset;
+            this.downBorder = this.display.height - this.source.height - snapOffset;
 
             emitDebounce = debounce(() => this.$emit("onDrag", ...[this.x, this.y]), 1000);
             mouseDebounce = debounce(() => (this.mouse = true), 500);
@@ -85,8 +105,8 @@ export default {
             this.$emit("onResize", ...args);
         },
         onDragging(x, y) {
-            this.x = Math.max(Math.min(x, this.rightBorder), -1);
-            this.y = Math.max(Math.min(y, this.downBorder), -1);
+            this.x = Math.max(Math.min(x, this.rightBorder + snapOffset), -1);
+            this.y = Math.max(Math.min(y, this.downBorder + snapOffset), -1);
 
             if (this.mouse) {
                 if (x !== this.x) {
@@ -166,22 +186,44 @@ export default {
         cursor: default;
     }
 
-    .name {
+    .movable-title {
         position: absolute;
-        top: -22px;
+        top: -29px;
+
+        display: grid;
+        grid-template-columns: 1fr;
+        align-items: center;
+        column-gap: 5px;
 
         width: 100%;
-        height: 22px;
 
         padding: 5px;
 
         background: $secondary;
-        border-radius: 10px 10px 0px 0px;
 
-        text-align: center;
+        &.widget {
+            grid-template-columns: max-content 1fr;
+        }
 
-        font-size: 9pt !important;
-        user-select: none;
+        &-visible {
+            display: flex;
+            align-items: center;
+
+            padding-right: 5px;
+
+            border-right: 1px solid #000000;
+
+            .icon {
+                width: 24px;
+
+                stroke: #ffffff;
+                stroke-width: 2px;
+            }
+        }
+
+        &-name {
+            justify-self: center;
+        }
     }
 }
 </style>

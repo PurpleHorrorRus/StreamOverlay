@@ -5,7 +5,6 @@
         <div v-if="!settings.first" id="content-valid">
             <Notifications />
             <OBS v-if="connected" />
-            <TwitchInfo v-if="user && settings.TwitchInfo.enable" />
             <TechInfo v-if="settings.TechInfo.enable && connected && status.tech !== null" />
             <Chat v-if="settings.chat.enable" />
             <ViewersList v-if="settings.ViewersList.enable" />
@@ -21,7 +20,6 @@ import { ipcRenderer } from "electron";
 import EditMode from "~/components/EditMode";
 
 import OBS from "~/components/OBS";
-import TwitchInfo from "~/components/TwitchInfo";
 import TechInfo from "~/components/obs/TechInfo";
 
 import Notifications from "~/components/Notifications/Notifications";
@@ -38,7 +36,6 @@ export default {
     components: {
         EditMode,
         OBS,
-        TwitchInfo,
         TechInfo,
         Notifications,
         Chat,

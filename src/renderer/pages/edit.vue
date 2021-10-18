@@ -68,6 +68,7 @@ export default {
                 id: Number((Math.random() * 1000).toFixed(0)),
                 name: "",
                 src: "",
+                visible: true,
                 style: {
                     x: 200,
                     y: 200,

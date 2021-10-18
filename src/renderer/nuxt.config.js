@@ -40,12 +40,20 @@ module.exports = {
                 maxAssetSize: 512000
             });
 
+            config.module.rules.find(rule => rule.test.test(".svg")).test = /\.(png|jpe?g|gif|webp)$/;
             config.module.rules.push({
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader"
-                }
+                test: /\.svg$/,
+                use: [
+                    "babel-loader",
+                    {
+                        loader: "vue-svg-loader",
+                        options: {
+                            svgo: {
+                                plugins: [{ removeDimensions: true }, { removeViewBox: false }]
+                            }
+                        }
+                    }
+                ]
             });
 
             config.module.rules.push({
