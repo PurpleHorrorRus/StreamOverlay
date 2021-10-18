@@ -42,8 +42,6 @@ export default {
 
 <style lang="scss">
 #chat-block-input {
-    grid-area: input;
-
     &-field {
         width: 100%;
         height: 100%;

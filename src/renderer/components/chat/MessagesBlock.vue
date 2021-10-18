@@ -37,9 +37,3 @@ export default {
     }
 };
 </script>
-
-<style lang="scss">
-#chat-block-messages {
-    grid-area: messages;
-}
-</style>

@@ -47,10 +47,7 @@ export default {
 #chat-block {
     display: grid;
     grid-template-columns: 100%;
-    grid-template-rows: 1fr 30px;
-    grid-template-areas:
-        "messages"
-        "input";
+    grid-template-rows: 1fr;
 
     height: 100%;
 
@@ -59,6 +56,8 @@ export default {
     overflow: hidden;
 
     &.input {
+        grid-template-rows: 1fr 30px;
+
         background: $primary;
 
         box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
