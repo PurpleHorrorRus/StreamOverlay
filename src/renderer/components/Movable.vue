@@ -188,7 +188,7 @@ export default {
 
     .movable-title {
         position: absolute;
-        top: -23px;
+        top: 0px;
 
         display: grid;
         grid-template-columns: 1fr;
@@ -202,6 +202,8 @@ export default {
         background: $secondary;
 
         border-radius: 4px 4px 0px 0px;
+
+        z-index: 99;
 
         &.widget {
             grid-template-columns: max-content 1fr;
