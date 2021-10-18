@@ -141,7 +141,8 @@ export default {
 
                 const time = new Date();
                 message = message.trim();
-                state.messages.unshift({
+                
+                const data = {
                     id: Date.now(),
                     time: misc.formatTime({
                         hours: time.getHours(),
@@ -156,12 +157,21 @@ export default {
                     mode: user["msg-id"],
                     show: true,
                     banned: false
-                });
+                };
+
+                state.messages.unshift(data);
 
                 if (state.messages.filter(m => m.show).length > visibleMessagesMax) {
                     [...state.messages]
                         .splice(visibleMessagesMax, state.messages.filter(m => m.show).length - 1)
                         .map(m => state.messages.find(_m => _m.id === m.id).show = false);
+                }
+
+                if (rootState.settings.settings.chat.timeout > 0) {
+                    setTimeout(
+                        () => (state.messages.find(m => m.id === data.id).show = false),
+                        rootState.settings.settings.chat.timeout * 1000
+                    );
                 }
 
                 if (rootState.settings.settings.chat.sound) {
@@ -277,12 +287,6 @@ export default {
             return formatted;
         },
         BAN: ({ state }, data) => client.ban(state.user.display_name, data.nickname, data.reason),
-        REMOVE_MESSAGE: ({ state }, id) => {
-            const index = state.messages.findIndex(m => m.id === id);
-            if (~index) {
-                state.messages[index].show = false;
-            }
-        },
         UPDATE: async ({ dispatch, state }, data) => {
             if (!data.title) data.title = state.stream.title;
             if (!data.game) data.game = state.stream.game;
