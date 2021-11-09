@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-const cssnano = require("cssnano");
 const isDev = process.env.NODE_ENV === "development";
 
 module.exports = {
@@ -33,12 +32,12 @@ module.exports = {
             }
 
             config.mode = process.env.NODE_ENV;
-            (config.devtool = isDev ? "inline-source-map" : false),
-            (config.performance = {
+            config.devtool = isDev ? "inline-source-map" : false;
+            config.performance = {
                 hints: false,
                 maxEntrypointSize: 512000,
                 maxAssetSize: 512000
-            });
+            };
 
             config.module.rules.find(rule => rule.test.test(".svg")).test = /\.(png|jpe?g|gif|webp)$/;
             config.module.rules.push({
@@ -105,29 +104,7 @@ module.exports = {
             }
             : {},
 
-        extractCSS: true,
-
-        postcss: {
-            plugins: [
-                cssnano({
-                    preset: [
-                        "default",
-                        {
-                            autoprefixer: false,
-                            cssDeclarationSorter: false,
-                            zindex: false,
-                            discardComments: {
-                                removeAll: true
-                            }
-                        }
-                    ]
-                })
-            ],
-            preset: {
-                autoprefixer: true
-            },
-            order: "cssnanoLast"
-        }
+        extractCSS: true
     },
     router: {
         prefetchLinks: false
