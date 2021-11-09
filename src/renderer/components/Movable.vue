@@ -84,11 +84,13 @@ export default {
         })
     },
     created() {
-        this.x = this.source.x ?? this.source.left;
-        this.y = this.source.y ?? this.source.top;
-
-        this.rightBorder = this.display.width - this.source.width - snapOffset;
+        this.rightBorder = this.display.width - this.source.width;
         this.downBorder = this.display.height - this.source.height - snapOffset;
+
+        this.normalizePosition(
+            (this.source.x || this.source.left) || 0, 
+            (this.source.y || this.source.top) || 0
+        );
 
         if (this.active) {
             emitDebounce = debounce(() => this.$emit("onDrag", ...[this.x, this.y]), 1000);
@@ -105,8 +107,8 @@ export default {
     },
     methods: {
         normalizePosition(x, y) {
-            this.x = Math.max(Math.min(x, this.rightBorder + snapOffset), -1);
-            this.y = Math.max(Math.min(y, this.downBorder + snapOffset), -1);
+            this.x = Math.max(Math.min(x, this.rightBorder + snapOffset), 0);
+            this.y = Math.max(Math.min(y, this.downBorder + snapOffset), 0);
         },
         onResize(...args) {
             this.$emit("onResize", ...args);
@@ -146,7 +148,7 @@ export default {
                     break;
                 }
                 case "ArrowLeft": {
-                    this.x = Math.max(this.x - 1, -1);
+                    this.x = Math.max(this.x - 1, 0);
                     this.$children[0].moveHorizontally(this.x);
                     break;
                 }
@@ -156,7 +158,7 @@ export default {
                     break;
                 }
                 case "ArrowUp": {
-                    this.y = Math.max(this.y - 1, -1);
+                    this.y = Math.max(this.y - 1, 0);
                     this.$children[0].moveVertically(this.y);
                     break;
                 }
