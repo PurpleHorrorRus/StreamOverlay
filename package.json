@@ -25,7 +25,7 @@
         "dev": "node .electron-nuxt/dev.js",
         "build": "node .electron-nuxt/build.js",
         "postinstall": "electron-builder install-app-deps",
-        "deps": "yarn && yarn postinstall && modclean -r && yarn build"
+        "deps": "yarn && yarn postinstall && modclean -r"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^1.2.36",
@@ -40,7 +40,7 @@
         "node-fetch": "2.6.1",
         "nuxt": "^2.15.8",
         "nuxt-fontawesome": "^0.4.0",
-        "nuxt-lazy-load": "^1.2.7",
+        "nuxt-lazy-load": "^1.2.9",
         "obs-websocket-js": "^4.0.3",
         "overlayaddon": "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git",
         "simple-helix-api": "https://github.com/PurpleHorrorRus/simple-helix-api#v2",
@@ -59,15 +59,15 @@
         "@xpda-dev/electron-launcher": "^0.3.0",
         "@xpda-dev/webpack-step": "0.1.5",
         "babel-eslint": "^10.1.0",
-        "babel-loader": "^8.2.2",
+        "babel-loader": "^8.2.3",
         "cross-env": "^7.0.3",
         "cssnano": "4.1.11",
-        "electron": "^15.2.0",
+        "electron": "15.3.1",
         "electron-builder": "^22.13.1",
-        "eslint": "^8.0.1",
-        "eslint-plugin-vue": "^7.19.1",
+        "eslint": "^8.1.0",
+        "eslint-plugin-vue": "^8.0.3",
         "file-loader": "^6.2.0",
-        "sass": "^1.43.2",
+        "sass": "^1.43.4",
         "sass-loader": "10.1.1",
         "url-loader": "^4.1.1",
         "vue-loader": "15.9.7"
