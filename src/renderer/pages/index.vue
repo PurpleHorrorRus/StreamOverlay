@@ -4,11 +4,15 @@
 
         <div v-if="!settings.first" id="content-valid">
             <Notifications />
-            <OBS v-if="user" />
-            <TechInfo v-if="settings.TechInfo.enable && connected && status.tech !== null" />
+            <OBS v-if="showOBS" />
+            <TechInfo v-if="showTechInfo" />
             <Chat v-if="settings.chat.enable" />
             <ViewersList v-if="settings.ViewersList.enable" />
-            <Widget v-for="widget of widgets" :key="widget.id" :widget="widget" />
+            <Widget
+                v-for="widget of widgets"
+                :key="widget.id"
+                :widget="widget"
+            />
         </div>
     </div>
 </template>
@@ -44,8 +48,16 @@ export default {
     },
     mixins: [OBSMixin, TwitchMixin, WidgetsMixin, other],
     computed: {
-        connected() {
-            return this.obs._connected;
+        showOBS() {
+            return this.user 
+                && (this.connected 
+                    || this.settings.OBSStatus.TwitchInfo.enable 
+                    || this.settings.OBSStatus.TwitchInfo.enableFollowers);
+        },
+        showTechInfo() {
+            return this.settings.TechInfo.enable &&
+                    this.connected &&
+                    this.status.tech !== null;
         }
     },
     async created() {
@@ -84,7 +96,7 @@ export default {
             return;
         }
 
-        if (!this.connected) {
+        if (!this.obs._connected) {
             if (this.config.settings.first) {
                 this.config.settings.first = false;
                 this.save(this.config.settings);

@@ -18,15 +18,23 @@
         @dragstop="onDrag"
         @resizestop="onResize"
     >
-        <div v-if="active && name.length > 0" class="movable-title" :class="{ widget: visible !== undefined }">
-            <div v-if="visible !== undefined" class="movable-title-visible" @click="$emit('turnVisible')">
+        <div
+            v-if="active && name.length > 0"
+            class="movable-title"
+            :class="{ widget: visible !== undefined }"
+        >
+            <div
+                v-if="visible !== undefined"
+                class="movable-title-visible"
+                @click="$emit('turnVisible')"
+            >
                 <EyeIcon v-if="visible" class="icon clickable" />
                 <EyeCrossedIcon v-else class="icon clickable" />
             </div>
 
             <span class="movable-title-name nowrap" v-text="name" />
         </div>
-        <slot v-if="$slots.default" />    
+        <slot v-if="$slots.default" />
     </vue-draggable-resizable>
 </template>
 
@@ -179,8 +187,11 @@ export default {
 
     border: none;
 
+    z-index: 1 !important;
+
     &.active {
-        background: linear-gradient($secondary, $secondary) top center/calc(100%) 2px,
+        background: linear-gradient($secondary, $secondary) top
+                center/calc(100%) 2px,
             linear-gradient($secondary, $secondary) bottom center/calc(100%) 2px,
             linear-gradient($secondary, $secondary) left center/2px calc(100%),
             linear-gradient($secondary, $secondary) right center/2px calc(100%);
@@ -208,8 +219,6 @@ export default {
         padding: 2px;
 
         background: $secondary;
-
-        border-radius: 4px 4px 0px 0px;
 
         z-index: 99;
 
