@@ -25,7 +25,7 @@ html, body, #__nuxt, #__layout, #content {
 }
 
 div, span, input, button {
-	font-family: "Roboto", sans-serif;
+	font-family: Roboto;
 	color: $text;
 }
 
@@ -84,16 +84,16 @@ button {
     }
 }
 
+.icon {
+    fill: #ffffff;
+}
+
 svg {
     color: #fff;
     outline: none;
 
-    &.clickable {
-        &:hover {
-            color: $secondary;
-            stroke: $secondary;
-            cursor: pointer;
-        }
+    &.clickable:hover {
+        cursor: pointer;
     }
 }
 

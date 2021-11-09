@@ -1,20 +1,39 @@
 <template>
     <div id="status">
-        <Dot />
-        <span v-if="settings.OBSStatus.time" id="status-time" v-text="formatTime" />
+        <BroadcastIcon
+            v-if="status.stream"
+            id="status-stream-icon"
+            class="icon"
+        />
+        <RecordIcon
+            v-else-if="status.record"
+            id="status-record-icon"
+            class="icon"
+        />
+        <DotIcon v-else id="status-ready-icon" class="icon" />
+
+        <span
+            v-if="settings.OBSStatus.time"
+            id="status-time"
+            v-text="formatTime"
+        />
     </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
 
-import Dot from "~/components/obs/Dot";
+import BroadcastIcon from "~/assets/icons/broadcast.svg";
+import RecordIcon from "~/assets/icons/record.svg";
+import DotIcon from "~/assets/icons/dot.svg";
 
 import misc from "~/plugins/misc";
 
 export default {
     components: {
-        Dot
+        BroadcastIcon,
+        RecordIcon,
+        DotIcon
     },
     computed: {
         ...mapState({
@@ -35,7 +54,21 @@ export default {
     align-items: center;
     column-gap: 5px;
 
-    width: max-content;
+    .icon {
+        width: 20px;
+    }
+
+    &-stream-icon {
+        fill: #ff0000;
+    }
+
+    &-record-icon path {
+        fill: #ff0000;
+    }
+
+    &-ready-icon circle {
+        fill: #90ee90;
+    }
 
     &-time {
         font-size: 11px;

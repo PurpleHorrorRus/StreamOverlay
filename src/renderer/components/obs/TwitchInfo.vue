@@ -1,19 +1,35 @@
 <template>
     <div id="twitch-info">
-        <div v-if="settings.OBSStatus.TwitchInfo.enable" id="twitch-info-viewers">
-            <EyeIcon class="icon shadow-box" />
-            <span id="twitch-info-viewers-count" class="shadow" v-text="viewers" />
+        <div
+            v-if="settings.OBSStatus.TwitchInfo.enable"
+            id="twitch-info-viewers"
+        >
+            <EyeIcon class="icon" />
+            <span
+                id="twitch-info-viewers-count"
+                class="shadow"
+                v-text="viewers"
+            />
         </div>
 
-        <div v-if="settings.OBSStatus.TwitchInfo.enableFollowers" id="twitch-info-followers">
-            <HeartIcon class="icon shadow-box" />
-            <span v-if="followers > -1" id="followers_count" class="shadow" v-text="followers" />
+        <div
+            v-if="settings.OBSStatus.TwitchInfo.enableFollowers"
+            id="twitch-info-followers"
+        >
+            <FollowersIcon class="icon" />
+            <span
+                v-if="followers > -1"
+                id="followers_count"
+                class="shadow"
+                v-text="followers"
+            />
         </div>
     </div>
 </template>
 
 <script>
-import { EyeIcon, HeartIcon } from "vue-feather-icons";
+import EyeIcon from "~/assets/icons/eye.svg";
+import FollowersIcon from "~/assets/icons/followers.svg";
 
 import TwitchMixin from "~/mixins/twitch";
 
@@ -22,7 +38,7 @@ let interval = null;
 export default {
     components: {
         EyeIcon,
-        HeartIcon
+        FollowersIcon
     },
     mixins: [TwitchMixin],
     data: () => ({
@@ -82,11 +98,6 @@ export default {
         span {
             color: #fff;
             font-size: 11px;
-        }
-
-        .icon {
-            stroke: #fff;
-            width: 13px;
         }
     }
 }

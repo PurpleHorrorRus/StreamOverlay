@@ -1,8 +1,18 @@
 <template>
-    <Movable :source="{ ...settings.OBSStatus, width, height }" :name="''" :resizable="false" @onDrag="onDrag">
+    <Movable
+        :source="{ ...settings.OBSStatus, width, height }"
+        :name="''"
+        :resizable="false"
+        @onDrag="onDrag"
+    >
         <div id="obs" ref="OBSStatus" :class="OBSClass">
             <Status v-if="connected" />
-            <TwitchInfo v-if="settings.OBSStatus.TwitchInfo.enable || settings.OBSStatus.TwitchInfo.enableFollowers" />
+            <TwitchInfo
+                v-if="
+                    settings.OBSStatus.TwitchInfo.enable ||
+                    settings.OBSStatus.TwitchInfo.enableFollowers
+                "
+            />
             <Devices v-if="connected" />
         </div>
     </Movable>
@@ -77,6 +87,10 @@ export default {
         #status {
             flex-direction: row-reverse;
         }
+    }
+
+    .icon {
+        width: 16px;
     }
 }
 </style>

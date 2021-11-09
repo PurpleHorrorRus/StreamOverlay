@@ -1,25 +1,34 @@
 <template>
     <div id="devices">
-        <MicOffIcon v-if="!devices.mic" class="device disabled icon shadow-box" />
-        <HeadphonesIcon v-if="!devices.sound" class="device disabled icon shadow-box" />
-        <CameraIcon
-            v-if="devices.camera !== null"
-            :class="{ disabled: devices.camera === false }"
-            class="device icon shadow-box"
+        <MicrophoneMutedIcon
+            v-if="!devices.mic"
+            id="devices-microphone-muted"
+            class="icon disabled"
         />
+
+        <SoundMutedIcon v-if="!devices.sound" class="icon disabled" />
+
+        <div v-if="devices.camera !== null" id="devices-camera">
+            <CameraIcon v-if="devices.camera" class="icon" />
+            <CameraDisabledIcon v-else class="icon disabled" />
+        </div>
     </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
 
-import { MicOffIcon, HeadphonesIcon, CameraIcon } from "vue-feather-icons";
+import MicrophoneMutedIcon from "~/assets/icons/microphone-muted.svg";
+import SoundMutedIcon from "~/assets/icons/sound-muted.svg";
+import CameraIcon from "~/assets/icons/camera.svg";
+import CameraDisabledIcon from "~/assets/icons/camera-disabled.svg";
 
 export default {
     components: {
-        MicOffIcon,
-        HeadphonesIcon,
-        CameraIcon
+        MicrophoneMutedIcon,
+        SoundMutedIcon,
+        CameraIcon,
+        CameraDisabledIcon
     },
     computed: {
         ...mapState({
@@ -38,19 +47,20 @@ export default {
 
 <style lang="scss">
 #devices {
-    position: relative;
-    top: 1px;
-
     display: flex;
     justify-content: space-between;
+    align-items: center;
     column-gap: 5px;
 
-    .device {
-        width: 13px;
+    &-camera {
+        display: flex;
+        align-items: center;
 
-        &.disabled {
-            stroke: #ff0000;
-        }
+        height: 100%;
+    }
+
+    .icon.disabled {
+        fill: #ff0000;
     }
 }
 </style>

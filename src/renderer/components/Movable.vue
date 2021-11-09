@@ -227,9 +227,6 @@ export default {
 
             .icon {
                 width: 24px;
-
-                stroke: #ffffff;
-                stroke-width: 2px;
             }
         }
 
