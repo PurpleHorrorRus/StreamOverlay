@@ -1,11 +1,11 @@
 <template>
-    <Movable 
+    <Movable
         ref="widget"
         class="widget"
-        :source="widget.style" 
-        :name="widget.name" 
+        :source="widget.style"
+        :name="widget.name"
         :visible="widget.visible"
-        @onDrag="onDrag" 
+        @onDrag="onDrag"
         @onResize="onResize"
         @turnVisible="turnVisible"
     >
