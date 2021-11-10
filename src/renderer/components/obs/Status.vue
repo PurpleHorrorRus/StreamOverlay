@@ -59,7 +59,7 @@ export default {
     }
 
     &-stream-icon {
-        fill: #ff0000;
+        fill: #8c00ff;
     }
 
     &-record-icon path {

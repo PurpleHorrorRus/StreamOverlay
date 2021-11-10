@@ -89,7 +89,7 @@ export default {
                 const data = await send("GetStreamingStatus");
 
                 state.status.stream = data.streaming;
-                state.status.recording = data.recording;
+                state.status.record = data.recording;
 
                 if (data.streaming || data.recording) {
                     dispatch("SETUP_UPDATE_INTERVAL");
@@ -117,7 +117,7 @@ export default {
                 state.obs.on("StreamStarting", async () => {
                     state.status.stream = true;
 
-                    if (!state.status.recording) {
+                    if (!state.status.record) {
                         dispatch("SETUP_UPDATE_INTERVAL");
                     }
                 });
@@ -128,20 +128,20 @@ export default {
                     dispatch("notifications/TURN", { name: "lowbitrate", show: false }, { root: true });
                     dispatch("notifications/TURN", { name: "lowfps", show: false }, { root: true });
 
-                    if (!state.status.recording) {
+                    if (!state.status.record) {
                         dispatch("CLEAR_UPDATE_INTERVAL");
                     }
                 });
 
                 state.obs.on("RecordingStarted", () => {
-                    state.status.recording = true;
+                    state.status.record = true;
                     if (!state.status.stream) {
                         dispatch("SETUP_UPDATE_INTERVAL");
                     }
                 });
 
                 state.obs.on("RecordingStopping", async () => {
-                    state.status.recording = false;
+                    state.status.record = false;
                     if (!state.status.stream) {
                         dispatch("CLEAR_UPDATE_INTERVAL");
                     }

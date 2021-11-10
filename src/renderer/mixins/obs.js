@@ -17,7 +17,7 @@ export default {
             return this.connected && this.status.stream;
         },
         recording() {
-            return this.connected && this.status.recording;
+            return this.connected && this.status.record;
         },
         isLeft() {
             return this.settings.OBSStatus.x < window.innerWidth / 2;
