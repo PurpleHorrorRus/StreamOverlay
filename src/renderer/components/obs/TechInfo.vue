@@ -1,12 +1,29 @@
 <template>
-    <Movable :source="settings.TechInfo" :name="'Техническая информация'" @onDrag="onDrag" @onResize="onResize">
+    <Movable
+        :source="settings.TechInfo"
+        :name="'Техническая информация'"
+        @onDrag="onDrag"
+        @onResize="onResize"
+    >
         <div id="tech-info">
-            <TechInfoItem v-if="status.stream" :label="'Bitrate'" :value="formatBitrate" :valueStyle="bitrateStyle" />
-            <TechInfoItem :label="'FPS'" :value="formatFPS" :valueStyle="FPSStyle" />
-            <TechInfoItem :label="'Frametime'" :value="formatFrametime" />
-            <TechInfoItem :label="'Render Frames Missed'" :value="formatRender" />
             <TechInfoItem
-                v-if="status.stream || status.recording"
+                v-if="status.stream"
+                :label="'Bitrate'"
+                :value="formatBitrate"
+                :valueStyle="bitrateStyle"
+            />
+            <TechInfoItem
+                :label="'FPS'"
+                :value="formatFPS"
+                :valueStyle="FPSStyle"
+            />
+            <TechInfoItem :label="'Frametime'" :value="formatFrametime" />
+            <TechInfoItem
+                :label="'Render Frames Missed'"
+                :value="formatRender"
+            />
+            <TechInfoItem
+                v-if="status.stream || status.record"
                 :label="'Output Frames Skipped'"
                 :value="formatOutput"
             />
