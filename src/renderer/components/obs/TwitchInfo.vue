@@ -8,7 +8,7 @@
             <span
                 id="twitch-info-viewers-count"
                 class="shadow"
-                v-text="viewers"
+                v-text="viewersCount"
             />
         </div>
 
@@ -17,12 +17,7 @@
             id="twitch-info-followers"
         >
             <FollowersIcon class="icon" />
-            <span
-                v-if="followers > -1"
-                id="followers_count"
-                class="shadow"
-                v-text="followers"
-            />
+            <span id="followers_count" class="shadow" v-text="followersCount" />
         </div>
     </div>
 </template>
@@ -42,9 +37,17 @@ export default {
     },
     mixins: [TwitchMixin],
     data: () => ({
-        viewers: 0,
-        followers: -1
+        viewers: null,
+        followers: null
     }),
+    computed: {
+        viewersCount() {
+            return this.viewers ?? "-";
+        },
+        followersCount() {
+            return this.followers ?? "-";
+        }
+    },
     async created() {
         await this.fetch();
         interval = setInterval(() => this.fetch(), 20000);
