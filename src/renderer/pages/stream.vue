@@ -3,7 +3,7 @@
         <div id="modal-stream-content" class="modal-content">
             <Title id="modal-stream-content-title" title="Трансляция" />
             <div id="modal-stream-content-art">
-                <img id="modal-stream-content-art-image" :src="art">
+                <img id="modal-stream-content-art-image" :src="art" />
             </div>
             <div id="modal-stream-content-edit">
                 <Input
@@ -18,7 +18,12 @@
                     @input="local.game = $event"
                     @keypress.enter.native="update"
                 />
-                <SolidButton label="Обновить" :disabled="disabled" :load="loading" @clicked="update" />
+                <SolidButton
+                    label="Обновить"
+                    :disabled="disabled"
+                    :load="loading"
+                    @clicked="update"
+                />
             </div>
             <Recent v-show="recent.length > 0" :recent="recent" />
             <div id="modal-stream-content-games">
@@ -30,8 +35,16 @@
                         @click.native="local.game = game.name"
                     />
                 </div>
-                <div v-if="search.length > 0" id="modal-stream-content-games-search">
-                    <Game v-for="game of search" :key="game.id" :game="game" @click.native="local.game = game.name" />
+                <div
+                    v-if="search.length > 0"
+                    id="modal-stream-content-games-search"
+                >
+                    <Game
+                        v-for="game of search"
+                        :key="game.id"
+                        :game="game"
+                        @click.native="local.game = game.name"
+                    />
                 </div>
             </div>
         </div>
