@@ -1,6 +1,6 @@
 <template>
     <div class="modal-content">
-        <Title id="modal-obs-content-title" title="Настройка OBS" />
+        <Title id="modal-stream-content-title" title="Настройка OBS" />
         <div class="modal-body">
             <div class="modal-item-tip">
                 <span class="modal-item-tip-text">
@@ -9,12 +9,12 @@
                     установите OBS Websocket
                 </span>
 
-                <SolidButton :label="'Установить OBS Websocket'" @clicked="install" />
+                <SolidButton id="install-obs-ws-button" :label="'Установить OBS Websocket'" @clicked="install" />
             </div>
 
-            <Input text="Адрес подключения" :value="address" @input="changeAddress" />
-            <Input text="Порт подключения" :value="port" @input="changePort" />
-            <Input text="Пароль" :value="password" @input="changePassword" />
+            <Input text="Адрес подключения" :value="address" @input="address = $event" />
+            <Input text="Порт подключения" :value="port" @input="port = $event" />
+            <Input text="Пароль" :value="password" @input="password = $event" />
             <Input
                 text="Название источника с веб-камерой"
                 :value="camera"
@@ -24,7 +24,7 @@
                 Если у вас нет веб-камеры или вы не палите лицо на стриме, оставьте это поле пустым.\
                 Если у вас несколько источников или групп с камерой в OBS, то впишите их названия через запятую.'
                 "
-                @input="changeCamera"
+                @input="camera = $event"
             />
 
             <div v-if="error.length" class="modal-item-tip">
@@ -60,7 +60,7 @@ export default {
         address: "localhost",
         port: 4444,
         password: "",
-        camera: [],
+        camera: "",
         error: ""
     }),
     computed: {
@@ -81,18 +81,6 @@ export default {
         }
     },
     methods: {
-        changeAddress(value) {
-            this.address = value;
-        },
-        changePort(value) {
-            this.port = value;
-        },
-        changePassword(value) {
-            this.password = value;
-        },
-        changeCamera(value) {
-            this.camera = value;
-        },
         async next() {
             this.load = true;
             this.error = "";
@@ -117,3 +105,10 @@ export default {
     }
 };
 </script>
+
+<style lang="scss">
+#install-obs-ws-button {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+</style>
