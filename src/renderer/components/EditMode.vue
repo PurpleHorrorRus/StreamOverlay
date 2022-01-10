@@ -9,16 +9,22 @@
 </template>
 
 <script>
+import { ipcRenderer } from "electron";
+
 import WidgetsMixin from "~/mixins/widgets";
 
 export default {
     mixins: [WidgetsMixin],
+    beforeDestroy() {
+        this.exitEdit();
+    },
     methods: {
         openFullEdit() {
             this.$router.replace("/edit").catch(() => {});
             this.active = false;
         },
         exitEdit() {
+            ipcRenderer.send("turnMouse", false);
             this.$router.replace("/").catch(() => {});
             this.active = false;
         }
