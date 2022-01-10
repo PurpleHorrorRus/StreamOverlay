@@ -1,28 +1,19 @@
 <template>
     <div class="badges">
-        <img v-for="badge of badges" :key="badge" class="badge" :style="badgeStyle" :src="badge">
+        <img v-for="badge of badges" :key="badge" class="badge" :style="pictureStyle" :src="badge">
     </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import MessageMixin from "~/components/chat/mixin";
 
 export default {
+    mixins: [MessageMixin],
     props: {
         badges: {
             type: Array,
             required: false,
             default: () => []
-        }
-    },
-    computed: {
-        ...mapState({
-            settings: state => state.settings.settings
-        }),
-        badgeStyle() {
-            return {
-                width: `${this.settings.chat.font}pt`
-            };
         }
     }
 };
@@ -31,6 +22,7 @@ export default {
 <style lang="scss">
 .badges {
     display: inline;
+
     vertical-align: middle;
 
     .badge {

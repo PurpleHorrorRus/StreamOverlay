@@ -1,8 +1,29 @@
 <template>
     <div class="message" :style="messageStyle">
-        <span v-if="$parent.input" class="message-time" :style="textStyle" v-text="`[${message.time}]`" />
-        <img v-if="settings.chat.avatar" v-lazy-load :style="pictureStyle" :data-src="message.avatar" class="avatar">
-        <Badges v-if="settings.chat.badges" :badges="message.badges" />
+        <span
+            v-if="$parent.input"
+            class="message-time"
+            :style="textStyle"
+            v-text="`[${message.time}]`"
+        />
+        <img
+            v-if="
+                settings.chat.avatar &&
+                    message.avatar &&
+                    message.avatar.length > 0
+            "
+            :style="pictureStyle"
+            :src="message.avatar"
+            class="avatar"
+        />
+        <Badges
+            v-if="
+                settings.chat.badges &&
+                    message.badges &&
+                    message.badges.length > 0
+            "
+            :badges="message.badges"
+        />
         <span
             v-tooltip="'Забанить'"
             :style="nicknameStyle"
@@ -11,7 +32,12 @@
             v-text="message.nickname"
         />
         <Body v-if="!message.banned" :items="message.formatted" />
-        <span v-else class="message-banned stroke" :style="textStyle" v-text="'Сообщение удалено'" />
+        <span
+            v-else
+            class="message-banned stroke"
+            :style="textStyle"
+            v-text="'Сообщение удалено'"
+        />
     </div>
 </template>
 
@@ -73,9 +99,6 @@ export default {
     }
 
     .avatar {
-        position: relative;
-        top: 1px;
-
         border-radius: 100px;
 
         vertical-align: middle;
