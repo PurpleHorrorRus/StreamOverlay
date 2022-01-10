@@ -344,18 +344,20 @@ export default {
             );
         },
         LOAD_BADGES: async ({ state }) => {
-            state.badges = Object.fromEntries(
-                Object.values({
-                    ...(await state.helix.badges.global()),
-                    ...(await state.helix.badges.channel(state.user.id))
-                })
-                    .map(({ set_id, versions }) =>
-                        Object.entries({
-                            [set_id]: versions ? versions[0].image_url_1x : ""
-                        })
-                    )
-                    .flat(1)
-            );
+            const [global, channel] = await Promise.all([
+                state.helix.chat.globalBadges(),
+                state.helix.chat.badges(state.user.id)
+            ]);
+
+            const values = Object.values({ ...global, ...channel });
+            const mapped = values.map(({ set_id, versions }) => {
+                return Object.entries({ [set_id]: versions ? versions[0].image_url_1x : "" });
+            }).flat(1);
+
+            return {
+                ...Object.fromEntries(mapped),
+                subscriber: channel.versions[0].image_url_1x
+            };
         },
         LOAD_EMOTES: async ({ state }) => {
             const betterttv_global_url = "https://api.betterttv.net/3/cached/emotes/global",
