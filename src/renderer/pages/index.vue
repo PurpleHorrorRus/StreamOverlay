@@ -2,17 +2,13 @@
     <div v-if="settings" id="content">
         <EditMode v-if="active" />
 
-        <div v-if="!settings.first" id="content-valid">
+        <div id="content-valid">
             <Notifications />
             <OBS v-if="showOBS" />
-            <TechInfo v-if="showTechInfo" />
+            <TechInfo v-if="settings.TechInfo.enable && connected && status.tech !== null" />
             <Chat v-if="settings.chat.enable" />
             <ViewersList v-if="settings.ViewersList.enable" />
-            <Widget
-                v-for="widget of widgets"
-                :key="widget.id"
-                :widget="widget"
-            />
+            <Widget v-for="widget of widgets" :key="widget.id" :widget="widget" />
         </div>
     </div>
 </template>
@@ -53,27 +49,21 @@ export default {
                 && (this.connected 
                     || this.settings.OBSStatus.TwitchInfo.enable 
                     || this.settings.OBSStatus.TwitchInfo.enableFollowers);
-        },
-        showTechInfo() {
-            return this.settings.TechInfo.enable &&
-                    this.connected &&
-                    this.status.tech !== null;
         }
     },
     async created() {
         if (this.$route.query?.edit) {
             this.active = true;
+            ipcRenderer.send("turnMouse", true);
         }
     },
     async mounted() {
-        if (this.$route.query?.edit) {
-            ipcRenderer.send("turnMouse", true);
+        if (this.active) {
             return;
         }
 
         if (!this.config) {
             this.setConfig(await ipcRenderer.invoke("config"));
-            this.setWidgets(this.config.widgets);
         }
 
         if (!this.config.OBS.address || !this.config.OBS.port) {
@@ -96,6 +86,8 @@ export default {
             return;
         }
 
+        this.setWidgets(this.config.widgets);
+
         if (!this.obs._connected) {
             if (this.config.settings.first) {
                 this.config.settings.first = false;
@@ -115,7 +107,7 @@ export default {
                         Alt + K - список зрителей",
 
                     color: "#343a40",
-                    icon: ["fas", "keyboard"],
+                    icon: () => import("~/assets/icons/keyboard.svg"),
                     handle: 10
                 });
 
@@ -130,8 +122,9 @@ export default {
 
             turnLock: "ipc/TURN_LOCK",
 
+            connectOBS: "obs/CONNECT",
+
             addNotification: "notifications/ADD",
-            turnNotification: "notifications/TURN",
             turnUpdate: "notifications/TURN_UPDATE"
         }),
         registerIPC() {
