@@ -27,7 +27,8 @@ export default {
         },
         OBSClass() {
             return {
-                connected: this.connected,
+                connected: this.connected && !this.streaming && !this.recording,
+                disconnected: !this.connected,
                 streaming: this.streaming,
                 recording: this.recording,
                 left: this.isLeft,
