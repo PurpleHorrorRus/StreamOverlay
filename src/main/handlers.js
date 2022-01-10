@@ -5,10 +5,12 @@ import common from "./common";
 
 export default {
     register: window => {
-        ipcMain.handleOnce("config", () => {
+        const config = () => {
             common.storage.config.display = screen.getPrimaryDisplay().size;
             return common.storage.config;
-        });
+        };
+
+        common.isDev ? ipcMain.handle("config", config) : ipcMain.handleOnce("config", config);
 
         ipcMain.on("turnMouse", (_event, enabled) => {
             if (window) {
