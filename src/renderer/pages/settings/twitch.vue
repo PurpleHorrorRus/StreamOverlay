@@ -127,7 +127,6 @@ export default {
             this.saveSettings({
                 type: "twitch",
                 content: {
-                    id: user.id,
                     username: user.display_name,
                     access_token: this.access_token,
                     oauth_token: this.oauth_token

@@ -320,7 +320,7 @@ export default {
             if (!data.game) data.game = state.stream.game;
 
             state.stream = data;
-            await state.helix.updateStream(state.credits.id, data.title, data.game);
+            await state.helix.updateStream(state.user.id, data.title, data.game);
             dispatch("UPDATE_RECENT", data);
 
             return true;
