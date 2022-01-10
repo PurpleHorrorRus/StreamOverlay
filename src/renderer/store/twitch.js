@@ -4,7 +4,6 @@ import { lookup } from "dns";
 import { delay } from "bluebird";
 
 import misc from "~/plugins/misc";
-import notification from "~/static/notification.mp3";
 
 const client_id = "zmin05a65f74rln2g94iv935w58nyq";
 
@@ -157,7 +156,7 @@ export default {
                 });
 
                 if (rootState.settings.settings.chat.sound) {
-                    const sound = new Audio(notification);
+                    const sound = new Audio("notification.mp3");
                     sound.volume = 0.6;
                     sound.play();
                 }
