@@ -2,12 +2,26 @@
     <div id="menu-header" :class="{ stream: streaming, expanded }">
         <div id="menu-header-profile">
             <div id="menu-header-profile-avatar">
-                <img id="menu-header-profile-avatar-image" :src="user.profile_image_url">
-                <span v-if="streaming" id="menu-header-profile-avatar-stream" v-text="'В ЭФИРЕ'" />
+                <img
+                    id="menu-header-profile-avatar-image"
+                    :src="user.profile_image_url"
+                />
+                <span
+                    v-if="streaming"
+                    id="menu-header-profile-avatar-stream"
+                    v-text="'В ЭФИРЕ'"
+                />
             </div>
             <div id="menu-header-profile-info">
-                <span id="menu-header-profile-info-name" v-text="user.display_name" />
-                <span v-if="user.description" id="menu-header-profile-info-description" v-text="user.description" />
+                <span
+                    id="menu-header-profile-info-name"
+                    v-text="user.display_name"
+                />
+                <span
+                    v-if="user.description"
+                    id="menu-header-profile-info-description"
+                    v-text="user.description"
+                />
             </div>
 
             <div v-if="connected && tags" id="menu-header-profile-expand-icon">
@@ -37,18 +51,19 @@
 <script>
 import { mapState } from "vuex";
 
-import TwitchMixin from "~/mixins/twitch";
-import OBSMixin from "~/mixins/obs";
-
 import Toggles from "~/components/menu/header/Toggles";
 import Actions from "~/components/menu/header/Actions";
 
 import ChevronLeft from "~/assets/icons/chevron-left.svg";
 import ChevronRight from "~/assets/icons/chevron-right.svg";
+
+import TwitchMixin from "~/mixins/twitch";
+import OBSMixin from "~/mixins/obs";
+
 export default {
     components: {
         Actions,
-        Toggles
+        Toggles,
         ChevronLeft,
         ChevronRight
     },
@@ -84,6 +99,8 @@ export default {
     background: $primary;
     border-top: 2px solid $secondary;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+
+    z-index: 100;
 
     &.expanded {
         grid-template-columns: 1fr 450px;
