@@ -72,7 +72,7 @@ import CoreMixin from "~/mixins/core";
 export default {
     components: {
         Title,
-        Item,
+        Item
     },
     mixins: [CoreMixin],
     layout: "modal",
