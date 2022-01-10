@@ -1,13 +1,16 @@
 <template>
-    <div :style="{ background: notification.color }" class="notification" :class="{ icon: notification.icon }">
-        <FontAwesomeIcon
+    <div 
+        :style="{ background: notification.color }" 
+        class="notification"
+        :class="{ icon: Boolean(notification.icon) }"
+    >
+        <Component
+            :is="notification.icon"
             v-if="notification.icon"
-            :icon="notification.icon"
-            :spin="Boolean(notification.spin)"
+            class="icon"
+            :class="{ spin: Boolean(notification.spin) }"
         />
-        <div class="notification-content">
-            <span class="notification-text" v-html="notification.text" />
-        </div>
+        <span class="notification-text" v-html="notification.text" />
     </div>
 </template>
 
@@ -25,20 +28,24 @@ export default {
 <style lang="scss">
 .notification {
     display: grid;
-    grid-template-columns: 300px;
-    grid-template-rows: auto;
-
     align-items: center;
+    column-gap: 5px;
+
+    width: 300px;
 
     margin-bottom: 10px;
     padding: 15px;
 
     background: $backdrop;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-    border-radius: 3px;
+    box-shadow: 0 3px 6px #00000029, 0 3px 6px #00000003;
+    border-radius: 4px;
 
     &.icon {
-        grid-template-columns: 30px 270px;
+        grid-template-columns: 30px 1fr;
+    }
+
+    .icon {
+        height: 100%;
     }
 }
 </style>

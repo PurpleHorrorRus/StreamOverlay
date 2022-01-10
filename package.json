@@ -28,18 +28,12 @@
         "deps": "yarn && yarn postinstall && modclean -r"
     },
     "dependencies": {
-        "@fortawesome/fontawesome-svg-core": "^1.2.36",
-        "@fortawesome/free-brands-svg-icons": "^5.15.4",
-        "@fortawesome/free-regular-svg-icons": "^5.15.4",
-        "@fortawesome/free-solid-svg-icons": "^5.15.4",
-        "@fortawesome/vue-fontawesome": "2.0.2",
         "bluebird": "^3.7.2",
         "electron-updater": "4.3.9",
         "express": "^4.17.1",
         "http": "^0.0.1-security",
         "node-fetch": "2.6.1",
         "nuxt": "^2.15.8",
-        "nuxt-fontawesome": "^0.4.0",
         "nuxt-lazy-load": "^1.2.9",
         "obs-websocket-js": "^4.0.3",
         "overlayaddon": "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git",

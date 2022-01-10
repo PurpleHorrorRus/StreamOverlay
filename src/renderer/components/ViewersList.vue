@@ -18,7 +18,7 @@
             </div>
         </div>
         <div v-else id="loading-block">
-            <FontAwesomeIcon id="loading-icon" icon="circle-notch" spin />
+            <LoaderIcon class="icon spin" />
         </div>
     </Movable>
 </template>
@@ -30,13 +30,17 @@ import _ from "lodash";
 import fetch from "node-fetch";
 
 import Movable from "~/components/Movable";
+import LoaderIcon from "~/assets/icons/loader.svg";
 
 import TwitchMixin from "~/mixins/twitch";
 
 let interval = null;
 
 export default {
-    components: { Movable },
+    components: { 
+        Movable,
+        LoaderIcon
+    },
     mixins: [TwitchMixin],
     data: () => ({
         loading: true,

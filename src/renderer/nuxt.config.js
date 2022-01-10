@@ -125,7 +125,6 @@ module.exports = {
     plugins: [
         "~/plugins/errors.js",
         { src: "~plugins/vue-draggable-resizable", mode: "client" },
-        { src: "~plugins/font-awesome", mode: "client" },
         { src: "~plugins/vue-range-component.js", mode: "client" },
         { src: "~plugins/vue-toggle-button.js", mode: "client" },
         { src: "~plugins/tooltip.js", mode: "client" }
@@ -144,25 +143,6 @@ module.exports = {
                 directiveOnly: true,
 
                 defaultImage: "/lazy_avatar.png"
-            }
-        ],
-        [
-            "nuxt-fontawesome",
-            {
-                imports: [
-                    {
-                        set: "@fortawesome/free-solid-svg-icons",
-                        icons: ["fas"]
-                    },
-                    {
-                        set: "@fortawesome/free-brands-svg-icons",
-                        icons: ["fab"]
-                    },
-                    {
-                        set: "@fortawesome/free-regular-svg-icons",
-                        icons: ["far"]
-                    }
-                ]
             }
         ]
     ],

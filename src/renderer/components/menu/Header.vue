@@ -10,14 +10,21 @@
                 <span v-if="user.description" id="menu-header-profile-info-description" v-text="user.description" />
             </div>
 
-            <FontAwesomeIcon
-                v-if="connected && tags"
-                id="menu-header-profile-expand-icon"
-                v-tooltip="'Действия'"
-                class="icon clickable"
-                :icon="['fas', !expanded ? 'angle-left' : 'angle-right']"
-                @click="expanded = !expanded"
-            />
+            <div v-if="connected && tags" id="menu-header-profile-expand-icon">
+                <ChevronLeft
+                    v-if="!expanded"
+                    id="menu-header-profile-expand-icon"
+                    class="icon feather clickable"
+                    @click="expanded = true"
+                />
+
+                <ChevronRight
+                    v-else
+                    id="menu-header-profile-expand-icon"
+                    class="icon feather clickable"
+                    @click="expanded = false"
+                />
+            </div>
         </div>
 
         <div v-if="expanded" id="menu-header-expand">
@@ -36,10 +43,14 @@ import OBSMixin from "~/mixins/obs";
 import Toggles from "~/components/menu/header/Toggles";
 import Actions from "~/components/menu/header/Actions";
 
+import ChevronLeft from "~/assets/icons/chevron-left.svg";
+import ChevronRight from "~/assets/icons/chevron-right.svg";
 export default {
     components: {
         Actions,
         Toggles
+        ChevronLeft,
+        ChevronRight
     },
     mixins: [TwitchMixin, OBSMixin],
     data: () => ({

@@ -1,13 +1,20 @@
 <template>
     <div id="modal-lock">
         <span id="modal-lock-tip" v-text="'Alt+A'" />
-        <FontAwesomeIcon v-if="locked" :icon="['fa', 'lock']" style="color: lightgreen" />
-        <FontAwesomeIcon v-else :icon="['fa', 'unlock']" style="color: red" />
+        <LockIcon v-if="locked" id="locked" class="icon" />
+        <UnlockIcon v-else id="unlocked" class="icon" />
     </div>
 </template>
 
 <script>
+import LockIcon from "~/assets/icons/lock.svg";
+import UnlockIcon from "~/assets/icons/unlock.svg";
+
 export default {
+    components: {
+        LockIcon,
+        UnlockIcon
+    },
     props: {
         locked: {
             type: Boolean,
@@ -23,16 +30,24 @@ export default {
     top: 10px;
     right: 10px;
 
-    font-size: 15pt;
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
 
     &-tip {
-        padding: 5px;
-
-        border-radius: 5px;
+        border-radius: 4px;
         background: rgba(0, 0, 0, 0.7);
 
-        font-size: 10pt;
+        font-size: 13px;
         font-weight: 600;
+    }
+
+    #locked {
+        stroke: #ff0000;
+    }
+
+    #unlocked {
+        stroke: #90ee90;
     }
 }
 </style>

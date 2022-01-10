@@ -1,8 +1,17 @@
 <template>
     <div id="modal-container-items">
-        <div v-for="item of items" :key="item.link" v-tooltip="item.text" class="menu-item clickable">
-            <nuxt-link :to="item.link" active-class="active" class="menu-item-link">
-                <FontAwesomeIcon :icon="item.icon" />
+        <div
+            v-for="item of items"
+            :key="item.link"
+            v-tooltip="item.text"
+            class="menu-item clickable"
+        >
+            <nuxt-link
+                :to="item.link"
+                active-class="active"
+                class="menu-item-link"
+            >
+                <Component :is="item.icon" class="icon" />
             </nuxt-link>
         </div>
     </div>
@@ -15,32 +24,32 @@ export default {
             {
                 text: "Трансляция",
                 link: "/stream",
-                icon: ["fas", "signal"]
+                icon: () => import("~/assets/icons/broadcast.svg")
             },
             {
-                text: "Редактирование виджетов",
-                icon: ["fas", "pen"],
-                link: "/?edit=true"
+                text: "Режим редактирования",
+                link: "/?edit=true",
+                icon: () => import("~/assets/icons/pencil.svg")
             },
             {
                 text: "Настройки OBS",
-                icon: ["fas", "wrench"],
-                link: "/settings/obs"
+                link: "/settings/obs",
+                icon: () => import("~/assets/icons/wrench.svg")
             },
             {
                 text: "Настройки Twitch",
-                icon: ["fab", "twitch"],
-                link: "/settings/twitch"
+                link: "/settings/twitch",
+                icon: () => import("~/assets/icons/twitch.svg")
             },
             {
                 text: "Настройки чата",
-                icon: ["fas", "comment"],
-                link: "/settings/chat"
+                link: "/settings/chat",
+                icon: () => import("~/assets/icons/chat.svg")
             },
             {
                 text: "Прочие настройки",
-                icon: ["fas", "tools"],
-                link: "/settings/other"
+                link: "/settings/other",
+                icon: () => import("~/assets/icons/settings.svg")
             }
         ]
     })

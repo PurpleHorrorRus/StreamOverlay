@@ -49,7 +49,8 @@
             </div>
         </div>
     </div>
-    <FontAwesomeIcon v-else class="modal-load" icon="circle-notch" spin />
+
+    <LoaderIcon v-else class="modal-load icon spin" />
 </template>
 
 <script>
@@ -59,8 +60,9 @@ import Title from "~/components/menu/Title";
 import Input from "~/components/settings/Input";
 import Game from "~/components/Game";
 import SolidButton from "~/components/SolidButton";
-
 import Recent from "~/components/Recent";
+
+import LoaderIcon from "~/assets/icons/loader.svg";
 
 import TwitchMixin from "~/mixins/twitch";
 
@@ -78,7 +80,8 @@ export default {
         Input,
         Game,
         SolidButton,
-        Recent
+        Recent,
+        LoaderIcon
     },
     mixins: [TwitchMixin],
     layout: "modal",

@@ -75,25 +75,38 @@ button {
     }
 
     &-thumb {
-        background: rgb(46, 46, 46);
+        background: #2e2e2e;
         border-radius: 0px 0px 0px 0px;
 
         &:hover {
-            background: rgb(37, 37, 37);
+            background: #252525;
         }
     }
 }
 
 .icon {
-    fill: #ffffff;
-}
+    width: 24px;
 
-svg {
-    color: #fff;
     outline: none;
+
+    &.feather {
+        stroke: #ffffff;
+    }
+
+    &:not(.feather) {
+        fill: #ffffff;
+    }
 
     &.clickable:hover {
         cursor: pointer;
+        
+        &.feather {
+            stroke: $secondary;
+        }
+
+        &:not(.feather) {
+            fill: $secondary
+        }
     }
 }
 
@@ -199,4 +212,22 @@ a {
 
 .fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
     opacity: 0;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(180deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.spin {
+    animation: spin 3s infinite linear;
 }

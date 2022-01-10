@@ -1,5 +1,9 @@
 <template>
-    <div v-if="!firstLoad && !denied" id="modal-prediction-content" class="modal-content">
+    <div
+        v-if="!firstLoad && !denied"
+        id="modal-prediction-content"
+        class="modal-content"
+    >
         <Title id="modal-prediction-title" title="Предсказание" />
         <div id="modal-prediction-content-container">
             <Input
@@ -12,12 +16,24 @@
             />
             <Outcomes />
             <div id="modal-prediction-content-container-buttons">
-                <SolidButton v-if="!isActive" label="Начать" :load="load" :disabled="!canCreate" @clicked="start" />
-                <SolidButton v-else label="Отменить" :load="load" @clicked="cancel" />
+                <SolidButton
+                    v-if="!isActive"
+                    label="Начать"
+                    :load="load"
+                    :disabled="!canCreate"
+                    @clicked="start"
+                />
+                <SolidButton
+                    v-else
+                    label="Отменить"
+                    :load="load"
+                    @clicked="cancel"
+                />
             </div>
         </div>
     </div>
-    <FontAwesomeIcon v-else class="modal-load" icon="circle-notch" spin />
+
+    <LoaderIcon v-else class="modal-load icon spin" />
 </template>
 
 <script>
@@ -25,6 +41,8 @@ import Title from "~/components/menu/Title";
 import Input from "~/components/settings/Input";
 import Outcomes from "~/components/menu/predictions/Outcomes";
 import SolidButton from "~/components/SolidButton";
+
+import LoaderIcon from "~/assets/icons/loader.svg";
 
 import TwitchMixin from "~/mixins/twitch";
 
@@ -41,7 +59,8 @@ export default {
         Title,
         Input,
         Outcomes,
-        SolidButton
+        SolidButton,
+        LoaderIcon
     },
     mixins: [TwitchMixin],
     layout: "modal",
@@ -53,10 +72,16 @@ export default {
     }),
     computed: {
         canCreate() {
-            return this.prediction.title && !~this.prediction.outcomes.findIndex(o => !o.title);
+            return (
+                this.prediction.title &&
+                !~this.prediction.outcomes.findIndex(o => !o.title)
+            );
         },
         isActive() {
-            return this.prediction.status === "ACTIVE" || this.prediction.status === "LOCKED";
+            return (
+                this.prediction.status === "ACTIVE" ||
+                this.prediction.status === "LOCKED"
+            );
         }
     },
     async created() {
@@ -73,20 +98,11 @@ export default {
     },
     methods: {
         async get() {
-            const response = await this.helix.predictions.get(this.user.id);
-
-            if (!response[0]) {
-                this.denied = true;
-                return this.addNotification({
-                    // eslint-disable-next-line max-len
-                    text: "Для использования этой функции необходимо сгенерировать новый Access Token в настройках Twitch",
-                    color: "red",
-                    handle: 15
-                });
-            }
-
-            const [prediction] = response;
-            if (prediction.status === "ACTIVE" || prediction.status === "LOCKED") {
+            const [prediction] = await this.helix.predictions.get(this.user.id);
+            if (
+                prediction.status === "ACTIVE" ||
+                prediction.status === "LOCKED"
+            ) {
                 this.prediction = prediction;
             }
         },
@@ -108,23 +124,32 @@ export default {
             if (this.isActive) {
                 this.load = true;
 
-                await this.helix.predictions.end(this.user.id, this.prediction.id, "RESOLVED", {
-                    winning_outcome_id: this.prediction.outcomes[index].id
-                });
+                await this.helix.predictions.end(
+                    this.user.id,
+                    this.prediction.id,
+                    "RESOLVED",
+                    {
+                        winning_outcome_id: this.prediction.outcomes[index].id
+                    }
+                );
 
-                this.prediction = empty;
                 this.clear();
                 this.load = false;
             }
         },
         async cancel() {
             this.load = true;
-            await this.helix.predictions.end(this.user.id, this.prediction.id, "CANCELED");
-            this.prediction = empty;
+            await this.helix.predictions.end(
+                this.user.id,
+                this.prediction.id,
+                "CANCELED"
+            );
             this.clear();
             this.load = false;
         },
         clear() {
+            this.prediction = empty;
+
             if (updateInterval) {
                 clearInterval(updateInterval);
                 updateInterval = null;

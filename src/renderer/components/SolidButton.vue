@@ -1,26 +1,22 @@
 <template>
     <div class="solid-button" :class="{ disabled }" @click.stop="click">
-        <div v-if="!load" class="solid-button-text">
-            <FontAwesomeIcon v-if="icon.length > 0" class="solid-button-text-icon" :icon="icon" />
-            <span class="solid-button-text-label" v-text="label" />
-        </div>
-
-        <FontAwesomeIcon v-else icon="circle-notch" spin />
+        <span v-if="!load" class="solid-button-text" v-text="label" />
+        <LoaderIcon v-else class="icon spin" />
     </div>
 </template>
 
 <script>
+import LoaderIcon from "~/assets/icons/loader.svg";
+
 export default {
+    components: {
+        LoaderIcon
+    },
     props: {
         load: {
             type: Boolean,
             required: false,
             default: false
-        },
-        icon: {
-            type: Array,
-            required: false,
-            default: () => []
         },
         label: {
             type: String,
@@ -44,16 +40,19 @@ export default {
 
 <style lang="scss">
 .solid-button {
-    display: block;
-    min-width: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    min-width: 100px;
     width: max-content;
     max-width: 400px;
     height: 30px;
 
-    padding: 8px;
+    padding: 0px 5px 0px 5px;
 
     background: $secondary;
-    border-radius: 5px;
+    border-radius: 4px;
 
     font-size: 9pt;
     text-align: center;
@@ -83,11 +82,12 @@ export default {
     }
 
     &-text {
-        &-icon,
-        &-label {
-            display: inline-block;
-            color: $text;
-        }
+        display: inline-block;
+        color: $text;
+    }
+
+    .icon {
+        width: 16px;
     }
 }
 </style>
