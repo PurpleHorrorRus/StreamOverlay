@@ -26,9 +26,10 @@
             />
 
             <Item
-                :text="'Включить Content Protection'"
-                :checked="settings.contentProtection"
-                @change="turn('contentProtection')"
+                :text="'Включить аппаратное ускорение'"
+                :checked="settings.hardwareAcceleration"
+                tip="Необходима перезагрузка приложения"
+                @change="turn('hardwareAcceleration')"
             />
 
             <Item :text="'Включить инструменты разработчика'" :checked="settings.devtools" @change="turnDevtools" />

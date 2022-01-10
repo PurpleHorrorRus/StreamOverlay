@@ -11,6 +11,7 @@ const clear = {
         contentProtection: true,
         RAMClean: false,
         devtools: false,
+        hardwareAcceleration: true,
         chat: {
             enable: true,
             avatar: true,

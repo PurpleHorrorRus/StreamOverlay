@@ -1,11 +1,15 @@
 /* eslint-disable no-undef */
 import { app } from "electron";
 
-import { default as mainWindow } from "./main";
-import { default as tray } from "./tray";
+import mainWindow from "./main";
+import common from "./common";
+import tray from "./tray";
 
 if (app.requestSingleInstanceLock()) {
-    app.disableHardwareAcceleration();
+    if (!common.storage.config.settings.hardwareAcceleration) {
+        app.disableHardwareAcceleration();
+    }
+    
     app.on("window-all-closed", app.quit);
     app.whenReady().then(() => {
         mainWindow.create();
