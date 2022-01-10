@@ -12,6 +12,7 @@ const clear = {
         RAMClean: false,
         devtools: false,
         hardwareAcceleration: true,
+        outputDeviceId: "default",
         chat: {
             enable: true,
             avatar: true,
@@ -70,7 +71,12 @@ const clear = {
         camera: []
     },
     widgets: [],
-    recent: []
+    recent: [],
+    autoprocess: {
+        enable: false,
+        list: []
+    },
+    chatters: []
 };
 
 const readJSON = dir => JSON.parse(fs.readFileSync(dir, "UTF-8"));
@@ -86,7 +92,7 @@ if (!fs.existsSync(configPath)) {
     fs.mkdirSync(configPath);
 }
 
-const spath = isDev ? path.join(configPath, "StreamOverlay") : configPath;
+const spath = isDev ? path.join(configPath, "StreamOverlayMaximum") : configPath;
 if (!fs.existsSync(spath)) {
     fs.mkdirSync(spath);
 }
@@ -115,18 +121,13 @@ const dataPath = filename => path.join(spath, filename);
 const exist = path => fs.existsSync(path);
 const data = (path, clear) => (exist(path) ? nested(readJSON(path), clear) : writeJSON(path, clear));
 
-if (exist(path.join(spath, "overlays.json"))) {
-    fs.renameSync(path.join(spath, "overlays.json"), path.join(spath, "widgets.json"));
-}
-
 const paths = {
     spath,
     settings: dataPath("settings.json"),
     twitch: dataPath("twitch.json"),
     OBS: dataPath("obs.json"),
     widgets: dataPath("widgets.json"),
-    recent: dataPath("recent.json"),
-    autoprocess: dataPath("autoprocess.json")
+    recent: dataPath("recent.json")
 };
 
 const config = {

@@ -6,21 +6,26 @@ import common from "./common";
 
 autoUpdater.currentVersion = app.getVersion();
 autoUpdater.autoDownload = true;
+class Updater {
+    constructor (window) {
+        this.window = window;
+    }
 
-autoUpdater.on("error", () => {
-    return;
-});
+    init () {
+        autoUpdater.on("error", () => {
+            return;
+        });
 
-autoUpdater.on("update-downloaded", () => autoUpdater.quitAndInstall(false, true));
-
-export default {
-    init: window => {
-        autoUpdater.on("download-progress", progress => common.windows.send(window, "download-progress", progress));
-        autoUpdater.on("update-available", info => common.windows.send(window, "update-available", info));
+        // eslint-disable-next-line max-len
+        autoUpdater.on("download-progress", progress => common.windows.send(this.window, "download-progress", progress));
+        autoUpdater.on("update-available", info => common.windows.send(this.window, "update-available", info));
+        autoUpdater.on("update-downloaded", () => autoUpdater.quitAndInstall(false, true));
         autoUpdater.checkForUpdates();
 
         return {
             interval: timeout => setInterval(() => autoUpdater.checkForUpdates(), timeout)
         };
     }
-};
+}
+
+export default Updater;

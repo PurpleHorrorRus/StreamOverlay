@@ -1,43 +1,49 @@
+/* eslint-disable constructor-super */
 import addon from "overlayaddon";
 import path from "path";
 
 import common from "./common";
 
-const clearMemory = () => {
-    addon.SetLowPriority();
+class Addon {
+    constructor (window) {
+        this.window = window;
 
-    if (common.storage.config.settings.RAMClean) {
+        // eslint-disable-next-line no-undef
+        addon.InitWindow(this.window.getNativeWindowHandle(), path.basename(process.execPath));
+        addon.SetLowPriority();
         addon.ReduceWorkingSet();
     }
-};
 
-const moveTop = window => {
-    if (window && !window.menu) {
-        addon.MoveTop();
-        window.showInactive();
-    }
-};
+    clearMemory () {
+        addon.SetLowPriority();
 
-const init = window => {
-    // eslint-disable-next-line no-undef
-    addon.InitWindow(window.getNativeWindowHandle(), path.basename(process.execPath));
-    addon.SetLowPriority();
-    addon.ReduceWorkingSet();
-
-    return {
-        clearMemory: () => {
-            clearMemory();
-            return {
-                interval: timeout => setInterval(clearMemory, timeout)
-            };
-        },
-        moveTop: () => {
-            moveTop(window);
-            return {
-                interval: timeout => setInterval(() => moveTop(window), timeout)
-            };
+        if (common.storage.config.settings.RAMClean) {
+            addon.ReduceWorkingSet();
         }
-    };
-};
 
-export default { init, ...addon };
+        return {
+            interval: timeout => setInterval(() => this.clearMemory(), timeout)
+        };
+    }
+
+    moveTop () {
+        if (!this.window.menu) {
+            addon.MoveTop();
+            this.window.showInactive();
+        }
+
+        return {
+            interval: timeout => setInterval(() => this.moveTop(), timeout)
+        };
+    }
+
+    FindWindow (name) {
+        return addon.FindWindow(name);
+    }
+
+    GetNames () {
+        return addon.GetNames();
+    }
+}
+
+export default Addon;

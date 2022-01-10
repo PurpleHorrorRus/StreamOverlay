@@ -1,10 +1,9 @@
 import { ipcMain, screen } from "electron";
 
-import hotkeys from "./hotkeys";
 import common from "./common";
 
-export default {
-    register: window => {
+class Handlers {
+    constructor (mainWindowInstance, hotkeysInstance) {
         const config = () => {
             common.storage.config.display = screen.getPrimaryDisplay().size;
             return common.storage.config;
@@ -13,16 +12,18 @@ export default {
         common.isDev ? ipcMain.handle("config", config) : ipcMain.handleOnce("config", config);
 
         ipcMain.on("turnMouse", (_event, enabled) => {
-            if (window) {
-                window.setIgnoreMouseEvents(!enabled);
-                enabled ? hotkeys.registerMenuHotkeys(window) : hotkeys.registerIndexHotkeys(window);
-            }
+            mainWindowInstance.window.setIgnoreMouseEvents(!enabled);
+            enabled ? hotkeysInstance.registerMenuHotkeys() : hotkeysInstance.registerIndexHotkeys();
         });
-
+        
         ipcMain.on("saveSettings", (_, args) => common.storage.save(args.type, args.content));
 
-        ipcMain.on("devTools", (_event, sequence) =>
-            sequence ? window.openDevTools({ mode: "undocked" }) : window.closeDevTools()
-        );
+        ipcMain.on("devTools", (_event, sequence) => {
+            sequence 
+                ? mainWindowInstance.window.webContents.openDevTools({ mode: "undocked" }) 
+                : mainWindowInstance.window.webContents.closeDevTools();
+        });
     }
-};
+}
+
+export default Handlers;

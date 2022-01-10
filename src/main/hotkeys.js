@@ -2,34 +2,39 @@ import { globalShortcut } from "electron";
 
 import common from "./common";
 
-let lock = false;
+class Hotkeys {
+    constructor (window) {
+        this.window = window;
+    }
 
-export default {
-    register: window => {
-        window.menu = false;
-        window.lock = false;
+    register () {
+        this.window.menu = false;
+        this.window.lock = false;
 
         globalShortcut.register("Alt+R", () => {
-            if (window) {
-                window.menu = !window.menu;
-                common.windows.send(window, "turnMenu", window.menu);
-            }
+            this.window.menu = !this.window.menu;
+            this.window.lock = this.window.menu;
+            common.windows.send(this.window, "turnMenu", this.window.menu);
         });
-    },
-    registerIndexHotkeys: window => {
-        window.lock = false;
+    }
+
+    registerIndexHotkeys () {
+        this.window.lock = false;
 
         globalShortcut.unregister("Alt+A");
-        globalShortcut.register("Alt+K", () => common.windows.send(window, "turnViewersList"));
-    },
-    registerMenuHotkeys: window => {
-        window.lock = true;
+        globalShortcut.register("Alt+K", () => common.windows.send(this.window, "turnViewersList"));
+    }
+
+    registerMenuHotkeys () {
+        this.window.lock = true;
 
         globalShortcut.unregister("Alt+K");
         globalShortcut.register("Alt+A", () => {
-            console.log("Alt+A");
-            window.lock = !window.lock;
-            common.windows.send(window, "turnLock", window.lock);
+            this.window.lock = !this.window.lock;
+            this.window.setIgnoreMouseEvents(!this.window.lock);
+            common.windows.send(this.window, "turnLock", this.window.lock);
         });
     }
-};
+}
+
+export default Hotkeys;
