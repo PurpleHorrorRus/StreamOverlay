@@ -30,6 +30,8 @@ export default {
                 show: true,
                 release
             };
-        }
+        },
+        TURN_LOWFPS: ({ state }, sequence) => state.lowfps = sequence,
+        TURN_LOWBITRATE: ({ state }, sequence) => state.lowbitrate = sequence
     }
 };
