@@ -18,7 +18,7 @@ const addPart = (formatted, type, content) => {
 
 let client = null;
 
-let betterTTV = null,
+let BetterTTV = null,
     FrankerFaceZ = null;
 
 let utterQuery = [];
@@ -29,6 +29,9 @@ let profilesCacheSize = 0;
 let profilesCache = {};
 
 const visibleMessagesMax = 15;
+
+// eslint-disable-next-line max-len
+const linkRegex = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
 
 // eslint-disable-next-line no-undef
 if (process.client) {
@@ -90,15 +93,18 @@ export default {
 
             state.user = await state.helix.users.getByLogin(state.credits.username);
             state.channel = await state.helix.channel.get(state.user.id);
-            profilesCache[state.user.username] = state.user;
+            profilesCache[state.credits.username] = state.user;
 
             state.stream = {
                 title: state.channel.title,
                 game: state.channel.game_name
             };
 
-            dispatch("LOAD_BADGES");
-            dispatch("LOAD_EMOTES");
+            dispatch("LOAD_BADGES").then(badges => state.badges = badges);
+            dispatch("LOAD_EMOTES").then(({ bttv, ffz }) => {
+                BetterTTV = bttv;
+                FrankerFaceZ = ffz;
+            });
         },
         CREATE_CHATBOT: async ({ dispatch, state, rootState }) => {
             if (client || !state.helix) {
@@ -113,8 +119,6 @@ export default {
                 },
                 channels: [state.credits.username]
             });
-
-            client.connect();
 
             client.on("message", async (_channel, user, message) => {
                 if (!rootState.settings.settings.chat.enable) {
@@ -139,16 +143,9 @@ export default {
                     user.color = "#FFFFFF";
                 }
 
-                const time = new Date();
                 message = message.trim();
                 
-                const data = {
-                    id: Date.now(),
-                    time: misc.formatTime({
-                        hours: time.getHours(),
-                        mins: time.getMinutes(),
-                        seconds: time.getSeconds()
-                    }),
+                await dispatch("ADD_MESSAGE", {
                     nickname: profile.display_name,
                     avatar: profile.profile_image_url,
                     badges: user.badges ? await dispatch("FORMAT_BADGES", user.badges) : [],
@@ -157,22 +154,7 @@ export default {
                     mode: user["msg-id"],
                     show: true,
                     banned: false
-                };
-
-                state.messages.unshift(data);
-
-                if (state.messages.filter(m => m.show).length > visibleMessagesMax) {
-                    [...state.messages]
-                        .splice(visibleMessagesMax, state.messages.filter(m => m.show).length - 1)
-                        .map(m => state.messages.find(_m => _m.id === m.id).show = false);
-                }
-
-                if (rootState.settings.settings.chat.timeout > 0) {
-                    setTimeout(
-                        () => (state.messages.find(m => m.id === data.id).show = false),
-                        rootState.settings.settings.chat.timeout * 1000
-                    );
-                }
+                });
 
                 if (rootState.settings.settings.chat.sound) {
                     const sound = new Audio(notification);
@@ -213,7 +195,7 @@ export default {
                         {
                             text: "Чат успешно подключен",
                             color: "#28a745",
-                            icon: ["fas", "comment"],
+                            icon: () => import("~/assets/icons/chat-bubble.svg"),
                             handle: 5
                         },
                         { root: true }
@@ -229,62 +211,108 @@ export default {
                     dispatch("notifications/TURN", { name: "chatdisconnect", show: true }, { root: true });
                 }
             });
+
+            client.connect();
         },
         FORMAT_BADGES: ({ state }, badges) =>
             Object.keys(badges)
                 .map(badge => state.badges[badge] || null)
                 .filter(badge => badge !== null),
-        FORMAT_MESSAGE: (_, { text, emotes }) => {
+        FORMAT_TWITCH_EMOTES: (_, message) => {
+            const positions = Object.values(message.emotes).map(([position]) => position.split("-").map(Number));
+            const ids = Object.keys(message.emotes);
+
+            return positions.map(([start, end], index) => {
+                return {
+                    url: `http://static-cdn.jtvnw.net/emoticons/v1/${ids[index]}/3.0`,
+                    word: message.text.substring(start, end + 1)
+                };
+            });
+        },
+        FORMAT_MESSAGE: async ({ dispatch }, message) => {
+            const { text, emotes } = message;
+        
             let formatted = [];
-            let emojiWords = [];
-
-            if (emotes) {
-                const positions = Object.values(emotes).map(([position]) => position.split("-").map(Number));
-
-                const ids = Object.keys(emotes);
-                emojiWords = positions.map(([start, end], index) => {
-                    return {
-                        url: `http://static-cdn.jtvnw.net/emoticons/v1/${ids[index]}/3.0`,
-                        word: text.substring(start, end + 1)
-                    };
-                });
-            }
-
+            const emojiWords = emotes && Object.keys(emotes).length > 0 
+                ? await dispatch("FORMAT_TWITCH_EMOTES", message) 
+                : [];
+        
             let part = "";
             const splitted = text.split(" ");
             for (let wordIndex in splitted) {
                 wordIndex = Number(wordIndex);
                 const word = splitted[wordIndex];
-
+        
                 const twitchIndex = emotes ? emojiWords.map(({ word }) => word).indexOf(word) : -1;
-                const betterTTVIndex = betterTTV.ids.indexOf(word);
+                const betterTTVIndex = BetterTTV.ids.indexOf(word);
                 const FrankerFaceZIndex = FrankerFaceZ.ids.indexOf(word);
-
+        
                 if ((~twitchIndex || ~betterTTVIndex || ~FrankerFaceZIndex) !== 0) {
-                    formatted = addPart(formatted, "text", part.trim());
-                    part = "";
-
+                    if (part.length > 0) {
+                        formatted = addPart(formatted, "text", part.trim());
+                        part = "";
+                    }
+        
                     if (~twitchIndex) {
                         formatted = addPart(formatted, "emoji", emojiWords[twitchIndex].url);
                         continue;
                     } else if (~betterTTVIndex) {
-                        formatted = addPart(formatted, "emoji", betterTTV.content[betterTTVIndex].url);
+                        formatted = addPart(formatted, "emoji", BetterTTV.content[betterTTVIndex].url);
                         continue;
                     } else if (~FrankerFaceZIndex) {
                         formatted = addPart(formatted, "emoji", FrankerFaceZ.content[FrankerFaceZIndex].url);
                         continue;
                     }
+                } else if (linkRegex.test(word)) {
+                    if (part.length > 0) {
+                        formatted = addPart(formatted, "text", part.trim());
+                        part = "";
+                    }
+        
+                    formatted = addPart(formatted, "link", word);
                 } else {
                     part += " " + word;
-
+        
                     if (wordIndex === splitted.length - 1) {
                         formatted = addPart(formatted, "text", part.trim());
                         part = "";
                     }
                 }
             }
-
+        
             return formatted;
+        },
+        FORMAT_MESSAGE_TIME: () => {
+            const time = new Date();
+            return misc.formatTime({
+                hours: time.getHours(),
+                mins: time.getMinutes(),
+                seconds: time.getSeconds()
+            });
+        },
+        ADD_MESSAGE: async ({ dispatch, state, rootState }, message) => {
+            message = {
+                id: Date.now(),
+                time: await dispatch("FORMAT_MESSAGE_TIME"),
+                ...message
+            };
+
+            state.messages.unshift(message);
+
+            if (state.messages.filter(m => m.show).length > visibleMessagesMax) {
+                [...state.messages]
+                    .splice(visibleMessagesMax, state.messages.filter(m => m.show).length - 1)
+                    .map(m => state.messages.find(_m => _m.id === m.id).show = false);
+            }
+            
+            if (rootState.settings.settings.chat.timeout > 0) {
+                setTimeout(
+                    () => (state.messages.find(m => m.id === message.id).show = false),
+                    rootState.settings.settings.chat.timeout * 1000
+                );
+            }
+
+            return message;
         },
         BAN: ({ state }, data) => client.ban(state.user.display_name, data.nickname, data.reason),
         UPDATE: async ({ dispatch, state }, data) => {
@@ -331,7 +359,7 @@ export default {
         },
         LOAD_EMOTES: async ({ state }) => {
             const betterttv_global_url = "https://api.betterttv.net/3/cached/emotes/global",
-                betterttv_url = `https://api.betterttv.net/3/cached/users/twitch/${state.credits.id}`,
+                betterttv_url = `https://api.betterttv.net/3/cached/users/twitch/${state.user.id}`,
                 frankerfacez_global_url = "https://api.frankerfacez.com/v1/set/global",
                 frankerfacez_url = `https://api.frankerfacez.com/v1/room/${state.credits.username.toLowerCase()}`;
 
@@ -405,16 +433,14 @@ export default {
                 fChannelPromise
             ]);
 
-            const bttv = [...bGlobal, ...bChannel];
-            betterTTV = {
-                content: bttv,
-                ids: bttv.map(e => e.code)
-            };
-
-            const ffz = [...fGlobal, ...fChannel];
-            FrankerFaceZ = {
-                content: ffz,
-                ids: ffz.map(e => e.code)
+            const collection = arr => ({
+                content: arr,
+                ids: arr.map(e => e.code)
+            });
+            
+            return {
+                bttv: collection([...bGlobal, ...bChannel]),
+                ffz: collection([...fGlobal, ...fChannel])
             };
         },
         CHATTERS: async ({ state }) => await state.helix.other.getViewers(state.credits.username),
