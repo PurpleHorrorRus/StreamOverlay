@@ -52,6 +52,10 @@ const clear = {
             y: 801,
             width: 192,
             height: 219
+        },
+        notifications: {
+            lowfps: true,
+            lowbitrate: true
         }
     },
     twitch: {

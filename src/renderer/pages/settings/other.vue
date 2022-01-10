@@ -32,14 +32,28 @@
                 @change="turn('hardwareAcceleration')"
             />
 
-            <Item :text="'Включить инструменты разработчика'" :checked="settings.devtools" @change="turnDevtools" />
+            <Item
+                :text="'Включить оповещение о низком FPS'"
+                :checked="settings.notifications.lowfps"
+                @change="turnNotification('lowfps')"
+            />
+
+            <Item
+                :text="'Включить оповещение о низком битрейте'"
+                :checked="settings.notifications.lowbitrate"
+                @change="turnNotification('lowbitrate')"
+            />
+
+            <Item
+                :text="'Включить инструменты разработчика'"
+                :checked="settings.devtools"
+                @change="turnDevtools"
+            />
 
             <Item
                 :text="'Включить очистку ОЗУ'"
-                :tip="
-                    'Выполняет очистку памяти приложения каждые 70 секунд.\
-                    Отключите эту опцию, если приложение вылетает'
-                "
+                :tip="'Выполняет очистку памяти приложения каждые 70 секунд.\
+                    Отключите эту опцию, если приложение вылетает'"
                 :checked="settings.RAMClean"
                 @change="turn('RAMClean')"
             />
@@ -77,6 +91,10 @@ export default {
         },
         turnTech() {
             this.settings.TechInfo.enable = !this.settings.TechInfo.enable;
+            this.save();
+        },
+        turnNotification(option) {
+            this.settings.notifications[option] = !this.settings.notifications[option];
             this.save();
         },
         turnDevtools() {

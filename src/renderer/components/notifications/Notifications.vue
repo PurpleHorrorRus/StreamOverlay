@@ -4,11 +4,11 @@
             <Notification v-for="notification of notifications" :key="notification.text" :notification="notification" />
         </transition-group>
 
-        <LowBitrate v-if="showLowBitrate" />
-        <LowFPS v-if="showLowFPS" />
+        <LowBitrate v-show="showLowBitrate" />
+        <LowFPS v-show="showLowFPS" />
         <Update v-if="update.show" :release="update.release" />
-        <Notification v-if="showChatDisconnect" :notification="solidNotifications.CHAT_DISCONNECT" />
-        <Notification v-if="!online" :notification="solidNotifications.NO_CONNECTION" />
+        <Notification v-show="showChatDisconnect" :notification="solidNotifications.CHAT_DISCONNECT" />
+        <Notification v-show="!online" :notification="solidNotifications.NO_CONNECTION" />
     </div>
 </template>
 
