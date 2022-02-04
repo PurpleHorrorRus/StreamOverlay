@@ -138,6 +138,7 @@ export default {
 
                 this.turnLock(sequence);
                 this.$router.replace(sequence ? "/stream" : "/").catch(() => {});
+
                 this.active = false;
             });
 

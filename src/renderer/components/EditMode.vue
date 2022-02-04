@@ -2,8 +2,7 @@
     <div id="edit-mode">
         <div id="edit-mode-notification">
             <span id="edit-mode-notification-label" v-text="'Режим редактирования'" />
-            <button @click="openFullEdit" v-text="'Ред.'" />
-            <button @click="exitEdit" v-text="'Выйти'" />
+            <SolidButton :label="'Виджеты'" @clicked="openFullEdit" />
         </div>
     </div>
 </template>
@@ -11,22 +10,21 @@
 <script>
 import { ipcRenderer } from "electron";
 
+import SolidButton from "~/components/SolidButton";
+
 import WidgetsMixin from "~/mixins/widgets";
 
 export default {
+    components: {
+        SolidButton
+    },
     mixins: [WidgetsMixin],
     beforeDestroy() {
-        this.exitEdit();
+        ipcRenderer.send("turnMouse", false);
     },
     methods: {
         openFullEdit() {
             this.$router.replace("/edit").catch(() => {});
-            this.active = false;
-        },
-        exitEdit() {
-            ipcRenderer.send("turnMouse", false);
-            this.$router.replace("/").catch(() => {});
-            this.active = false;
         }
     }
 };
@@ -35,6 +33,7 @@ export default {
 <style lang="scss">
 #edit-mode {
     position: absolute;
+
     width: 100%;
     height: 100%;
 
@@ -43,26 +42,21 @@ export default {
         top: 0px;
         left: 45%;
 
-        width: 200px;
-        height: 60px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        justify-self: center;
+        row-gap: 10px;
 
-        background: $backdrop;
-        text-align: center;
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-        z-index: 9;
+        width: 250px;
+        height: max-content;
 
-        &-label {
-            display: inline-block;
+        padding: 15px;
 
-            margin-bottom: 5px;
-        }
-    }
+        border-radius: 0px 0px 8px 8px;
 
-    &-widgets {
-        position: absolute;
-        width: 100%;
-        height: 100%;
+        background: #181818cc;
     }
 }
 </style>

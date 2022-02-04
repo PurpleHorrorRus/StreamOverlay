@@ -58,7 +58,7 @@ export default {
     async created() {
         this.active = false;
 
-        if (this.widgets.length) {
+        if (this.widgets.length > 0) {
             this.widget = this.widgets[0];
         }
     },
