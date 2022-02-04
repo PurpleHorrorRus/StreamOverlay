@@ -33,6 +33,13 @@
             />
 
             <Item
+                :text="'Включить Content Protection'"
+                :checked="settings.contentProtection"
+                tip="Content Protection - защита от отображения в OBS и других приложениях для захвата рабочего стола"
+                @change="turn('contentProtection')"
+            />
+
+            <Item
                 :text="'Включить оповещение о низком FPS'"
                 :checked="settings.notifications.lowfps"
                 @change="turnNotification('lowfps')"
