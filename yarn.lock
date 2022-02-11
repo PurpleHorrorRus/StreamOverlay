@@ -6696,7 +6696,7 @@ node-fetch-progress@^1.0.2:
     date-fns "^1.30.1"
     throttle-debounce "^2.1.0"
 
-node-fetch@2.6.6, node-fetch@2.6.7, node-fetch@^2.6.1:
+node-fetch@2.6.7, node-fetch@^2.6.1:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
@@ -8813,10 +8813,10 @@ signal-exit@^3.0.2, signal-exit@^3.0.3:
   integrity sha512-VUJ49FC8U1OxwZLxIbTTrDvLnf/6TDgxZcK8wxR8zs13xpx7xbG60ndBlhNrFi2EMuFRoeDoJO7wthSLq42EjA==
 
 "simple-helix-api@https://github.com/PurpleHorrorRus/simple-helix-api#v2":
-  version "2.1.0"
-  resolved "https://github.com/PurpleHorrorRus/simple-helix-api#adcf72e43b79bf0ccefee7e47f14027f58f099dc"
+  version "2.1.2"
+  resolved "https://github.com/PurpleHorrorRus/simple-helix-api#5b6238a184c6f8cd80fb5a9eb44ff72344cb4d47"
   dependencies:
-    node-fetch "2.6.6"
+    node-fetch "2.6.7"
 
 simple-swizzle@^0.2.2:
   version "0.2.2"

@@ -2,53 +2,16 @@
     <div class="modal-content">
         <Title title="Настройки Twitch" />
         <div class="modal-body">
-            <!-- <Tip
-                text="Для того, чтобы включить и отключить фокус на оверлее, нажмите комбинацию клавиш Alt + A"
-            /> -->
+            <MenuError v-if="error" :error="error" />
+
             <Input
                 text="Имя пользователя Twitch"
                 :value="username"
                 @input="username = $event"
             />
 
-            <div id="twitch-settings-access-token" class="twitch-settings">
-                <div class="modal-item-tip">
-                    <span
-                        class="modal-item-tip-text"
-                        v-text="
-                            'Access Token - нужен для того, чтобы менять название стрима и игру через оверлей'
-                        "
-                    />
-                </div>
-
-                <div class="twitch-settings-form">
-                    <Input
-                        :value="access_token"
-                        @input="access_token = $event"
-                    />
-                    <SolidButton :label="'Получить'" @clicked="getToken" />
-                </div>
-            </div>
-
-            <div id="twitch-settings-oauth" class="twitch-settings">
-                <div class="modal-item-tip">
-                    <span
-                        class="modal-item-tip-text"
-                        v-text="
-                            'OAuth Token - нужен для того, чтобы получать сообщения из чата'
-                        "
-                    />
-                </div>
-
-                <div class="twitch-settings-form">
-                    <Input :value="oauth_token" @input="oauth_token = $event" />
-                    <SolidButton :label="'Получить'" @clicked="getOAuth" />
-                </div>
-            </div>
-
-            <div v-if="error.length" class="modal-item-tip">
-                <span style="color: red" class="modal-item-tip-text">Ошибка: {{ error }}</span>
-            </div>
+            <TwitchSettingsAccessToken @input="access_token = $event" />
+            <TwitchSettingsOAuthToken @input="oauth_token = $event" />
 
             <SolidButton
                 :label="'Продолжить'"
@@ -61,9 +24,12 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
-
 import Helix from "simple-helix-api";
+
+import MenuError from "~/components/MenuNotifications/Error";
+
+import TwitchSettingsAccessToken from "~/components/settings/twitch/AccessToken";
+import TwitchSettingsOAuthToken from "~/components/settings/twitch/OAuthToken";
 
 import Title from "~/components/menu/Title";
 import Input from "~/components/settings/Input";
@@ -72,11 +38,18 @@ import SolidButton from "~/components/SolidButton";
 import CoreMixin from "~/mixins/core";
 import other from "~/mixins/other";
 
-const client_id = "zmin05a65f74rln2g94iv935w58nyq";
-let helix;
+const accessTokenRegex = /access_token=(.*?)&/;
+const oauthRegex = /oauth:/;
+
+let helix = null;
 
 export default {
     components: {
+        MenuError,
+
+        TwitchSettingsAccessToken,
+        TwitchSettingsOAuthToken,
+        
         Title,
         Input,
         SolidButton
@@ -91,30 +64,28 @@ export default {
         validating: false
     }),
     computed: {
-        ...mapState({
-            server: state => state.twitch.token.fastify
-        }),
         disabled() {
             return (
-                !this.username.length ||
-                !this.access_token.length ||
-                !this.oauth_token.length
+                this.username.length === 0 ||
+                this.access_token.length === 0 ||
+                this.oauth_token.length === 0
             );
         }
     },
     watch: {
-        access_token(newVal) {
-            if (~newVal.indexOf("http://")) {
-                this.access_token = newVal.match(/access_token=(.*?)&/)[1];
+        access_token(access_token) {
+            if (accessTokenRegex.test(access_token)) {
+                this.access_token = access_token.match(accessTokenRegex)[1];
             }
         },
-        oauth_token(newVal) {
-            if (!newVal.length) {
+        oauth_token(oauth_token) {
+            if (oauth_token.length === 0) {
                 this.oauth_token = "oauth:";
                 return;
             }
-            if (!~newVal.indexOf("oauth:")) {
-                this.oauth_token = `oauth:${this.oauth_token}`;
+            
+            if (!oauthRegex.test(oauth_token)) {
+                this.oauth_token = `oauth:${oauth_token}`;
             }
         }
     },
@@ -126,79 +97,57 @@ export default {
         }
     },
     methods: {
-        ...mapActions({
-            startServer: "twitch/token/START_SERVER"
-        }),
         async next() {
             this.validating = true;
             this.error = "";
 
-            if (~this.access_token.indexOf("http://")) {
-                this.access_token =
-                    this.access_token.match(/access_token=(.*?)&/)[1];
-            }
-
-            const valid = await this.validate().catch(e => {
-                this.validating = false;
+            const success = await this.validate().catch(e => {
+                this.reset();
                 this.error = e.error;
-                return;
+                return false;
             });
 
-            if (!valid.success) {
-                this.validating = false;
-                return;
+            if (success) {
+                this.saveSettings({
+                    type: "twitch",
+                    content: {
+                        username: this.username,
+                        access_token: this.access_token,
+                        oauth_token: this.oauth_token
+                    }
+                });
+
+                this.$router.replace("/");
             }
-
-            const user = await helix.users.getByLogin(this.username);
-            this.saveSettings({
-                type: "twitch",
-                content: {
-                    username: user.display_name,
-                    access_token: this.access_token,
-                    oauth_token: this.oauth_token
-                }
-            });
-
-            this.validating = false;
-            this.$router.replace("/");
         },
         async validate() {
             helix = new Helix({
-                client_id,
+                // eslint-disable-next-line no-undef
+                client_id: process.env.client_id,
                 access_token: this.access_token
             });
 
-            const user = await helix.users
-                .getByLogin(this.username)
-                .catch(() => ({
-                    success: false,
-                    error: "Пользователь с таким ником не найден"
-                }));
+            const user = await helix.users.getByLogin(this.username.toLowerCase())
+                .catch(() => {
+                    throw this.handleError("Неверный Access Token");
+                });
 
-            const data = await helix.channel.get(user.id);
-            const success = await helix
-                .updateStream(user.id, data.title, data.game_name)
-                .catch(() => ({
-                    success: false,
-                    error: "Неверный Access Token"
-                }));
-
-            return { success };
-        },
-        async getToken() {
-            const url = new Helix({
-                client_id,
-                redirect_uri: "http://localhost:3000/token"
-            }).getAuthLink();
-
-            if (!this.server) {
-                await this.startServer();
+            if (user.length === 0) {
+                throw this.handleError("Пользователь с таким именем не найден");
             }
 
-            this.openLink(url);
+            const data = await helix.channel.get(user.id);
+            return await helix.updateStream(user.id, data.title, data.game_name);
         },
-        getOAuth() {
-            this.openLink("https://twitchapps.com/tmi/");
+        handleError(error) {
+            return {
+                success: false,
+                error
+            };
+        },
+        reset() {
+            helix = null;
+            this.validating = false;
         }
     }
 };

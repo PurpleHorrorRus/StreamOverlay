@@ -7,8 +7,6 @@ import token from "~/store/twitch/token";
 
 import misc from "~/plugins/misc";
 
-const client_id = "zmin05a65f74rln2g94iv935w58nyq";
-
 const addPart = (formatted, type, content) => {
     if (content.length > 0) {
         return [...formatted, { type, content }];
@@ -85,7 +83,8 @@ export default {
             state.credits = credits;
 
             state.helix = new Helix({
-                client_id,
+                // eslint-disable-next-line no-undef
+                client_id: process.env.client_id,
                 access_token: credits.access_token,
                 language: "ru"
             });
