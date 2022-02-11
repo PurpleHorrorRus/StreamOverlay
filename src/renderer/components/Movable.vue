@@ -109,9 +109,7 @@ export default {
         this.normalizePosition(this.x, this.y);
     },
     beforeDestroy() {
-        if (this.active) {
-            this.onDeactivated();
-        }
+        this.onDeactivated();
     },
     methods: {
         normalizePosition(x, y) {
@@ -140,11 +138,15 @@ export default {
             this.$emit("onDrag", ...args);
         },
         onActivated() {
-            document.addEventListener("keydown", this.move);
+            if (this.active) {
+                document.addEventListener("keydown", this.move);
+            }
         },
         onDeactivated() {
-            this.$emit("onDrag", ...[this.x, this.y]);
-            document.removeEventListener("keydown", this.move);
+            if (this.active) {
+                emitDebounce();
+                document.removeEventListener("keydown", this.move);
+            }
         },
         move({ key }) {
             this.mouse = false;
