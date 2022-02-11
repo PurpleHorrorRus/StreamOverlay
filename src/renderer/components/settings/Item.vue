@@ -6,9 +6,7 @@
             <VueToggleButton ref="toggle-button" :value="checked" :height="25" @change="$emit('change')" />
         </div>
 
-        <div v-if="tip.length > 0" class="modal-item-tip">
-            <span class="modal-item-tip-text" v-text="tip" />
-        </div>
+        <span v-if="tip.length > 0" class="modal-item-tip" v-text="tip" />
     </div>
 </template>
 
