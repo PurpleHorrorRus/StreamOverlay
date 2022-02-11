@@ -10,7 +10,7 @@
             <TwitchInfo
                 v-if="
                     settings.OBSStatus.TwitchInfo.enable ||
-                    settings.OBSStatus.TwitchInfo.enableFollowers
+                        settings.OBSStatus.TwitchInfo.enableFollowers
                 "
             />
             <Devices v-if="connected" />
@@ -43,7 +43,9 @@ export default {
     mounted() {
         this.adaptive();
         if (this.isLeft) {
-            new ResizeObserver(() => this.adaptive()).observe(this.$refs.OBSStatus);
+            new ResizeObserver(() => this.adaptive()).observe(
+                this.$refs.OBSStatus
+            );
         }
     },
     methods: {
