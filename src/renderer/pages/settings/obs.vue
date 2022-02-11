@@ -42,9 +42,6 @@ import Installation from "~/components/OBS/Settings/Websocket/Installation";
 import CoreMixin from "~/mixins/core";
 import other from "~/mixins/other";
 
-const OBSWebsocketInstallerURL =
-    "https://github.com/Palakis/obs-websocket/releases/download/4.9.1/obs-websocket-4.9.1-Windows-Installer.exe";
-
 export default {
     components: {
         Title,
@@ -102,9 +99,6 @@ export default {
 
                 this.$router.replace("/settings/twitch").catch(() => {});
             }
-        },
-        install() {
-            this.openLink(OBSWebsocketInstallerURL);
         }
     }
 };
