@@ -11,8 +11,8 @@ import { ipcRenderer } from "electron";
 import { mapState } from "vuex";
 
 import Notifications from "~/components/Notifications/Notifications";
-import Lock from "~/components/menu/Lock";
-import ModalContent from "~/components/menu/ModalContent";
+import Lock from "~/components/Menu/Lock";
+import ModalContent from "~/components/Menu/ModalContent";
 
 import CoreMixin from "~/mixins/core";
 

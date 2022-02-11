@@ -28,8 +28,8 @@
 </template>
 
 <script>
-import Input from "~/components/settings/Input";
-import Outcome from "~/components/menu/predictions/Outcome";
+import Input from "~/components/Settings/Input";
+import Outcome from "~/components/Menu/Predictions/Outcome";
 
 export default {
     components: {

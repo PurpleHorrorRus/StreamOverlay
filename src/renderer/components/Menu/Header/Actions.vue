@@ -16,9 +16,9 @@
 </template>
 
 <script>
-import Link from "~/components/menu/header/Link";
-import ActionsAd from "~/components/menu/header/ActionsAd";
-import Button from "~/components/menu/header/Button";
+import Link from "~/components/Menu/Header/Link";
+import ActionsAd from "~/components/Menu/Header/ActionsAd";
+import Button from "~/components/Menu/Header/Button";
 
 import OBSMixin from "~/mixins/obs";
 import TwitchMixin from "~/mixins/twitch";

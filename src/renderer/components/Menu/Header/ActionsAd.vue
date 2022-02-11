@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import Button from "~/components/menu/header/Button";
+import Button from "~/components/Menu/Header/Button";
 
 import TwitchMixin from "~/mixins/twitch";
 

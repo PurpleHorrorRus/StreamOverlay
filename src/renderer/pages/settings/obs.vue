@@ -32,12 +32,12 @@
 <script>
 import { mapState } from "vuex";
 
-import Title from "~/components/menu/Title";
-import Input from "~/components/settings/Input";
+import Title from "~/components/Menu/Title";
+import Input from "~/components/Settings/Input";
 import SolidButton from "~/components/SolidButton";
 
-import Install from "~/components/OBSSettings/Websocket/Install";
-import Installation from "~/components/OBSSettings/Websocket/Installation";
+import Install from "~/components/OBS/Settings/Websocket/Install";
+import Installation from "~/components/OBS/Settings/Websocket/Installation";
 
 import CoreMixin from "~/mixins/core";
 import other from "~/mixins/other";

@@ -58,9 +58,9 @@
 </template>
 
 <script>
-import Title from "~/components/menu/Title";
-import Item from "~/components/settings/Item";
-import Range from "~/components/settings/Range";
+import Title from "~/components/Menu/Title";
+import Item from "~/components/Settings/Item";
+import Range from "~/components/Settings/Range";
 
 import CoreMixin from "~/mixins/core";
 

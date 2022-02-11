@@ -7,7 +7,7 @@
 <script>
 import { mapActions, mapState } from "vuex";
 
-import Item from "~/components/settings/Item";
+import Item from "~/components/Settings/Item";
 
 export default {
     components: {

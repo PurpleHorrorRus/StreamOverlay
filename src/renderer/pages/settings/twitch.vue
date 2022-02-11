@@ -26,13 +26,13 @@
 <script>
 import Helix from "simple-helix-api";
 
-import MenuError from "~/components/MenuNotifications/Error";
+import MenuError from "~/components/Menu/Notifications/Error";
 
-import TwitchSettingsAccessToken from "~/components/settings/twitch/AccessToken";
-import TwitchSettingsOAuthToken from "~/components/settings/twitch/OAuthToken";
+import TwitchSettingsAccessToken from "~/components/Settings/Twitch/AccessToken";
+import TwitchSettingsOAuthToken from "~/components/Settings/Twitch/OAuthToken";
 
-import Title from "~/components/menu/Title";
-import Input from "~/components/settings/Input";
+import Title from "~/components/Menu/Title";
+import Input from "~/components/Settings/Input";
 import SolidButton from "~/components/SolidButton";
 
 import CoreMixin from "~/mixins/core";

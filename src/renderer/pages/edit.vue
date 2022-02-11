@@ -28,8 +28,8 @@
 </template>
 
 <script>
-import Title from "~/components/menu/Title";
-import Input from "~/components/settings/Input";
+import Title from "~/components/Menu/Title";
+import Input from "~/components/Settings/Input";
 import SolidButton from "~/components/SolidButton";
 
 import WidgetsMixin from "~/mixins/widgets";

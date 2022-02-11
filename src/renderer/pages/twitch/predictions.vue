@@ -37,9 +37,9 @@
 </template>
 
 <script>
-import Title from "~/components/menu/Title";
-import Input from "~/components/settings/Input";
-import Outcomes from "~/components/menu/predictions/Outcomes";
+import Title from "~/components/Menu/Title";
+import Input from "~/components/Settings/Input";
+import Outcomes from "~/components/Menu/Predictions/Outcomes";
 import SolidButton from "~/components/SolidButton";
 
 import LoaderIcon from "~/assets/icons/loader.svg";

@@ -56,8 +56,8 @@
 <script>
 import { mapActions, mapState } from "vuex";
 
-import Title from "~/components/menu/Title";
-import Input from "~/components/settings/Input";
+import Title from "~/components/Menu/Title";
+import Input from "~/components/Settings/Input";
 import Game from "~/components/Game";
 import SolidButton from "~/components/SolidButton";
 import Recent from "~/components/Recent";

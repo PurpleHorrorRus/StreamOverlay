@@ -15,7 +15,7 @@
 import { ipcRenderer } from "electron";
 import { mapActions, mapState } from "vuex";
 
-import MenuError from "~/components/MenuNotifications/Error";
+import MenuError from "~/components/Menu/Notifications/Error";
 import SolidButton from "~/components/SolidButton";
 
 export default {

@@ -51,8 +51,8 @@
 <script>
 import { mapState } from "vuex";
 
-import Toggles from "~/components/menu/header/Toggles";
-import Actions from "~/components/menu/header/Actions";
+import Toggles from "~/components/Menu/Header/Toggles";
+import Actions from "~/components/Menu/Header/Actions";
 
 import ChevronLeft from "~/assets/icons/chevron-left.svg";
 import ChevronRight from "~/assets/icons/chevron-right.svg";

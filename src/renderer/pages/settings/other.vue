@@ -71,8 +71,8 @@
 <script>
 import { ipcRenderer } from "electron";
 
-import Title from "~/components/menu/Title";
-import Item from "~/components/settings/Item";
+import Title from "~/components/Menu/Title";
+import Item from "~/components/Settings/Item";
 
 import CoreMixin from "~/mixins/core";
 
