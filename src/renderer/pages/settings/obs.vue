@@ -36,8 +36,8 @@ import Title from "~/components/menu/Title";
 import Input from "~/components/settings/Input";
 import SolidButton from "~/components/SolidButton";
 
-import Install from "~/components/obs-settings/Install";
-import Installation from "~/components/obs-settings/Installation";
+import Install from "~/components/OBSSettings/Websocket/Install";
+import Installation from "~/components/OBSSettings/Websocket/Installation";
 
 import CoreMixin from "~/mixins/core";
 import other from "~/mixins/other";
