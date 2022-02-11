@@ -62,18 +62,32 @@ export default {
         .modal-body {
             padding: 5px;
 
+            > * {
+                margin: 10px 0px;
+            }
+
             .modal-item {
-                padding: 5px;
-
                 &-tip {
-                    padding: 0px 20px 0px 10px;
+                    display: block;
+                    
+                    margin: 10px 0px;
 
-                    &-text {
-                        display: block;
+                    color: $small-text;
+                    font-size: 12px;
+                }
 
-                        color: #ccc;
-                        font-size: 12px;
-                    }
+                &-notification {
+                    display: block;
+
+                    width: 100%;
+                    height: max-content;
+
+                    margin: 10px 0px;
+                    padding: 10px;
+
+                    border-radius: 4px;
+
+                    user-select: text;
                 }
             }
         }

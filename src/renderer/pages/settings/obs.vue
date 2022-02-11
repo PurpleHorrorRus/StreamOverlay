@@ -2,15 +2,8 @@
     <div class="modal-content">
         <Title id="modal-stream-content-title" title="Настройка OBS" />
         <div class="modal-body">
-            <div class="modal-item-tip">
-                <span class="modal-item-tip-text">
-                    Для дальнейшей работы
-                    <strong style="color: red" v-text="'ОБЯЗАТЕЛЬНО'" />
-                    установите OBS Websocket
-                </span>
-
-                <SolidButton id="install-obs-ws-button" :label="'Установить OBS Websocket'" @clicked="install" />
-            </div>
+            <Install v-if="!installActive" />
+            <Installation v-else />
 
             <Input text="Адрес подключения" :value="address" @input="address = $event" />
             <Input text="Порт подключения" :value="port" @input="port = $event" />
@@ -37,9 +30,14 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 import Title from "~/components/menu/Title";
 import Input from "~/components/settings/Input";
 import SolidButton from "~/components/SolidButton";
+
+import Install from "~/components/obs-settings/Install";
+import Installation from "~/components/obs-settings/Installation";
 
 import CoreMixin from "~/mixins/core";
 import other from "~/mixins/other";
@@ -51,7 +49,10 @@ export default {
     components: {
         Title,
         Input,
-        SolidButton
+        SolidButton,
+
+        Install,
+        Installation
     },
     mixins: [CoreMixin, other],
     layout: "modal",
@@ -64,6 +65,9 @@ export default {
         error: ""
     }),
     computed: {
+        ...mapState({
+            installActive: state => state.websocketInstaller.active
+        }),
         disabled() {
             return this.address.length === 0 || this.port.length === 0;
         }
@@ -105,10 +109,3 @@ export default {
     }
 };
 </script>
-
-<style lang="scss">
-#install-obs-ws-button {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-</style>

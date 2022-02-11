@@ -10,3 +10,4 @@ src/main/addon/build/Release
 *.gypi
 src/main/addon/build
 src/renderer/assets/defaultMessages.json
+websocket.zip

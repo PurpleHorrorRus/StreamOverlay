@@ -1,4 +1,4 @@
-import { ipcMain, screen } from "electron";
+import { dialog, ipcMain, screen } from "electron";
 
 import common from "./common";
 
@@ -22,6 +22,12 @@ class Handlers {
             sequence 
                 ? mainWindowInstance.window.webContents.openDevTools({ mode: "undocked" }) 
                 : mainWindowInstance.window.webContents.closeDevTools();
+        });
+
+        ipcMain.handle("FindWindow", (_, window) => mainWindowInstance.addonInstance.FindWindow(window));
+        ipcMain.handle("select", async (_, options) => {
+            const { canceled, filePaths } = await dialog.showOpenDialog(options);
+            return !canceled ? filePaths : false;
         });
     }
 }
