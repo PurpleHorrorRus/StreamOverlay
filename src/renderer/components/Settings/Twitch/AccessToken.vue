@@ -22,7 +22,7 @@ import { mapActions, mapState } from "vuex";
 
 import Helix from "simple-helix-api";
 
-import Input from "~/components/settings/Input";
+import Input from "~/components/Settings/Input";
 import SolidButton from "~/components/SolidButton";
 
 import OtherMixin from "~/mixins/other";

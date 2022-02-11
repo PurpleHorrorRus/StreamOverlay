@@ -10,10 +10,10 @@
 
 <script>
 import Chat from "~/components/Chat";
-import Time from "~/components/menu/Time";
+import Time from "~/components/Menu/Time";
 
-import Header from "~/components/menu/Header";
-import ModalContainer from "~/components/menu/ModalContainer";
+import Header from "~/components/Menu/Header";
+import ModalContainer from "~/components/Menu/ModalContainer";
 
 export default {
     components: {

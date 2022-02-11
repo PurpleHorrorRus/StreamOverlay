@@ -37,10 +37,10 @@
 </template>
 
 <script>
-import Title from "~/components/Menu/Title";
-import Input from "~/components/Settings/Input";
-import Outcomes from "~/components/Menu/Predictions/Outcomes";
 import SolidButton from "~/components/SolidButton";
+import Title from "~/components/Menu/Title";
+import Outcomes from "~/components/Menu/Predictions/Outcomes";
+import Input from "~/components/Settings/Input";
 
 import LoaderIcon from "~/assets/icons/loader.svg";
 

@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import Input from "~/components/settings/Input";
+import Input from "~/components/Settings/Input";
 import SolidButton from "~/components/SolidButton";
 
 import OtherMixin from "~/mixins/other";
