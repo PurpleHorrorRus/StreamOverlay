@@ -31,7 +31,7 @@
         "adm-zip": "^0.5.9",
         "bluebird": "^3.7.2",
         "electron-updater": "^4.6.5",
-        "express": "^4.17.2",
+        "fastify": "^3.27.1",
         "http": "^0.0.1-security",
         "node-fetch": "2.6.7",
         "node-fetch-progress": "^1.0.2",

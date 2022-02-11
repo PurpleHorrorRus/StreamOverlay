@@ -3,6 +3,8 @@ import tmi from "tmi.js";
 import { lookup } from "dns";
 import { delay } from "bluebird";
 
+import token from "~/store/twitch/token";
+
 import misc from "~/plugins/misc";
 
 const client_id = "zmin05a65f74rln2g94iv935w58nyq";
@@ -457,5 +459,8 @@ export default {
                     : client.followersonly(state.credits.username, duration);
             }
         }
+    },
+    modules: {
+        token
     }
 };
