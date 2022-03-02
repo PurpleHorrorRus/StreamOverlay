@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2019
 
     steps:
       - name: Check out Git repository
@@ -16,14 +16,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16.8.0
-
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1.1
-        with:
-          msbuild-architecture: x64
-
-      - name: Set msvs_version
-        run: npm config set msvs_version 2017
 
       - name: Install Dependencies
         run: yarn
