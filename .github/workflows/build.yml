@@ -22,6 +22,9 @@ jobs:
         with:
           msbuild-architecture: x64
 
+      - name: Set msvs_version
+        run: npm config set msvs_version 2017
+
       - name: Install Dependencies
         run: yarn
 
