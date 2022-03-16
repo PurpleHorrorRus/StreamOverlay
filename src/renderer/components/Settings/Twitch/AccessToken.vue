@@ -18,8 +18,6 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
-
 import Helix from "simple-helix-api";
 
 import Input from "~/components/Settings/Input";
@@ -33,25 +31,13 @@ export default {
         SolidButton
     },
     mixins: [OtherMixin],
-    computed: {
-        ...mapState({
-            server: state => state.twitch.token.fastify
-        })
-    },
     methods: {
-        ...mapActions({
-            startServer: "twitch/token/START_SERVER"
-        }),
         async getToken() {
             const url = new Helix({
                 // eslint-disable-next-line no-undef
                 client_id: process.env.client_id,
-                redirect_uri: "http://localhost:3000/token"
+                redirect_uri: "https://purplehorrorrus.github.io/token"
             }).getAuthLink();
-
-            if (!this.server) {
-                await this.startServer();
-            }
 
             this.openLink(url);
         }
