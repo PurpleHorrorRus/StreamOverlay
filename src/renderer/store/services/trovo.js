@@ -153,13 +153,20 @@ export default {
             state.service.client.chat.send(message);
         },
 
+        FORMAT_GAME: (_, game) => {
+            return {
+                name: game.name,
+                icon: game.icon_url
+            };
+        },
+
         FIND_GAME: (_, { game, collection }) => {
             return collection.find(x => {
                 return x.name === game;
             }) || collection[0];
         },
 
-        UPDATE_STREAM: async ({ dispatch, state }, data) => {
+        UPDATE: async ({ dispatch, state }, data) => {
             if (!data.title) {
                 const channel = await state.service.client.channels.get(Number(state.service.user.userId));
                 data.title = channel.live_title;

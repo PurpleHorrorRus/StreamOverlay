@@ -325,6 +325,13 @@ export default {
                     follower_mode_duration: duration
                 });
             }
+        },
+
+        FORMAT_GAME: (_, game) => {
+            return {
+                name: game.name,
+                icon: game.box_art_url
+            };
         }
     },
     modules: {

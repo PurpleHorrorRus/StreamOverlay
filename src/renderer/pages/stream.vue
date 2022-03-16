@@ -2,30 +2,9 @@
     <div v-if="!firstLoad" id="modal-stream-container">
         <div id="modal-stream-content" class="modal-content">
             <Title id="modal-stream-content-title" title="Трансляция" />
-            <img id="modal-stream-content-art-image" :src="game.icon_url" />
 
-            <div id="modal-stream-content-edit">
-                <Input
-                    :value="local.title"
-                    placeholder="Название трансляции"
-                    @input="local.title = $event"
-                    @keypress.enter.native="update"
-                />
-
-                <Input
-                    :value="local.game"
-                    :placeholder="'Название игры'"
-                    @input="local.game = $event"
-                    @keypress.enter.native="update"
-                />
-
-                <SolidButton
-                    label="Обновить"
-                    :disabled="disabled"
-                    :load="loading"
-                    @clicked="update"
-                />
-            </div>
+            <img id="modal-stream-content-art-image" :src="game.icon" />
+            <Edit />
 
             <Recent 
                 v-show="recent.length > 0" 
@@ -46,34 +25,24 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import { debounce } from "lodash";
+import Promise from "bluebird";
 
-import Title from "~/components/Menu/Title";
-import Input from "~/components/Settings/Input";
-import SolidButton from "~/components/SolidButton";
-import Recent from "~/components/Recent";
-
-import Search from "~/components/Menu/EditPage/Search";
-
-import LoaderIcon from "~/assets/icons/loader.svg";
-
-import TrovoMixin from "~/mixins/trovo";
+import CoreMixin from "~/mixins/core";
 
 let updateSearchResultsDebounce = null;
 
 export default {
     components: {
-        Title,
-        Input,
+        Title: () => import("~/components/Menu/Title"),
+        
+        Edit: () => import("~/components/Menu/EditPage/Edit"),
+        Recent: () => import("~/components/Recent"),
+        Search: () => import("~/components/Menu/EditPage/Search"),
 
-        SolidButton,
-        Recent,
-
-        Search,
-
-        LoaderIcon
+        LoaderIcon: () => import("~/assets/icons/loader.svg")
     },
 
-    mixins: [TrovoMixin],
+    mixins: [CoreMixin],
 
     layout: "modal",
 
@@ -113,27 +82,47 @@ export default {
     },
 
     async created() {
-        const channel = await this.trovo.channels.get(this.user.nickName);
-        this.local.title = channel.live_title;
-        this.local.game = channel.category_name;
+        await this.fetch();
 
-        const response = await this.trovo.categories.search(channel.category_name);
-        this.game = response.category_info[0];
-        this.search = response.category_info;
-        
-        updateSearchResultsDebounce = debounce(game => this.updateSearchResults(game), 200);
+        updateSearchResultsDebounce = debounce(game => {
+            return this.updateSearchResults(game);
+        }, 200);
 
         this.firstLoad = false;
     },
 
     methods: {
         ...mapActions({
-            updateStream: "trovo/UPDATE_STREAM"
+            twitchUpdate: "twitch/UPDATE",
+            trovoUpdate: "trovo/UPDATE",
+
+            twitchFormatGame: "twitch/FORMAT_GAME",
+            trovoFormatGame: "trovo/FORMAT_GAME"
         }),
+
+        async fetch() {
+            switch (this.settings.service) {
+                case this.services.twitch: {
+                    const channel = await this.helix.channel.get(this.user.id);
+                    this.local.title = channel.title;
+                    this.local.game = channel.game_name;
+                    break;   
+                }
+
+                case this.services.trovo: {
+                    const channel = await this.trovo.channels.get(this.user.nickName);
+                    this.local.title = channel.live_title;
+                    this.local.game = channel.category_name;
+                    break;
+                }
+            }
+
+            return await this.updateSearchResults(this.local.game);
+        },
 
         async update() {
             this.loading = true;
-            await this.updateStream(this.local);
+            await this.serviceDispatch("UPDATE", this.local);
             this.loading = false;
         },
 
@@ -143,15 +132,37 @@ export default {
         },
         
         async updateSearchResults(query) {
-            if (this.game.name === query) {
-                return;
+            this.search = await this.searchGame(query);
+
+            const gameInSearch = this.search.find(game => {
+                return game.name === query;
+            });
+
+            if (gameInSearch) {
+                this.select(gameInSearch);
+            }
+        },
+
+        async searchGame(query) {
+            let games = [];
+
+            switch(this.settings.service) {
+                case this.services.twitch: {
+                    games = await this.helix.search.categories(query);
+                    games = games.data || games;
+                    break;
+                }
+
+                case this.services.trovo: {
+                    const response = await this.trovo.categories.search(query);
+                    games = response.category_info;
+                    break;
+                }
             }
 
-            const response = await this.trovo.categories.search(query);
-            this.search = response.category_info;
-
-            const gameInSearch = this.search.find(game => game.name === query);
-            if (gameInSearch) this.select(gameInSearch);
+            return await Promise.map(games, async game => {
+                return await this.serviceDispatch("FORMAT_GAME", game);
+            });
         }
     }
 };
@@ -179,14 +190,6 @@ export default {
             width: 100%;
             height: 100%;
         }
-    }
-
-    &-edit {
-        grid-area: edit;
-
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-end;
     }
 
     &-games {

@@ -1,6 +1,6 @@
 <template>
     <div class="game clickable">
-        <img class="game-image" :src="game.icon_url" />
+        <img class="game-image" :src="game.icon" />
         <span class="game-name nowrap" v-text="game.name" />
     </div>
 </template>

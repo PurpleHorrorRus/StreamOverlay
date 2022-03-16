@@ -42,6 +42,10 @@ export default {
                 type: "settings",
                 content
             });
+        },
+
+        async serviceDispatch(action, data) {
+            return await this.$store.dispatch(`${this.settings.service}/${action}`, data);
         }
     }
 };
