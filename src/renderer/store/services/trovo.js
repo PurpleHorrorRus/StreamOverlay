@@ -159,7 +159,7 @@ export default {
         },
 
         SAY: ({ rootState }, message) => {
-            if (!rootState.service.connected) return;
+            if (!rootState.service.connected) return false;
             rootState.service.client.chat.send(message);
         },
 
@@ -189,8 +189,8 @@ export default {
             data.game = game.name;
 
             await rootState.service.client.channel.edit(rootState.service.user.id, data.title, game.id, "RU");
-            await dispatch("SET_STREAM", data);
-            await dispatch("UPDATE_RECENT", data);
+            await dispatch("service/SET_STREAM", data, { root: true });
+            await dispatch("service/UPDATE_RECENT", data, { root: true });
             
             return response.category_info[0];
         },

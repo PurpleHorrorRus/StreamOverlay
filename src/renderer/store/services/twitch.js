@@ -47,8 +47,6 @@ export default {
     }),
     actions: {
         INIT: async ({ dispatch, state }, credits) => {
-            state.credits = credits;
-
             const client = await dispatch("service/SET_CLIENT", new Helix({
                 // eslint-disable-next-line no-undef
                 client_id: process.env.twitch_client_id,
@@ -56,7 +54,7 @@ export default {
                 language: "ru"
             }), { root: true });
             
-            let user = await client.users.getByLogin(state.credits.username);
+            let user = await client.users.getByLogin(credits.username);
             user = await dispatch("service/SET_USER", {
                 ...user,
                 id: Number(user.id),
@@ -71,7 +69,7 @@ export default {
                 game: channel.game_name
             }, { root: true });
 
-            dispatch("CONNECT");
+            dispatch("CONNECT", credits);
             dispatch("badges/LOAD", user.id);
             dispatch("emotes/LOAD", {
                 id: user.id,
@@ -81,14 +79,14 @@ export default {
             return client;
         },
 
-        CONNECT: async ({ dispatch, rootState, state }) => {
+        CONNECT: async ({ dispatch, rootState, state }, credits) => {
             const chat = await dispatch("service/SET_CHAT", new tmi.Client({
                 connection: { reconnect: true },
                 identity: {
-                    username: state.credits.username,
-                    password: state.credits.oauth_token
+                    username: credits.username,
+                    password: credits.oauth_token
                 },
-                channels: [state.credits.username]
+                channels: [credits.username]
             }), { root: true });
 
             chat.on("message", async (_, user, message) => {
@@ -166,7 +164,6 @@ export default {
         },
 
         DISCONNECT: ({ state }) => {
-            state.credits = {};
             state.tags = null;
         },
 
@@ -248,13 +245,14 @@ export default {
             });
         },
 
-        BAN: async ({ state }, data) => {
+        BAN: async ({ rootState }, data) => {
             data.nickname = data.nickname.toLowerCase();
+            const username = rootState.service.user.nickname.toLowerCase();
 
             if (data.duration) {
-                client.timeout(state.credits.username.toLowerCase(), data.nickname, data.duration, data.reason);
+                client.timeout(username, data.nickname, data.duration, data.reason);
             } else {
-                client.ban(state.credits.username.toLowerCase(), data.nickname, data.reason);
+                client.ban(username, data.nickname, data.reason);
             }
         },
         
@@ -263,14 +261,14 @@ export default {
             if (!data.game) data.game = rootState.service.stream.game;
             
             await rootState.service.client.updateStream(rootState.service.user.id, data.title, data.game);
-            await dispatch("SET_STREAM", data);
-            dispatch("UPDATE_RECENT", data);
+            await dispatch("service/SET_STREAM", data, { root: true });
+            await dispatch("service/UPDATE_RECENT", data, { root: true });
 
             return true;
         },
 
         CHATTERS: async ({ rootState }) => {
-            return await rootState.service.client.other.getViewers(state.credits.username);
+            return await rootState.service.client.other.getViewers(rootState.service.user.id);
         },
         
         SAY: ({ rootState }, message) => {
