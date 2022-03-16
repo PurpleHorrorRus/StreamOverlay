@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import { ipcRenderer } from "electron";
+
 import TwitchImage from "~/assets/images/twitch.png";
 import TrovoImage from "~/assets/images/trovo.png";
 
@@ -38,29 +40,22 @@ export default {
     }),
 
     created() {
-        this.updateActive();
+        this.servicesList.forEach(service => {
+            service.active = this.settings.service === service.id;
+            return service;
+        });
     },
 
     methods: {
-        updateActive() {
-            this.servicesList.forEach(service => {
-                service.active = this.settings.service === service.id;
-                return service;
-            });
-        },
-
         async changeService(service) {
             if (this.settings.service === service.id) {
                 return;
             }
 
-            await this.serviceDispatch("DISCONNECT");
-            await this.serviceDispatch("CLEAR");
-            this.$router.replace("/").catch(() => {});
-            
             this.settings.service = service.id;
-            this.updateActive();
             this.save();
+
+            ipcRenderer.send("restart");
         }
     }
 };

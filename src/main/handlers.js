@@ -1,4 +1,4 @@
-import { dialog, ipcMain, screen } from "electron";
+import { app, dialog, ipcMain, screen } from "electron";
 
 import common from "./common";
 
@@ -22,6 +22,11 @@ class Handlers {
             sequence 
                 ? mainWindowInstance.window.webContents.openDevTools({ mode: "undocked" }) 
                 : mainWindowInstance.window.webContents.closeDevTools();
+        });
+
+        ipcMain.once("restart", () => {
+            app.relaunch();
+            app.exit(0);
         });
 
         ipcMain.handle("FindWindow", (_, window) => mainWindowInstance.addonInstance.FindWindow(window));
