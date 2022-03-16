@@ -13,6 +13,8 @@ const clear = {
         devtools: false,
         hardwareAcceleration: true,
         outputDeviceId: "default",
+
+        service: "twitch",
         chat: {
             enable: true,
             avatar: true,

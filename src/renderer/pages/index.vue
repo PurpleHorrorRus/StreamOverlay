@@ -29,8 +29,22 @@ import Widget from "~/components/Widget";
 
 import OBSMixin from "~/mixins/obs";
 import TwitchMixin from "~/mixins/twitch";
+import TrovoMixin from "~/mixins/trovo";
 import WidgetsMixin from "~/mixins/widgets";
 import other from "~/mixins/other";
+
+const notifications = {
+    controls: {
+        text:
+                        "Управление:<br/>\
+                        Alt + R - меню<br/>\
+                        Alt + K - список зрителей",
+
+        color: "#343a40",
+        icon: () => import("~/assets/icons/keyboard.svg"),
+        handle: 10
+    }
+};
 
 export default {
     components: {
@@ -42,7 +56,7 @@ export default {
         ViewersList,
         Widget
     },
-    mixins: [OBSMixin, TwitchMixin, WidgetsMixin, other],
+    mixins: [OBSMixin, TwitchMixin, TrovoMixin, WidgetsMixin, other],
     computed: {
         showOBS() {
             return this.user 
@@ -76,44 +90,44 @@ export default {
             return;
         }
 
-        if (!this.config.twitch.username || !this.config.twitch.access_token || !this.config.twitch.oauth_token) {
+        if (!this.validateServices()) {
             this.config.settings.first = true;
             this.setConfig(this.config);
 
             this.registerLock();
             this.turnLock(true);
-            this.$router.replace("/services/twitch").catch(() => {});
-            return;
         }
 
-        this.setWidgets(this.config.widgets);
+        if (!this.connected) {
+            this.connectOBS(this.config.OBS);
 
-        if (!this.obs._connected) {
             if (this.config.settings.first) {
                 this.config.settings.first = false;
                 this.save(this.config.settings);
             }
+        }
 
-            if (!this.helix) {
-                this.connectOBS(OBS);
-                this.registerIPC();
+        if (this.widgets.length === 0 && this.config.widgets.length > 0) {
+            this.setWidgets(this.config.widgets);
+        }
 
-                ipcRenderer.send("finish-load");
-
-                this.addNotification({
-                    text:
-                        "Управление:<br/>\
-                        Alt + R - меню<br/>\
-                        Alt + K - список зрителей",
-
-                    color: "#343a40",
-                    icon: () => import("~/assets/icons/keyboard.svg"),
-                    handle: 10
-                });
-
+        switch(this.config.settings.service) {
+            case this.services.twitch: {
+                if (this.helix) return;
                 await this.createHelix(this.config.twitch);
+                break;
+            }
+
+            case this.services.trovo: {
+                if (this.trovo) return;
+                await this.createTrovo(this.config.trovo);
+                break;
             }
         }
+
+        this.registerIPC();
+        ipcRenderer.send("finish-load");
+        this.addNotification(notifications.controls);
     },
     methods: {
         ...mapActions({
@@ -126,6 +140,32 @@ export default {
             addNotification: "notifications/ADD",
             turnUpdate: "notifications/TURN_UPDATE"
         }),
+
+        validateServices() {
+            switch (this.config.settings.service) {
+                case this.services.twitch: {
+                    // eslint-disable-next-line max-len
+                    if (!this.config.twitch.username || !this.config.twitch.access_token || !this.config.twitch.oauth_token) {
+                        this.$router.replace("/services/twitch").catch(() => {});
+                        return false;
+                    }
+
+                    return true;
+                }
+
+                case this.services.trovo: {
+                    if (!this.config.trovo.access_token) {
+                        this.$router.replace("/services/trovo").catch(() => {});
+                        return false;
+                    }
+
+                    return true;
+                }
+            }
+
+            return true;
+        },
+
         registerIPC() {
             this.registerLock();
             ipcRenderer.on("update-available", (_, release) => this.turnUpdate(release));

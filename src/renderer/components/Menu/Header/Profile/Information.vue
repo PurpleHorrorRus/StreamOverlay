@@ -1,19 +1,39 @@
 <template>
     <div id="menu-header-profile-info">
-        <span id="menu-header-profile-info-name" v-text="user.display_name" />
+        <span id="menu-header-profile-info-name" v-text="name" />
         <span
-            v-if="user.description"
+            v-if="description"
             id="menu-header-profile-info-description"
-            v-text="user.description"
+            v-text="description"
         />
     </div>
 </template>
 
 <script>
-import TwitchMixin from "~/mixins/twitch";
+import CoreMixin from "~/mixins/core";
 
 export default {
-    mixins: [TwitchMixin]
+    mixins: [CoreMixin],
+
+    computed: {
+        name() {
+            switch(this.settings.service) {
+                case this.services.twitch: return this.twitchUser.display_name;
+                case this.services.trovo: return this.trovoUser.nickName;
+            }
+
+            return "";
+        },
+
+        description() {
+            switch(this.settings.service) {
+                case this.services.twitch: return this.twitchUser.description;
+                case this.services.trovo: return this.trovoUser.info;
+            }
+
+            return "";
+        }
+    }
 };
 </script>
 

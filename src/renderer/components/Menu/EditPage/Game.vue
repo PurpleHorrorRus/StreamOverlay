@@ -1,23 +1,16 @@
 <template>
     <div class="game clickable">
-        <img class="game-image" :src="box_art_url" />
+        <img class="game-image" :src="game.icon_url" />
         <span class="game-name nowrap" v-text="game.name" />
     </div>
 </template>
 
 <script>
-const artSize = { width: 90, height: 130 };
-
 export default {
     props: {
         game: {
             required: true,
             type: Object
-        }
-    },
-    computed: {
-        box_art_url() {
-            return this.$parent.resizeArt(this.game.box_art_url, artSize);
         }
     }
 };

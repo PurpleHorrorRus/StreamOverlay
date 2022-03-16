@@ -2,9 +2,8 @@
     <div v-if="!firstLoad" id="modal-stream-container">
         <div id="modal-stream-content" class="modal-content">
             <Title id="modal-stream-content-title" title="Трансляция" />
-            <div id="modal-stream-content-art">
-                <img id="modal-stream-content-art-image" :src="art" />
-            </div>
+            <img id="modal-stream-content-art-image" :src="game.icon_url" />
+
             <div id="modal-stream-content-edit">
                 <Input
                     :value="local.title"
@@ -12,12 +11,14 @@
                     @input="local.title = $event"
                     @keypress.enter.native="update"
                 />
+
                 <Input
                     :value="local.game"
                     :placeholder="'Название игры'"
                     @input="local.game = $event"
                     @keypress.enter.native="update"
                 />
+
                 <SolidButton
                     label="Обновить"
                     :disabled="disabled"
@@ -25,28 +26,17 @@
                     @clicked="update"
                 />
             </div>
-            <Recent v-show="recent.length > 0" :recent="recent" />
-            <div id="modal-stream-content-games">
-                <div id="modal-stream-content-games-filtered">
-                    <Game
-                        v-for="game of filteredTopGames"
-                        :key="game.id"
-                        :game="game"
-                        @click.native="local.game = game.name"
-                    />
-                </div>
-                <div
-                    v-if="search.length > 0"
-                    id="modal-stream-content-games-search"
-                >
-                    <Game
-                        v-for="game of search"
-                        :key="game.id"
-                        :game="game"
-                        @click.native="local.game = game.name"
-                    />
-                </div>
-            </div>
+
+            <Recent 
+                v-show="recent.length > 0" 
+                :recent="recent" 
+            />
+
+            <Search 
+                v-if="search.length > 0" 
+                :search="search"
+                @select="select"
+            />
         </div>
     </div>
 
@@ -55,146 +45,113 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import { debounce } from "lodash";
 
 import Title from "~/components/Menu/Title";
 import Input from "~/components/Settings/Input";
-import Game from "~/components/Game";
 import SolidButton from "~/components/SolidButton";
 import Recent from "~/components/Recent";
 
+import Search from "~/components/Menu/EditPage/Search";
+
 import LoaderIcon from "~/assets/icons/loader.svg";
 
-import TwitchMixin from "~/mixins/twitch";
+import TrovoMixin from "~/mixins/trovo";
 
-const noArt = "https://static-cdn.jtvnw.net/ttv-static/404_boxart-{width}x{height}.jpg";
-const artSize = {
-    width: 250,
-    height: 350
-};
-
-let inputDelay = null;
+let updateSearchResultsDebounce = null;
 
 export default {
     components: {
         Title,
         Input,
-        Game,
+
         SolidButton,
         Recent,
+
+        Search,
+
         LoaderIcon
     },
-    mixins: [TwitchMixin],
+
+    mixins: [TrovoMixin],
+
     layout: "modal",
+
     data: () => ({
         firstLoad: true,
+        loading: false,
+
+        game: null,
+        search: [],
         local: {
             title: "",
             game: ""
-        },
-        games: [],
-        search: [],
-        art: "",
-        topGames: [],
-        reset: true,
-        loading: false,
-        success: false,
-        error: ""
+        }
     }),
+
     computed: {
         ...mapState({
-            stream: state => state.twitch.stream,
             recent: state => state.config.recent
         }),
-        filteredTopGames() {
-            if (!this.local.game.length) {
-                return this.topGames;
-            }
 
-            return this.topGames.filter(r => ~r.name.toLowerCase().indexOf(this.local.game.toLowerCase()));
-        },
         disabled() {
             return this.local.title.length === 0 || this.local.game.length === 0;
         }
     },
+
     watch: {
-        art: function(newVal) {
-            this.art = this.resizeArt(newVal);
-        },
-        "local.game": async function(newVal) {
-            this.art = noArt;
+        "local.game": function(game) {
+            if (!this.firstLoad && game !== this.game.name) {
+                if (game.length === 0) {
+                    this.search = [];
+                    return;
+                }
 
-            if (inputDelay) {
-                clearTimeout(inputDelay);
-                inputDelay = null;
+                updateSearchResultsDebounce(game);
             }
-
-            if (newVal.length === 0) {
-                this.search = [];
-                return;
-            } else if (this.findCache(this.games, this.local.game) || this.findCache(this.search, this.local.game)) {
-                return;
-            }
-
-            inputDelay = setTimeout(async () => {
-                const games = await this.helix.search.categories(newVal);
-                this.search = Array.isArray(games) ? games : games.data || [];
-
-                if (this.search.length === 0) {
-                    const game = await this.helix.games.getByName(newVal);
-                    this.art = game.box_art_url || noArt;
-                } else this.findCache(this.search, newVal);
-            }, 200);
         }
     },
-    async created() {
-        const channel = await this.helix.channel.get(this.user.id);
-        this.local = {
-            title: channel.title,
-            game: channel.game_name
-        };
 
-        this.helix.games.top().then(({ data: topGames }) => (this.topGames = topGames));
-        this.helix.games.getByName(channel.game_name).then(game => (this.art = game?.box_art_url || noArt));
+    async created() {
+        const channel = await this.trovo.channels.get(this.user.nickName);
+        this.local.title = channel.live_title;
+        this.local.game = channel.category_name;
+
+        const response = await this.trovo.categories.search(channel.category_name);
+        this.game = response.category_info[0];
+        this.search = response.category_info;
+        
+        updateSearchResultsDebounce = debounce(game => this.updateSearchResults(game), 200);
 
         this.firstLoad = false;
     },
+
     methods: {
         ...mapActions({
-            updateStream: "twitch/UPDATE"
+            updateStream: "trovo/UPDATE_STREAM"
         }),
-        findCache(array, game) {
-            const index = array.map(g => g.name).indexOf(game);
-            if (~index) {
-                this.art = array[index].box_art_url;
-            }
 
-            return index !== -1;
-        },
-        resizeArt(art, sizes = artSize) {
-            return art
-                .replace("{width}", sizes.width)
-                .replace("{height}", sizes.height)
-                .replace("52x72", `${sizes.width}x${sizes.height}`);
-        },
         async update() {
-            if (this.disabled) {
+            this.loading = true;
+            await this.updateStream(this.local);
+            this.loading = false;
+        },
+
+        select(game) {
+            this.game = game;
+            this.local.game = game.name;
+        },
+        
+        async updateSearchResults(query) {
+            if (this.game.name === query) {
                 return;
             }
 
-            this.reset = false;
-            this.loading = true;
-            this.error = "";
+            const response = await this.trovo.categories.search(query);
+            this.search = response.category_info;
 
-            this.success = await this.updateStream({
-                title: this.local.title,
-                game: this.local.game
-            });
-
-            this.loading = false;
-            setTimeout(() => {
-                this.success = false;
-                this.reset = true;
-            }, 2 * 1000);
+            const gameInSearch = this.search.find(game => game.name === query);
+            if (gameInSearch) this.select(gameInSearch);
         }
     }
 };
@@ -242,10 +199,6 @@ export default {
 
         overflow-x: hidden;
         overflow-y: auto;
-
-        &-search {
-            border-top: 1px solid $outline;
-        }
     }
 }
 </style>

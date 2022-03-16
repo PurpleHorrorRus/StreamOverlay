@@ -30,7 +30,9 @@ export default {
         }),
 
         showExpand() {
-            return this.connected && this.tags !== null;
+            return this.settings.service === "twitch" &&
+                this.connected && 
+                this.tags !== null;
         }
     }
 };
