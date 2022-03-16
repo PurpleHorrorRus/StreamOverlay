@@ -82,7 +82,7 @@ export default {
 
             this.registerLock();
             this.turnLock(true);
-            this.$router.replace("/settings/twitch").catch(() => {});
+            this.$router.replace("/services/twitch").catch(() => {});
             return;
         }
 

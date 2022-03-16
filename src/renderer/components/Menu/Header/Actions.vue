@@ -34,11 +34,11 @@ export default {
         items: [
             {
                 title: "Голосование",
-                to: "/twitch/polls"
+                to: "services/twitch/polls"
             },
             {
                 title: "Предсказание",
-                to: "/twitch/predictions"
+                to: "services/twitch/predictions"
             }
         ],
         loadAd: false,

@@ -38,7 +38,7 @@ export default {
             },
             {
                 text: "Настройки Twitch",
-                link: "/settings/twitch",
+                link: "/services/twitch",
                 icon: () => import("~/assets/icons/twitch.svg")
             },
             {

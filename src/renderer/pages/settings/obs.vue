@@ -97,7 +97,7 @@ export default {
                     }
                 });
 
-                this.$router.replace("/settings/twitch").catch(() => {});
+                this.$router.replace("/services/twitch").catch(() => {});
             }
         }
     }
