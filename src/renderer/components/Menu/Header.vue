@@ -1,87 +1,36 @@
 <template>
     <div id="menu-header" :class="{ stream: streaming, expanded }">
-        <div id="menu-header-profile">
-            <div id="menu-header-profile-avatar">
-                <img
-                    id="menu-header-profile-avatar-image"
-                    :src="user.profile_image_url"
-                />
-                <span
-                    v-if="streaming"
-                    id="menu-header-profile-avatar-stream"
-                    v-text="'В ЭФИРЕ'"
-                />
-            </div>
-            <div id="menu-header-profile-info">
-                <span
-                    id="menu-header-profile-info-name"
-                    v-text="user.display_name"
-                />
-                <span
-                    v-if="user.description"
-                    id="menu-header-profile-info-description"
-                    v-text="user.description"
-                />
-            </div>
-
-            <div v-if="connected && tags" id="menu-header-profile-expand-icon">
-                <ChevronLeft
-                    v-if="!expanded"
-                    id="menu-header-profile-expand-icon"
-                    class="icon feather clickable"
-                    @click="expanded = true"
-                />
-
-                <ChevronRight
-                    v-else
-                    id="menu-header-profile-expand-icon"
-                    class="icon feather clickable"
-                    @click="expanded = false"
-                />
-            </div>
-        </div>
-
-        <div v-if="expanded" id="menu-header-expand">
-            <Toggles />
-            <Actions />
-        </div>
+        <Profile />
+        <Expand v-if="showExpand" />
     </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
 
-import Toggles from "~/components/Menu/Header/Toggles";
-import Actions from "~/components/Menu/Header/Actions";
-
-import ChevronLeft from "~/assets/icons/chevron-left.svg";
-import ChevronRight from "~/assets/icons/chevron-right.svg";
-
 import TwitchMixin from "~/mixins/twitch";
 import OBSMixin from "~/mixins/obs";
 
 export default {
     components: {
-        Actions,
-        Toggles,
-        ChevronLeft,
-        ChevronRight
+        Profile: () => import("~/components/Menu/Header/Profile"),
+        Expand: () => import("~/components/Menu/Header/Expand")
     },
+
     mixins: [TwitchMixin, OBSMixin],
+
     data: () => ({
         expanded: false
     }),
+
     computed: {
         ...mapState({
             connected: state => state.twitch.connected,
             tags: state => state.twitch.tags
-        })
-    },
-    watch: {
-        connected(newVal) {
-            if (!newVal && this.expanded) {
-                this.expanded = false;
-            }
+        }),
+
+        showExpand() {
+            return this.connected && this.tags !== null;
         }
     }
 };
@@ -96,6 +45,8 @@ export default {
     grid-template-rows: 1fr;
     grid-template-areas: "profile";
 
+    position: relative;
+
     background: $primary;
     border-top: 2px solid $secondary;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
@@ -105,91 +56,11 @@ export default {
     &.expanded {
         grid-template-columns: 1fr 450px;
         grid-template-areas: "profile expand";
-
-        #menu-header-expand {
-            grid-area: expand;
-
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            grid-template-rows: 1fr;
-            grid-template-areas: "toggles actions";
-        }
     }
 
     &.stream {
         #menu-header-profile-avatar-image {
             border: 2px solid $secondary;
-        }
-    }
-
-    &-profile {
-        grid-area: profile;
-
-        display: grid;
-        grid-template-columns: 150px 1fr;
-        grid-template-rows: 1fr;
-        grid-template-areas: "avatar info";
-
-        position: relative;
-
-        &-avatar {
-            grid-area: avatar;
-
-            position: relative;
-
-            display: flex;
-            justify-content: center;
-            align-content: center;
-            align-items: center;
-
-            &-image {
-                width: 100px;
-                height: 100px;
-
-                border-radius: 100px;
-            }
-
-            &-stream {
-                position: absolute;
-                bottom: 30px;
-                left: 45px;
-
-                padding: 5px;
-
-                border-radius: 5px;
-
-                background: $secondary;
-
-                font-size: 9pt;
-            }
-        }
-
-        &-info {
-            grid-area: info;
-
-            display: flex;
-            align-content: center;
-            flex-wrap: wrap;
-
-            width: 98%;
-
-            span {
-                width: 100%;
-            }
-
-            &-name {
-                font-size: 18pt;
-            }
-
-            &-description {
-                font-size: 9pt;
-            }
-        }
-
-        &-expand-icon {
-            position: absolute;
-            top: 15px;
-            right: 15px;
         }
     }
 }
