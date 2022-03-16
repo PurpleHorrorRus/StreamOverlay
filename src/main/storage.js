@@ -99,7 +99,7 @@ if (!fs.existsSync(configPath)) {
     fs.mkdirSync(configPath);
 }
 
-const spath = isDev ? path.join(configPath, "StreamOverlayMaximum") : configPath;
+const spath = isDev ? path.join(configPath, "StreamOverlay") : configPath;
 if (!fs.existsSync(spath)) {
     fs.mkdirSync(spath);
 }
