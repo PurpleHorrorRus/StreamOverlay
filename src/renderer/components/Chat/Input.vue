@@ -13,8 +13,6 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-
 import CoreMixin from "~/mixins/core";
 
 export default {
@@ -25,15 +23,11 @@ export default {
     }),
 
     methods: {
-        ...mapActions({
-            say: "twitch/SAY"
-        }),
-
         send() {
             this.text = this.text.trim();
             
             if (this.text.length > 0 && this.connected) {
-                this.say(this.text);
+                this.serviceDispatch("SAY", this.text);
                 this.text = "";
             }
         }
