@@ -1,20 +1,42 @@
 <template>
     <div class="service clickable">
-        <CheckIcon v-if="service.active" class="icon" />
-        <img :src="service.image" class="service-image">
-        <span class="service-name" v-text="service.name" />
+        <div class="service-information">
+            <CheckIcon v-if="service.active" class="icon" />
+            <img :src="service.image" class="service-information-image">
+            <span class="service-information-name" v-text="service.name" />
+        </div>
+        
+        <SettingsIcon 
+            v-tooltip="tooltip" 
+            class="icon clickable"
+            @click.stop="open"
+        />
     </div>
 </template>
 
 <script>
 export default {
     components: {
-        CheckIcon: () => import("~/assets/icons/check.svg")
+        CheckIcon: () => import("~/assets/icons/check.svg"),
+        SettingsIcon: () => import("~/assets/icons/settings.svg")
     },
+
     props: {
         service: {
             type: Object,
             required: true
+        }
+    },
+
+    computed: {
+        tooltip() {
+            return `Настройки ${this.service.name}`;
+        }
+    },
+
+    methods: {
+        open() {
+            this.$router.replace(`/services/${this.service.id}`);
         }
     }
 };
@@ -23,15 +45,20 @@ export default {
 <style lang="scss">
 .service {
     display: flex;
+    justify-content: space-between;
     align-content: center;
-    align-items: center;
-    column-gap: 10px;
 
     padding: 10px;
 
-    &-image {
-        width: 36px;
-        height: 36px;
+    &-information {
+        display: flex;
+        align-items: center;
+        column-gap: 10px;
+        
+        &-image {
+            width: 36px;
+            height: 36px;
+        }
     }
 }
 </style>

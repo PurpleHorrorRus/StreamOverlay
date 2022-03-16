@@ -4,7 +4,7 @@
             v-for="service of servicesList"
             :key="service.id"
             :service="service"
-            @click.native="changeService(service)"
+            @click.self.native="changeService(service)"
         />
     </div>
 </template>

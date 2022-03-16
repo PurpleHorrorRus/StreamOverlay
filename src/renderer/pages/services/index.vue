@@ -1,16 +1,7 @@
 <template>
     <div id="services-page">
         <Title title="Настройки сервисов" />
-
         <ServiceSelector />
-
-        <div id="services-page-list">
-            <Link
-                v-for="service of services"
-                :key="service.to"
-                :item="service"
-            />
-        </div>
     </div>
 </template>
 
@@ -18,32 +9,9 @@
 export default {
     components: {
         Title: () => import("~/components/Menu/Title"),
-
-        ServiceSelector: () => import("~/components/Settings/Services/ServiceSelector"),
-        Link: () => import("~/components/Menu/Header/Link")
+        ServiceSelector: () => import("~/components/Settings/Services/ServiceSelector")
     },
 
-    layout: "modal",
-
-    data: () => ({
-        services: [
-            {
-                title: "Настройки Twitch",
-                to: "/services/twitch"
-            },
-            {
-                title: "Настройки Trovo",
-                to: "/services/trovo"
-            }
-        ]
-    })
+    layout: "modal"
 };
 </script>
-
-<style lang="scss">
-#services-page {
-    &-list {
-        margin-top: 10px;
-    }
-}
-</style>
