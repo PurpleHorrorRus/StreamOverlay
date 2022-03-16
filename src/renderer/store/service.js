@@ -22,13 +22,10 @@ export default {
 
     actions: {
         ADD_MESSAGE: async ({ dispatch, state, rootState }, message) => {
-            message = {
-                ...message,
-                formatted: await dispatch("FORMAT_MESSAGE", message.content),
-                time: await dispatch("FORMAT_MESSAGE_TIME", message),
+            message = Object.assign(message, {
                 show: true,
-                banned: false
-            };
+                bannded: false
+            });
 
             state.messages.unshift(message);
             dispatch("LIMIT_MESSAGES");
@@ -55,12 +52,12 @@ export default {
         },
 
         LIMIT_MESSAGES: ({ state }) => {
-            const visibleMessagesCount = state.service.messages.filter(m => m.show).length;
+            const visibleMessagesCount = state.messages.filter(m => m.show).length;
 
             if (visibleMessagesCount > config.visibleMessagesMax) {
                 for (let i = config.visibleMessagesMax; i < visibleMessagesCount; i++) {
-                    if (!state.service.messages[i].show) break;
-                    state.service.messages[i].show = false;
+                    if (!state.messages[i].show) break;
+                    state.messages[i].show = false;
                 }
             }
         },

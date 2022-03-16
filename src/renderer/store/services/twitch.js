@@ -68,7 +68,7 @@ export default {
 
             state.service.client = new Helix({
                 // eslint-disable-next-line no-undef
-                client_id: process.env.client_id,
+                client_id: process.env.twitch_client_id,
                 access_token: credits.access_token,
                 language: "ru"
             });

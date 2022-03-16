@@ -30,11 +30,11 @@ const addMessagePart = (formatted, type, content) => {
 export default {
     namespaced: true,
     actions: {
-        INIT: async ({ dispatch, state }, access_token) => {
+        INIT: async ({ dispatch, state }, config) => {
             state.service.client = new TrovoAPI({
                 // eslint-disable-next-line no-undef
-                client_id: process.env.client_id,
-                access_token
+                client_id: process.env.trovo_client_id,
+                access_token: config.access_token
             });
 
             state.service.user = await state.service.client.users.getUserInfo();
@@ -61,7 +61,12 @@ export default {
                 show: false 
             }, { root: true });
 
-            state.service.chat.messages.on("message", message => {
+            state.service.chat.messages.on("message", async message => {
+                message = Object.assign(message, {
+                    formatted: await dispatch("FORMAT_MESSAGE", message.content),
+                    time: await dispatch("FORMAT_MESSAGE_TIME", message)
+                });
+
                 return dispatch("events/ON_MESSAGE", message);
             });
 
