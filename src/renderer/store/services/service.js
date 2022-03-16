@@ -39,17 +39,6 @@ export default {
     }),
 
     actions: {
-        CLEAR: ({ state }) => {
-            state.connected = false;
-
-            state.client = null;
-            state.chat = null;
-            state.user = null;
-
-            state.messages = [];
-            state.stream = emptyStream;
-        },
-
         SET_CLIENT: ({ state }, client) => {
             state.client = client;
             return state.client;
@@ -79,7 +68,6 @@ export default {
 
             state.messages.unshift(message);
             dispatch("LIMIT_MESSAGES");
-            
 
             if (rootState.settings.settings.chat.timeout > 0) {
                 setTimeout(() => {
