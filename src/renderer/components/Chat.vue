@@ -1,5 +1,5 @@
 <template>
-    <Movable v-if="settings" class="chat" :source="settings.chat" name="Чат" @onResize="onResize" @onDrag="onDrag">
+    <Movable class="chat" :source="settings.chat" name="Чат" @onResize="onResize" @onDrag="onDrag">
         <div id="chat-block" :class="{ input }">
             <MessagesBlock :input="input" />
             <ChatInput v-if="input" />

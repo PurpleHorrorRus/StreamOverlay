@@ -62,12 +62,13 @@ export default {
             }, { root: true });
 
             state.service.chat.messages.on("message", async message => {
-                message = Object.assign(message, {
+                return dispatch("events/ON_MESSAGE", {
+                    id: message.message_id,
+                    nickname: message.nick_name,
+                    avatar: message.avatar,
                     formatted: await dispatch("FORMAT_MESSAGE", message.content),
                     time: await dispatch("FORMAT_MESSAGE_TIME", message)
                 });
-
-                return dispatch("events/ON_MESSAGE", message);
             });
 
             state.service.chat.messages.on(state.service.chat.messages.events.WELCOME, user => {
@@ -95,14 +96,6 @@ export default {
             ["message", ...events].forEach(event => {
                 state.service.chat.messages.removeAllListeners(event);
             });
-        },
-
-        REMOVE_MESSAGE: ({ state }, id) => {
-            state.service.messages.find(message => {
-                return message.message_id === id;
-            }).show = false;
-
-            return true;
         },
 
         FORMAT_MESSAGE: async ({ dispatch }, message) => {

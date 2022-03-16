@@ -32,23 +32,32 @@ export default {
 
             if (rootState.settings.settings.chat.timeout > 0) {
                 setTimeout(() => {
-                    dispatch("REMOVE_MESSAGE", message.message_id);
+                    dispatch("REMOVE_MESSAGE", message.id);
                 }, rootState.settings.settings.chat.timeout * 1000);
             }
 
             return message;
         },
 
-        ADD_SYSTEM_MESSAGE: ({ dispatch }, text) => {
+        ADD_SYSTEM_MESSAGE: async ({ dispatch }, text) => {
             dispatch("ADD_MESSAGE", {
-                message_id: Date.now(),
-                nick_name: "SYSTEM",
-                content: text,
-                send_time: Math.floor(new Date() / 1000),
-                show: true,
-                banned: false,
+                id: Date.now(),
+                nickname: "SYSTEM",
+                formatted: [{
+                    type: "text",
+                    content: text
+                }],
+                time: await dispatch("twitch/FORMAT_MESSAGE_TIME", null, { root: true }),
                 system: true
             });
+        },
+
+        REMOVE_MESSAGE: ({ state }, id) => {
+            state.messages.find(message => {
+                return message.id === id;
+            }).show = false;
+
+            return true;
         },
 
         LIMIT_MESSAGES: ({ state }) => {
