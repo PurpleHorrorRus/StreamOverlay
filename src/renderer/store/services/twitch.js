@@ -135,8 +135,7 @@ export default {
             });
 
             chat.on("disconnected", () => {
-                rootState.service.connected = false;
-                state.tags = null;
+                dispatch("DISCONNECT");
                 return dispatch("events/ON_DISCONNECTED");
             });
 
@@ -163,7 +162,8 @@ export default {
             return chat;
         },
 
-        DISCONNECT: ({ state }) => {
+        DISCONNECT: ({ state, rootState }) => {
+            rootState.service.connected = false;
             state.tags = null;
         },
 

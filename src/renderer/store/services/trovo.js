@@ -102,6 +102,8 @@ export default {
         },
 
         DISCONNECT: ({ rootState }) => {
+            rootState.service.connected = false;
+            
             const events = Object.values(rootState.service.chat.messages.events);
             ["message", ...events].forEach(event => {
                 rootState.service.chat.messages.removeAllListeners(event);
