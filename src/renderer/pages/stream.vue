@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapState } from "vuex";
 import { debounce } from "lodash";
 import Promise from "bluebird";
 
@@ -92,14 +92,6 @@ export default {
     },
 
     methods: {
-        ...mapActions({
-            twitchUpdate: "twitch/UPDATE",
-            trovoUpdate: "trovo/UPDATE",
-
-            twitchFormatGame: "twitch/FORMAT_GAME",
-            trovoFormatGame: "trovo/FORMAT_GAME"
-        }),
-
         async fetch() {
             switch (this.settings.service) {
                 case this.services.twitch: {
