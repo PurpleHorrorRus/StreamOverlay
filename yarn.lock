@@ -8261,6 +8261,11 @@ readdirp@~3.5.0:
   dependencies:
     picomatch "^2.2.1"
 
+reconnecting-websocket@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/reconnecting-websocket/-/reconnecting-websocket-4.4.0.tgz#3b0e5b96ef119e78a03135865b8bb0af1b948783"
+  integrity sha512-D2E33ceRPga0NvTDhJmphEgJ7FUYF0v4lr1ki0csq06OdlxKfugGzN0dSkxM/NfqCxYELK4KcaTOUOjTV6Dcng==
+
 regenerate-unicode-properties@^8.2.0:
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/regenerate-unicode-properties/-/regenerate-unicode-properties-8.2.0.tgz#e5de7111d655e7ba60c057dbe9ff37c87e65cdec"
@@ -8818,6 +8823,14 @@ simple-swizzle@^0.2.2:
   integrity sha1-pNprY1/8zMoz9w0Xy5JZLeleVXo=
   dependencies:
     is-arrayish "^0.3.1"
+
+simple-trovo-api@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/simple-trovo-api/-/simple-trovo-api-1.0.9.tgz#e96464e3c89af1e2f3b40870383c111355900153"
+  integrity sha512-dqlyTw/eUWd4zseWJG4gtNPYHHW7RA+37/ILDmaG5rzhfQsSh3VFUw3Ty0efsxXZ8L4IbyK4MxjvSdjzlt8cHQ==
+  dependencies:
+    node-fetch "2.6.7"
+    reconnecting-websocket "^4.4.0"
 
 sirv@^1.0.7:
   version "1.0.11"
