@@ -84,14 +84,16 @@ export default {
             });
         },
 
-        ON_DISCONNECTED: ({ dispatch, state }) => {
-            state.service.connected = false;
+        ON_DISCONNECTED: ({ dispatch }) => {
+            dispatch("DISCONNECT");
 
             dispatch("notifications/TURN", { 
                 name: "chatdisconnect", 
                 show: true 
             }, { root: true });
+        },
 
+        DISCONNECT: ({ state }) => {
             const events = Object.values(state.service.chat.messages.events);
             ["message", ...events].forEach(event => {
                 state.service.chat.messages.removeAllListeners(event);

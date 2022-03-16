@@ -4,6 +4,11 @@ const config = {
     visibleMessagesMax: 15
 };
 
+const emptyStream = {
+    title: "",
+    game: ""
+};
+
 export default {
     namespaced: false,
 
@@ -14,15 +19,24 @@ export default {
         connected: false,
 
         messages: [],
-        stream: {
-            title: "",
-            game: ""
-        }
+        stream: emptyStream
     }),
 
     actions: {
+        CLEAR: ({ state }) => {
+            state.connected = false;
+
+            state.client = null;
+            state.chat = null;
+            state.user = null;
+
+            state.messages = [];
+            state.stream = emptyStream;
+        },
+
         ADD_MESSAGE: async ({ dispatch, state, rootState }, message) => {
             message = Object.assign(message, {
+                id: message.id || Date.now(),
                 show: true,
                 bannded: false
             });
@@ -53,11 +67,12 @@ export default {
         },
 
         REMOVE_MESSAGE: ({ state }, id) => {
-            state.messages.find(message => {
+            const message = state.messages.find(message => {
                 return message.id === id;
-            }).show = false;
-
-            return true;
+            });
+            
+            if (message) message.show = false;
+            return Boolean(message);
         },
 
         LIMIT_MESSAGES: ({ state }) => {

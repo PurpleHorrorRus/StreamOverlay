@@ -2,6 +2,8 @@
     <div id="services-page">
         <Title title="Настройки сервисов" />
 
+        <ServiceSelector />
+
         <div id="services-page-list">
             <Link
                 v-for="service of services"
@@ -16,6 +18,8 @@
 export default {
     components: {
         Title: () => import("~/components/Menu/Title"),
+
+        ServiceSelector: () => import("~/components/Settings/Services/ServiceSelector"),
         Link: () => import("~/components/Menu/Header/Link")
     },
 

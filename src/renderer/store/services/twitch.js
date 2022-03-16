@@ -120,6 +120,7 @@ export default {
                     avatar: profile.profile_image_url,
                     badges: await dispatch("badges/FORMAT", user.badges),
                     formatted: await dispatch("FORMAT_MESSAGE", { text: message, emotes: user.emotes }),
+                    time: await dispatch("FORMAT_MESSAGE_TIME"),
                     color: user.color,
                     mode: user["msg-id"],
                     show: true,
@@ -184,6 +185,11 @@ export default {
             });
             
             state.service.chat.connect();
+        },
+
+        DISCONNECT: ({ state }) => {
+            state.credits = {};
+            state.tags = null;
         },
 
         CACHE_PROFILE: async ({ state }, username) => {
@@ -278,14 +284,6 @@ export default {
             if (utterQuery.length === 1) {
                 speechSynthesis.speak(utter);
             }
-        },
-
-        REMOVE_MESSAGE: ({ state }, id) => {
-            state.service.messages.find(message => {
-                return message.id === id;
-            }).show = false;
-
-            return true;
         },
 
         BAN: async ({ state }, data) => {

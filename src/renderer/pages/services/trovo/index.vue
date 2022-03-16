@@ -23,7 +23,7 @@ import { TrovoAPI } from "simple-trovo-api";
 
 import MenuError from "~/components/Menu/Notifications/Error";
 
-import TrovoSettingsAccessToken from "~/components/Settings/Trovo/AccessToken";
+import TrovoSettingsAccessToken from "~/components/Settings/Services/Trovo/AccessToken";
 
 import Title from "~/components/Menu/Title";
 import SolidButton from "~/components/SolidButton";

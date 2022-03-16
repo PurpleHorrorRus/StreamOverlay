@@ -1,9 +1,9 @@
 <template>
     <div id="modal-locked">
-        <Chat v-if="!$parent.settings.first && $parent.settings.chat.enable" :input="true" />
+        <Chat v-if="showChat" :input="true" />
         <Time v-if="$parent.locked" />
 
-        <Header v-if="!$parent.settings.first" />
+        <Header v-if="showHeader" />
         <ModalContainer />
     </div>
 </template>
@@ -15,6 +15,8 @@ import Time from "~/components/Menu/Time";
 import Header from "~/components/Menu/Header";
 import ModalContainer from "~/components/Menu/ModalContainer";
 
+import CoreMixin from "~/mixins/core";
+
 export default {
     components: {
         Chat,
@@ -22,6 +24,18 @@ export default {
 
         Header,
         ModalContainer
+    },
+
+    mixins: [CoreMixin],
+
+    computed: {
+        showChat() {
+            return !this.settings.first && this.settings.chat.enable;
+        },
+
+        showHeader() {
+            return !this.settings.first && this.user;
+        }
     }
 };
 </script>

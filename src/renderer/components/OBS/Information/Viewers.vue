@@ -19,13 +19,13 @@ export default {
         async update() {
             switch(this.settings.service) {
                 case this.services.twitch: {
-                    const stream = await this.helix.stream.streams({ user_id: this.user.id });
+                    const stream = await this.helix.stream.streams({ user_id: this.twitchUser.id });
                     this.count = stream.viewer_count ?? 0;
                     break;
                 }
 
                 case this.services.trovo: {
-                    const channel = await this.trovo.channels.get(this.user.nickName);
+                    const channel = await this.trovo.channels.get(this.trovoUser.nickName);
                     this.count = channel.current_viewers ?? 0;
                     break;
                 }

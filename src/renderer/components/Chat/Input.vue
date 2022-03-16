@@ -15,19 +15,35 @@
 <script>
 import { mapActions, mapState } from "vuex";
 
+import CoreMixin from "~/mixins/core";
+
 export default {
+    mixins: [CoreMixin],
+
     data: () => ({
         text: ""
     }),
+
     computed: {
         ...mapState({
-            connected: state => state.twitch.service.connected
-        })
+            twitchConnected: state => state.twitch.service.connected,
+            trovoConnected: state => state.trovo.service.connected
+        }),
+
+        connected() {
+            switch(this.settings.service) {
+                case this.services.twitch: return this.twitchConnected;
+                case this.services.trovo: return this.trovoConnected;
+            }
+            
+            return false;
+        }
     },
     methods: {
         ...mapActions({
             say: "twitch/SAY"
         }),
+
         send() {
             this.text = this.text.trim();
             

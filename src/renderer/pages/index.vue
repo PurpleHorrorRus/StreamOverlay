@@ -127,7 +127,6 @@ export default {
 
         this.registerIPC();
         ipcRenderer.send("finish-load");
-        this.addNotification(notifications.controls);
     },
     methods: {
         ...mapActions({
