@@ -95,14 +95,14 @@ export default {
         async fetch() {
             switch (this.settings.service) {
                 case this.services.twitch: {
-                    const channel = await this.helix.channel.get(this.user.id);
+                    const channel = await this.client.channel.get(this.user.id);
                     this.local.title = channel.title;
                     this.local.game = channel.game_name;
                     break;   
                 }
 
                 case this.services.trovo: {
-                    const channel = await this.trovo.channels.get(this.user.nickName);
+                    const channel = await this.client.channels.get(this.user.nickName);
                     this.local.title = channel.live_title;
                     this.local.game = channel.category_name;
                     break;
@@ -140,13 +140,13 @@ export default {
 
             switch(this.settings.service) {
                 case this.services.twitch: {
-                    games = await this.helix.search.categories(query);
+                    games = await this.client.search.categories(query);
                     games = games.data || games;
                     break;
                 }
 
                 case this.services.trovo: {
-                    const response = await this.trovo.categories.search(query);
+                    const response = await this.client.categories.search(query);
                     games = response.category_info;
                     break;
                 }

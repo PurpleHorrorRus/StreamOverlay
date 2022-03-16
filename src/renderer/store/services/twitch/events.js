@@ -40,11 +40,11 @@ export default {
         },
 
         ON_CLEAR_CHAT: ({ dispatch }) => {
-            return dispatch("twitch/ADD_SYSTEM_MESSAGE", "Чат был очищен", { root: true });
+            return dispatch("service/ADD_SYSTEM_MESSAGE", "Чат был очищен", { root: true });
         },
 
         ON_BAN: ({ dispatch }, username) => {
-            return dispatch("twitch/ADD_SYSTEM_MESSAGE", `Пользователь ${username} заблокирован`, { root: true });
+            return dispatch("service/ADD_SYSTEM_MESSAGE", `Пользователь ${username} заблокирован`, { root: true });
         },
         
         ON_RAID: ({ dispatch }, { username, viewers }) => {

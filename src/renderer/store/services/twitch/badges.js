@@ -8,8 +8,8 @@ export default {
     actions: {
         LOAD: async ({ state, rootState }, id) => {
             const [global, channel] = await Promise.all([
-                rootState.twitch.service.client.chat.globalBadges(),
-                rootState.twitch.service.client.chat.badges(id)
+                rootState.service.client.chat.globalBadges(),
+                rootState.service.client.chat.badges(id)
             ]);
             
 

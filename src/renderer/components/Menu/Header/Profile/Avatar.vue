@@ -2,7 +2,7 @@
     <div id="menu-header-profile-avatar">
         <img
             id="menu-header-profile-avatar-image"
-            :src="avatar"
+            :src="user.avatar"
         />
 
         <span
@@ -18,18 +18,7 @@ import CoreMixin from "~/mixins/core";
 import OBSMixin from "~/mixins/obs";
 
 export default {
-    mixins: [CoreMixin, OBSMixin],
-
-    computed: {
-        avatar() {
-            switch(this.settings.service) {
-                case this.services.twitch: return this.twitchUser.profile_image_url;
-                case this.services.trovo: return this.trovoUser.profilePic;
-            }
-
-            return "";
-        }
-    }
+    mixins: [CoreMixin, OBSMixin]
 };
 </script>
 

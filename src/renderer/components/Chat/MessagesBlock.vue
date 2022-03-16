@@ -15,14 +15,10 @@ import { mapState } from "vuex";
 
 import Message from "~/components/Chat/Message";
 
-import CoreMixin from "~/mixins/core";
-
 export default {
     components: {
         Message
     },
-
-    mixins: [CoreMixin],
 
     props: {
         input: {
@@ -34,18 +30,8 @@ export default {
     
     computed: {
         ...mapState({
-            twitchMessages: state => state.twitch.service.messages,
-            trovoMessages: state => state.trovo.service.messages
+            messages: state => state.service.messages
         }),
-
-        messages() {
-            switch(this.settings.service) {
-                case this.services.twitch: return this.twitchMessages;
-                case this.services.trovo: return this.trovoMessages;
-            }
-
-            return this.twitchMessages;
-        },
 
         visibleMessages() {
             return this.messages.filter(message => {

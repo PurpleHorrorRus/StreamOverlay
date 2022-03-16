@@ -1,10 +1,10 @@
 <template>
     <div id="menu-header-profile-info">
-        <span id="menu-header-profile-info-name" v-text="name" />
+        <span id="menu-header-profile-info-name" v-text="user.nickname" />
         <span
-            v-if="description"
+            v-if="user.description"
             id="menu-header-profile-info-description"
-            v-text="description"
+            v-text="user.description"
         />
     </div>
 </template>
@@ -13,27 +13,7 @@
 import CoreMixin from "~/mixins/core";
 
 export default {
-    mixins: [CoreMixin],
-
-    computed: {
-        name() {
-            switch(this.settings.service) {
-                case this.services.twitch: return this.twitchUser.display_name;
-                case this.services.trovo: return this.trovoUser.nickName;
-            }
-
-            return "";
-        },
-
-        description() {
-            switch(this.settings.service) {
-                case this.services.twitch: return this.twitchUser.description;
-                case this.services.trovo: return this.trovoUser.info;
-            }
-
-            return "";
-        }
-    }
+    mixins: [CoreMixin]
 };
 </script>
 

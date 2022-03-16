@@ -98,7 +98,7 @@ export default {
     },
     methods: {
         async get() {
-            const [prediction] = await this.helix.predictions.get(this.user.id);
+            const [prediction] = await this.client.predictions.get(this.user.id);
             if (
                 prediction.status === "ACTIVE" ||
                 prediction.status === "LOCKED"
@@ -109,7 +109,7 @@ export default {
         async start() {
             this.load = true;
 
-            this.prediction = await this.helix.predictions.create(
+            this.prediction = await this.client.predictions.create(
                 this.user.id,
                 this.prediction.title,
                 this.prediction.outcomes,
@@ -124,7 +124,7 @@ export default {
             if (this.isActive) {
                 this.load = true;
 
-                await this.helix.predictions.end(
+                await this.client.predictions.end(
                     this.user.id,
                     this.prediction.id,
                     "RESOLVED",
@@ -139,7 +139,7 @@ export default {
         },
         async cancel() {
             this.load = true;
-            await this.helix.predictions.end(
+            await this.client.predictions.end(
                 this.user.id,
                 this.prediction.id,
                 "CANCELED"

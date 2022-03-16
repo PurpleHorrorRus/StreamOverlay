@@ -9,8 +9,24 @@ const emptyStream = {
     game: ""
 };
 
+let utterQuery = [];
+let utter = null;
+// eslint-disable-next-line no-undef
+if (process.client) {
+    utter = new SpeechSynthesisUtterance();
+    utter.lang = "ru-RU";
+    utter.onend = async () => {
+        utterQuery.splice(0, 1);
+        if (utterQuery.length > 0) {
+            utter.text = utterQuery[0];
+            await new Promise(resolve => setTimeout(resolve, 500));
+            speechSynthesis.speak(utter);
+        }
+    };
+}
+
 export default {
-    namespaced: false,
+    namespaced: true,
 
     state: () => ({
         client: null,
@@ -34,6 +50,26 @@ export default {
             state.stream = emptyStream;
         },
 
+        SET_CLIENT: ({ state }, client) => {
+            state.client = client;
+            return state.client;
+        },
+
+        SET_CHAT: ({ state }, chat) => {
+            state.chat = chat;
+            return state.chat;
+        },
+
+        SET_USER: ({ state }, user) => {
+            state.user = user;
+            return state.user;
+        },
+
+        SET_STREAM: ({ state }, stream) => {
+            state.stream = stream;
+            return state.stream;
+        },
+
         ADD_MESSAGE: async ({ dispatch, state, rootState }, message) => {
             message = Object.assign(message, {
                 id: message.id || Date.now(),
@@ -43,11 +79,23 @@ export default {
 
             state.messages.unshift(message);
             dispatch("LIMIT_MESSAGES");
+            
 
             if (rootState.settings.settings.chat.timeout > 0) {
                 setTimeout(() => {
                     dispatch("REMOVE_MESSAGE", message.id);
                 }, rootState.settings.settings.chat.timeout * 1000);
+            }
+
+            if (rootState.settings.settings.chat.sound) {
+                dispatch("PLAY_SOUND");
+            }
+
+            if (rootState.settings.settings.chat.tts.enable) {
+                dispatch("VOICE_MESSAGE", {
+                    name: message.nickname,
+                    message: message.content
+                });
             }
 
             return message;
@@ -83,6 +131,22 @@ export default {
                     if (!state.messages[i].show) break;
                     state.messages[i].show = false;
                 }
+            }
+        },
+
+        PLAY_SOUND: () => {
+            const sound = new Audio("notification.mp3");
+            sound.volume = 0.6;
+            sound.play();
+        },
+
+        VOICE_MESSAGE: ({ rootState }, { name, message, forceName }) => {
+            const readName = rootState.settings.settings.chat.tts.readName || forceName;
+            utter.text = readName ? `${name} сказал ${message}` : message;
+            utterQuery.push(utter.text);
+
+            if (utterQuery.length === 1) {
+                speechSynthesis.speak(utter);
             }
         },
 

@@ -25,7 +25,7 @@ export default {
 
     computed: {
         ...mapState({
-            connected: state => state.twitch.service.connected,
+            connected: state => state.service.connected,
             tags: state => state.twitch.tags
         }),
 

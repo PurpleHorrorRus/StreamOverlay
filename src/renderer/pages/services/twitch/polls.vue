@@ -118,7 +118,7 @@ export default {
             });
         },
         async get() {
-            const { data } = await this.helix.polls.get(this.user.id);
+            const { data } = await this.client.polls.get(this.user.id);
 
             if (data?.poll.status === "ACTIVE") {
                 if (data.poll.choices.length < 5) {
@@ -132,7 +132,7 @@ export default {
         },
         async start() {
             this.load = true;
-            this.poll = await this.helix.polls.create(
+            this.poll = await this.client.polls.create(
                 this.user.id,
                 this.poll.title,
                 this.poll.choices,
@@ -144,7 +144,7 @@ export default {
         },
         async end() {
             this.load = true;
-            await this.helix.polls.end(this.user.id, this.poll.id);
+            await this.client.polls.end(this.user.id, this.poll.id);
             this.poll = empty;
             this.clear();
             this.load = false;

@@ -3,8 +3,6 @@ import Promise from "bluebird";
 import Helix from "simple-helix-api";
 import tmi from "tmi.js";
 
-import service from "~/store/service";
-
 import events from "~/store/services/twitch/events";
 import emotes from "~/store/services/twitch/emotes";
 import badges from "~/store/services/twitch/badges";
@@ -32,8 +30,7 @@ const addMessagePart = (formatted, type, content) => {
 
 let client = null;
 
-let utterQuery = [];
-let utter = null;
+
 
 const profilesCacheMax = 50;
 let profilesCacheSize = 0;
@@ -41,20 +38,6 @@ let profilesCache = {};
 
 // eslint-disable-next-line max-len
 const linkRegex = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
-
-// eslint-disable-next-line no-undef
-if (process.client) {
-    utter = new SpeechSynthesisUtterance();
-    utter.lang = "ru-RU";
-    utter.onend = async () => {
-        utterQuery.splice(0, 1);
-        if (utterQuery.length > 0) {
-            utter.text = utterQuery[0];
-            await new Promise(resolve => setTimeout(resolve, 500));
-            speechSynthesis.speak(utter);
-        }
-    };
-}
 
 export default {
     namespaced: true,
@@ -66,43 +49,49 @@ export default {
         INIT: async ({ dispatch, state }, credits) => {
             state.credits = credits;
 
-            state.service.client = new Helix({
+            const client = await dispatch("service/SET_CLIENT", new Helix({
                 // eslint-disable-next-line no-undef
                 client_id: process.env.twitch_client_id,
                 access_token: credits.access_token,
                 language: "ru"
-            });
-
-            state.service.user = await state.service.client.users.getByLogin(state.credits.username);
-            profilesCache[state.credits.username] = state.service.user;
+            }), { root: true });
             
-            const channel = await state.service.client.channel.get(state.service.user.id);
-            state.service.stream = {
+            let user = await client.users.getByLogin(state.credits.username);
+            user = await dispatch("service/SET_USER", {
+                ...user,
+                id: Number(user.id),
+                nickname: user.display_name,
+                avatar: user.profile_image_url
+            }, { root: true });
+            dispatch("CACHE_PROFILE", user.nickname);
+            
+            const channel = await client.channel.get(user.id);
+            await dispatch("service/SET_STREAM", {
                 title: channel.title,
                 game: channel.game_name
-            };
+            }, { root: true });
 
             dispatch("CONNECT");
-            dispatch("badges/LOAD", state.service.user.id);
+            dispatch("badges/LOAD", user.id);
             dispatch("emotes/LOAD", {
-                id: state.service.user.id,
-                name: state.credits.username
+                id: user.id,
+                name: user.nickname
             });
 
-            return state.service.client;
+            return client;
         },
 
         CONNECT: async ({ dispatch, rootState, state }) => {
-            state.service.chat = new tmi.Client({
+            const chat = await dispatch("service/SET_CHAT", new tmi.Client({
                 connection: { reconnect: true },
                 identity: {
                     username: state.credits.username,
                     password: state.credits.oauth_token
                 },
                 channels: [state.credits.username]
-            });
+            }), { root: true });
 
-            state.service.chat.on("message", async (_, user, message) => {
+            chat.on("message", async (_, user, message) => {
                 if (!rootState.settings.settings.chat.enable) {
                     return;
                 }
@@ -115,58 +104,45 @@ export default {
 
                 message = message.trim();
                 
-                await dispatch("ADD_MESSAGE", {
+                await dispatch("service/ADD_MESSAGE", {
                     nickname: profile.display_name,
                     avatar: profile.profile_image_url,
+                    content: message,
                     badges: await dispatch("badges/FORMAT", user.badges),
                     formatted: await dispatch("FORMAT_MESSAGE", { text: message, emotes: user.emotes }),
                     time: await dispatch("FORMAT_MESSAGE_TIME"),
                     color: user.color,
-                    mode: user["msg-id"],
-                    show: true,
-                    banned: false
-                });
-
-                if (rootState.settings.settings.chat.sound) {
-                    dispatch("PLAY_SOUND");
-                }
-
-                if (rootState.settings.settings.chat.tts.enable) {
-                    dispatch("VOICE_MESSAGE", {
-                        name: profile.display_name,
-                        message
-                    });
-                }
+                    mode: user["msg-id"]
+                }, { root: true });
             });
 
-            state.service.chat.on("raw_message", (_, message) => {
+            chat.on("raw_message", (_, message) => {
                 if (message.command === "ROOMSTATE" && !state.tags) {
                     state.tags = message.tags;
                     return dispatch("events/ON_RAW_MESSAGE_FOLLOWERS_MODE");
                 }
             });
 
-            state.service.chat.on("followersonly", (_, enabled) => {
+            chat.on("followersonly", (_, enabled) => {
                 state.tags["followers-only"] = enabled ? "0" : "-1";
                 
                 // eslint-disable-next-line max-len
                 return dispatch("ADD_SYSTEM_MESSAGE", `Режим "только для фолловеров" ${enabled ? "включен" : "выключен"}`);
             });
 
-            state.service.chat.on("connected", () => {
-                state.service.chat.raw("CAP REQ :twitch.tv/tags");
-                state.service.connected = true;
+            chat.on("connected", () => {
+                chat.raw("CAP REQ :twitch.tv/tags");
+                rootState.service.connected = true;
                 return dispatch("events/ON_CONNECTED");
             });
 
-            state.service.chat.on("disconnected", () => {
-                state.service.connected = false;
+            chat.on("disconnected", () => {
+                rootState.service.connected = false;
                 state.tags = null;
-
                 return dispatch("events/ON_DISCONNECTED");
             });
 
-            state.service.chat.on("ban", (_, username) => {
+            chat.on("ban", (_, username) => {
                 for (const message of rootState.twitch.messages) {
                     if (username === message.nickname) {
                         message.banned = true;
@@ -176,15 +152,17 @@ export default {
                 return dispatch("events/ON_BAN", username);
             });
 
-            state.service.chat.on("clearchat", () => {
+            chat.on("clearchat", () => {
                 return dispatch("events/ON_CLEAR_CHAT");
             });
 
-            state.service.chat.on("raided", (_, username, viewers) => {
+            chat.on("raided", (_, username, viewers) => {
                 return dispatch("events/ON_RAID", { username, viewers });
             });
             
-            state.service.chat.connect();
+            chat.connect();
+
+            return chat;
         },
 
         DISCONNECT: ({ state }) => {
@@ -192,8 +170,8 @@ export default {
             state.tags = null;
         },
 
-        CACHE_PROFILE: async ({ state }, username) => {
-            profilesCache[username] = await state.service.client.users.getByLogin(username);
+        CACHE_PROFILE: async ({ rootState }, username) => {
+            profilesCache[username] = await rootState.service.client.users.getByLogin(username);
 
             if (profilesCacheSize > profilesCacheMax - 1) {
                 const spliceLen = Object.values(profilesCache).length - profilesCacheMax;
@@ -209,12 +187,6 @@ export default {
 
         GET_PROFILE: async ({ dispatch }, username) => {
             return profilesCache[username] || await dispatch("CACHE_PROFILE", username);
-        },
-
-        PLAY_SOUND: () => {
-            const sound = new Audio("notification.mp3");
-            sound.volume = 0.6;
-            sound.play();
         },
 
         FORMAT_MESSAGE: async ({ dispatch, state }, message) => {
@@ -276,16 +248,6 @@ export default {
             });
         },
 
-        VOICE_MESSAGE: ({ rootState }, { name, message, forceName }) => {
-            const readName = rootState.settings.settings.chat.tts.readName || forceName;
-            utter.text = readName ? `${name} сказал ${message}` : message;
-            utterQuery.push(utter.text);
-
-            if (utterQuery.length === 1) {
-                speechSynthesis.speak(utter);
-            }
-        },
-
         BAN: async ({ state }, data) => {
             data.nickname = data.nickname.toLowerCase();
 
@@ -296,29 +258,29 @@ export default {
             }
         },
         
-        UPDATE: async ({ dispatch, state }, data) => {
-            if (!data.title) data.title = state.service.stream.title;
-            if (!data.game) data.game = state.service.stream.game;
-
-            state.service.stream = data;
-            await state.service.client.updateStream(state.service.user.id, data.title, data.game);
+        UPDATE: async ({ dispatch, rootState }, data) => {
+            if (!data.title) data.title = rootState.service.stream.title;
+            if (!data.game) data.game = rootState.service.stream.game;
+            
+            await rootState.service.client.updateStream(rootState.service.user.id, data.title, data.game);
+            await dispatch("SET_STREAM", data);
             dispatch("UPDATE_RECENT", data);
 
             return true;
         },
 
-        CHATTERS: async ({ state }) => {
-            return await state.service.client.other.getViewers(state.credits.username);
+        CHATTERS: async ({ rootState }) => {
+            return await rootState.service.client.other.getViewers(state.credits.username);
         },
         
-        SAY: ({ state }, message) => {
-            if (!state.service.connected) return false;
-            client.say(state.credits.username, message);
+        SAY: ({ rootState }, message) => {
+            if (!rootState.service.connected) return false;
+            client.say(rootState.service.user.nickname, message);
         },
 
-        TURN_FOLLOWERS_ONLY: ({ state }, duration = 0) => {
-            if (state.service.connected) {
-                state.service.client.chat.updateSettings(state.service.user.id, state.service.user.id, {
+        TURN_FOLLOWERS_ONLY: ({ rootState, state }, duration = 0) => {
+            if (rootState.service.connected) {
+                rootState.service.client.chat.updateSettings(rootState.service.user.id, rootState.service.user.id, {
                     follower_mode: state.tags["followers-only"] === "-1",
                     follower_mode_duration: duration
                 });
@@ -333,8 +295,6 @@ export default {
         }
     },
     modules: {
-        service,
-
         events,
         emotes,
         badges

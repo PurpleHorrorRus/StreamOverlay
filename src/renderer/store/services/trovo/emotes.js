@@ -9,7 +9,7 @@ export default {
     }),
     actions: {
         LOAD: async ({ state, rootState }) => {
-            const emotes = await rootState.trovo.service.client.channel.emotes(0, [rootState.trovo.service.user.userId]);
+            const emotes = await rootState.service.client.channel.emotes(0, [rootState.service.user.id]);
             state.collections = emotes.channels;
             return state.collections;
         },

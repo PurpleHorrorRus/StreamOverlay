@@ -13,21 +13,11 @@ export default {
             config: state => state.config,
             settings: state => state.settings.settings,
 
-            helix: state => state.twitch.service.client,
-            trovo: state => state.trovo.service.client,
+            client: state => state.service.client,
 
-            twitchUser: state => state.twitch.service.user,
-            trovoUser: state => state.trovo.service.user
-        }),
-
-        user() {
-            switch(this.settings.service) {
-                case this.services.twitch: return this.twitchUser;
-                case this.services.trovo: return this.trovoUser;
-            }
-
-            return this.twitchUser;
-        }
+            user: state => state.service.user,
+            connected: state => state.service.connected
+        })
     },
 
     methods: {

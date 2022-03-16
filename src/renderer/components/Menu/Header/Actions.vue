@@ -57,7 +57,7 @@ export default {
     methods: {
         async createClip() {
             this.loadClip = true;
-            await this.helix.clips.create(this.user.id);
+            await this.client.clips.create(this.user.id);
 
             this.addNotification({
                 text: "Клип успешно создан",

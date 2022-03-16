@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions } from "vuex";
 
 import CoreMixin from "~/mixins/core";
 
@@ -24,21 +24,6 @@ export default {
         text: ""
     }),
 
-    computed: {
-        ...mapState({
-            twitchConnected: state => state.twitch.service.connected,
-            trovoConnected: state => state.trovo.service.connected
-        }),
-
-        connected() {
-            switch(this.settings.service) {
-                case this.services.twitch: return this.twitchConnected;
-                case this.services.trovo: return this.trovoConnected;
-            }
-            
-            return false;
-        }
-    },
     methods: {
         ...mapActions({
             say: "twitch/SAY"

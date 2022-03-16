@@ -7,9 +7,9 @@ export default {
 
     computed: {
         ...mapState({
-            trovo: state => state.trovo.service.client,
-            user: state => state.trovo.service.user,
-            channel: state => state.trovo.service.channel
+            trovo: state => state.service.client,
+            user: state => state.service.user,
+            channel: state => state.service.channel
         })
     },
 

@@ -1,7 +1,5 @@
 import { TrovoAPI } from "simple-trovo-api";
 
-import service from "~/store/service";
-
 import events from "~/store/services/trovo/events";
 import emotes from "~/store/services/trovo/emotes";
 
@@ -30,30 +28,40 @@ const addMessagePart = (formatted, type, content) => {
 export default {
     namespaced: true,
     actions: {
-        INIT: async ({ dispatch, state }, config) => {
-            state.service.client = new TrovoAPI({
+        INIT: async ({ dispatch }, config) => {
+            const client = await dispatch("service/SET_CLIENT", new TrovoAPI({
                 // eslint-disable-next-line no-undef
                 client_id: process.env.trovo_client_id,
                 access_token: config.access_token
-            });
+            }), { root: true });
 
-            state.service.user = await state.service.client.users.getUserInfo();
-            state.service.user.userId = Number(state.service.user.userId);
+            let user = await client.users.getUserInfo();
+            user = await dispatch("service/SET_USER", {
+                ...user,
+                id: Number(user.userId),
+                nickname: user.nickName,
+                avatar: user.profilePic,
+                description: user.info
+            }, { root: true });
+
             dispatch("emotes/LOAD");
 
-            const channel = await state.service.client.channels.get(state.service.user.userId);
-            state.service.stream.title = channel.live_title;
-            state.service.stream.game = channel.category_name;
+            const channel = await client.channels.get(user.id);
+            await dispatch("service/SET_STREAM", {
+                title: channel.live_title,
+                game: channel.category_name
+            }, { root: true });
             
-            state.service.chat = await state.service.client.chat.connect();
-            state.service.chat.on(state.service.chat.events.READY, () => dispatch("ON_READY"));
-            state.service.chat.on(state.service.chat.events.DISCONNECTED, () => dispatch("ON_DISCONNECTED"));
+            let chat = await client.chat.connect();
+            chat.on(chat.events.READY, () => dispatch("ON_READY"));
+            chat.on(chat.events.DISCONNECTED, () => dispatch("ON_DISCONNECTED"));
+            chat = await dispatch("service/SET_CHAT", chat, { root: true });
 
-            return state.service.user;
+            return user;
         },
 
-        ON_READY: ({ dispatch, state }) => {
-            state.service.connected = true;
+        ON_READY: ({ dispatch, rootState }) => {
+            rootState.service.connected = true;
 
             dispatch("notifications/ADD", notifications.CHAT_CONNECTED, { root: true });
             dispatch("notifications/TURN", { 
@@ -61,7 +69,7 @@ export default {
                 show: false 
             }, { root: true });
 
-            state.service.chat.messages.on("message", async message => {
+            rootState.service.chat.messages.on("message", async message => {
                 return dispatch("events/ON_MESSAGE", {
                     id: message.message_id,
                     nickname: message.nick_name,
@@ -71,15 +79,15 @@ export default {
                 });
             });
 
-            state.service.chat.messages.on(state.service.chat.messages.events.WELCOME, user => {
+            rootState.service.chat.messages.on(rootState.service.chat.messages.events.WELCOME, user => {
                 return dispatch("events/ON_WELCOME", user);
             });
 
-            state.service.chat.messages.on(state.service.chat.messages.events.FOLLOW, follow => {
+            rootState.service.chat.messages.on(rootState.service.chat.messages.events.FOLLOW, follow => {
                 return dispatch("events/ON_FOLLOW", follow);
             });
 
-            state.service.chat.messages.on(state.service.chat.messages.events.SUBSCRIPTION, follow => {
+            rootState.service.chat.messages.on(rootState.service.chat.messages.events.SUBSCRIPTION, follow => {
                 return dispatch("events/ON_SUBSCRIPTION", follow);
             });
         },
@@ -93,10 +101,10 @@ export default {
             }, { root: true });
         },
 
-        DISCONNECT: ({ state }) => {
-            const events = Object.values(state.service.chat.messages.events);
+        DISCONNECT: ({ rootState }) => {
+            const events = Object.values(rootState.service.chat.messages.events);
             ["message", ...events].forEach(event => {
-                state.service.chat.messages.removeAllListeners(event);
+                rootState.service.chat.messages.removeAllListeners(event);
             });
         },
 
@@ -150,9 +158,9 @@ export default {
             });
         },
 
-        SAY: ({ state }, message) => {
-            if (!state.service.connected) return;
-            state.service.client.chat.send(message);
+        SAY: ({ rootState }, message) => {
+            if (!rootState.service.connected) return;
+            rootState.service.client.chat.send(message);
         },
 
         FORMAT_GAME: (_, game) => {
@@ -168,13 +176,11 @@ export default {
             }) || collection[0];
         },
 
-        UPDATE: async ({ dispatch, state }, data) => {
-            if (!data.title) {
-                const channel = await state.service.client.channels.get(Number(state.service.user.userId));
-                data.title = channel.live_title;
-            }
+        UPDATE: async ({ dispatch, rootState }, data) => {
+            if (!data.title) data.title = rootState.service.stream.title;
+            if (!data.game) data.game = rootState.service.stream.game;
 
-            const response = await state.service.client.categories.search(data.game);
+            const response = await rootState.service.client.categories.search(data.game);
             const game = await dispatch("FIND_GAME", {
                 game: data.game,
                 collection: response.category_info
@@ -182,20 +188,18 @@ export default {
 
             data.game = game.name;
 
-            await state.service.client.channel.edit(state.service.user.userId, data.title, game.id, "RU");
-            state.service.stream = data;
-            dispatch("UPDATE_RECENT", data);
+            await rootState.service.client.channel.edit(rootState.service.user.id, data.title, game.id, "RU");
+            await dispatch("SET_STREAM", data);
+            await dispatch("UPDATE_RECENT", data);
             
             return response.category_info[0];
         },
         
-        CHATTERS: async ({ state }) => {
-            return await state.service.client.channel.viewers(state.service.user.userId);
+        CHATTERS: async ({ rootState }) => {
+            return await rootState.service.client.channel.viewers(rootState.service.user.id);
         }
     },
     modules: {
-        service,
-
         events,
         emotes
     }

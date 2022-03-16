@@ -19,14 +19,14 @@ export default {
         async update() {
             switch(this.settings.service) {
                 case this.services.twitch: {
-                    const follows = await this.helix.users.follows(this.twitchUser.id);
+                    const follows = await this.client.users.follows(this.user.id);
                     this.count = follows?.total ?? 0;
                     break;
                 }
 
                 case this.services.trovo: {
-                    const followers = await this.trovo.channel.followers(this.trovoUser.userId);
-                    this.count = followers?.count ?? 0;
+                    const follows = await this.client.channel.followers(this.user.id);
+                    this.count = Number(follows?.total) || 0;
                     break;
                 }
             }

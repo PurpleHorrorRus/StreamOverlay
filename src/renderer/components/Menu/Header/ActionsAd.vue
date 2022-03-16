@@ -26,7 +26,7 @@ export default {
         async startAd(index) {
             const duration = (index + 1) * 30;
             this.$parent.loadAd = true;
-            await this.helix.commercial.start(this.user.id, duration);
+            await this.client.commercial.start(this.user.id, duration);
 
             this.addNotification({
                 text: `Вы запустили рекламу на ${duration} секунд`,
