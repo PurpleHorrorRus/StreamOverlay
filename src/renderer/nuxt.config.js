@@ -2,9 +2,7 @@
 const isDev = process.env.NODE_ENV === "development";
 
 module.exports = {
-    env: {
-        client_id: "zmin05a65f74rln2g94iv935w58nyq"
-    },
+    env: require("../../env.json"),
     head: {
         title: "Stream Overlay",
         meta: [{ charset: "utf-8" }],

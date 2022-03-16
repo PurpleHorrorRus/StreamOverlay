@@ -11,3 +11,4 @@ src/main/addon/build/Release
 src/main/addon/build
 src/renderer/assets/defaultMessages.json
 websocket.zip
+env.json
