@@ -79,7 +79,6 @@ const clear = {
 
     widgets: [],
     recent: [],
-    chatters: [],
 
     autoprocess: {
         enable: false,

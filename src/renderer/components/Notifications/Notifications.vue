@@ -8,7 +8,7 @@
         <LowFPS v-show="showLowFPS" />
         <Update v-if="update.show" :release="update.release" />
         <Notification v-show="showChatDisconnect" :notification="solidNotifications.CHAT_DISCONNECT" />
-        <Notification v-show="!online" :notification="solidNotifications.NO_CONNECTION" />
+        <!-- <Notification v-show="!online" :notification="solidNotifications.NO_CONNECTION" /> -->
     </div>
 </template>
 
@@ -44,10 +44,12 @@ export default {
         solidNotifications() {
             return {
                 LOW: this.error,
+                
                 NO_CONNECTION: {
                     ...this.error,
                     text: "Нет соединения с Twitch..."
                 },
+                
                 CHAT_DISCONNECT: {
                     ...this.error,
                     text: "Чат отключен"

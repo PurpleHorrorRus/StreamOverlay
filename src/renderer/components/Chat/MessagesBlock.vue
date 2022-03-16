@@ -10,14 +10,17 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import Message from "~/components/Chat/Message";
 
-import Message from "~/components/chat/Message";
+import TwitchMixin from "~/mixins/twitch";
 
 export default {
     components: {
         Message
     },
+
+    mixins: [TwitchMixin],
+
     props: {
         input: {
             type: Boolean,
@@ -25,12 +28,8 @@ export default {
             default: false
         }
     },
+    
     computed: {
-        ...mapState({
-            messages: state => state.twitch.messages,
-            helix: state => state.twitch.helix,
-            user_id: state => state.twitch.user.id
-        }),
         visibleMessages() {
             return this.messages.filter(m => m.show);
         }

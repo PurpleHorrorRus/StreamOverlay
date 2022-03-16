@@ -4,16 +4,25 @@ import CoreMixin from "~/mixins/core";
 
 export default {
     mixins: [CoreMixin],
+
     computed: {
         ...mapState({
-            helix: state => state.twitch.helix,
-            user: state => state.twitch.user
-        })
+            helix: state => state.twitch.service.client,
+            user: state => state.twitch.service.user,
+
+            twitchMessages: state => state.twitch.service.messages
+        }),
+
+        messages: {
+            get() {
+                return this.twitchMessages;
+            }
+        }
     },
+
     methods: {
         ...mapActions({
-            createHelix: "twitch/CREATE_HELIX",
-            createChatBot: "twitch/CREATE_CHATBOT"
+            createHelix: "twitch/INIT"
         })
     }
 };

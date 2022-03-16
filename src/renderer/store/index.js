@@ -3,7 +3,9 @@ import Vuex from "vuex";
 import obs from "~/store/obs";
 import websocketInstaller from "~/store/websocket/install";
 
-import twitch from "~/store/twitch";
+import twitch from "~/store/services/twitch";
+import trovo from "~/store/services/trovo";
+
 import widgets from "~/store/widgets";
 import notifications from "~/store/notifications";
 import settings from "~/store/settings";
@@ -25,6 +27,8 @@ const store = () => {
             websocketInstaller,
 
             twitch, 
+            trovo,
+
             widgets, 
             notifications, 
             settings,  

@@ -112,7 +112,6 @@ export default {
                 });
 
                 await this.createHelix(this.config.twitch);
-                this.createChatBot();
             }
         }
     },

@@ -7,30 +7,23 @@
             v-text="`[${message.time}]`"
         />
         <img
-            v-if="
-                settings.chat.avatar &&
-                    message.avatar &&
-                    message.avatar.length > 0
-            "
+            v-if="showAvatar"
             :style="pictureStyle"
             :src="message.avatar"
             class="avatar"
         />
-        <Badges
-            v-if="
-                settings.chat.badges &&
-                    message.badges &&
-                    message.badges.length > 0
-            "
-            :badges="message.badges"
-        />
+
+        <Badges v-if="showBadges" :badges="message.badges" />
+
         <span
-            v-tooltip="'Забанить'"
+            v-if="!message.system"
+            v-tooltip="'Быстрый бан'"
             :style="nicknameStyle"
             class="nickname stroke"
             @click="banUser"
             v-text="message.nickname"
         />
+
         <Body v-if="!message.banned" :items="message.formatted" />
         <span
             v-else
@@ -44,24 +37,43 @@
 <script>
 import { mapActions } from "vuex";
 
-import Badges from "~/components/chat/Badges";
-import Body from "~/components/chat/Body";
+import Badges from "~/components/Chat/Badges";
+import Body from "~/components/Chat/Body";
 
-import MessageMixin from "~/components/chat/mixin";
+import MessageMixin from "~/components/Chat/Mixin";
 
 export default {
     components: {
         Badges,
         Body
     },
+
     mixins: [MessageMixin],
+
     props: {
         message: {
             type: Object,
             required: true
         }
     },
+
     computed: {
+        showAvatar() {
+            return (
+                this.settings.chat.avatar &&
+                !this.message.system &&
+                this.message.avatar?.length > 0
+            );
+        },
+
+        showBadges() {
+            return (
+                this.settings.chat.badges &&
+                !this.message.system &&
+                this.message.badges?.length > 0
+            );
+        },
+
         messageStyle() {
             return {
                 background: `rgba(20, 20, 19, ${this.settings.chat.opacity / 100})`,
@@ -69,10 +81,12 @@ export default {
             };
         }
     },
+
     methods: {
         ...mapActions({
             ban: "twitch/BAN"
         }),
+
         banUser() {
             this.ban({
                 nickname: this.message.nickname,

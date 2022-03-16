@@ -9,8 +9,8 @@
 
 <script>
 import Movable from "~/components/Movable";
-import MessagesBlock from "~/components/chat/MessagesBlock";
-import ChatInput from "~/components/chat/Input";
+import MessagesBlock from "~/components/Chat/MessagesBlock";
+import ChatInput from "~/components/Chat/Input";
 
 import CoreMixin from "~/mixins/core";
 

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import MessageMixin from "~/components/chat/mixin";
+import MessageMixin from "~/components/Chat/mixin";
 
 export default {
     mixins: [MessageMixin],
