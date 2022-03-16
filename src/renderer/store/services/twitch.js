@@ -1,5 +1,3 @@
-import Promise from "bluebird";
-
 import Helix from "simple-helix-api";
 import tmi from "tmi.js";
 
@@ -46,7 +44,7 @@ export default {
         tags: null
     }),
     actions: {
-        INIT: async ({ dispatch, state }, credits) => {
+        INIT: async ({ dispatch }, credits) => {
             const client = await dispatch("service/SET_CLIENT", new Helix({
                 // eslint-disable-next-line no-undef
                 client_id: process.env.twitch_client_id,
