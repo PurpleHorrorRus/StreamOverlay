@@ -37,8 +37,8 @@ export default {
                 icon: () => import("~/assets/icons/wrench.svg")
             },
             {
-                text: "Настройки Twitch",
-                link: "/services/twitch",
+                text: "Настройки сервисов",
+                link: "/services",
                 icon: () => import("~/assets/icons/twitch.svg")
             },
             {

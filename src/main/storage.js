@@ -59,24 +59,32 @@ const clear = {
             lowbitrate: true
         }
     },
+
     twitch: {
         username: "",
         access_token: "",
         oauth_token: ""
     },
+
+    trovo: {
+        access_token: ""
+    },
+
     OBS: {
         address: "localhost",
         port: 4444,
         password: "",
         camera: []
     },
+
     widgets: [],
     recent: [],
+    chatters: [],
+
     autoprocess: {
         enable: false,
         list: []
-    },
-    chatters: []
+    }
 };
 
 const readJSON = dir => JSON.parse(fs.readFileSync(dir, "UTF-8"));
@@ -125,6 +133,7 @@ const paths = {
     spath,
     settings: dataPath("settings.json"),
     twitch: dataPath("twitch.json"),
+    trovo: dataPath("trovo.json"),
     OBS: dataPath("obs.json"),
     widgets: dataPath("widgets.json"),
     recent: dataPath("recent.json")
@@ -133,6 +142,7 @@ const paths = {
 const config = {
     settings: data(paths.settings, clear.settings),
     twitch: data(paths.twitch, clear.twitch),
+    trovo: data(paths.trovo, clear.trovo),
     OBS: data(paths.OBS, clear.OBS),
     widgets: data(paths.widgets, clear.widgets),
     recent: data(paths.recent, clear.recent)
