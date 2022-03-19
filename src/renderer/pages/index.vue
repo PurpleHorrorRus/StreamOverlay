@@ -74,7 +74,8 @@ export default {
         },
 
         showViewersList() {
-            return this.user && this.settings?.ViewersList.enable;
+            return this.user 
+                && this.settings.ViewersList.enable;
         }
     },
 
@@ -91,17 +92,8 @@ export default {
         }
 
         if (!this.config) {
-            this.setConfig(await ipcRenderer.invoke("config"));
-        }
-
-        if (!this.config.OBS.address || !this.config.OBS.port) {
-            this.config.settings.first = true;
-            this.setConfig(this.config);
-
-            this.registerLock();
-            this.turnLock(true);
-            this.$router.replace("/settings/obs").catch(() => {});
-            return;
+            const config = await ipcRenderer.invoke("config");
+            this.setConfig(config);
         }
 
         if (!this.validateServices()) {
@@ -110,6 +102,7 @@ export default {
 
             this.registerLock();
             this.turnLock(true);
+            return;
         }
 
         if (!this.connected) {
@@ -157,8 +150,6 @@ export default {
     },
     methods: {
         ...mapActions({
-            setConfig: "SET_CONFIG",
-
             turnLock: "ipc/TURN_LOCK",
 
             connectOBS: "obs/CONNECT",
@@ -208,8 +199,7 @@ export default {
             });
 
             ipcRenderer.on("turnViewersList", () => {
-                this.settings.ViewersList.enable = !this.settings.ViewersList.enable;
-                this.save();
+                this.deepChange(this.settings.ViewersList, "enable");
             });
         },
         registerLock() {
