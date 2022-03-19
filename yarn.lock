@@ -8824,10 +8824,10 @@ simple-swizzle@^0.2.2:
   dependencies:
     is-arrayish "^0.3.1"
 
-simple-trovo-api@^1.0.9:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/simple-trovo-api/-/simple-trovo-api-1.0.9.tgz#e96464e3c89af1e2f3b40870383c111355900153"
-  integrity sha512-dqlyTw/eUWd4zseWJG4gtNPYHHW7RA+37/ILDmaG5rzhfQsSh3VFUw3Ty0efsxXZ8L4IbyK4MxjvSdjzlt8cHQ==
+simple-trovo-api@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/simple-trovo-api/-/simple-trovo-api-1.1.2.tgz#e4daf1a1fc150f6e9d7797819b5c3c3c9e159692"
+  integrity sha512-F7jR8ppDuTPByCg4lOxaMt96RF7LYyNI0h2OheAOq1naEdKOW7+x/2KrbeiB/x78GtSi6kKN3xwLqKBMri38Ag==
   dependencies:
     node-fetch "2.6.7"
     reconnecting-websocket "^4.4.0"
