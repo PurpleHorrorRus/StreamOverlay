@@ -20,7 +20,7 @@
             v-tooltip="'Быстрый бан'"
             :style="nicknameStyle"
             class="nickname stroke"
-            @click="banUser"
+            @click="ban"
             v-text="message.nickname"
         />
 
@@ -35,11 +35,10 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-
 import Badges from "~/components/Chat/Badges";
 import Body from "~/components/Chat/Body";
 
+import CoreMixin from "~/mixins/core";
 import MessageMixin from "~/components/Chat/Mixin";
 
 export default {
@@ -48,7 +47,7 @@ export default {
         Body
     },
 
-    mixins: [MessageMixin],
+    mixins: [CoreMixin, MessageMixin],
 
     props: {
         message: {
@@ -83,13 +82,10 @@ export default {
     },
 
     methods: {
-        ...mapActions({
-            ban: "twitch/BAN"
-        }),
-
-        banUser() {
-            this.ban({
+        ban() {
+            this.serviceDispatch("BAN", {
                 nickname: this.message.nickname,
+                timeout: 0,
                 reason: "бан стримером"
             });
         }

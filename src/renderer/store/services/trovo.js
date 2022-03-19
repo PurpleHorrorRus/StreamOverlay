@@ -1,9 +1,14 @@
 import { TrovoAPI } from "simple-trovo-api";
+import lodash from "lodash";
 
 import events from "~/store/services/trovo/events";
 import emotes from "~/store/services/trovo/emotes";
 
 import misc from "~/plugins/misc";
+
+// eslint-disable-next-line max-len
+const linkRegex = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
+const domainRegex = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/;
 
 const notifications = {
     CHAT_CONNECTED: {
@@ -28,12 +33,19 @@ const addMessagePart = (formatted, type, content) => {
 export default {
     namespaced: true,
     actions: {
-        INIT: async ({ dispatch }, config) => {
-            const client = await dispatch("service/SET_CLIENT", new TrovoAPI({
+        INIT: async ({ dispatch, rootState }) => {
+            let client = new TrovoAPI({
                 // eslint-disable-next-line no-undef
                 client_id: process.env.trovo_client_id,
-                access_token: config.access_token
-            }), { root: true });
+                // eslint-disable-next-line no-undef
+                client_secret: process.env.trovo_client_secret,
+                redirect_uri: "https://purplehorrorrus.github.io/token",
+                credits: rootState.config.paths.trovo
+            });
+
+            const credits = rootState.config.trovo;
+            client = await client.auth(credits.access_token, credits.refresh_token);
+            client = await dispatch("service/SET_CLIENT", client, { root: true });
 
             let user = await client.users.getUserInfo();
             user = await dispatch("service/SET_USER", {
@@ -60,6 +72,16 @@ export default {
             return user;
         },
 
+        FORMAT_MESSAGE_OBJECT: async ({ dispatch }, message) => {
+            return {
+                ...message,
+                id: message.message_id,
+                nickname: message.nick_name,
+                formatted: await dispatch("FORMAT_MESSAGE", message.content),
+                time: await dispatch("FORMAT_MESSAGE_TIME", message)
+            };
+        },
+
         ON_READY: ({ dispatch, rootState }) => {
             rootState.service.connected = true;
 
@@ -70,12 +92,14 @@ export default {
             }, { root: true });
 
             rootState.service.chat.messages.on("message", async message => {
-                return dispatch("events/ON_MESSAGE", {
-                    id: message.message_id,
-                    nickname: message.nick_name,
-                    avatar: message.avatar,
-                    formatted: await dispatch("FORMAT_MESSAGE", message.content),
-                    time: await dispatch("FORMAT_MESSAGE_TIME", message)
+                message = await dispatch("FORMAT_MESSAGE_OBJECT", message);
+                return await dispatch("events/ON_MESSAGE", message);
+            });
+
+            rootState.service.chat.messages.once("past_messages", messages => {
+                return messages.forEach(async message => {
+                    message = await dispatch("FORMAT_MESSAGE_OBJECT", message);
+                    return await dispatch("events/ON_MESSAGE", message);
                 });
             });
 
@@ -89,6 +113,18 @@ export default {
 
             rootState.service.chat.messages.on(rootState.service.chat.messages.events.SUBSCRIPTION, follow => {
                 return dispatch("events/ON_SUBSCRIPTION", follow);
+            });
+
+            rootState.service.chat.messages.on(rootState.service.chat.messages.events.SPELLS, spell => {
+                return dispatch("events/ON_SPELL", spell);
+            });
+
+            rootState.service.chat.messages.on(rootState.service.chat.messages.events.SUPER_CAP, message => {
+                return dispatch("events/ON_SUPER_CAP", message);
+            });
+
+            rootState.service.chat.messages.on(rootState.service.chat.messages.events.ACTIVITY, message => {
+                return dispatch("events/ON_ACTIVITY", message);
             });
         },
 
@@ -119,22 +155,36 @@ export default {
                 index = Number(index);
                 const word = splitted[index];
 
+                if (linkRegex.test(word)) {
+                    if (part.length > 0) {
+                        formatted = addMessagePart(formatted, "text", part);
+                        part = "";
+                    }
+                    
+                    const domain = word.match(domainRegex)[1];
+                    formatted = addMessagePart(formatted, "link", domain);
+                    continue;
+                }
+
                 if (!~word.indexOf(":")) {
                     if (word) {
                         part += word + " ";
                     }
                 } else {
-                    const [rest, emoteKey] = word.split(":");
-                    if (rest.length > 0) {
-                        formatted = addMessagePart(formatted, "text", part + rest);
-                        part = "";
-                    }
+                    const wordSplitted = word.split(":");
 
-                    const emote = await dispatch("emotes/FIND_EMOTE", emoteKey);
-                    if (emote) {
-                        formatted = addMessagePart(formatted, "text", part);
-                        formatted = addMessagePart(formatted, "emote", emote.gifp || emote.url);
-                        part = "";
+                    for (const emoteKey of wordSplitted) {
+                        if (emoteKey.length > 0) {
+                            const emote = await dispatch("emotes/FIND_EMOTE", emoteKey);
+                            if (emote) {
+                                if (part.length > 0) {
+                                    formatted = addMessagePart(formatted, "text", part);
+                                    part = "";
+                                }
+
+                                formatted = addMessagePart(formatted, "emote", emote.gifp || emote.url);
+                            } else part += ":" + emoteKey;
+                        } else part += " ";
                     }
                 }
                 
@@ -196,9 +246,33 @@ export default {
             
             return response.category_info[0];
         },
-        
+
+        BAN: async ({ rootState }, data) => {
+            const command = data.timeout > 0
+                ? `ban ${data.nickname} ${data.timeout}`
+                : `ban ${data.nickname}`;
+
+            return await rootState.service.client.chat.command(command, rootState.service.user.id);
+        },
+
         CHATTERS: async ({ rootState }) => {
-            return await rootState.service.client.channel.viewers(rootState.service.user.id);
+            // eslint-disable-next-line max-len
+            const { chatters, custom_roles } = await rootState.service.client.channel.viewers(rootState.service.user.id);
+            const allRoles = Object.assign(chatters, custom_roles);
+
+            const viewers = Object.values(allRoles).map(category => {
+                return category.viewers;
+            });
+
+            allRoles.all.viewers = lodash.union(...viewers);
+
+            Object.keys(allRoles).forEach(category => {
+                allRoles[category].viewers.length === 0
+                    ? delete allRoles[category]
+                    : allRoles[category] = allRoles[category].viewers;
+            });
+            
+            return allRoles;
         }
     },
     modules: {

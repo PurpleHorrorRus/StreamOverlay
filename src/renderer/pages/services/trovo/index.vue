@@ -1,11 +1,19 @@
 <template>
-    <div class="modal-content">
+    <div id="settings-trovo" class="modal-content">
         <Title title="Настройки Trovo" />
         
         <div class="modal-body">
             <MenuError v-if="error" :error="error" />
 
-            <TrovoSettingsAccessToken @input="access_token = $event" />
+            <div v-if="!settings.first" id="settings-trovo-notifications">
+                <Item
+                    :text="'Оповещение о присоединении пользователя в чат'"
+                    :checked="settings.trovo.notifications.welcome"
+                    @change="deepChange(settings.trovo.notifications, 'welcome')"
+                />
+            </div>
+            
+            <TrovoSettinsCode @input="code = $event" />
 
             <SolidButton
                 :label="'Продолжить'"
@@ -18,12 +26,13 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapState } from "vuex";
 import { TrovoAPI } from "simple-trovo-api";
 
 import MenuError from "~/components/Menu/Notifications/Error";
 
-import TrovoSettingsAccessToken from "~/components/Settings/Services/Trovo/AccessToken";
+import Item from "~/components/Settings/Item";
+import TrovoSettinsCode from "~/components/Settings/Services/Trovo/Code";
 
 import Title from "~/components/Menu/Title";
 import SolidButton from "~/components/SolidButton";
@@ -31,7 +40,7 @@ import SolidButton from "~/components/SolidButton";
 import CoreMixin from "~/mixins/core";
 import other from "~/mixins/other";
 
-const accessTokenRegex = /access_token=(.*?)&/;
+const accessTokenRegex = /code=(.*?)&/;
 const checkingTitle = "Stream Overlay Validating";
 
 let TrovoClient = null;
@@ -40,7 +49,8 @@ export default {
     components: {
         MenuError,
 
-        TrovoSettingsAccessToken,
+        Item,
+        TrovoSettinsCode,
         
         Title,
         SolidButton
@@ -51,68 +61,66 @@ export default {
     layout: "modal",
 
     data: () => ({
-        access_token: "",
+        code: "",
         error: "",
         validating: false
     }),
 
     computed: {
+        ...mapState({
+            paths: state => state.config.paths
+        }),
+
         disabled() {
-            return this.access_token.length === 0;
+            return this.code.length === 0;
         }
     },
 
     watch: {
-        access_token(access_token) {
-            if (accessTokenRegex.test(access_token)) {
-                this.access_token = access_token.match(accessTokenRegex)[1];
+        code(code) {
+            if (accessTokenRegex.test(code)) {
+                this.code = code.match(accessTokenRegex)[1];
             }
         }
     },
 
     async created() {
-        if (this.config.trovo.access_token) {
-            this.access_token = this.config.trovo.access_token;
+        if (this.config.trovo.code) {
+            this.code = this.config.trovo.code;
         }
     },
 
     methods: {
-        ...mapActions({
-            initTrovo: "trovo/INIT",
-            connectChat: "trovo/CONNECT"
-        }),
-
         async next() {
             this.validating = true;
             this.error = "";
 
             const success = await this.validate().catch(e => {
                 this.reset();
-                this.error = e.error;
+                this.error = e;
                 return false;
             });
 
             if (success) {
-                this.saveSettings({
-                    type: "trovo",
-                    content: {
-                        access_token: this.access_token
-                    }
-                });
-
-                await this.initTrovo(this.access_token);
-                await this.connectChat();
-
                 this.$router.replace("/");
             }
         },
 
         async validate() {
-            TrovoClient = new TrovoAPI({
+            if (!TrovoClient) {
+                TrovoClient = new TrovoAPI({
                 // eslint-disable-next-line no-undef
-                client_id: process.env.client_id,
-                access_token: this.access_token
-            });
+                    client_id: process.env.trovo_client_id,
+                    // eslint-disable-next-line no-undef
+                    client_secret: process.env.trovo_client_secret,
+                    redirect_uri: "https://purplehorrorrus.github.io/token",
+                    credits: this.paths.trovo
+                });
+            }
+            
+            const credits = await TrovoClient.exchange(this.code);
+
+            TrovoClient = await TrovoClient.auth(credits.access_token, credits.refresh_token);
 
             const user = await TrovoClient.users.getUserInfo();
             const user_id = Number(user.userId);

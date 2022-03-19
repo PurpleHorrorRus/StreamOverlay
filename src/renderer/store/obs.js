@@ -1,8 +1,11 @@
 import Promise from "bluebird";
 import OBSWebSocket from "obs-websocket-js";
 
+import events from "~/store/obs/events";
+import devices from "~/store/obs/devices";
+import time from "~/store/obs/time";
+
 let interval = null;
-let updateInterval = null;
 
 const setTime = timecode => {
     const [hours, mins, seconds] = timecode.split(":");
@@ -17,26 +20,18 @@ export default {
     namespaced: true,
     state: () => ({
         obs: { _connected: false },
+        videoSettings: null,
+        scene: null,
         status: {
             stream: false,
             record: false,
-            time: {
-                seconds: 0,
-                mins: 0,
-                hours: 0
-            },
-            videoSettings: null,
+
             tech: null,
             bitrate: 2300
-        },
-        devices: {
-            mic: false,
-            sound: false,
-            camera: null
         }
     }),
     actions: {
-        CONNECT: async ({ dispatch, state }, data) => {
+        CONNECT: ({ dispatch, state }, data) => {
             if (state.obs._connected) {
                 return;
             }
@@ -44,26 +39,17 @@ export default {
             state.obs = new OBSWebSocket({
                 address: `${data.address}:${data.port}`
             });
-            
-            state.obs.connect()
-                .then(() => dispatch("LISTEN", data))
-                .catch(async () => {
-                    await Promise.delay(1000);
-                    return await dispatch("CONNECT", data);
-                });
+
+            state.obs.connect().then(async () => {
+                await dispatch("RESTORE_STATE");
+                dispatch("LISTEN", data);
+            }).catch(async () => {
+                await Promise.delay(1000);
+                return await dispatch("CONNECT", data);
+            });
         },
+
         LISTEN: async ({ dispatch, state, rootState }, data) => {
-            const status = await dispatch("SEND", { event: "GetStreamingStatus" });
-            state.status.stream = status.streaming;
-            state.status.record = status.record;
-
-            if (status.streaming || status.record) {
-                dispatch("SETUP_UPDATE_INTERVAL");
-            }
-
-            if (status.streaming) state.status.time = setTime(status["stream-timecode"]);
-            else if (status.record) state.status.time = setTime(status["rec-timecode"]);
-
             state.obs.once("ConnectionClosed", async () => {
                 await dispatch("DISCONNECT");
                 await dispatch("CONNECT", data);
@@ -71,83 +57,52 @@ export default {
 
             state.obs.on("StreamStarting", () => {
                 state.status.stream = true;
-
-                if (!state.status.record) {
-                    dispatch("SETUP_UPDATE_INTERVAL");
-                }
+                dispatch("events/ON_STREAM_STARTING");
             });
 
             state.obs.on("StreamStopping", () => {
                 state.status.stream = false;
-
-                dispatch("notifications/TURN", { name: "lowbitrate", show: false }, { root: true });
-                dispatch("notifications/TURN", { name: "lowfps", show: false }, { root: true });
-
-                if (!state.status.record) {
-                    dispatch("CLEAR_UPDATE_INTERVAL");
-                }
+                dispatch("events/ON_STREAM_STOPPING");
             });
 
             state.obs.on("RecordingStarted", () => {
                 state.status.record = true;
-                if (!state.status.stream) {
-                    dispatch("SETUP_UPDATE_INTERVAL");
-                }
+                dispatch("events/ON_RECORDING_STARTED");
             });
 
             state.obs.on("RecordingStopping", () => {
                 state.status.record = false;
-                if (!state.status.stream) {
-                    dispatch("CLEAR_UPDATE_INTERVAL");
-                }
+                dispatch("events/ON_RECORDING_STOPPING");
             });
 
-            state.obs.on("StreamStatus", ({ kbitsPerSec }) => {
-                state.status.bitrate = kbitsPerSec;
-
-                if (rootState.settings.settings.notifications.lowbitrate) {
-                    if (kbitsPerSec <= 200) {
-                        dispatch("notifications/TURN_LOWBITRATE", true, { root: true });
-                    } else if (rootState.notifications.lowbitrate) {
-                        dispatch("notifications/TURN_LOWBITRATE", false, { root: true });
-                    }
-                }
+            state.obs.on("StreamStatus", status => {
+                state.status.bitrate = status.kbitsPerSec;
+                dispatch("events/ON_STREAM_STATUS", status);
             });
 
-            const sources = await dispatch("SEND", { event: "GetSpecialSources" });
-            state.devices = {
-                mic: !(await dispatch("GET_MUTED", sources["mic-1"])),
-                sound: !(await dispatch("GET_MUTED", sources["desktop-1"])),
-                camera: await dispatch("GET_CAMERA_VISIBLE")
-            };
-
-            state.obs.on("SourceMuteStateChanged", ({ sourceName, muted }) => {
-                switch (sourceName) {
-                    case sources["mic-1"]: {
-                        state.devices.mic = !muted;
-                        break;
-                    }
-                    case sources["desktop-1"]: {
-                        state.devices.sound = !muted;
-                        break;
-                    }
-                }
+            await dispatch("devices/GET");
+            state.obs.on("SourceMuteStateChanged", source => {
+                dispatch("devices/ON_SOURCE_MUTE_STATE_CHANGED", source);
             });
 
-            let { name: currentScene } = await dispatch("SEND", { event: "GetCurrentScene" });
-            state.obs.on("SceneItemVisibilityChanged", ({ sceneName, itemName, itemVisible }) => {
-                if (sceneName === currentScene && ~rootState.config.OBS.camera.indexOf(itemName)) {
-                    state.devices.camera = itemVisible;
-                }
+            await dispatch("UPDATE_SCENE");
+            state.obs.on("SwitchScenes", () => {
+                dispatch("UPDATE_SCENE");
+                dispatch("devices/UPDATE_CAMERA");
             });
 
-            state.obs.on("SwitchScenes", async ({ sceneName }) => {
-                currentScene = sceneName;
-                state.devices.camera = await dispatch("GET_CAMERA_VISIBLE");
+            state.obs.on("SceneItemVisibilityChanged", item => {
+                const sameScene = item.sceneName === state.scene.name;
+                const sourceIsCamera = Boolean(~rootState.config.OBS.camera.indexOf(item.itemName));
+
+                if (sameScene && sourceIsCamera) {
+                    dispatch("devices/UPDATE_CAMERA");
+                }
             });
 
             dispatch("SETUP_CHECKING_INTERVAL");
         },
+
         DISCONNECT: ({ state }) => {
             state.obs = { _connected: false };
             state.status.tech = null;
@@ -158,6 +113,7 @@ export default {
                 interval = null;
             }
         },
+
         SEND: async ({ state }, { event, args }) => {
             if (state.obs._connected) {
                 return await state.obs.send(event, args).catch(e => {
@@ -167,35 +123,12 @@ export default {
 
             return;
         },
-        GET_MUTED: async ({ dispatch }, source) => {
-            const { muted } = await dispatch("SEND", {
-                event: "GetMute",
-                args: { source }
-            });
 
-            return muted;
-        },
-        GET_VISIBLE: async ({ dispatch }, item) => {
-            return new Promise(resolve => {
-                dispatch("SEND", {
-                    event: "GetSceneItemProperties",
-                    args: { item }
-                }).then(({ visible }) => resolve(visible))
-                    .catch(() => resolve(null));
-            });
-        },
-        GET_CAMERA_VISIBLE: async ({ dispatch, rootState }) => {
-            const mapped = await Promise.map(
-                rootState.config.OBS.camera,
-                async item => await dispatch("GET_VISIBLE", item)
-            );
-
-            const valid = mapped.filter(m => m !== null);
-            return valid.length > 0 ? valid.indexOf(true) !== -1 : null;
-        },
         CHECK_STATS: async ({ dispatch, state, rootState }) => {
-            if (!state.status.videoSettings) {
-                state.status.videoSettings = await dispatch("SEND", { event: "GetVideoInfo" });   
+            if (!state.videoSettings) {
+                state.videoSettings = await dispatch("SEND", { 
+                    event: "GetVideoInfo"
+                });   
             }
 
             const { stats } = await dispatch("SEND", { event: "GetStats" });
@@ -204,7 +137,7 @@ export default {
             }
 
             if (rootState.settings.settings.notifications.lowfps) {
-                if (stats.fps < state.status.videoSettings.fps) {
+                if (stats.fps < state.videoSettings.fps) {
                     if (!rootState.notifications.lowfps) {
                         dispatch("notifications/TURN_LOWFPS", true, { root: true });
                     }
@@ -213,48 +146,39 @@ export default {
                 }
             }
         },
+
+        RESTORE_STATE: async ({ dispatch, state }) => {
+            const status = await dispatch("SEND", { event: "GetStreamingStatus" });
+            state.status.stream = status.streaming;
+            state.status.record = status.recording;
+
+            if (status.streaming || status.recording) {
+                state.time = setTime(status["stream-timecode"] || status["rec-timecode"]);
+                dispatch("time/SETUP");
+            }
+        },
+
+        UPDATE_SCENE: async ({ dispatch, state }) => {
+            const scene = await dispatch("SEND", { event: "GetCurrentScene" });
+            state.scene = { name: scene.name };
+            return scene;
+        },
+
         SETUP_CHECKING_INTERVAL: ({ dispatch }) => {
             dispatch("CHECK_STATS");
             interval = setInterval(() => dispatch("CHECK_STATS"), 1000);
         },
+
         STOP_CHECKING_INTERVAL: () => {
             if (interval) {
                 clearInterval(interval);
                 interval = null;
             }
-        },
-        SETUP_UPDATE_INTERVAL: ({ dispatch }) => {
-            if (updateInterval) {
-                dispatch("CLEAR_UPDATE_INTERVAL");
-            }
-
-            updateInterval = setInterval(() => dispatch("UPDATE_TIME"), 1000);
-        },
-        CLEAR_UPDATE_INTERVAL: ({ state }) => {
-            state.status.time.seconds = 0;
-            state.status.time.mins = 0;
-            state.status.time.hours = undefined;
-
-            if (updateInterval) {
-                clearInterval(updateInterval);
-                updateInterval = null;
-            }
-        },
-        UPDATE_TIME: ({ state }) => {
-            state.status.time.seconds++;
-
-            if (state.status.time.seconds >= 60) {
-                state.status.time.seconds = 0;
-                state.status.time.mins++;
-            }
-
-            if (state.status.time.mins >= 60) {
-                if (state.status.time.hours === undefined) state.status.time.hours = 1;
-                else state.status.time.hours++;
-
-                state.status.time.seconds = 0;
-                state.status.time.mins = 0;
-            }
         }
+    },
+    modules: {
+        events,
+        devices,
+        time
     }
 };

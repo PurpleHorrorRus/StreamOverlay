@@ -1,60 +1,83 @@
 <template>
     <Movable
-        :source="{ ...settings.OBSStatus, width, height }"
-        :name="''"
+        id="obs"
+        ref="OBSStatus"
+        :class="OBSClass"
+        :source="source"
         :resizable="false"
-        @onDrag="onDrag"
     >
-        <div id="obs" ref="OBSStatus" :class="OBSClass">
-            <Status v-if="connected" />
-            <TwitchInfo
-                v-if="
-                    settings.OBSStatus.TwitchInfo.enable ||
-                        settings.OBSStatus.TwitchInfo.enableFollowers
-                "
-            />
-            <Devices v-if="connected" />
-        </div>
+        <Status v-if="connected" />
+        <ServiceInfo v-if="chatConnected" />
+        <Devices v-if="connected && showDevices" />
     </Movable>
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 import Movable from "~/components/Movable";
 
 import Devices from "~/components/OBS/Devices";
-import TwitchInfo from "~/components/OBS/TwitchInfo";
+import ServiceInfo from "~/components/OBS/ServiceInfo";
 import Status from "~/components/OBS/Status";
 
 import OBSMixin from "~/mixins/obs";
-import TwitchMixin from "~/mixins/twitch";
 
 export default {
     components: {
         Movable,
-        TwitchInfo,
+
         Devices,
+        ServiceInfo,
         Status
     },
-    mixins: [OBSMixin, TwitchMixin],
+
+    mixins: [OBSMixin],
+
     data: () => ({
         width: 125,
         height: 25
     }),
-    mounted() {
-        this.adaptive();
-        if (this.isLeft) {
-            new ResizeObserver(() => this.adaptive()).observe(
-                this.$refs.OBSStatus
-            );
+
+    computed: {
+        ...mapState({
+            chatConnected: state => state.service.connected
+        }),
+
+        showDevices() {
+            return !this.devices.mic || !this.devices.sound || this.devices.camera !== null;
+        },
+
+        source() {
+            return {
+                ...this.settings.OBSStatus,
+                width: this.width,
+                height: this.height
+            };
         }
     },
+    
+    watch: {
+        devices: {
+            deep: true,
+            handler: function() {
+                this.adaptive();
+            }
+        }
+    },
+    
+    mounted() {
+        this.adaptive();
+    },
+
     methods: {
         adaptive() {
             if (this.$refs.OBSStatus) {
-                this.width = this.$refs.OBSStatus.clientWidth;
-                this.height = this.$refs.OBSStatus.clientHeight;
+                this.width = this.$refs.OBSStatus.$el.clientWidth;
+                this.height = this.$refs.OBSStatus.$el.clientHeight;
             }
         },
+        
         onDrag(x, y) {
             this.settings.OBSStatus.x = x;
             this.settings.OBSStatus.y = y;
@@ -75,11 +98,10 @@ export default {
 
     justify-content: flex-start;
 
-    width: max-content;
+    width: max-content !important;
     height: 26px;
 
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 10px;
 
     background: #000000bb;
 

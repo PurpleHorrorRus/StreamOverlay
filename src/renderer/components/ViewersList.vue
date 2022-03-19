@@ -1,22 +1,20 @@
 <template>
     <Movable
-        class="viewers-list"
+        id="viewers-list"
         :source="settings.ViewersList"
         name="Список зрителей"
         @onDrag="onDrag"
         @onResize="onResize"
     >
-        <div v-if="!loading" id="viewers-container">
-            <div v-for="category of Object.keys(chatters)" :key="category" class="category">
-                <span
-                    v-if="chatters[category].length"
-                    class="category-title"
-                    :style="{ color: colors[category] }"
-                    v-text="category"
-                />
-                <span v-for="viewer of chatters[category]" :key="viewer" class="viewer-name" v-text="viewer" />
-            </div>
+        <div v-if="!loading" id="viewers-list-categories">
+            <ViewersListCategory
+                v-for="category of Object.keys(chatters)"
+                :key="category"
+                :name="category"
+                :users="chatters[category]"
+            />
         </div>
+
         <div v-else id="loading-block">
             <LoaderIcon class="icon spin" />
         </div>
@@ -24,79 +22,68 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-
-import _ from "lodash";
-import fetch from "node-fetch";
-
 import Movable from "~/components/Movable";
+import ViewersListCategory from "~/components/ViewersList/Category";
 import LoaderIcon from "~/assets/icons/loader.svg";
 
-import TwitchMixin from "~/mixins/twitch";
+import CoreMixin from "~/mixins/core";
 
 let interval = null;
 
 export default {
     components: { 
         Movable,
+        ViewersListCategory,
         LoaderIcon
     },
-    mixins: [TwitchMixin],
+    
+    mixins: [CoreMixin],
+
     data: () => ({
         loading: true,
-        chatters: {},
-        colors: {
-            admins: "#7C1F7C",
-            broadcaster: "#FFCF40",
-            global_mods: "#7C1F7C",
-            moderators: "#00b454",
-            staff: "#7C1F7C",
-            viewers: "#0084ff",
-            vips: "#6900ba"
-        }
+        chatters: {}
     }),
+
     async created() {
         this.loading = true;
-        this.chatters = await this.get();
-        interval = setInterval(async () => (this.chatters = await this.get()), 4 * 1000);
+        await this.get();
+        interval = setInterval(() => this.get(), 15 * 1000);
         this.loading = false;
     },
+
     beforeDestroy() {
         this.exit();
     },
+    
     destroyed() {
         this.exit();
     },
+
     methods: {
-        ...mapActions({
-            getChatters: "twitch/CHATTERS"
-        }),
         async get() {
-            const botsRequest = await fetch("https://api.twitchinsights.net/v1/bots/online");
+            let chatters = await this.serviceDispatch("CHATTERS");
 
-            const { bots } = botsRequest.ok ? await botsRequest.json() : { bots: [] };
-            const { chatters } = await this.getChatters();
-
-            if (!bots || !chatters) {
-                return this.chatters;
-            }
-
-            for (const category in chatters) {
-                chatters[category] = _.without(chatters[category], ...bots.map(([name]) => name));
-            }
-
-            return chatters;
+            Object.keys(chatters).forEach(category => {
+                if (chatters[category].length === 0) {
+                    delete chatters[category];
+                }
+            });
+            
+            this.chatters = chatters;
         },
+
         onResize(x, y, width, height) {
             this.settings.ViewersList.width = width;
             this.settings.ViewersList.height = height;
             this.onDrag(x, y);
         },
+
         onDrag(x, y) {
             this.settings.ViewersList.x = x;
             this.settings.ViewersList.y = y;
             this.save();
         },
+
         exit() {
             if (interval) {
                 clearInterval(interval);
@@ -108,7 +95,7 @@ export default {
 </script>
 
 <style lang="scss">
-.viewers-list {
+#viewers-list {
     position: absolute;
 
     width: 100%;
@@ -118,16 +105,7 @@ export default {
     border-radius: 3px;
     z-index: 50;
 
-    span {
-        display: block;
-
-        color: #fff;
-        font-family: Roboto;
-        font-size: 11pt;
-        text-align: center;
-    }
-
-    #viewers-container {
+    &-categories {
         width: 100%;
         height: 100%;
 
@@ -135,18 +113,6 @@ export default {
 
         overflow-x: hidden;
         overflow-y: auto;
-
-        .category {
-            margin-bottom: 10px;
-
-            &:first {
-                margin-bottom: 0px;
-            }
-
-            &-title {
-                font-weight: 600;
-            }
-        }
     }
 
     #loading-block {

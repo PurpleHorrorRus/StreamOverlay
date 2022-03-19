@@ -12,7 +12,7 @@ import misc from "~/plugins/misc";
 const types = {
     TEXT: "text",
     LINK: "link",
-    EMOJI: "emoji"
+    EMOJI: "emote"
 };
 
 const addMessagePart = (formatted, type, content) => {
@@ -27,8 +27,6 @@ const addMessagePart = (formatted, type, content) => {
 };
 
 let client = null;
-
-
 
 const profilesCacheMax = 50;
 let profilesCacheSize = 0;

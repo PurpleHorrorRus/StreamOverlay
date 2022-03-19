@@ -32,8 +32,9 @@ export default {
     },
     computed: {
         ...mapState({
-            devices: state => state.obs.devices
+            devices: state => state.obs.devices.list
         }),
+
         classes() {
             return {
                 mic: this.devices.mic,

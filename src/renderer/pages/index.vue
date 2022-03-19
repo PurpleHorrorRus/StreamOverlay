@@ -5,10 +5,10 @@
         <div id="content-valid">
             <Notifications />
             <OBS v-if="showOBS" />
-            <TechInfo v-if="settings.TechInfo.enable && connected && status.tech !== null" />
+            <TechInfo v-if="showTech" />
             <Chat v-if="settings.chat.enable" />
-            <ViewersList v-if="settings.ViewersList.enable" />
             <Widget v-for="widget of widgets" :key="widget.id" :widget="widget" />
+            <ViewersList v-if="showViewersList" />
         </div>
     </div>
 </template>
@@ -56,21 +56,35 @@ export default {
         ViewersList,
         Widget
     },
+
     mixins: [OBSMixin, TwitchMixin, TrovoMixin, WidgetsMixin, other],
+
     computed: {
         showOBS() {
-            return this.user 
-                && (this.connected 
-                    || this.settings.OBSStatus.TwitchInfo.enable 
-                    || this.settings.OBSStatus.TwitchInfo.enableFollowers);
+            const ServiceInfoEnabled = this.settings.OBSStatus.ServiceInfo 
+                || this.settings.OBSStatus.ServiceInfo.enableFollowers;
+                
+            return this.connected && ServiceInfoEnabled;
+        },
+
+        showTech() {
+            return this.settings?.TechInfo.enable 
+                && this.connected 
+                && this.status.tech !== null;
+        },
+
+        showViewersList() {
+            return this.user && this.settings?.ViewersList.enable;
         }
     },
+
     async created() {
         if (this.$route.query?.edit) {
             this.active = true;
             ipcRenderer.send("turnMouse", true);
         }
     },
+    
     async mounted() {
         if (this.active) {
             return;
@@ -113,18 +127,31 @@ export default {
 
         switch(this.config.settings.service) {
             case this.services.twitch: {
+                // eslint-disable-next-line no-undef
+                if (!process.env.twitch_client_id) {
+                    console.warn("[Trovo] There is no secrets for Twitch client");
+                    return;
+                }
+
                 if (this.helix) return;
                 await this.createHelix(this.config.twitch);
                 break;
             }
 
             case this.services.trovo: {
+                // eslint-disable-next-line no-undef
+                if (!process.env.trovo_client_id || !process.env.trovo_client_secret) {
+                    console.warn("[Trovo] There is no secrets for Trovo client");
+                    return;
+                }
+
                 if (this.trovo) return;
                 await this.createTrovo(this.config.trovo);
                 break;
             }
         }
 
+        this.addNotification(notifications.controls);
         this.registerIPC();
         ipcRenderer.send("finish-load");
     },

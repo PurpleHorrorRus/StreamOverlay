@@ -14,11 +14,11 @@
                 :style="textStyle"
                 class="text link stroke"
                 @click="openLink(item)"
-                v-text="linkText(item)"
+                v-text="item.content"
             />
 
             <img
-                v-else-if="item.type === 'emoji'"
+                v-else-if="item.type === 'emote'"
                 class="emoticon"
                 :style="emoticionStyle"
                 :src="item.content"
@@ -32,18 +32,16 @@ import { shell } from "electron";
 
 import MessageMixin from "~/components/Chat/Mixin";
 
-// eslint-disable-next-line max-len
-const linkRegex = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
-const domainRegex = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/;
-
 export default {
     mixins: [MessageMixin],
+    
     props: {
         items: {
             type: Array,
             required: true
         }
     },
+
     computed: {
         emoticionStyle() {
             return {
@@ -51,10 +49,8 @@ export default {
             };
         }
     },
+
     methods: {
-        linkText(item) {
-            return item.content.replace(linkRegex, `[${item.content.match(domainRegex)[1]}]`);
-        },
         openLink(item) {
             shell.openExternal(item.content);
         }

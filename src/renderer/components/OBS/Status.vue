@@ -38,10 +38,12 @@ export default {
     computed: {
         ...mapState({
             status: state => state.obs.status,
+            time: state => state.obs.time,
             settings: state => state.settings.settings
         }),
+        
         formatTime() {
-            return misc.formatTime(this.status.time);
+            return misc.formatTime(this.time);
         }
     }
 };

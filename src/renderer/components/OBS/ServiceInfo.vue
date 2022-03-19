@@ -1,7 +1,7 @@
 <template>
     <div id="meta-info">
-        <Viewers v-if="settings.OBSStatus.TwitchInfo.enable" />
-        <Followers v-if="settings.OBSStatus.TwitchInfo.enableFollowers" />
+        <Viewers v-if="settings.OBSStatus.ServiceInfo.enable" />
+        <Followers v-if="settings.OBSStatus.ServiceInfo.enableFollowers" />
     </div>
 </template>
 

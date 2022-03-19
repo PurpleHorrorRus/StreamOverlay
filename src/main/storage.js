@@ -15,6 +15,7 @@ const clear = {
         outputDeviceId: "default",
 
         service: "twitch",
+
         chat: {
             enable: true,
             avatar: true,
@@ -32,12 +33,20 @@ const clear = {
                 readName: false
             }
         },
+
+        trovo: {
+            notifications: {
+                welcome: true
+            }
+        },
+
         OBSStatus: {
             enable: true,
             time: true,
             x: -37,
             y: 1022,
-            TwitchInfo: {
+
+            ServiceInfo: {
                 enable: true,
                 enableFollowers: true
             }
@@ -69,10 +78,11 @@ const clear = {
     },
 
     trovo: {
-        access_token: ""
+        access_token: "",
+        refresh_token: ""
     },
 
-    OBS: {
+    obs: {
         address: "localhost",
         port: 4444,
         password: "",
@@ -135,7 +145,7 @@ const paths = {
     settings: dataPath("settings.json"),
     twitch: dataPath("twitch.json"),
     trovo: dataPath("trovo.json"),
-    OBS: dataPath("obs.json"),
+    obs: dataPath("obs.json"),
     widgets: dataPath("widgets.json"),
     recent: dataPath("recent.json")
 };
@@ -144,7 +154,7 @@ const config = {
     settings: data(paths.settings, clear.settings),
     twitch: data(paths.twitch, clear.twitch),
     trovo: data(paths.trovo, clear.trovo),
-    OBS: data(paths.OBS, clear.OBS),
+    OBS: data(paths.obs, clear.obs),
     widgets: data(paths.widgets, clear.widgets),
     recent: data(paths.recent, clear.recent)
 };
@@ -154,6 +164,9 @@ export default {
         config[type] = content;
         writeJSON(paths[type], content);
     },
-    paths,
-    config
+    
+    config: {
+        paths,
+        ...config
+    }
 };

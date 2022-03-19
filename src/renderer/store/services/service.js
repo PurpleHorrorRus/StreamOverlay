@@ -75,15 +75,17 @@ export default {
                 }, rootState.settings.settings.chat.timeout * 1000);
             }
 
-            if (rootState.settings.settings.chat.sound) {
-                dispatch("PLAY_SOUND");
-            }
-
-            if (rootState.settings.settings.chat.tts.enable) {
-                dispatch("VOICE_MESSAGE", {
-                    name: message.nickname,
-                    message: message.content
-                });
+            if (!message.system) {
+                if (rootState.settings.settings.chat.sound) {
+                    dispatch("PLAY_SOUND");
+                }
+    
+                if (rootState.settings.settings.chat.tts.enable) {
+                    dispatch("VOICE_MESSAGE", {
+                        name: message.nickname,
+                        message: message.content
+                    });
+                }
             }
 
             return message;
