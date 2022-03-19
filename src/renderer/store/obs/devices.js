@@ -46,7 +46,7 @@ export default {
         },
 
         GET_CAMERA_VISIBLE: async ({ dispatch, rootState }) => {
-            const mapped = await Promise.map(rootState.config.OBS.camera, async item => {
+            const mapped = await Promise.map(rootState.config.obs.camera, async item => {
                 return await dispatch("GET_VISIBLE", item);
             });
 

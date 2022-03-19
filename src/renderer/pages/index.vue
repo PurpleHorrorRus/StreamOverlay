@@ -105,13 +105,13 @@ export default {
             return;
         }
 
-        if (!this.connected) {
-            this.connectOBS(this.config.OBS);
+        if (this.config.obs && !this.connected) {
+            this.connectOBS(this.config.obs);
+        }
 
-            if (this.config.settings.first) {
-                this.config.settings.first = false;
-                this.save(this.config.settings);
-            }
+        if (this.config.settings.first) {
+            this.config.settings.first = false;
+            this.save(this.config.settings);
         }
 
         if (this.widgets.length === 0 && this.config.widgets.length > 0) {

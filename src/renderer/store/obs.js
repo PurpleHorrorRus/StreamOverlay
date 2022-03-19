@@ -93,7 +93,7 @@ export default {
 
             state.obs.on("SceneItemVisibilityChanged", item => {
                 const sameScene = item.sceneName === state.scene.name;
-                const sourceIsCamera = Boolean(~rootState.config.OBS.camera.indexOf(item.itemName));
+                const sourceIsCamera = Boolean(~rootState.config.obs.camera.indexOf(item.itemName));
 
                 if (sameScene && sourceIsCamera) {
                     dispatch("devices/UPDATE_CAMERA");

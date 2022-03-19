@@ -16,7 +16,9 @@ class Handlers {
             enabled ? hotkeysInstance.registerMenuHotkeys() : hotkeysInstance.registerIndexHotkeys();
         });
         
-        ipcMain.on("saveSettings", (_, args) => common.storage.save(args.type, args.content));
+        ipcMain.on("saveSettings", (_, args) => {
+            common.storage.save(args.type, args.content);
+        });
 
         ipcMain.on("devTools", (_event, sequence) => {
             sequence 

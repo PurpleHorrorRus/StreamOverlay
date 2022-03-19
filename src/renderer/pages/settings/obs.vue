@@ -20,10 +20,6 @@
                 @input="camera = $event"
             />
 
-            <div v-if="error.length" class="modal-item-tip">
-                <span style="color: red" class="modal-item-tip-text">Ошибка: {{ error }}</span>
-            </div>
-
             <SolidButton :label="'Продолжить'" :disabled="disabled" @clicked="next" />
         </div>
     </div>
@@ -51,54 +47,61 @@ export default {
         Install,
         Installation
     },
+
     mixins: [CoreMixin, other],
+    
     layout: "modal",
+
     data: () => ({
         load: false,
         address: "localhost",
         port: 4444,
         password: "",
-        camera: "",
-        error: ""
+        camera: ""
     }),
+
     computed: {
         ...mapState({
             installActive: state => state.websocketInstaller.active
         }),
+
         disabled() {
             return this.address.length === 0 || this.port.length === 0;
         }
     },
+
     async created() {
-        if (this.config.OBS) {
-            if (typeof this.config.OBS.camera === "string") {
-                this.config.OBS.camera = [this.config.OBS.camera];
+        if (this.config.obs) {
+            if (typeof this.config.obs.camera === "string") {
+                this.config.obs.camera = [this.config.obs.camera];
             }
 
-            this.address = this.config.OBS.address;
-            this.port = this.config.OBS.port;
-            this.password = this.config.OBS.password;
-            this.camera = this.config.OBS.camera?.join(", ") || "";
+            this.address = this.config.obs.address;
+            this.port = this.config.obs.port;
+            this.password = this.config.obs.password;
+            this.camera = this.config.obs.camera?.join(", ") || "";
         }
     },
+
     methods: {
         async next() {
             this.load = true;
-            this.error = "";
 
-            if (await this.checkConnection()) {
-                this.saveSettings({
-                    type: "OBS",
-                    content: {
-                        address: this.address,
-                        port: this.port,
-                        password: this.password,
-                        camera: Array.from(new Set(this.camera.split(",").map(c => c.trim())))
-                    }
-                });
+            const webcamMapped = this.camera.split(",").map(c => c.trim());
+            const webcamSet = new Set(webcamMapped);
+            const webcamsCollection = Array.from(webcamSet);
 
-                this.$router.replace("/services/twitch").catch(() => {});
-            }
+            this.saveSettings({
+                type: "obs",
+                content: {
+                    address: this.address,
+                    port: this.port,
+                    password: this.password,
+                    camera: webcamsCollection
+                }
+            });
+
+            this.$router.replace("/");
         }
     }
 };
