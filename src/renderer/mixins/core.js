@@ -34,6 +34,24 @@ export default {
             });
         },
 
+        deepChange(settings, template) {
+            console.log("template", template);
+            let field = template;
+
+            if (~template.indexOf("/")) {
+                template = template.split("/");
+                field = template[0];
+                console.log("field", field);
+                template.splice(0, 1);
+                return this.deepChange(settings[field], template.join("/"));
+            }
+
+            settings[field] = !settings[field];
+            this.save();
+            
+            return settings;
+        },
+
         async serviceDispatch(action, data) {
             return await this.$store.dispatch(`${this.settings.service}/${action}`, data);
         }
