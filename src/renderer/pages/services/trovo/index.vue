@@ -41,7 +41,6 @@ import CoreMixin from "~/mixins/core";
 import other from "~/mixins/other";
 
 const accessTokenRegex = /code=(.*?)&/;
-const checkingTitle = "Stream Overlay Validating";
 
 let TrovoClient = null;
 
@@ -95,13 +94,15 @@ export default {
             this.validating = true;
             this.error = "";
 
-            const success = await this.validate().catch(e => {
+            const credits = await this.validate().catch(e => {
                 this.reset();
                 this.error = e;
                 return false;
             });
 
-            if (success) {
+            if (credits) {
+                this.config.trovo = credits;
+                this.setConfig(this.config);
                 this.$router.replace("/");
             }
         },
@@ -109,7 +110,7 @@ export default {
         async validate() {
             if (!TrovoClient) {
                 TrovoClient = new TrovoAPI({
-                // eslint-disable-next-line no-undef
+                    // eslint-disable-next-line no-undef
                     client_id: process.env.trovo_client_id,
                     // eslint-disable-next-line no-undef
                     client_secret: process.env.trovo_client_secret,
@@ -118,19 +119,7 @@ export default {
                 });
             }
             
-            const credits = await TrovoClient.exchange(this.code);
-
-            TrovoClient = await TrovoClient.auth(credits.access_token, credits.refresh_token);
-
-            const user = await TrovoClient.users.getUserInfo();
-            const user_id = Number(user.userId);
-
-            const response = await TrovoClient.categories.search("League of Legends");
-            const game = response.category_info[0];
-            await TrovoClient.channel.edit(user_id, checkingTitle, game.id);
-
-            const channel = await TrovoClient.channels.get(user_id);
-            return channel.live_title === checkingTitle;
+            return await TrovoClient.exchange(this.code);
         },
 
         handleError(error) {

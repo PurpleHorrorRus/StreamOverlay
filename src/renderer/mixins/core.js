@@ -23,6 +23,8 @@ export default {
     methods: {
         ...mapActions({
             addNotification: "notifications/ADD",
+
+            setConfig: "SET_CONFIG",
             setSettings: "settings/SET",
             saveSettings: "settings/SAVE"
         }),
