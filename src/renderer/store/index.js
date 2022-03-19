@@ -20,7 +20,10 @@ const store = () => {
         actions: {
             SET_CONFIG: ({ dispatch, state }, config) => {
                 state.config = config;
-                dispatch("settings/SET", config.settings, { root: true });
+                
+                if (config?.settings) {
+                    dispatch("settings/SET", config.settings, { root: true });
+                }
             }
         },
         modules: {
