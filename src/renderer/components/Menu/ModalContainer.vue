@@ -1,6 +1,6 @@
 <template>
     <div id="modal-locked-container">
-        <Navigation v-show="!$parent.$parent.settings.first" />
+        <Navigation v-show="!settings.first" />
         <div id="modal-locked-container-page">
             <nuxt />
         </div>
@@ -10,10 +10,14 @@
 <script>
 import Navigation from "~/components/Menu/Navigation";
 
+import CoreMixin from "~/mixins/core";
+
 export default {
     components: {
         Navigation
-    }
+    },
+
+    mixins: [CoreMixin]
 };
 </script>
 

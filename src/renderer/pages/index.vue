@@ -96,57 +96,24 @@ export default {
             this.setConfig(config);
         }
 
-        if (!this.validateServices()) {
-            this.config.settings.first = true;
-            this.setConfig(this.config);
-
-            this.registerLock();
-            this.turnLock(true);
-            return;
-        }
-
         if (this.config.obs && !this.connected) {
             this.connectOBS(this.config.obs);
-        }
-
-        if (this.config.settings.first) {
-            this.config.settings.first = false;
-            this.save(this.config.settings);
         }
 
         if (this.widgets.length === 0 && this.config.widgets.length > 0) {
             this.setWidgets(this.config.widgets);
         }
 
-        switch(this.config.settings.service) {
-            case this.services.twitch: {
-                // eslint-disable-next-line no-undef
-                if (!process.env.twitch_client_id) {
-                    console.warn("[Trovo] There is no secrets for Twitch client");
-                    return;
-                }
+        if (await this.authService()) {
+            this.addNotification(notifications.controls);
+            this.registerIPC();
+            ipcRenderer.send("finish-load");
 
-                if (this.helix) return;
-                await this.createHelix(this.config.twitch);
-                break;
-            }
-
-            case this.services.trovo: {
-                // eslint-disable-next-line no-undef
-                if (!process.env.trovo_client_id || !process.env.trovo_client_secret) {
-                    console.warn("[Trovo] There is no secrets for Trovo client");
-                    return;
-                }
-
-                if (this.trovo) return;
-                await this.createTrovo(this.config.trovo);
-                break;
+            if (this.settings.first) {
+                this.settings.first = false;
+                this.save();
             }
         }
-
-        this.addNotification(notifications.controls);
-        this.registerIPC();
-        ipcRenderer.send("finish-load");
     },
     methods: {
         ...mapActions({
@@ -158,29 +125,63 @@ export default {
             turnUpdate: "notifications/TURN_UPDATE"
         }),
 
-        validateServices() {
-            switch (this.config.settings.service) {
+        async authService() {
+            switch(this.config.settings.service) {
                 case this.services.twitch: {
-                    // eslint-disable-next-line max-len
-                    if (!this.config.twitch.username || !this.config.twitch.access_token || !this.config.twitch.oauth_token) {
-                        this.$router.replace("/services/twitch").catch(() => {});
+                    if (this.helix) return false;
+
+                    // eslint-disable-next-line no-undef
+                    if (!process.env.twitch_client_id) {
+                        console.warn("[Trovo] There is no secrets for Twitch client");
                         return false;
                     }
 
-                    return true;
+                    // eslint-disable-next-line max-len
+                    if (!this.config.twitch.username || !this.config.twitch.access_token || !this.config.twitch.oauth_token) {
+                        return this.invalidService("/services/twitch");
+                    }
+                    
+                    const response = await this.createHelix(this.config.twitch).catch(() => {
+                        return this.invalidService("/services/twitch");
+                    });
+
+                    return Boolean(response);
                 }
 
                 case this.services.trovo: {
-                    if (!this.config.trovo.access_token) {
-                        this.$router.replace("/services/trovo").catch(() => {});
+                    if (this.trovo) return false;
+
+                    // eslint-disable-next-line no-undef
+                    if (!process.env.trovo_client_id || !process.env.trovo_client_secret) {
+                        console.warn("[Trovo] There is no secrets for Trovo client");
                         return false;
                     }
 
-                    return true;
+                    if (!this.config.trovo.access_token) {
+                        return this.invalidService("/services/trovo");
+                    }
+
+                    const response = await this.createTrovo().catch(() => {
+                        return this.invalidService("/services/trovo");
+                    });
+
+                    return Boolean(response);
                 }
             }
 
-            return true;
+            return false;
+        },
+
+        invalidService(link) {
+            this.settings.first = true;
+            this.save();
+
+            this.registerLock();
+            this.turnLock(true);
+
+            this.$router.replace(link).catch(() => {});
+
+            return false;
         },
 
         registerIPC() {
@@ -202,6 +203,7 @@ export default {
                 this.deepChange(this.settings.ViewersList, "enable");
             });
         },
+        
         registerLock() {
             ipcRenderer.on("turnLock", (_event, mouse) => this.turnLock(mouse));
         }
