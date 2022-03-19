@@ -122,7 +122,6 @@ module.exports = {
     ],
     plugins: [
         "~/plugins/errors.js",
-        { src: "~plugins/vue-draggable-resizable", mode: "client" },
         { src: "~plugins/vue-range-component.js", mode: "client" },
         { src: "~plugins/vue-toggle-button.js", mode: "client" },
         { src: "~plugins/tooltip.js", mode: "client" }

@@ -1,7 +1,7 @@
 <template>
-    <vue-draggable-resizable
+    <VueDraggableResizable
         ref="movable"
-        :class="{ active, nonactive: !active }"
+        :class="{ active }"
         :draggable="active"
         :resizable="resizable && active"
         :minWidth="source.minWidth || 0"
@@ -18,32 +18,17 @@
         @dragstop="onDrag"
         @resizestop="onResize"
     >
-        <div
-            v-if="active && name.length > 0"
-            class="movable-title"
-            :class="{ widget: visible !== undefined }"
-        >
-            <div
-                v-if="visible !== undefined"
-                class="movable-title-visible"
-                @click="$emit('turnVisible')"
-            >
-                <EyeIcon v-if="visible" class="icon clickable" />
-                <EyeCrossedIcon v-else class="icon clickable" />
-            </div>
-
-            <span class="movable-title-name nowrap" v-text="name" />
-        </div>
+        <MovableName v-if="active && name" />
         <slot v-if="$slots.default" />
-    </vue-draggable-resizable>
+    </VueDraggableResizable>
 </template>
 
 <script>
 import { mapState } from "vuex";
 import { debounce } from "lodash";
 
-import EyeIcon from "~/assets/icons/eye.svg";
-import EyeCrossedIcon from "~/assets/icons/eye-crossed.svg";
+import VueDraggableResizable from "vue-draggable-resizable";
+import MovableName from "~/components/Movable/MovableName";
 
 import WidgetsMixin from "~/mixins/widgets";
 
@@ -54,44 +39,53 @@ let mouseDebounce = null;
 
 export default {
     components: {
-        EyeIcon,
-        EyeCrossedIcon
+        VueDraggableResizable,
+        MovableName
     },
+    
     mixins: [WidgetsMixin],
+
     props: {
         source: {
             type: Object,
             required: true
         },
+
         name: {
             type: String,
             required: false,
-            default: "null"
+            default: ""
         },
+
         resizable: {
             type: Boolean,
             required: false,
             default: true
         },
+
         visible: {
             type: Boolean,
             required: false,
             default: undefined
         }
     },
+
     data: () => ({
         x: 0,
         y: 0,
         rightBorder: 0,
         downBorder: 0,
-        mouse: true
+        mouse: true,
+        zIndex: 0
     }),
+
     computed: {
         ...mapState({
             display: state => state.config.display
         })
     },
-    created() {
+
+    mounted() {
         this.rightBorder = this.display.width - this.source.width;
         this.downBorder = this.display.height - this.source.height - snapOffset;
 
@@ -101,24 +95,25 @@ export default {
         );
 
         if (this.active) {
-            emitDebounce = debounce(() => this.$emit("onDrag", ...[this.x, this.y]), 1000);
+            emitDebounce = debounce(() => this.$parent.onDrag(this.x, this.y), 1000);
             mouseDebounce = debounce(() => (this.mouse = true), 500);
         }
     },
-    mounted() {
-        this.normalizePosition(this.x, this.y);
-    },
+    
     beforeDestroy() {
         this.onDeactivated();
     },
+
     methods: {
         normalizePosition(x, y) {
             this.x = Math.max(Math.min(x, this.rightBorder + snapOffset), 0);
             this.y = Math.max(Math.min(y, this.downBorder + snapOffset), 0);
         },
+
         onResize(...args) {
-            this.$emit("onResize", ...args);
+            this.$parent.onResize(...args);
         },
+
         onDragging(x, y) {
             this.normalizePosition(x, y);
 
@@ -134,20 +129,24 @@ export default {
 
             emitDebounce();
         },
-        onDrag(...args) {
-            this.$emit("onDrag", ...args);
+
+        onDrag() {
+            this.$parent.onDrag(this.x, this.y);
         },
+
         onActivated() {
             if (this.active) {
                 document.addEventListener("keydown", this.move);
             }
         },
+
         onDeactivated() {
             if (this.active) {
                 emitDebounce();
                 document.removeEventListener("keydown", this.move);
             }
         },
+
         move({ key }) {
             this.mouse = false;
 
@@ -157,16 +156,19 @@ export default {
                     this.$children[0].moveHorizontally(this.x);
                     break;
                 }
+
                 case "ArrowLeft": {
                     this.x = Math.max(this.x - 1, 0);
                     this.$children[0].moveHorizontally(this.x);
                     break;
                 }
+                
                 case "ArrowDown": {
                     this.y = Math.min(this.y + 1, this.downBorder);
                     this.$children[0].moveVertically(this.y);
                     break;
                 }
+
                 case "ArrowUp": {
                     this.y = Math.max(this.y - 1, 0);
                     this.$children[0].moveVertically(this.y);
@@ -174,8 +176,10 @@ export default {
                 }
             }
 
-            emitDebounce();
-            mouseDebounce();
+            if (emitDebounce) {
+                emitDebounce();
+                mouseDebounce();
+            }
         }
     }
 };
@@ -189,8 +193,6 @@ export default {
 
     border: none;
 
-    z-index: 1 !important;
-
     &.active {
         background: linear-gradient($secondary, $secondary) top
                 center/calc(100%) 2px,
@@ -202,48 +204,9 @@ export default {
         cursor: move;
     }
 
-    &.nonactive {
+    &:not(.active) {
         background: none;
         cursor: default;
-    }
-
-    .movable-title {
-        position: absolute;
-        top: 0px;
-
-        display: grid;
-        grid-template-columns: 1fr;
-        align-items: center;
-        column-gap: 5px;
-
-        width: 100%;
-
-        padding: 2px;
-
-        background: $secondary;
-
-        z-index: 99;
-
-        &.widget {
-            grid-template-columns: max-content 1fr;
-        }
-
-        &-visible {
-            display: flex;
-            align-items: center;
-
-            padding-right: 5px;
-
-            border-right: 1px solid #000000;
-
-            .icon {
-                width: 24px;
-            }
-        }
-
-        &-name {
-            justify-self: center;
-        }
     }
 }
 </style>

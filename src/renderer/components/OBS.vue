@@ -5,6 +5,7 @@
         :class="OBSClass"
         :source="source"
         :resizable="false"
+        @onDrag="onDrag"
     >
         <Status v-if="connected" />
         <ServiceInfo v-if="chatConnected" />
