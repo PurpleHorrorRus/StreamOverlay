@@ -20,7 +20,7 @@ export default {
 
             state.badges = {
                 ...Object.fromEntries(mapped),
-                subscriber: channel.versions[0].image_url_1x
+                subscriber: channel.versions?.[0].image_url_1x
             };
 
             return 0;
