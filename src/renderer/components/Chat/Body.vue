@@ -13,8 +13,8 @@
                 v-tooltip="'Нажмите, чтобы перейти по ссылке'"
                 :style="textStyle"
                 class="text link stroke"
-                @click="openLink(item)"
-                v-text="item.content"
+                @click="openLink(item.content.link)"
+                v-text="item.content.domain"
             />
 
             <img
@@ -51,8 +51,8 @@ export default {
     },
 
     methods: {
-        openLink(item) {
-            shell.openExternal(item.content);
+        openLink(link) {
+            shell.openExternal(link);
         }
     }
 };
