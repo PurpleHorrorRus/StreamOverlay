@@ -73,14 +73,10 @@ export default {
             return user;
         },
 
-        FORMAT_MESSAGE_OBJECT: async ({ dispatch }, message) => {
-            return {
-                ...message,
-                id: message.message_id,
-                nickname: message.nick_name,
-                formatted: await dispatch("FORMAT_MESSAGE", message.content),
-                time: await dispatch("FORMAT_MESSAGE_TIME", message)
-            };
+        REGISTER_EVENT: ({ dispatch, rootState }, { event, response }) => {
+            rootState.service.chat.messages.on(event, data => {
+                return dispatch(`events/${response}`, data);
+            });
         },
 
         ON_READY: ({ dispatch, rootState }) => {
@@ -92,40 +88,40 @@ export default {
                 show: false 
             }, { root: true });
 
-            rootState.service.chat.messages.on("message", async message => {
-                message = await dispatch("FORMAT_MESSAGE_OBJECT", message);
-                return await dispatch("events/ON_MESSAGE", message);
+            dispatch("REGISTER_EVENT", {
+                event: "message",
+                response: "ON_MESSAGE"
             });
 
-            rootState.service.chat.messages.once("past_messages", messages => {
-                return messages.forEach(async message => {
-                    message = await dispatch("FORMAT_MESSAGE_OBJECT", message);
-                    return await dispatch("events/ON_MESSAGE", message);
-                });
+            const events = rootState.service.chat.messages.events;
+            dispatch("REGISTER_EVENT", {
+                event: events.WELCOME,
+                response: "ON_WELCOME"
             });
 
-            rootState.service.chat.messages.on(rootState.service.chat.messages.events.WELCOME, user => {
-                return dispatch("events/ON_WELCOME", user);
+            dispatch("REGISTER_EVENT", {
+                event: events.FOLLOW,
+                response: "ON_WELCOME"
             });
 
-            rootState.service.chat.messages.on(rootState.service.chat.messages.events.FOLLOW, follow => {
-                return dispatch("events/ON_FOLLOW", follow);
+            dispatch("REGISTER_EVENT", {
+                event: events.SUBSCRIPTION,
+                response: "ON_SUBSCRIPTION"
             });
 
-            rootState.service.chat.messages.on(rootState.service.chat.messages.events.SUBSCRIPTION, follow => {
-                return dispatch("events/ON_SUBSCRIPTION", follow);
+            dispatch("REGISTER_EVENT", {
+                event: events.SPELLS,
+                response: "ON_SPELL"
             });
 
-            rootState.service.chat.messages.on(rootState.service.chat.messages.events.SPELLS, spell => {
-                return dispatch("events/ON_SPELL", spell);
+            dispatch("REGISTER_EVENT", {
+                event: events.SUPER_CAP,
+                response: "ON_SUPER_CAP"
             });
 
-            rootState.service.chat.messages.on(rootState.service.chat.messages.events.SUPER_CAP, message => {
-                return dispatch("events/ON_SUPER_CAP", message);
-            });
-
-            rootState.service.chat.messages.on(rootState.service.chat.messages.events.ACTIVITY, message => {
-                return dispatch("events/ON_ACTIVITY", message);
+            dispatch("REGISTER_EVENT", {
+                event: events.ACTIVITY,
+                response: "ON_ACTIVITY"
             });
         },
 
