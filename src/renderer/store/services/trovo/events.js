@@ -2,6 +2,13 @@ export default {
     namespaced: true,
     actions: {
         ON_MESSAGE: async ({ dispatch }, message) => {
+            message = Object.assign(message, {
+                id: message.message_id,
+                nickname: message.nick_name,
+                formatted: await dispatch("trovo/FORMAT_MESSAGE", message.content, { root: true }),
+                time: await dispatch("trovo/FORMAT_MESSAGE_TIME", message, { root: true })
+            });
+            
             return await dispatch("service/ADD_MESSAGE", message, { root: true });
         },
 
