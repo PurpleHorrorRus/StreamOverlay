@@ -10,6 +10,14 @@ const collection = arr => {
 
 export default {
     namespaced: true,
+
+    state: () => ({
+        emotes: {
+            bttv: [],
+            ffz: []
+        }
+    }),
+
     actions: {
         LOAD: async ({ dispatch, state }, { id, name }) => {
             const [bGlobal, bChannel, fGlobal, fChannel] = await Promise.all([
@@ -46,6 +54,7 @@ export default {
             });
         }
     },
+
     modules: {
         bttv,
         ffz

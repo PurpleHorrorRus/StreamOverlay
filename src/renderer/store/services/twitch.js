@@ -16,13 +16,12 @@ const types = {
 };
 
 const addMessagePart = (formatted, type, content) => {
-    if (content.length > 0) {
-        return [...formatted, { 
-            type, 
-            content: content.trim() 
-        }];
+    if (typeof content === "string") {
+        content = content.trim();
+        if (content.length === 0) return formatted;
     }
 
+    formatted.push({ type, content });
     return formatted;
 };
 
@@ -34,13 +33,17 @@ let profilesCache = {};
 
 // eslint-disable-next-line max-len
 const linkRegex = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
+// eslint-disable-next-line no-useless-escape
+const domainRegex = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/;
 
 export default {
     namespaced: true,
+    
     state: () => ({
         credits: {},
         tags: null
     }),
+
     actions: {
         INIT: async ({ dispatch }, credits) => {
             const client = await dispatch("service/SET_CLIENT", new Helix({
@@ -190,16 +193,19 @@ export default {
             const twitchEmotesWords = twitchEmotes.map(({ word }) => word);
             
             const splitted = message.text.split(" ");
-            for (let wordIndex = 0; wordIndex < splitted.length; wordIndex++) {
+            for (let wordIndex in splitted) {
+                wordIndex = Number(wordIndex);
                 const word = splitted[wordIndex];
 
                 if (linkRegex.test(word)) {
-                    if (part.length > 0) {
-                        formatted = addMessagePart(formatted, types.TEXT, part);
-                        part = "";
-                    }
+                    addMessagePart(formatted, types.TEXT, part);
+                    part = "";
 
-                    formatted = addMessagePart(formatted, types.LINK, word);
+                    addMessagePart(formatted, types.LINK, {
+                        domain: word.match(domainRegex)[1],
+                        link: word
+                    });
+
                     continue;
                 }
 
@@ -208,28 +214,19 @@ export default {
                 const ffzEmoteIndex = state.emotes.ffz.ids.indexOf(word);
 
                 if (~twitchEmoteIndex || ~bttvEmoteIndex || ~ffzEmoteIndex) {
-                    if (part.length > 0) {
-                        formatted = addMessagePart(formatted, types.TEXT, part);
-                        part = "";
-                    }
+                    addMessagePart(formatted, types.TEXT, part);
+                    part = "";
 
                     const emoji = 
                         twitchEmotes[twitchEmoteIndex]?.url
                         || state.emotes.bttv.content[bttvEmoteIndex]?.url
                         || state.emotes.ffz.content[ffzEmoteIndex]?.url;
 
-                    formatted = addMessagePart(formatted, types.EMOJI, emoji);
-                } else {
-                    part += " " + word;
-
-                    if (wordIndex === splitted.length - 1) {
-                        formatted = addMessagePart(formatted, types.TEXT, part);
-                        part = "";
-                    }
-                }
+                    addMessagePart(formatted, types.EMOJI, emoji);
+                } else part += " " + word;
             }
 
-            return formatted;
+            return addMessagePart(formatted, types.TEXT, part);
         },
 
         FORMAT_MESSAGE_TIME: () => {
