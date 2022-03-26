@@ -141,7 +141,7 @@ export default {
             switch(this.settings.service) {
                 case this.services.twitch: {
                     games = await this.client.search.categories(query);
-                    games = games.data || games;
+                    games = games.data || [games];
                     break;
                 }
 
