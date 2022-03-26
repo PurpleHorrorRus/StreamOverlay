@@ -247,21 +247,33 @@ export default {
         CHATTERS: async ({ rootState }) => {
             // eslint-disable-next-line max-len
             const { chatters, custom_roles } = await rootState.service.client.channel.viewers(rootState.service.user.id);
-            const allRoles = Object.assign(chatters, custom_roles);
+            let allRoles = Object.assign(chatters, custom_roles);
 
-            const viewers = Object.values(allRoles).map(category => {
+            allRoles = lodash.pickBy(allRoles, category => {
+                return category.viewers.length > 0;
+            });
+
+            allRoles = lodash.mapValues(allRoles, category => {
                 return category.viewers;
             });
 
-            allRoles.all.viewers = lodash.union(...viewers);
-
-            Object.keys(allRoles).forEach(category => {
-                allRoles[category].viewers.length === 0
-                    ? delete allRoles[category]
-                    : allRoles[category] = allRoles[category].viewers;
+            allRoles = lodash.pickBy(allRoles, category => {
+                return category.length > 0;
             });
-            
-            return allRoles;
+
+            const entries = Object.entries(allRoles);
+            for (let i = 0; i < entries.length; i++) {
+                for (let j = i + 1; j < entries.length; j++) {
+                    if (entries[i][1].length > 0) {
+                        entries[i][1] = lodash.difference(entries[i][1], entries[j][1]);
+                    }
+                }
+            }
+
+            allRoles = Object.fromEntries(entries);
+            return lodash.pickBy(allRoles, category => {
+                return category.length > 0;
+            });
         }
     },
     modules: {

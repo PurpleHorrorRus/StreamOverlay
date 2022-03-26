@@ -23,8 +23,6 @@
 
 <script>
 import Movable from "~/components/Movable";
-import ViewersListCategory from "~/components/ViewersList/Category";
-import LoaderIcon from "~/assets/icons/loader.svg";
 
 import CoreMixin from "~/mixins/core";
 
@@ -33,8 +31,8 @@ let interval = null;
 export default {
     components: { 
         Movable,
-        ViewersListCategory,
-        LoaderIcon
+        ViewersListCategory: () => import("~/components/ViewersList/Category"),
+        LoaderIcon: () => import("~/assets/icons/loader.svg")
     },
     
     mixins: [CoreMixin],
@@ -61,15 +59,7 @@ export default {
 
     methods: {
         async get() {
-            let chatters = await this.serviceDispatch("CHATTERS");
-
-            Object.keys(chatters).forEach(category => {
-                if (chatters[category].length === 0) {
-                    delete chatters[category];
-                }
-            });
-            
-            this.chatters = chatters;
+            this.chatters = await this.serviceDispatch("CHATTERS");
         },
 
         onResize(x, y, width, height) {
