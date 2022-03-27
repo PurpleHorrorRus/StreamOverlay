@@ -101,7 +101,7 @@ export default {
 
             dispatch("REGISTER_EVENT", {
                 event: events.FOLLOW,
-                response: "ON_WELCOME"
+                response: "ON_FOLLOW"
             });
 
             dispatch("REGISTER_EVENT", {
