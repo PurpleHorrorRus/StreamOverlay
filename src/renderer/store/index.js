@@ -12,11 +12,12 @@ import notifications from "~/store/notifications";
 import settings from "~/store/settings";
 import ipc from "~/store/ipc";
 
-const store = () => {
+export default function() {
     return new Vuex.Store({
         state: () => ({
             config: null
         }),
+
         actions: {
             SET_CONFIG: ({ dispatch, state }, config) => {
                 state.config = config;
@@ -26,6 +27,7 @@ const store = () => {
                 }
             }
         },
+        
         modules: {
             obs,
             websocketInstaller,
@@ -40,6 +42,4 @@ const store = () => {
             ipc
         } 
     });
-};
-
-export default store;
+}
