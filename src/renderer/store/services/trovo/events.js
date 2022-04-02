@@ -1,10 +1,17 @@
+const colors = {
+    default: "#21b36c",
+    subscriber: "#c8a86b"
+};
+
 export default {
     namespaced: true,
+
     actions: {
         ON_MESSAGE: async ({ dispatch }, message) => {
             message = Object.assign(message, {
                 id: message.message_id,
                 nickname: message.nick_name,
+                color: message.roles?.includes("subscriber") ? colors.subscriber : colors.default,
                 formatted: await dispatch("trovo/FORMAT_MESSAGE", message.content, { root: true }),
                 time: await dispatch("trovo/FORMAT_MESSAGE_TIME", message, { root: true })
             });
@@ -30,9 +37,13 @@ export default {
         },
 
         ON_SPELL: ({ dispatch }, message) => {
-            message.content = JSON.parse(message.content);
-            // eslint-disable-next-line max-len
-            message.content = `${message.nick_name} использует ${message.content.num}x${message.content.gift} за ${message.content.gift_value} ${message.content.value_type}`;
+            const user = message.nick_name;
+            const spell = message.content.gift;
+            const count = message.content.num;
+            const cost = message.content.gift_value;
+            const value = message.content.value_type;
+
+            message.content = `${user} использует ${count}x${spell} за ${cost} ${value}`;
             return dispatch("service/ADD_SYSTEM_MESSAGE", message.content, { root: true });
         },
 
