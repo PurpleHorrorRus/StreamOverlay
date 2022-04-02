@@ -6,6 +6,14 @@ import emotes from "~/store/services/trovo/emotes";
 
 import misc from "~/plugins/misc";
 
+// eslint-disable-next-line no-undef
+const isDev =  process.env.NODE_ENV === "development";
+const trovoParams = {
+    messages: {
+        fetchPastMessages: isDev
+    }
+};
+
 // eslint-disable-next-line max-len
 const linkRegex = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
 // eslint-disable-next-line no-useless-escape
@@ -65,7 +73,7 @@ export default {
                 game: channel.category_name
             }, { root: true });
             
-            let chat = await client.chat.connect();
+            let chat = await client.chat.connect(trovoParams);
             chat.on(chat.events.READY, () => dispatch("ON_READY"));
             chat.on(chat.events.DISCONNECTED, () => dispatch("ON_DISCONNECTED"));
             chat = await dispatch("service/SET_CHAT", chat, { root: true });
