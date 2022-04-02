@@ -15,8 +15,8 @@
 
             <Item
                 :text="'Включить техническую статистику OBS'"
-                :checked="settings.TechInfo.enable"
-                @change="deepChange(settings.TechInfo, 'enable')"
+                :checked="settings.OBSStatus.tech"
+                @change="deepChange(settings.OBSStatus, 'tech')"
             />
 
             <Item

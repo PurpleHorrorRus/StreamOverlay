@@ -144,6 +144,6 @@ module.exports = {
         ]
     ],
     styleResources: {
-        scss: ["~assets/css/colors.scss"]
+        scss: ["~assets/css/colors.scss", "~assets/css/mixins.scss"]
     }
 };

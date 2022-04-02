@@ -18,6 +18,7 @@ const setTime = timecode => {
 
 export default {
     namespaced: true,
+
     state: () => ({
         obs: { _connected: false },
         videoSettings: null,
@@ -27,9 +28,10 @@ export default {
             record: false,
 
             tech: null,
-            bitrate: 2300
+            bitrate: 0
         }
     }),
+
     actions: {
         CONNECT: ({ dispatch, state }, data) => {
             if (state.obs._connected) {
@@ -176,6 +178,7 @@ export default {
             }
         }
     },
+    
     modules: {
         events,
         devices,

@@ -88,12 +88,18 @@ export default {
                 show: false 
             }, { root: true });
 
+            const events = rootState.service.chat.messages.events;
+            
             dispatch("REGISTER_EVENT", {
-                event: "message",
+                event: events.MESSAGE,
                 response: "ON_MESSAGE"
             });
 
-            const events = rootState.service.chat.messages.events;
+            dispatch("REGISTER_EVENT", {
+                event: events.PAST_MESSAGES,
+                response: "ON_PAST_MESSAGES"
+            });
+            
             dispatch("REGISTER_EVENT", {
                 event: events.WELCOME,
                 response: "ON_WELCOME"

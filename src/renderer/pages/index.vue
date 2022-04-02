@@ -5,7 +5,6 @@
         <div id="content-valid">
             <Notifications />
             <OBS v-if="showOBS" />
-            <TechInfo v-if="showTech" />
             <Chat v-if="settings.chat.enable" />
             <Widget v-for="widget of widgets" :key="widget.id" :widget="widget" />
             <ViewersList v-if="showViewersList" />
@@ -20,7 +19,6 @@ import { ipcRenderer } from "electron";
 import EditMode from "~/components/EditMode";
 
 import OBS from "~/components/OBS";
-import TechInfo from "~/components/obs/TechInfo";
 
 import Notifications from "~/components/Notifications/Notifications";
 import Chat from "~/components/Chat";
@@ -50,7 +48,6 @@ export default {
     components: {
         EditMode,
         OBS,
-        TechInfo,
         Notifications,
         Chat,
         ViewersList,
@@ -65,12 +62,6 @@ export default {
                 || this.settings.OBSStatus.ServiceInfo.enableFollowers;
                 
             return this.connected && ServiceInfoEnabled;
-        },
-
-        showTech() {
-            return this.settings?.TechInfo.enable 
-                && this.connected 
-                && this.status.tech !== null;
         },
 
         showViewersList() {

@@ -1,45 +1,50 @@
 <template>
     <div id="devices">
-        <MicrophoneMutedIcon
-            v-if="!devices.mic"
-            id="devices-microphone-muted"
-            class="icon disabled"
+        <Device
+            :icon="icons.mic"
+            :class="{ disabled: !devices.mic }"
         />
 
-        <SoundMutedIcon v-if="!devices.sound" class="icon disabled" />
+        <Device
+            :icon="icons.sound"
+            :class="{ disabled: !devices.sound }"
+        />
 
-        <div v-if="devices.camera !== null" id="devices-camera">
-            <CameraIcon v-if="devices.camera" class="icon" />
-            <CameraDisabledIcon v-else class="icon disabled" />
-        </div>
+        <Device 
+            v-if="devices.camera !== null"
+            :icon="icons.camera"
+            :class="{ disabled: !devices.camera }"
+        />
     </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
 
+import MicrophoneIcon from "~/assets/icons/microphone.svg";
 import MicrophoneMutedIcon from "~/assets/icons/microphone-muted.svg";
+
+import SoundIcon from "~/assets/icons/sound.svg";
 import SoundMutedIcon from "~/assets/icons/sound-muted.svg";
+
 import CameraIcon from "~/assets/icons/camera.svg";
 import CameraDisabledIcon from "~/assets/icons/camera-disabled.svg";
 
 export default {
     components: {
-        MicrophoneMutedIcon,
-        SoundMutedIcon,
-        CameraIcon,
-        CameraDisabledIcon
+        Device: () => import("~/components/OBS/Devices/Device")
     },
+
     computed: {
         ...mapState({
             devices: state => state.obs.devices.list
         }),
 
-        classes() {
+        icons() {
             return {
-                mic: this.devices.mic,
-                sound: this.devices.sound,
-                camera: this.devices.camera
+                mic: this.devices.mic ? MicrophoneIcon : MicrophoneMutedIcon,
+                sound: this.devices.sound ? SoundIcon : SoundMutedIcon,
+                camera: this.devices.camera ? CameraIcon : CameraDisabledIcon
             };
         }
     }
@@ -49,19 +54,6 @@ export default {
 <style lang="scss">
 #devices {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
     column-gap: 5px;
-
-    &-camera {
-        display: flex;
-        align-items: center;
-
-        height: 100%;
-    }
-
-    .icon.disabled {
-        fill: #ff0000;
-    }
 }
 </style>

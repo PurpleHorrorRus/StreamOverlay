@@ -1,46 +1,47 @@
 <template>
     <div id="status">
-        <BroadcastIcon
-            v-if="status.stream"
-            id="status-stream-icon"
-            class="icon"
-        />
-        <RecordIcon
-            v-else-if="status.record"
-            id="status-record-icon"
-            class="icon"
-        />
-        <DotIcon v-else id="status-ready-icon" class="icon" />
+        <DotIcon id="status-icon" class="icon" />
 
-        <span
-            v-if="settings.OBSStatus.time"
-            id="status-time"
-            v-text="formatTime"
-        />
+        <div id="status-information">
+            <span 
+                id="status-information-label" 
+                v-text="label" 
+            />
+
+            <span
+                v-if="settings.OBSStatus.time"
+                id="status-information-time"
+                v-text="formatTime"
+            />
+        </div>
     </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
 
-import BroadcastIcon from "~/assets/icons/broadcast.svg";
-import RecordIcon from "~/assets/icons/record.svg";
 import DotIcon from "~/assets/icons/dot.svg";
 
 import misc from "~/plugins/misc";
 
 export default {
     components: {
-        BroadcastIcon,
-        RecordIcon,
         DotIcon
     },
+
     computed: {
         ...mapState({
             status: state => state.obs.status,
             time: state => state.obs.time,
             settings: state => state.settings.settings
         }),
+
+        label() {
+            if (this.status.stream && this.status.record) return "LIVE/REC";
+            else if (this.status.stream) return "LIVE";
+            else if (this.status.record) return "REC";
+            return "";
+        },
         
         formatTime() {
             return misc.formatTime(this.time);
@@ -52,29 +53,21 @@ export default {
 <style lang="scss">
 #status {
     display: flex;
-    justify-content: space-evenly;
     align-items: center;
     column-gap: 5px;
 
+    width: max-content;
+
+    @include obs-item;
+
     .icon {
-        width: 20px;
+        width: 13px !important;
     }
 
-    &-stream-icon {
-        fill: #8c00ff;
-    }
-
-    &-record-icon path {
-        fill: #ff0000;
-    }
-
-    &-ready-icon circle {
-        fill: #90ee90;
-    }
-
-    &-time {
-        font-size: 11px;
-        font-weight: 400;
+    &-information {
+        display: flex;
+        align-items: center;
+        column-gap: 5px;
     }
 }
 </style>

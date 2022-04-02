@@ -43,6 +43,7 @@ const clear = {
         OBSStatus: {
             enable: true,
             time: true,
+            tech: false,
             x: -37,
             y: 1022,
 
@@ -51,13 +52,7 @@ const clear = {
                 enableFollowers: true
             }
         },
-        TechInfo: {
-            enable: true,
-            x: 0,
-            y: 0,
-            width: 300,
-            height: 300
-        },
+
         ViewersList: {
             enable: false,
             x: 1721,
@@ -65,6 +60,7 @@ const clear = {
             width: 192,
             height: 219
         },
+
         notifications: {
             lowfps: true,
             lowbitrate: true

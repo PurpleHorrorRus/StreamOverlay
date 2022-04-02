@@ -23,19 +23,27 @@ export default {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    column-gap: 10px;
+    column-gap: 5px;
 
     border-radius: 2px;
 
     &-viewers,
     &-followers {
+        @include obs-item;
+
         display: flex;
         align-items: center;
-        column-gap: 4px;
+        column-gap: 5px;
+
+        width: max-content;
+
+        padding: 5px 8px 5px 5px;
 
         span {
             color: #fff;
-            font-size: 11px;
+            font-size: 12px;
+            font-weight: bold;
+            font-family: "Roboto Condensed";
         }
     }
 }

@@ -7,9 +7,13 @@
         :resizable="false"
         @onDrag="onDrag"
     >
-        <Status v-if="connected" />
+        <div id="obs-main">
+            <Devices v-if="connected && showDevices" />
+            <Status v-if="connected && showStatus" />
+            <OBSTech v-if="showTech" />
+        </div>
+
         <ServiceInfo v-if="chatConnected" />
-        <Devices v-if="connected && showDevices" />
     </Movable>
 </template>
 
@@ -30,14 +34,15 @@ export default {
 
         Devices,
         ServiceInfo,
-        Status
+        Status,
+        OBSTech: () => import("~/components/OBS/Tech")
     },
 
     mixins: [OBSMixin],
 
     data: () => ({
         width: 125,
-        height: 25
+        height: 80
     }),
 
     computed: {
@@ -45,8 +50,17 @@ export default {
             chatConnected: state => state.service.connected
         }),
 
+        showStatus() {
+            return this.status.stream || this.status.record;
+        },
+
         showDevices() {
             return !this.devices.mic || !this.devices.sound || this.devices.camera !== null;
+        },
+
+        showTech() {
+            return this.settings.OBSStatus.tech
+                && this.connected;
         },
 
         source() {
@@ -57,28 +71,8 @@ export default {
             };
         }
     },
-    
-    watch: {
-        devices: {
-            deep: true,
-            handler: function() {
-                this.adaptive();
-            }
-        }
-    },
-    
-    mounted() {
-        this.adaptive();
-    },
 
     methods: {
-        adaptive() {
-            if (this.$refs.OBSStatus) {
-                this.width = this.$refs.OBSStatus.$el.clientWidth;
-                this.height = this.$refs.OBSStatus.$el.clientHeight;
-            }
-        },
-        
         onDrag(x, y) {
             this.settings.OBSStatus.x = x;
             this.settings.OBSStatus.y = y;
@@ -95,27 +89,42 @@ export default {
     right: 0px;
 
     display: flex;
-    column-gap: 10px;
-
-    justify-content: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
+    align-content: center;
+    row-gap: 5px;
 
     width: max-content !important;
-    height: 26px;
+    height: 140px;
 
-    padding: 10px;
+    padding: 5px;
 
-    background: #000000bb;
+    .icon {
+        height: 20px;
 
-    &.right {
-        flex-direction: row-reverse;
-
-        #status {
-            flex-direction: row-reverse;
+        g, path {
+            fill: #ffffff;
         }
     }
 
-    .icon {
-        width: 16px;
+    &-main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        column-gap: 5px;
+
+        * {
+            align-items: center;
+        }
+
+        > * {
+            align-content: center;
+        }
+        span {
+            color: #ffffff;
+            font-size: 12px;
+        }
     }
 }
 </style>
