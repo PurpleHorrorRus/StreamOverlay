@@ -10,7 +10,7 @@
             v-if="showAvatar"
             :style="pictureStyle"
             :src="message.avatar"
-            class="avatar"
+            class="message-avatar"
         />
 
         <Badges v-if="showBadges" :badges="message.badges" />
@@ -19,7 +19,7 @@
             v-if="!message.system"
             v-tooltip="'Быстрый бан'"
             :style="nicknameStyle"
-            class="nickname stroke"
+            class="message-nickname stroke"
             @click="ban"
             v-text="message.nickname"
         />
@@ -102,19 +102,19 @@ export default {
     padding: 5px 10px 5px 10px;
 
     &-time,
-    .avatar,
-    .nickname,
+    &-avatar,
+    &-nickname,
     &-banned {
         display: inline;
     }
 
-    .avatar {
+    &-avatar {
         border-radius: 100px;
 
         vertical-align: middle;
     }
 
-    .nickname {
+    &-nickname {
         position: relative;
         top: 2px;
 

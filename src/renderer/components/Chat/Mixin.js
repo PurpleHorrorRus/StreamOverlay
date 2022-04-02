@@ -1,11 +1,9 @@
-import { mapState } from "vuex";
+import CoreMixin from "~/mixins/core";
 
 export default {
-    computed: {
-        ...mapState({
-            settings: state => state.settings.settings
-        }),
+    mixins: [CoreMixin],
 
+    computed: {
         nicknameStyle() {
             return {
                 color: this.message.color,
@@ -21,7 +19,7 @@ export default {
         
         pictureStyle() {
             return {
-                width: `${this.settings.chat.font}pt`
+                width: `${this.settings.chat.font + 14}px`
             };
         }
     }
