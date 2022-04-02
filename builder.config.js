@@ -22,7 +22,7 @@ const windowsOS = {
 
 module.exports = Object.assign(windowsOS, {
     asar: true,
-    productName: "StreamOverlayMaximum",
+    productName: "StreamOverlay",
     appId: "com.purplehorrorrus.streamoverlay",
     artifactName: "streamoverlay-${version}.${ext}",
     directories: {
