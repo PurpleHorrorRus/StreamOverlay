@@ -19,6 +19,15 @@ export default {
             return await dispatch("service/ADD_MESSAGE", message, { root: true });
         },
 
+        ON_PAST_MESSAGES: ({ dispatch }, messages) => {
+            messages.forEach(async message => {
+                message.past = true;
+                return await dispatch("ON_MESSAGE", message);
+            });
+
+            return messages;
+        },
+
         ON_WELCOME: ({ dispatch, rootState }, user) => {
             if (!rootState.settings.settings.trovo.notifications.welcome) {
                 return;
