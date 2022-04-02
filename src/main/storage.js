@@ -102,14 +102,14 @@ const writeJSON = (dir, content) => {
 
 const appdata = app.getPath("userData");
 
-const configPath = path.join(appdata, "config");
-if (!fs.existsSync(configPath)) {
-    fs.mkdirSync(configPath);
+const configRoot = path.join(appdata, "config");
+if (!fs.existsSync(configRoot)) {
+    fs.mkdirSync(configRoot);
 }
 
-const spath = isDev ? path.join(configPath, "StreamOverlay") : configPath;
-if (!fs.existsSync(spath)) {
-    fs.mkdirSync(spath);
+const configPath = isDev ? path.join(configRoot, "StreamOverlay") : configRoot;
+if (!fs.existsSync(configPath)) {
+    fs.mkdirSync(configPath);
 }
 
 const nested = (settings, clear) => {
@@ -132,12 +132,13 @@ const nested = (settings, clear) => {
     return settings;
 };
 
-const dataPath = filename => path.join(spath, filename);
+const dataPath = filename => path.join(configPath, filename);
 const exist = path => fs.existsSync(path);
 const data = (path, clear) => (exist(path) ? nested(readJSON(path), clear) : writeJSON(path, clear));
 
 const paths = {
-    spath,
+    configPath,
+    temp: path.resolve(app.getPath("temp"), "StreamOverlay"),
     settings: dataPath("settings.json"),
     twitch: dataPath("twitch.json"),
     trovo: dataPath("trovo.json"),

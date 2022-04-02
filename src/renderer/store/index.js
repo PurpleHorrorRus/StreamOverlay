@@ -1,4 +1,6 @@
 import Vuex from "vuex";
+import fs from "fs-extra";
+import path from "path";
 
 import obs from "~/store/obs";
 import websocketInstaller from "~/store/websocket/install";
@@ -25,6 +27,19 @@ export default function() {
                 if (config?.settings) {
                     dispatch("settings/SET", config.settings, { root: true });
                 }
+            },
+
+            PREPARE_TEMP_FOLDER: ({ state }, folderPath) => {
+                if (!fs.existsSync(state.config.paths.temp)) {
+                    fs.mkdirSync(state.config.paths.temp);
+                }
+                
+                const folder = path.join(state.config.paths.temp, folderPath);
+                if (!fs.existsSync(folder)) {
+                    fs.mkdirSync(folder);
+                }
+
+                return path.resolve(folder);
             }
         },
         

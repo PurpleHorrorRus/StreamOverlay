@@ -30,6 +30,7 @@
     },
     "dependencies": {
         "adm-zip": "^0.5.9",
+        "better-node-gtts": "^1.0.2",
         "bluebird": "^3.7.2",
         "electron-updater": "^4.6.5",
         "fastify": "^3.27.4",

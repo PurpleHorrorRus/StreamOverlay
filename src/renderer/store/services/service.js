@@ -1,3 +1,8 @@
+import { Text2Speech } from "better-node-gtts";
+import fs from "fs-extra";
+import path from "path";
+import Promise from "bluebird";
+
 import misc from "~/plugins/misc";
 
 const config = {
@@ -9,21 +14,30 @@ const emptyStream = {
     game: ""
 };
 
-let utterQuery = [];
-let utter = null;
-// eslint-disable-next-line no-undef
-if (process.client) {
-    utter = new SpeechSynthesisUtterance();
-    utter.lang = "ru-RU";
-    utter.onend = async () => {
-        utterQuery.splice(0, 1);
-        if (utterQuery.length > 0) {
-            utter.text = utterQuery[0];
-            await new Promise(resolve => setTimeout(resolve, 500));
-            speechSynthesis.speak(utter);
+const TTSClient = new Text2Speech("ru");
+const TTSQuery = [];
+
+const DownloadTTS = async (text, folder) => {
+    const filename = "TTS_" + Math.floor(performance.now()) + ".mp3";
+    const filepath = path.join(folder, filename);
+    await TTSClient.save(filepath, text);
+    return filepath;
+};
+
+const ReadTTS = async file => {
+    const audio = new Audio(file);
+    audio.volume = 0.5;
+    audio.play();
+    audio.onended = async () => {
+        fs.remove(file);
+        TTSQuery.splice(0, 1);
+
+        if (TTSQuery.length > 0) {
+            await Promise.delay(500);
+            return ReadTTS(TTSQuery[0]);
         }
     };
-}
+};
 
 export default {
     namespaced: true,
@@ -130,14 +144,19 @@ export default {
             sound.play();
         },
 
-        VOICE_MESSAGE: ({ rootState }, { name, message, forceName }) => {
+        VOICE_MESSAGE: async ({ dispatch, rootState }, { name, message, forceName }) => {
             const readName = rootState.settings.settings.chat.tts.readName || forceName;
-            utter.text = readName ? `${name} сказал ${message}` : message;
-            utterQuery.push(utter.text);
+            const text = readName ? `${name} сказал ${message}` : message;
 
-            if (utterQuery.length === 1) {
-                speechSynthesis.speak(utter);
+            const folder = await dispatch("PREPARE_TEMP_FOLDER", "tts", { root: true });
+            const file = await DownloadTTS(text, folder);
+            TTSQuery.push(file);
+            
+            if (TTSQuery.length === 1) {
+                return await ReadTTS(TTSQuery[0]);
             }
+
+            return text;
         },
 
         UPDATE_RECENT: ({ dispatch, rootState }, data) => {
