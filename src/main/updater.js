@@ -19,7 +19,7 @@ class Updater {
         // eslint-disable-next-line max-len
         autoUpdater.on("download-progress", progress => common.windows.send(this.window, "download-progress", progress));
         autoUpdater.on("update-available", info => common.windows.send(this.window, "update-available", info));
-        autoUpdater.on("update-downloaded", () => autoUpdater.quitAndInstall(false, true));
+        autoUpdater.on("update-downloaded", () => autoUpdater.quitAndInstall(true, true));
         autoUpdater.checkForUpdates();
 
         return {
