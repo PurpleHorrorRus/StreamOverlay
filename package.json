@@ -1,6 +1,6 @@
 {
     "name": "streamoverlay",
-    "version": "1.6.3",
+    "version": "1.6.4",
     "description": "An overlay for streamers with single display",
     "author": "PurpleHorrorRus <purplehorrorrus@gmail.com>",
     "repository": {
@@ -42,7 +42,7 @@
         "obs-websocket-js": "^4.0.3",
         "overlayaddon": "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git",
         "simple-helix-api": "https://github.com/PurpleHorrorRus/simple-helix-api#v2",
-        "simple-trovo-api": "^1.1.6",
+        "simple-trovo-api": "^1.1.7",
         "tmi.js": "^1.8.5",
         "v-tooltip": "2.1.3",
         "vue-draggable-resizable": "2.3.0",
