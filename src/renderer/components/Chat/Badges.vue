@@ -1,19 +1,34 @@
 <template>
     <div class="badges">
-        <img v-for="badge of badges" :key="badge" class="badge" :style="pictureStyle" :src="badge">
+        <img 
+            v-for="badge of badges" 
+            :key="badge" 
+            class="badge" 
+            :style="badgeStyle" 
+            :src="badge"
+        >
     </div>
 </template>
 
 <script>
-import MessageMixin from "~/components/Chat/Mixin";
+import CoreMixin from "~/mixins/core";
 
 export default {
-    mixins: [MessageMixin],
+    mixins: [CoreMixin],
+
     props: {
         badges: {
             type: Array,
             required: false,
             default: () => []
+        }
+    },
+
+    computed: {
+        badgeStyle() {
+            return {
+                width: `${this.settings.chat.font + 4}px`
+            };
         }
     }
 };

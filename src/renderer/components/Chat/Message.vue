@@ -1,5 +1,9 @@
 <template>
-    <div class="message" :style="messageStyle">
+    <div 
+        class="message" 
+        :style="messageStyle" 
+        :class="messageClass"
+    >
         <span
             v-if="$parent.input"
             class="message-time"
@@ -8,7 +12,7 @@
         />
         <img
             v-if="showAvatar"
-            :style="pictureStyle"
+            :style="avatarStyle"
             :src="message.avatar"
             class="message-avatar"
         />
@@ -16,10 +20,11 @@
         <Badges v-if="showBadges" :badges="message.badges" />
 
         <span
-            v-if="!message.system"
-            v-tooltip="'Быстрый бан'"
+            v-if="message.nickname"
+            v-tooltip="nicknameTooltip"
             :style="nicknameStyle"
-            class="message-nickname stroke"
+            class="message-nickname"
+            :class="{ clickable: canBan }"
             @click="ban"
             v-text="message.nickname"
         />
@@ -60,9 +65,18 @@ export default {
         showAvatar() {
             return (
                 this.settings.chat.avatar &&
-                !this.message.system &&
                 this.message.avatar?.length > 0
             );
+        },
+
+        canBan() {
+            return this.message.nickname !== this.user.nickname;
+        },
+
+        nicknameTooltip() {
+            return this.canBan
+                ? "Быстрый бан"
+                : null;
         },
 
         showBadges() {
@@ -78,16 +92,34 @@ export default {
                 background: `rgba(20, 20, 19, ${this.settings.chat.opacity / 100})`,
                 lineHeight: `${this.settings.chat.font + 2}pt`
             };
+        },
+
+        avatarStyle() {
+            return {
+                width: `${this.settings.chat.font + 14}px`
+            };
+        },
+        
+        messageClass() {
+            return { 
+                system: this.message.system 
+            };
         }
     },
 
     methods: {
         ban() {
+            if (!this.canBan) {
+                return false;
+            }
+
             this.serviceDispatch("BAN", {
                 nickname: this.message.nickname,
                 timeout: 0,
                 reason: "бан стримером"
             });
+
+            return true;
         }
     }
 };
@@ -97,9 +129,20 @@ export default {
 .message {
     display: inline-block;
 
-    width: 100%;
+    width: max-content;
+    max-width: 100%;
 
-    padding: 5px 10px 5px 10px;
+    padding: 5px 10px;
+
+    &.system {
+        span {
+            font-size: 11px;
+        }
+
+        .message-body span {
+            color: #b3b3b3;
+        }
+    }
 
     &-time,
     &-avatar,
@@ -109,7 +152,7 @@ export default {
     }
 
     &-avatar {
-        border-radius: 100px;
+        border-radius: 100%;
 
         vertical-align: middle;
     }
@@ -123,7 +166,7 @@ export default {
         font-family: Roboto;
         font-weight: bold;
 
-        &:hover {
+        &.clickable:hover {
             cursor: pointer;
             text-decoration: underline;
         }

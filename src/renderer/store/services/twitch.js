@@ -13,7 +13,7 @@ import misc from "~/plugins/misc";
 const types = {
     TEXT: "text",
     LINK: "link",
-    EMOJI: "emote"
+    EMOTE: "emote"
 };
 
 const addMessagePart = (formatted, type, content) => {
@@ -246,12 +246,12 @@ export default {
                     addMessagePart(formatted, types.TEXT, part);
                     part = "";
 
-                    const emoji = 
+                    const emote = 
                         twitchEmotes[twitchEmoteIndex]?.url
                         || state.emotes.bttv.content[bttvEmoteIndex]?.url
                         || state.emotes.ffz.content[ffzEmoteIndex]?.url;
 
-                    addMessagePart(formatted, types.EMOJI, emoji);
+                    addMessagePart(formatted, types.EMOTE, emote);
                 } else part += " " + word;
             }
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="items">
+    <div class="message-body">
         <div v-for="(item, index) of items" :key="index" class="item">
             <span
                 v-if="item.type === 'text'"
@@ -22,7 +22,7 @@
                 class="emoticon"
                 :style="emoticionStyle"
                 :src="item.content"
-            >
+            />
         </div>
     </div>
 </template>
@@ -34,7 +34,7 @@ import MessageMixin from "~/components/Chat/Mixin";
 
 export default {
     mixins: [MessageMixin],
-    
+
     props: {
         items: {
             type: Array,
@@ -59,41 +59,39 @@ export default {
 </script>
 
 <style lang="scss">
-.message {
-    .items {
-        position: relative;
-        top: 2px;
+.message-body {
+    position: relative;
+    top: 2px;
 
+    display: inline;
+
+    .item {
         display: inline;
 
-        .item {
+        &:not(:first-child) {
+            margin-left: 5px;
+        }
+
+        .text {
+            font-family: "Roboto Condensed";
+            font-weight: bold;
+
+            &.link {
+                color: #0077ff;
+                cursor: pointer;
+            }
+        }
+
+        .emoticon {
+            position: relative;
+            bottom: 1px;
+
+            vertical-align: middle;
+        }
+
+        .text,
+        .emoticon {
             display: inline;
-
-            &:not(:first-child) {
-                margin-left: 5px;
-            }
-
-            .text {
-                font-family: "Roboto Condensed";
-                font-weight: bold;
-
-                &.link {
-                    color: #0077ff;
-                    cursor: pointer;
-                }
-            }
-
-            .emoticon {
-                position: relative;
-                bottom: 1px;
-
-                vertical-align: middle;
-            }
-
-            .text,
-            .emoticon {
-                display: inline;
-            }
         }
     }
 }
