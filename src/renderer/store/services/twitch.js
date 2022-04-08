@@ -46,6 +46,34 @@ export default {
     }),
 
     actions: {
+        AUTH: async ({ dispatch, rootState }) => {
+            if (rootState.service.client) {
+                return false;
+            }
+
+            // eslint-disable-next-line no-undef
+            if (!process.env.twitch_client_id) {
+                console.warn("[Trovo] There is no secrets for Twitch client");
+                return false;
+            }
+
+            const invalidService = {
+                error: true,
+                redirect: "/services/twitch"
+            };
+
+            const config = rootState.config.twitch;
+            if (!config.username || !config.access_token || !config.oauth_token) {
+                return invalidService;
+            }
+            
+            const response = await dispatch("INIT", config).catch(() => {
+                return invalidService;
+            });
+
+            return Boolean(response);
+        },
+
         INIT: async ({ dispatch }, credits) => {
             const client = await dispatch("service/SET_CLIENT", new Helix({
                 // eslint-disable-next-line no-undef
@@ -261,6 +289,27 @@ export default {
             return true;
         },
 
+        GET_STREAM: async ({ rootState }) => {
+            const channel = await rootState.service.client.channel.get(rootState.service.user.id);
+            return {
+                title: channel.title,
+                game: channel.game_name
+            };
+        },
+
+        VIEWERS_COUNT: async ({ rootState }) => {
+            const stream = await rootState.service.client.stream.streams({ 
+                user_id: rootState.service.user.id 
+            });
+
+            return stream?.viewer_count;
+        },
+
+        FOLLOWERS_COUNT: async ({ rootState }) => {
+            const follows = await rootState.service.client.users.follows(rootState.service.user.id);
+            return follows?.total || 0;
+        },
+
         CHATTERS: async ({ rootState }) => {
             const name = rootState.service.user.display_name;
             const response = await rootState.service.client.other.getViewers(name);
@@ -281,6 +330,11 @@ export default {
                     follower_mode_duration: duration
                 });
             }
+        },
+
+        SEARCH_GAME: async ({ rootState }, query) => {
+            const games = await rootState.service.client.search.categories(query);
+            return games.data || Array.isArray(games) ? games : [games];
         },
 
         FORMAT_GAME: (_, game) => {

@@ -104,7 +104,11 @@ export default {
                 this.settings.first = false;
                 this.save();
             }
+
+            return true;
         }
+        
+        return false;
     },
     methods: {
         ...mapActions({
@@ -115,52 +119,19 @@ export default {
             addNotification: "notifications/ADD",
             turnUpdate: "notifications/TURN_UPDATE"
         }),
-
+    
         async authService() {
-            switch(this.config.settings.service) {
-                case this.services.twitch: {
-                    if (this.helix) return false;
-
-                    // eslint-disable-next-line no-undef
-                    if (!process.env.twitch_client_id) {
-                        console.warn("[Trovo] There is no secrets for Twitch client");
-                        return false;
-                    }
-
-                    // eslint-disable-next-line max-len
-                    if (!this.config.twitch.username || !this.config.twitch.access_token || !this.config.twitch.oauth_token) {
-                        return this.invalidService("/services/twitch");
-                    }
-                    
-                    const response = await this.createHelix(this.config.twitch).catch(() => {
-                        return this.invalidService("/services/twitch");
-                    });
-
-                    return Boolean(response);
-                }
-
-                case this.services.trovo: {
-                    if (this.trovo) return false;
-
-                    // eslint-disable-next-line no-undef
-                    if (!process.env.trovo_client_id || !process.env.trovo_client_secret) {
-                        console.warn("[Trovo] There is no secrets for Trovo client");
-                        return false;
-                    }
-
-                    if (!this.config.trovo.access_token) {
-                        return this.invalidService("/services/trovo");
-                    }
-
-                    const response = await this.createTrovo().catch(() => {
-                        return this.invalidService("/services/trovo");
-                    });
-
-                    return Boolean(response);
-                }
+            const auth = await this.serviceDispatch("AUTH");
+            if (auth.error) {
+                this.$router.replace(auth.redirect).catch(() => {});
+                return false;
+            }
+        
+            if (!auth) {
+                return false;
             }
 
-            return false;
+            return true;
         },
 
         invalidService(link) {

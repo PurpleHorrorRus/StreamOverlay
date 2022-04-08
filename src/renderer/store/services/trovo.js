@@ -28,6 +28,11 @@ const notifications = {
     }
 };
 
+const colors = {
+    default: "#21b36c",
+    subscriber: "#c8a86b"
+};
+
 const addMessagePart = (formatted, type, content) => {
     if (typeof content === "string") {
         content = content.trim();
@@ -42,7 +47,35 @@ export default {
     namespaced: true,
 
     actions: {
-        INIT: async ({ dispatch, rootState }) => {
+        AUTH: async ({ dispatch, rootState }) => {
+            if (rootState.service.client) {
+                return false;
+            }
+
+            // eslint-disable-next-line no-undef
+            if (!process.env.trovo_client_id || !process.env.trovo_client_secret) {
+                console.warn("[Trovo] There is no secrets for Trovo client");
+                return false;
+            }
+
+            const invalidService = {
+                error: true,
+                redirect: "/services/trovo"
+            };
+
+            const config = rootState.config.trovo;
+            if (!config.access_token) {
+                return invalidService;
+            }
+
+            const response = await dispatch("INIT", config).catch(() => {
+                return invalidService;
+            });
+
+            return Boolean(response);
+        },
+
+        INIT: async ({ dispatch, rootState }, credits) => {
             let client = new TrovoAPI({
                 // eslint-disable-next-line no-undef
                 client_id: process.env.trovo_client_id,
@@ -52,7 +85,6 @@ export default {
                 credits: rootState.config.paths.trovo
             });
 
-            const credits = rootState.config.trovo;
             client = await client.auth(credits.access_token, credits.refresh_token);
             client = await dispatch("service/SET_CLIENT", client, { root: true });
 
@@ -81,12 +113,6 @@ export default {
             return user;
         },
 
-        REGISTER_EVENT: ({ dispatch, rootState }, { event, response }) => {
-            rootState.service.chat.messages.on(event, data => {
-                return dispatch(`events/${response}`, data);
-            });
-        },
-
         ON_READY: ({ dispatch, rootState }) => {
             rootState.service.connected = true;
 
@@ -96,46 +122,23 @@ export default {
                 show: false 
             }, { root: true });
 
-            const events = rootState.service.chat.messages.events;
-            
-            dispatch("REGISTER_EVENT", {
-                event: events.MESSAGE,
-                response: "ON_MESSAGE"
-            });
+            const eventNames = Object.keys(events.actions);
+            for (const event of eventNames) {
+                if (event !== "COMMAND") {
+                    dispatch("REGISTER_EVENT", event);
+                }
+            }
+        },
 
-            dispatch("REGISTER_EVENT", {
-                event: events.PAST_MESSAGES,
-                response: "ON_PAST_MESSAGES"
-            });
-            
-            dispatch("REGISTER_EVENT", {
-                event: events.WELCOME,
-                response: "ON_WELCOME"
-            });
+        REGISTER_EVENT: ({ dispatch, rootState }, event) => {
+            rootState.service.chat.messages.on(event.toLowerCase(), async data => {
+                if (Array.isArray(data)) {
+                    await dispatch(`events/${event}`, data);
+                    return false;
+                }
 
-            dispatch("REGISTER_EVENT", {
-                event: events.FOLLOW,
-                response: "ON_FOLLOW"
-            });
-
-            dispatch("REGISTER_EVENT", {
-                event: events.SUBSCRIPTION,
-                response: "ON_SUBSCRIPTION"
-            });
-
-            dispatch("REGISTER_EVENT", {
-                event: events.SPELLS,
-                response: "ON_SPELL"
-            });
-
-            dispatch("REGISTER_EVENT", {
-                event: events.SUPER_CAP,
-                response: "ON_SUPER_CAP"
-            });
-
-            dispatch("REGISTER_EVENT", {
-                event: events.ACTIVITY,
-                response: "ON_ACTIVITY"
+                const formatted = await dispatch("FORMAT", data);
+                return await dispatch(`events/${event}`, formatted);
             });
         },
 
@@ -154,6 +157,15 @@ export default {
             const events = Object.values(rootState.service.chat.messages.events);
             ["message", ...events].forEach(event => {
                 rootState.service.chat.messages.removeAllListeners(event);
+            });
+        },
+
+        FORMAT: async ({ dispatch }, message) => {
+            return Object.assign(message, {
+                id: message.message_id,
+                nickname: message.nick_name,
+                color: message.roles?.includes("subscriber") ? colors.subscriber : colors.default,
+                time: await dispatch("FORMAT_MESSAGE_TIME", message)
             });
         },
 
@@ -182,8 +194,8 @@ export default {
                     continue;
                 }
 
-                if (~word.indexOf(":")) {
-                    const emote = await dispatch("emotes/FIND_EMOTE", word); // Format Emote
+                if (word.includes(":")) { // Format Emote
+                    const emote = await dispatch("emotes/FIND_EMOTE", word);
                     
                     if (emote) {
                         addMessagePart(formatted, "text", part);
@@ -194,7 +206,7 @@ export default {
                     }
                 }
 
-                part += word + " ";
+                part += word + " "; // Add word to part
             }
 
             return addMessagePart(formatted, "text", part);
@@ -212,6 +224,11 @@ export default {
         SAY: ({ rootState }, message) => {
             if (!rootState.service.connected) return false;
             rootState.service.client.chat.send(message);
+        },
+
+        SEARCH_GAME: async ({ rootState }, query) => {
+            const response = await rootState.service.client.categories.search(query);
+            return response.category_info;
         },
 
         FORMAT_GAME: (_, game) => {
@@ -252,6 +269,24 @@ export default {
                 : `ban ${data.nickname}`;
 
             return await rootState.service.client.chat.command(command, rootState.service.user.id);
+        },
+
+        GET_STREAM: async ({ rootState }) => {
+            const channel = await rootState.service.client.channels.get(rootState.service.user.nickname);
+            return {
+                title: channel.live_title,
+                game: channel.category_name
+            };
+        },
+
+        VIEWERS_COUNT: async ({ rootState }) => {
+            const channel = await rootState.service.client.channels.get(rootState.service.user.nickname);
+            return channel?.current_viewers;
+        },
+
+        FOLLOWERS_COUNT: async ({ rootState }) => {
+            const follows = await rootState.service.client.channel.followers(rootState.service.user.id);
+            return Number(follows?.total) || 0;
         },
 
         CHATTERS: async ({ rootState }) => {

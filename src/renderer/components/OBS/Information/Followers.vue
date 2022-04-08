@@ -17,19 +17,7 @@ export default {
 
     methods: {
         async update() {
-            switch(this.settings.service) {
-                case this.services.twitch: {
-                    const follows = await this.client.users.follows(this.user.id);
-                    this.count = follows?.total || 0;
-                    break;
-                }
-
-                case this.services.trovo: {
-                    const follows = await this.client.channel.followers(this.user.id);
-                    this.count = Number(follows?.total) || 0;
-                    break;
-                }
-            }
+            this.count = await this.serviceDispatch("FOLLOWERS_COUNT");
         }
     }
 };

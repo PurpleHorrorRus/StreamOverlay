@@ -93,22 +93,7 @@ export default {
 
     methods: {
         async fetch() {
-            switch (this.settings.service) {
-                case this.services.twitch: {
-                    const channel = await this.client.channel.get(this.user.id);
-                    this.local.title = channel.title;
-                    this.local.game = channel.game_name;
-                    break;   
-                }
-
-                case this.services.trovo: {
-                    const channel = await this.client.channels.get(this.user.nickName);
-                    this.local.title = channel.live_title;
-                    this.local.game = channel.category_name;
-                    break;
-                }
-            }
-
+            this.local = await this.serviceDispatch("GET_STREAM");
             return await this.updateSearchResults(this.local.game);
         },
 
@@ -121,6 +106,7 @@ export default {
         select(game) {
             this.game = game;
             this.local.game = game.name;
+            return true;
         },
         
         async updateSearchResults(query) {
@@ -130,27 +116,13 @@ export default {
                 return game.name === query;
             });
 
-            if (gameInSearch) {
-                this.select(gameInSearch);
-            }
+            return gameInSearch
+                ? this.select(gameInSearch)
+                : false;
         },
 
         async searchGame(query) {
-            let games = [];
-
-            switch(this.settings.service) {
-                case this.services.twitch: {
-                    games = await this.client.search.categories(query);
-                    games = games.data || [games];
-                    break;
-                }
-
-                case this.services.trovo: {
-                    const response = await this.client.categories.search(query);
-                    games = response.category_info;
-                    break;
-                }
-            }
+            const games = await this.serviceDispatch("SEARCH_GAME", query);
 
             return await Promise.map(games, async game => {
                 return await this.serviceDispatch("FORMAT_GAME", game);

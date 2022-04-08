@@ -29,6 +29,11 @@ export default function() {
                 }
             },
 
+            SERVICE_DISPATCH: async ({ dispatch, state }, { action, data }) => {
+                const service = state.settings.settings.service;
+                return await dispatch(`${service}/${action}`, data);
+            },
+
             PREPARE_TEMP_FOLDER: ({ state }, folderPath) => {
                 if (!fs.existsSync(state.config.paths.temp)) {
                     fs.mkdirSync(state.config.paths.temp);

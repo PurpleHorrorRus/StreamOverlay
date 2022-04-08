@@ -1,70 +1,103 @@
-const colors = {
-    default: "#21b36c",
-    subscriber: "#c8a86b"
-};
-
 export default {
     namespaced: true,
-
+    
     actions: {
-        ON_MESSAGE: async ({ dispatch }, message) => {
-            message = Object.assign(message, {
-                id: message.message_id,
-                nickname: message.nick_name,
-                color: message.roles?.includes("subscriber") ? colors.subscriber : colors.default,
-                formatted: await dispatch("trovo/FORMAT_MESSAGE", message.content, { root: true }),
-                time: await dispatch("trovo/FORMAT_MESSAGE_TIME", message, { root: true })
-            });
-            
-            return await dispatch("service/ADD_MESSAGE", message, { root: true });
+        MESSAGE: async ({ dispatch }, message) => {
+            if (typeof message.content !== "object") {
+                message.content = String(message.content);
+            }
+
+            message.formatted = await dispatch("trovo/FORMAT_MESSAGE", message.content, { root: true });
+            message = await dispatch("service/ADD_MESSAGE", message, { root: true });
+
+            if (message.system || message.past) {
+                return message;
+            }
+
+            return message;
         },
 
-        ON_PAST_MESSAGES: ({ dispatch }, messages) => {
-            messages.forEach(async message => {
+        PAST_MESSAGES: async ({ dispatch, rootState }, messages) => {
+            const events = rootState.service.chat.messages.ChatMessageEvents;
+
+            for (let message of messages) {
+                message = await dispatch("trovo/FORMAT", message, { root: true });
                 message.past = true;
-                return await dispatch("ON_MESSAGE", message);
-            });
+
+                const event = events[message.type] || "message";
+                message = await dispatch(event.toUpperCase(), message);
+            }
 
             return messages;
         },
 
-        ON_WELCOME: ({ dispatch, rootState }, user) => {
-            if (!rootState.settings.settings.trovo.notifications.welcome) {
-                return;
-            }
-
-            return dispatch("service/ADD_SYSTEM_MESSAGE", `${user.nick_name} вошёл в чат`, { root: true });
+        WELCOME: ({ dispatch }, user) => {
+            user.content = "вошёл в чат";
+            dispatch("service/ADD_SYSTEM_MESSAGE", user, { root: true });
+            return user;
         },
 
-        ON_FOLLOW: ({ dispatch }, follow) => {
-            return dispatch("service/ADD_SYSTEM_MESSAGE", `${follow.nick_name} зафолловил канал`, { root: true });
+        FOLLOW: ({ dispatch }, follow) => {
+            follow.content = "зафолловил канал";
+            dispatch("service/ADD_SYSTEM_MESSAGE", follow, { root: true });
+            return follow;
         },
 
-        ON_SUBSCRIPTION: ({ dispatch }, subscriber) => {
-            // eslint-disable-next-line max-len
-            return dispatch("service/ADD_SYSTEM_MESSAGE", `${subscriber.nick_name} оформил платную подписку`, { root: true });
+        SUBSCRIPTION: ({ dispatch }, subscriber) => {
+            subscriber.content = "оформил платную подписку";
+            dispatch("service/ADD_SYSTEM_MESSAGE", subscriber, { root: true });
+            return subscriber;
         },
 
-        ON_SPELL: ({ dispatch }, message) => {
-            const user = message.nick_name;
+        GIFT_SUB: async ({ dispatch }, gift) => {
+            const target = gift.content.split(",")[1];
+            gift.content = `дарит платную подиску ${target}`;
+            gift = await dispatch("trovo/FORMAT", gift, { root: true });
+
+            dispatch("service/ADD_SYSTEM_MESSAGE", gift, { root: true });
+            return gift;
+        },
+
+        GIFT_SUB_RANDOM: async ({ dispatch }, gift) => {
+            gift.content = `дарит ${gift.content} платных подписки случайным зрителям`;
+            gift = await dispatch("trovo/FORMAT", gift, { root: true });
+
+            dispatch("service/ADD_SYSTEM_MESSAGE", gift, { root: true });
+            return gift;
+        },
+
+        SPELLS: ({ dispatch }, message) => {
             const spell = message.content.gift;
             const count = message.content.num;
             const cost = message.content.gift_value;
             const value = message.content.value_type;
-
-            message.content = `${user} использует ${count}x${spell} за ${cost} ${value}`;
-            return dispatch("service/ADD_SYSTEM_MESSAGE", message.content, { root: true });
+            message.content = `использует ${count}x${spell} за ${cost} ${value}`;
+            
+            dispatch("service/ADD_SYSTEM_MESSAGE", message, { root: true });
+            return message;
         },
 
-        ON_SUPER_CAP: ({ dispatch }, message) => {
-            dispatch("ON_MESSAGE", message);
+        RAID: async ({ dispatch }, raider) => {
+            raider.content = raider.content.replace(raider.nick_name, "");
+            raider = await dispatch("trovo/FORMAT", raider, { root: true });
+
+            dispatch("service/ADD_SYSTEM_MESSAGE", raider, { root: true });
+            return raider;
         },
 
-        ON_ACTIVITY: ({ dispatch, rootState }, message) => {
+        SUPER_CAP: ({ dispatch }, message) => {
+            dispatch("MESSAGE", message);
+            return message;
+        },
+
+        ACTIVITY: async ({ dispatch, rootState }, message) => {
             message.avatar = message.avatar || rootState.service.user.avatar;
-            message.content = message.content.replace("{title}", "").trim();
             message.nick_name = message.nick_name || rootState.service.user.nickname;
-            return dispatch("service/ADD_SYSTEM_MESSAGE", `${message.nick_name} ${message.content}`, { root: true });
+            message.content = message.content.replace("{title}", "").trim();
+            message = await dispatch("trovo/FORMAT", message, { root: true });
+
+            dispatch("service/ADD_SYSTEM_MESSAGE", message, { root: true });
+            return message;
         }
     }
 };

@@ -89,7 +89,7 @@ export default {
                 }, rootState.settings.settings.chat.timeout * 1000);
             }
 
-            if (!message.system) {
+            if (!message.system && !message.service) {
                 if (rootState.settings.settings.chat.sound) {
                     dispatch("PLAY_SOUND");
                 }
@@ -105,17 +105,26 @@ export default {
             return message;
         },
 
-        ADD_SYSTEM_MESSAGE: async ({ dispatch }, text) => {
-            dispatch("ADD_MESSAGE", {
+        ADD_SYSTEM_MESSAGE: async ({ dispatch }, data) => {
+            const isObject = typeof data === "object";
+
+            let message = {
                 id: Date.now(),
-                nickname: "SYSTEM",
+                nickname: isObject ? data.nickname : "SYSTEM",
+                time: await dispatch("twitch/FORMAT_MESSAGE_TIME", null, { root: true }),
+                system: true,
+
                 formatted: [{
                     type: "text",
-                    content: text
-                }],
-                time: await dispatch("twitch/FORMAT_MESSAGE_TIME", null, { root: true }),
-                system: true
-            });
+                    content: isObject ? data.content : data
+                }]
+            };
+
+            if (isObject) {
+                message = Object.assign(message, data);
+            }
+
+            dispatch("ADD_MESSAGE", message);
         },
 
         REMOVE_MESSAGE: ({ state }, id) => {

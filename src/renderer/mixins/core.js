@@ -53,7 +53,7 @@ export default {
         },
 
         async serviceDispatch(action, data) {
-            return await this.$store.dispatch(`${this.settings.service}/${action}`, data);
+            return await this.$store.dispatch("SERVICE_DISPATCH", { action, data });
         }
     }
 };
