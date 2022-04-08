@@ -9022,10 +9022,10 @@ simple-swizzle@^0.2.2:
   dependencies:
     is-arrayish "^0.3.1"
 
-simple-trovo-api@^1.1.6:
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/simple-trovo-api/-/simple-trovo-api-1.1.6.tgz#7247fc0c0642845ea6fd68538789c697aef91c08"
-  integrity sha512-z3T39gMgxfoXMIGAAInFkZiOK30GMFGpbK9LLVPDP2vW5QypsMtlT602Vb+Lq57hHV0IhLq6yAfP5VqyPb7/OA==
+simple-trovo-api@^1.1.7:
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/simple-trovo-api/-/simple-trovo-api-1.1.7.tgz#433b81f0f347f67f7ab3178f4c56fa9a5d6cb2d5"
+  integrity sha512-31+51fU8nTEmRMChWm3cRVwWeyDwv1HtvrFnSCjbSoW8IfQ6F8gEv/eAGiWQ4aK/UtcYWMZDVXdsCAIP6RbFaQ==
   dependencies:
     node-fetch "2.6.7"
     reconnecting-websocket "^4.4.0"
