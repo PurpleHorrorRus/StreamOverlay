@@ -23,7 +23,7 @@
             v-if="message.nickname"
             v-tooltip="nicknameTooltip"
             :style="nicknameStyle"
-            class="message-nickname"
+            class="message-nickname stroke"
             :class="{ clickable: canBan }"
             @click="ban"
             v-text="message.nickname"
