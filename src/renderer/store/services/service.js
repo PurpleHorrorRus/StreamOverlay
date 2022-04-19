@@ -1,7 +1,8 @@
-import { Text2Speech } from "better-node-gtts";
+
 import fs from "fs-extra";
 import path from "path";
 import Promise from "bluebird";
+import TTS from "stream-gtts";
 
 import misc from "~/plugins/misc";
 
@@ -14,7 +15,7 @@ const emptyStream = {
     game: ""
 };
 
-const TTSClient = new Text2Speech("ru");
+const TTSClient = new TTS("ru");
 const TTSQuery = [];
 
 const DownloadTTS = async (text, folder) => {
