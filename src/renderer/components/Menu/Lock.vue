@@ -7,14 +7,12 @@
 </template>
 
 <script>
-import LockIcon from "~/assets/icons/lock.svg";
-import UnlockIcon from "~/assets/icons/unlock.svg";
-
 export default {
     components: {
-        LockIcon,
-        UnlockIcon
+        LockIcon: () => import("~/assets/icons/lock.svg"),
+        UnlockIcon: () => import("~/assets/icons/unlock.svg")
     },
+
     props: {
         locked: {
             type: Boolean,

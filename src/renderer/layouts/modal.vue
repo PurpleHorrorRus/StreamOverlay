@@ -1,14 +1,14 @@
 <template>
-    <div id="modal" name="fade" :class="{ locked, hidden }">
+    <div id="modal" name="fade" :class="{ hidden }">
         <Notifications />
-        <Lock :locked="locked" />
-        <ModalContent v-show="locked" />
+        <Lock :locked="!hidden" />
+        <ModalContent v-show="!hidden" />
     </div>
 </template>
 
 <script>
 import { ipcRenderer } from "electron";
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 import Notifications from "~/components/Notifications/Notifications";
 import Lock from "~/components/Menu/Lock";
@@ -22,25 +22,37 @@ export default {
         Lock,
         ModalContent
     },
+
     mixins: [CoreMixin],
+
     data: () => ({
-        hidden: true
+        hidden: false
     }),
+
     computed: {
         ...mapState({
-            locked: state => state.ipc.locked,
-            openedUser: state => state.twitch.openedUser
+            locked: state => state.ipc.locked
         })
     },
+
     created() {
-        ipcRenderer.send("turnMouse", true);
+        this.turnLock(true);
+
+        ipcRenderer.on("turnLock", (_event, mouse) => {
+            this.hidden = !mouse;
+        });
     },
-    mounted() {
+
+    beforeDestroy() {
         this.hidden = false;
+        this.turnLock(false);
+        ipcRenderer.removeAllListeners("turnLock");
     },
-    destroyed() {
-        this.hidden = true;
-        ipcRenderer.send("turnMouse", false);
+
+    methods: {
+        ...mapActions({
+            turnLock: "ipc/TURN_LOCK"
+        })
     }
 };
 </script>
@@ -50,15 +62,10 @@ export default {
     width: 100%;
     height: 100%;
 
-    opacity: 1;
-    transition: opacity .04s linear;
+    background: #111111cc;
 
     &.hidden {
-        opacity: 0;
-    }
-
-    &.locked {
-        background: #111111cc;
+        background: none;
     }
 
     .modal-load {

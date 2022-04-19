@@ -12,21 +12,23 @@ class Hotkeys {
         this.window.lock = false;
 
         globalShortcut.register("Alt+R", () => {
-            this.window.menu = !this.window.menu;
-            this.window.lock = this.window.menu;
-            common.windows.send(this.window, "turnMenu", this.window.menu);
+            common.windows.send(this.window, "turnMenu", !this.window.menu);
         });
     }
 
     registerIndexHotkeys () {
+        this.window.menu = false;
         this.window.lock = false;
+        this.window.setIgnoreMouseEvents(true);
 
         globalShortcut.unregister("Alt+A");
         globalShortcut.register("Alt+K", () => common.windows.send(this.window, "turnViewersList"));
     }
 
     registerMenuHotkeys () {
+        this.window.menu = true;
         this.window.lock = true;
+        this.window.setIgnoreMouseEvents(false);
 
         globalShortcut.unregister("Alt+K");
         globalShortcut.register("Alt+A", () => {
