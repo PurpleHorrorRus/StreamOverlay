@@ -46,6 +46,13 @@ const addMessagePart = (formatted, type, content) => {
 export default {
     namespaced: true,
 
+    mutations: {
+        LOGIN_REDIRECT() {
+            this.$router.replace("/services/trovo").catch(() => {});
+            return true;
+        }
+    },
+
     actions: {
         AUTH: async ({ dispatch, rootState }) => {
             if (rootState.service.client) {
@@ -72,6 +79,10 @@ export default {
                 return invalidService;
             });
 
+            if (response.error) {
+                return response;
+            }
+
             return Boolean(response);
         },
 
@@ -85,7 +96,11 @@ export default {
                 credits: rootState.config.paths.trovo
             });
 
-            client = await client.auth(credits.access_token, credits.refresh_token);
+            client = await client.auth(credits.access_token, credits.refresh_token).catch(e => {
+                throw e;
+            });
+
+            client.requests.on("error", () => dispatch("LOGIN_REDIRECT"));
             client = await dispatch("service/SET_CLIENT", client, { root: true });
 
             let user = await client.users.getUserInfo();
@@ -111,6 +126,11 @@ export default {
             chat = await dispatch("service/SET_CHAT", chat, { root: true });
 
             return user;
+        },
+
+        LOGIN_ERROR: ({ commit, rootState }) => {
+            rootState.settings.settings.first = true;
+            commit("LOGIN_REDIRECT");
         },
 
         ON_READY: ({ dispatch, rootState }) => {

@@ -122,52 +122,34 @@ export default {
     
         async authService() {
             const auth = await this.serviceDispatch("AUTH");
-            if (auth.error) {
-                this.$router.replace(auth.redirect).catch(() => {});
-                return false;
-            }
-        
             if (!auth) {
                 return false;
+            }
+
+            if (auth.error) {
+                return await this.serviceDispatch("LOGIN_ERROR");
             }
 
             return true;
         },
 
-        invalidService(link) {
-            this.settings.first = true;
-            this.save();
-
-            this.registerLock();
-            this.turnLock(true);
-
-            this.$router.replace(link).catch(() => {});
-
-            return false;
-        },
-
         registerIPC() {
-            this.registerLock();
-            ipcRenderer.on("update-available", (_, release) => this.turnUpdate(release));
+            ipcRenderer.once("update-available", (_, release) => {
+                return this.turnUpdate(release);
+            });
 
             ipcRenderer.on("turnMenu", (_event, sequence) => {
-                if (!this.user) {
+                if (!this.user || this.settings.first) {
                     return;
                 }
 
-                this.turnLock(sequence);
                 this.$router.replace(sequence ? "/stream" : "/").catch(() => {});
-
                 this.active = false;
             });
 
             ipcRenderer.on("turnViewersList", () => {
                 this.deepChange(this.settings.ViewersList, "enable");
             });
-        },
-        
-        registerLock() {
-            ipcRenderer.on("turnLock", (_event, mouse) => this.turnLock(mouse));
         }
     }
 };

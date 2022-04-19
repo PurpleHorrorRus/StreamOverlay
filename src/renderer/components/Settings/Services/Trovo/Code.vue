@@ -4,7 +4,8 @@
             <span class="modal-item-tip-text">
                 На этой странице необходимо получить одноразовый код доступа к
                 Trovo, который в последствии в автоматическом режиме будет изменён
-                на Access Token и Refresh Token для доступа к Trovo API и чату
+                на Access Token и Refresh Token для доступа к Trovo API и чату.
+                Из-за особенностей Trovo код необходимо разменивать повторно каждые 30 дней
             </span>
         </div>
 
