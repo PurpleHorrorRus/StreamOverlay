@@ -45,6 +45,13 @@ export default {
         tags: null
     }),
 
+    mutations: {
+        LOGIN_REDIRECT() {
+            this.$router.replace("/services/twitch").catch(() => {});
+            return true;
+        }
+    },
+
     actions: {
         AUTH: async ({ dispatch, rootState }) => {
             if (rootState.service.client) {
@@ -70,6 +77,10 @@ export default {
             const response = await dispatch("INIT", config).catch(() => {
                 return invalidService;
             });
+
+            if (response.error) {
+                return response;
+            }
 
             return Boolean(response);
         },
@@ -105,6 +116,11 @@ export default {
             });
 
             return client;
+        },
+
+        LOGIN_ERROR: ({ commit, rootState }) => {
+            rootState.settings.settings.first = true;
+            commit("LOGIN_REDIRECT");
         },
 
         CONNECT: async ({ dispatch, rootState, state }, credits) => {
