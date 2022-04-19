@@ -59,7 +59,7 @@ class MainWindow {
     load () {
         return new Promise(resolve => {
             ipcMain.once("finish-load", () => {
-                new Updater(this.window).init(60 * 1000 * 5);
+                new Updater(this.window).init().interval(60 * 1000 * 5);
                 this.addonInstance.moveTop().interval(4000);
                 this.addonInstance.clearMemory().interval(70000);
                 return resolve();
