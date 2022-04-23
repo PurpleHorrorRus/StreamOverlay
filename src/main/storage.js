@@ -14,7 +14,7 @@ const clear = {
         hardwareAcceleration: true,
         outputDeviceId: "default",
 
-        service: "twitch",
+        service: "none",
 
         chat: {
             enable: true,

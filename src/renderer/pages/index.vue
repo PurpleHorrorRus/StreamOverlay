@@ -121,6 +121,11 @@ export default {
         }),
     
         async authService() {
+            if (this.settings.service === "none") {
+                this.$route.replace("/settings/services").catch(() => {});
+                return false;
+            }
+
             const auth = await this.serviceDispatch("AUTH");
             if (!auth) {
                 return false;
