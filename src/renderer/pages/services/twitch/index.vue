@@ -54,8 +54,11 @@ export default {
         Input,
         SolidButton
     },
+
     mixins: [CoreMixin, other],
+
     layout: "modal",
+
     data: () => ({
         username: "",
         access_token: "",
@@ -63,6 +66,7 @@ export default {
         error: "",
         validating: false
     }),
+
     computed: {
         disabled() {
             return (
@@ -72,12 +76,14 @@ export default {
             );
         }
     },
+
     watch: {
         access_token(access_token) {
             if (accessTokenRegex.test(access_token)) {
                 this.access_token = access_token.match(accessTokenRegex)[1];
             }
         },
+
         oauth_token(oauth_token) {
             if (oauth_token.length === 0) {
                 this.oauth_token = "oauth:";
@@ -89,6 +95,7 @@ export default {
             }
         }
     },
+
     async created() {
         if (this.config.twitch.username) {
             this.username = this.config.twitch.username;
@@ -96,6 +103,7 @@ export default {
             this.oauth_token = this.config.twitch.oauth_token;
         }
     },
+
     methods: {
         async next() {
             this.validating = true;
@@ -120,10 +128,11 @@ export default {
                 this.$router.replace("/");
             }
         },
+
         async validate() {
             helix = new Helix({
                 // eslint-disable-next-line no-undef
-                client_id: process.env.client_id,
+                client_id: process.env.twitch_client_id,
                 access_token: this.access_token
             });
 
@@ -139,12 +148,14 @@ export default {
             const data = await helix.channel.get(user.id);
             return await helix.updateStream(user.id, data.title, data.game_name);
         },
+
         handleError(error) {
             return {
                 success: false,
                 error
             };
         },
+
         reset() {
             helix = null;
             this.validating = false;

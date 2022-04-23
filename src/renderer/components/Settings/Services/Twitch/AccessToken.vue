@@ -35,7 +35,7 @@ export default {
         async getToken() {
             const url = new Helix({
                 // eslint-disable-next-line no-undef
-                client_id: process.env.client_id,
+                client_id: process.env.twitch_client_id,
                 redirect_uri: "https://purplehorrorrus.github.io/token"
             }).getAuthLink();
 
