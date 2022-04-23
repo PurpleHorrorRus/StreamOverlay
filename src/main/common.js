@@ -5,7 +5,7 @@ import path from "path";
 import storage from "./storage";
 import windows from "./windows";
 
-app.getVersion = () => "1.6.6";
+app.getVersion = () => "1.6.7";
 
 const icon = path.join("build", "icons", "icon.ico");
 const isDev = process.env.NODE_ENV === "development";
