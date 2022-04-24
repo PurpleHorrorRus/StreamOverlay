@@ -56,7 +56,13 @@
 </template>
 
 <script>
-import TwitchMixin from "~/mixins/twitch";
+import Title from "~/components/Menu/Title";
+import Input from "~/components/Settings/Input";
+import SolidButton from "~/components/SolidButton";
+
+import LoaderIcon from "~/assets/icons/loader.svg";
+
+import CoreMixin from "~/mixins/core";
 
 const empty = {
     title: "",
@@ -67,7 +73,14 @@ const updateRate = 10;
 let updateInterval = null;
 
 export default {
-    mixins: [TwitchMixin],
+    components: {
+        Title,
+        Input,
+        SolidButton,
+        LoaderIcon
+    },
+
+    mixins: [CoreMixin],
 
     layout: "modal",
 
@@ -85,11 +98,11 @@ export default {
                 this.poll.choices.filter(c => c.title).length >= 2
             );
         },
-
         isActive() {
             return this.poll.status === "ACTIVE";
         }
     },
+
     async created() {
         await this.get();
 
@@ -111,7 +124,7 @@ export default {
                 title: value
             });
         },
-
+    
         async get() {
             const { data } = await this.client.polls.get(this.user.id);
 
@@ -125,7 +138,7 @@ export default {
                 this.poll = data.poll;
             }
         },
-
+    
         async start() {
             this.load = true;
             this.poll = await this.client.polls.create(

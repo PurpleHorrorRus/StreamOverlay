@@ -4,6 +4,7 @@ import CoreMixin from "~/mixins/core";
 
 export default {
     mixins: [CoreMixin],
+
     computed: {
         ...mapState({
             obs: state => state.obs.obs,

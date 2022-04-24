@@ -37,9 +37,14 @@
 </template>
 
 <script>
+import SolidButton from "~/components/SolidButton";
+import Title from "~/components/Menu/Title";
 import Outcomes from "~/components/Menu/Predictions/Outcomes";
+import Input from "~/components/Settings/Input";
 
-import TwitchMixin from "~/mixins/twitch";
+import LoaderIcon from "~/assets/icons/loader.svg";
+
+import CoreMixin from "~/mixins/core";
 
 const empty = {
     title: "",
@@ -51,10 +56,14 @@ let updateInterval = null;
 
 export default {
     components: {
-        Outcomes
+        Title,
+        Input,
+        Outcomes,
+        SolidButton,
+        LoaderIcon
     },
 
-    mixins: [TwitchMixin],
+    mixins: [CoreMixin],
 
     layout: "modal",
 
@@ -67,15 +76,15 @@ export default {
 
     computed: {
         canCreate() {
-            return (
-                this.prediction.title &&
-                !~this.prediction.outcomes.findIndex(o => !o.title)
-            );
+            const isEmptyOutcome = this.prediction.outcomes.some(outcome => {
+                return !outcome.title;
+            });
+
+            return this.prediction.title && !isEmptyOutcome;
         },
 
         isActive() {
-            return this.prediction.status === "ACTIVE" 
-                || this.prediction.status === "LOCKED";
+            return this.prediction.status === "ACTIVE" || this.prediction.status === "LOCKED";
         }
     },
 
@@ -96,27 +105,21 @@ export default {
     methods: {
         async get() {
             const [prediction] = await this.client.predictions.get(this.user.id);
-            if (
-                prediction.status === "ACTIVE" ||
-                prediction.status === "LOCKED"
-            ) {
+            if (prediction.status === "ACTIVE" || prediction.status === "LOCKED") {
                 this.prediction = prediction;
             }
         },
+
         async start() {
             this.load = true;
 
-            this.prediction = await this.client.predictions.create(
-                this.user.id, 
-                this.prediction.title, 
-                this.prediction.outcomes, 
-                60
-            );
-
+            // eslint-disable-next-line max-len
+            this.prediction = await this.client.predictions.create(this.user.id, this.prediction.title, this.prediction.outcomes, 60);
             updateInterval = setInterval(() => this.get(), updateRate * 1000);
 
             this.load = false;
         },
+
         async end(index) {
             if (this.isActive) {
                 this.load = true;
@@ -132,8 +135,10 @@ export default {
 
         async cancel() {
             this.load = true;
+
             await this.client.predictions.end(this.user.id, this.prediction.id, "CANCELED");
             this.clear();
+
             this.load = false;
         },
 

@@ -4,7 +4,6 @@
             v-for="(_, index) of 6"
             :key="index"
             :label="`${(index + 1) * 30}`"
-            :icon="['fa', 'play']"
             :load="$parent.loadAd"
             :tooltip="`Реклама на ${(index + 1) * 30} секунд`"
             @clicked="startAd(index)"
@@ -15,13 +14,15 @@
 <script>
 import Button from "~/components/Menu/Header/Button";
 
-import TwitchMixin from "~/mixins/twitch";
+import CoreMixin from "~/mixins/core";
 
 export default {
     components: {
         Button
     },
-    mixins: [TwitchMixin],
+
+    mixins: [CoreMixin],
+
     methods: {
         async startAd(index) {
             const duration = (index + 1) * 30;

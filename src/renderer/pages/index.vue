@@ -26,8 +26,6 @@ import ViewersList from "~/components/ViewersList";
 import Widget from "~/components/Widget";
 
 import OBSMixin from "~/mixins/obs";
-import TwitchMixin from "~/mixins/twitch";
-import TrovoMixin from "~/mixins/trovo";
 import WidgetsMixin from "~/mixins/widgets";
 import OtherMixin from "~/mixins/other";
 
@@ -54,7 +52,7 @@ export default {
         Widget
     },
 
-    mixins: [OBSMixin, TwitchMixin, TrovoMixin, WidgetsMixin, OtherMixin],
+    mixins: [OBSMixin, WidgetsMixin, OtherMixin],
 
     computed: {
         showOBS() {

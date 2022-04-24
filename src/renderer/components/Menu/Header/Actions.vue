@@ -17,7 +17,6 @@
 
 <script>
 import OBSMixin from "~/mixins/obs";
-import TwitchMixin from "~/mixins/twitch";
 
 export default {
     components: {
@@ -26,7 +25,7 @@ export default {
         Button: () => import("~/components/Menu/Header/Button")
     },
 
-    mixins: [OBSMixin, TwitchMixin],
+    mixins: [OBSMixin],
 
     data: () => ({
         items: [

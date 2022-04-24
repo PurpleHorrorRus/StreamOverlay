@@ -8,7 +8,6 @@
 <script>
 import { mapState } from "vuex";
 
-import TwitchMixin from "~/mixins/twitch";
 import OBSMixin from "~/mixins/obs";
 
 export default {
@@ -17,7 +16,7 @@ export default {
         Expand: () => import("~/components/Menu/Header/Expand")
     },
 
-    mixins: [TwitchMixin, OBSMixin],
+    mixins: [OBSMixin],
 
     data: () => ({
         expanded: false
