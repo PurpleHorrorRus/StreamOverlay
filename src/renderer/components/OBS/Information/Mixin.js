@@ -6,7 +6,7 @@ export default {
     mixins: [CoreMixin],
 
     data: () => ({
-        count: -1
+        count: 0
     }),
 
     async created() {
