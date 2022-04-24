@@ -16,15 +16,16 @@
             :tooltip-style="{ display: 'none' }"
             @slide-end="select"
         >
-            <template slot="tooltip" class="slider-tooltip-wrap slider-tooltip-top">
+            <template slot="tooltip">
                 <span class="slider-tooltip" :style="tooltipStyle" v-text="value" />
             </template>
         </VueRangeComponent>
 
-
-        <div v-if="tip.length > 0" class="modal-item-tip">
-            <span class="modal-item-tip-text" v-text="tip" />
-        </div>
+        <span 
+            v-if="tip.length > 0" 
+            class="modal-item-tip" 
+            v-text="tip" 
+        />
     </div>
 </template>
 
@@ -35,26 +36,31 @@ export default {
             type: Number,
             required: true
         },
+
         min: {
             type: Number,
             required: false,
             default: 0
         },
+
         max: {
             type: Number,
             required: false,
             default: 100
         },
+
         text: {
             type: String,
             required: true,
             default: "Не задано"
         },
+
         checked: {
             type: Boolean,
             required: false,
             default: false
         },
+
         tip: {
             type: String,
             required: false,

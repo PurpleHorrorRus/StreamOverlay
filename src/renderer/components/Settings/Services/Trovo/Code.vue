@@ -1,13 +1,11 @@
 <template>
     <div id="trovo-settings-access-token" class="trovo-settings">
-        <div class="modal-item-tip">
-            <span class="modal-item-tip-text">
-                На этой странице необходимо получить одноразовый код доступа к
-                Trovo, который в последствии в автоматическом режиме будет изменён
-                на Access Token и Refresh Token для доступа к Trovo API и чату.
-                Из-за особенностей Trovo код необходимо разменивать повторно каждые 30 дней
-            </span>
-        </div>
+        <span class="modal-item-tip">
+            На этой странице необходимо получить одноразовый код доступа к
+            Trovo, который в последствии в автоматическом режиме будет изменён
+            на Access Token и Refresh Token для доступа к Trovo API и чату.
+            Из-за особенностей Trovo код необходимо разменивать повторно каждые 30 дней
+        </span>
 
         <div class="trovo-settings-form">
             <Input @input="$emit('input', $event)" />

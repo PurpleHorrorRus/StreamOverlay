@@ -68,7 +68,7 @@ export default {
     .modal-content {
         display: grid;
         grid-template-columns: 1fr;
-        grid-template-rows: 30px 1fr;
+        grid-template-rows: 35px 1fr;
         grid-template-areas: "title" "body";
         row-gap: 10px;
         

@@ -6,7 +6,11 @@
             <VueToggleButton ref="toggle-button" :value="checked" :height="25" @change="$emit('change')" />
         </div>
 
-        <span v-if="tip.length > 0" class="modal-item-tip" v-text="tip" />
+        <span 
+            v-if="tip.length > 0" 
+            class="modal-item-tip" 
+            v-text="tip" 
+        />
     </div>
 </template>
 
@@ -18,11 +22,13 @@ export default {
             required: true,
             default: "Не задано"
         },
+
         checked: {
             type: Boolean,
             required: false,
             default: false
         },
+
         tip: {
             type: String,
             required: false,

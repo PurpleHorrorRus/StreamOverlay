@@ -1,10 +1,8 @@
 <template>
     <div id="twitch-settings-oauth" class="twitch-settings">
-        <div class="modal-item-tip">
-            <span class="modal-item-tip-text">
-                OAuth Token - нужен для того, чтобы получать сообщения из чата
-            </span>
-        </div>
+        <span class="modal-item-tip">
+            OAuth Token - нужен для того, чтобы получать сообщения из чата
+        </span>
 
         <div class="twitch-settings-form">
             <Input

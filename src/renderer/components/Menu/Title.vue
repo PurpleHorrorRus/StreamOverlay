@@ -19,6 +19,9 @@ export default {
 .modal-title {
     grid-area: title;
 
+    display: flex;
+    align-items: center;
+
     font-size: 18px;
     font-weight: bold;
 

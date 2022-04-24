@@ -1,9 +1,5 @@
 <template>
     <div class="modal-item-input" :class="{ disabled }">
-        <div v-if="text.length > 0" class="modal-item-tip">
-            <span class="modal-item-tip-text" v-text="text" />
-        </div>
-
         <input
             v-model="mutated"
             class="modal-item-input-field"
@@ -15,9 +11,11 @@
             @change="$emit('input', mutated)"
         >
 
-        <div v-if="tip.length > 0" class="modal-item-tip">
-            <span class="modal-item-tip-text" v-text="tip" />
-        </div>
+        <span 
+            v-if="tip.length > 0" 
+            class="modal-item-tip" 
+            v-text="tip" 
+        />
     </div>
 </template>
 
@@ -29,40 +27,48 @@ export default {
             required: false,
             default: ""
         },
+
         text: {
             type: String,
             required: false,
             default: ""
         },
+
         placeholder: {
             type: String,
             required: false,
             default: ""
         },
+
         disabled: {
             type: Boolean,
             required: false,
             default: false
         },
+
         maxLength: {
             type: Number,
             required: false,
             default: Infinity
         },
+
         tip: {
             type: String,
             required: false,
             default: ""
         }
     },
+
     data: () => ({
         mutated: ""
     }),
+
     watch: {
         value(newVal) {
             this.mutated = newVal;
         }
     },
+
     created() {
         this.mutated = this.value;
     }

@@ -32,7 +32,7 @@ export default {
     min-width: 600px;
     height: max-content;
 
-    padding: 15px 15px 15px 0px;
+    padding: 0px 15px 15px 0px;
 
     background: $primary;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);

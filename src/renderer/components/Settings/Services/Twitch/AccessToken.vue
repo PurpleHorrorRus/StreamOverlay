@@ -1,10 +1,8 @@
 <template>
     <div id="twitch-settings-access-token" class="twitch-settings">
-        <div class="modal-item-tip">
-            <span class="modal-item-tip-text">
-                Access Token - нужен для того, чтобы менять название стрима и игру через оверлей
-            </span>
-        </div>
+        <span class="modal-item-tip">
+            Access Token - нужен для того, чтобы менять название стрима и игру через оверлей
+        </span>
 
         <div class="twitch-settings-form">
             <Input
