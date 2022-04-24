@@ -1,5 +1,5 @@
 <template>
-    <div id="modal-locked">
+    <div id="modal-locked" :class="{ first: settings.first }">
         <Chat v-if="showChat" :input="true" />
         <Time v-if="$parent.locked" />
 
@@ -30,11 +30,13 @@ export default {
 
     computed: {
         showChat() {
-            return !this.settings.first && this.settings.chat.enable;
+            return !this.settings.first 
+                && this.settings.chat.enable;
         },
 
         showHeader() {
-            return !this.settings.first && this.user;
+            return !this.settings.first 
+                && this.user;
         }
     }
 };
@@ -44,10 +46,7 @@ export default {
 #modal-locked {
     display: grid;
     grid-template-columns: 950px;
-    grid-template-rows: 170px minmax(300px, max-content) minmax(
-            160px,
-            max-content
-        );
+    grid-template-rows: 170px minmax(300px, max-content);
     grid-template-areas:
         "header"
         "container";
@@ -61,24 +60,20 @@ export default {
 
     background: none;
 
+    &.first {
+        grid-template-rows: minmax(300px, max-content);
+        grid-template-areas: "container";
+    }
+
     .modal-content {
-        width: 100%;
-
-        .modal-title {
-            padding: 5px;
-
-            font-size: 14pt;
-            font-weight: bold;
-
-            border-bottom: 1px solid $secondary;
-        }
-
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 30px 1fr;
+        grid-template-areas: "title" "body";
+        row-gap: 10px;
+        
         .modal-body {
-            padding: 5px;
-
-            > * {
-                margin: 10px 0px;
-            }
+            grid-area: body;
 
             .modal-item {
                 &-tip {

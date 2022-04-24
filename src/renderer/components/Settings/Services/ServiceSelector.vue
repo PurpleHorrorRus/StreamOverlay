@@ -62,7 +62,7 @@ export default {
 </script>
 
 <style lang="scss">
-.service-selector {
+#service-selector {
     display: flex;
     flex-direction: column;
     row-gap: 5px;

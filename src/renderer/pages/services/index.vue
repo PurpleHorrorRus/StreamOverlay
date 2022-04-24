@@ -1,7 +1,7 @@
 <template>
-    <div id="services-page">
+    <div id="services-page" class="modal-content">
         <Title title="Настройки сервисов" />
-        <ServiceSelector />
+        <ServiceSelector class="modal-body" />
     </div>
 </template>
 

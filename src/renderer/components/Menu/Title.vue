@@ -3,7 +3,7 @@
         <span class="modal-title-text" v-text="title" />
     </div>
 </template>
-
+a
 <script>
 export default {
     props: {
@@ -17,9 +17,9 @@ export default {
 
 <style lang="scss">
 .modal-title {
-    padding-top: 3px;
+    grid-area: title;
 
-    font-size: 14pt;
+    font-size: 18px;
     font-weight: bold;
 
     border-bottom: 1px solid $secondary;
