@@ -1,6 +1,6 @@
 <template>
     <div id="menu-header-profile-info">
-        <span id="menu-header-profile-info-name" v-text="user.nickname" />
+        <HeaderProfileName />
         <span
             v-if="user.description"
             id="menu-header-profile-info-description"
@@ -14,6 +14,10 @@
 import CoreMixin from "~/mixins/core";
 
 export default {
+    components: {
+        HeaderProfileName: () => import("~/components/Menu/Header/Profile/Name")
+    },
+
     mixins: [CoreMixin]
 };
 </script>
@@ -23,18 +27,8 @@ export default {
     grid-area: info;
 
     display: flex;
-    align-content: center;
-    flex-wrap: wrap;
-
-    width: 98%;
-
-    span {
-        width: 100%;
-    }
-
-    &-name {
-        font-size: 26px;
-        font-weight: bold;
-    }
+    flex-direction: column;
+    align-self: center;
+    row-gap: 5px;
 }
 </style>

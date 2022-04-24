@@ -1,13 +1,15 @@
 <template>
     <div id="menu-header-profile-info-name">
-        <img id="menu-header-profile-info-name-service" :src="`/images/${service}.png`">
-        <span id="menu-header-profile-info-name" v-text="user.nickname" />
+        <img id="menu-header-profile-info-name-service" :src="`/images/${settings.service}.png`">
+        <span id="menu-header-profile-info-name-text" v-text="user.nickname" />
     </div>
 </template>
 
 <script>
-export default {
+import CoreMixin from "~/mixins/core";
 
+export default {
+    mixins: [CoreMixin]
 };
 </script>
 
@@ -19,7 +21,12 @@ export default {
     column-gap: 5px;
 
     &-service {
-        width: 36px;
+        height: 32px;
+    }
+
+    &-text {
+        font-size: 22px;
+        font-weight: bold;
     }
 }
 </style>
