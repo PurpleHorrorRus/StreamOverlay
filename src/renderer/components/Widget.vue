@@ -24,13 +24,16 @@ export default {
         Movable,
         WebView
     },
+
     mixins: [WidgetsMixin],
+
     props: {
         widget: {
             type: Object,
             required: true
         }
     },
+
     mounted () {
         if (this.widget.visible === undefined) {
             this.$set(this.widget, "visible", true);
@@ -38,6 +41,7 @@ export default {
             this.saveWidgets(this.widgets);
         }
     },
+
     methods: {
         onResize (x, y, width, height) {
             const index = this.widgets.findIndex(r => r.id === this.widget.id);
@@ -45,11 +49,13 @@ export default {
             this.widgets[index].style.height = height;
             this.onDrag(x, y, index);
         },
+
         onDrag (x, y, index = this.widgets.findIndex(r => r.id === this.widget.id)) {
             this.widgets[index].style.x = x;
             this.widgets[index].style.y = y;
             this.saveWidgets(this.widgets);
         },
+
         turnVisible() {
             this.widgets.find(w => w.id === this.widget.id).visible = !this.widget.visible;
             this.saveWidgets(this.widgets);

@@ -12,9 +12,6 @@
 <script>
 import { ipcRenderer } from "electron";
 
-import TwitchImage from "~/assets/images/twitch.png";
-import TrovoImage from "~/assets/images/trovo.png";
-
 import CoreMixin from "~/mixins/core";
 
 export default {
@@ -28,13 +25,12 @@ export default {
         servicesList: [
             {
                 id: "twitch",
-                name: "Twitch",
-                image: TwitchImage
+                name: "Twitch"
             },
+
             {
                 id: "trovo",
-                name: "Trovo",
-                image: TrovoImage
+                name: "Trovo"
             }
         ]
     }),

@@ -10,18 +10,15 @@
 <script>
 import { ipcRenderer } from "electron";
 
-import SolidButton from "~/components/SolidButton";
-
 import WidgetsMixin from "~/mixins/widgets";
 
 export default {
-    components: {
-        SolidButton
-    },
     mixins: [WidgetsMixin],
+
     beforeDestroy() {
         ipcRenderer.send("turnMouse", false);
     },
+
     methods: {
         openFullEdit() {
             this.$router.replace("/edit").catch(() => {});

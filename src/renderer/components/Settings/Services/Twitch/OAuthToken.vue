@@ -18,17 +18,11 @@
 </template>
 
 <script>
-import Input from "~/components/Settings/Input";
-import SolidButton from "~/components/SolidButton";
-
 import OtherMixin from "~/mixins/other";
 
 export default {
-    components: {
-        Input,
-        SolidButton
-    },
     mixins: [OtherMixin],
+
     methods: {
         getOAuth() {
             this.openLink("https://twitchapps.com/tmi/");

@@ -56,12 +56,6 @@
 </template>
 
 <script>
-import Title from "~/components/Menu/Title";
-import Input from "~/components/Settings/Input";
-import SolidButton from "~/components/SolidButton";
-
-import LoaderIcon from "~/assets/icons/loader.svg";
-
 import TwitchMixin from "~/mixins/twitch";
 
 const empty = {
@@ -73,20 +67,17 @@ const updateRate = 10;
 let updateInterval = null;
 
 export default {
-    components: {
-        Title,
-        Input,
-        SolidButton,
-        LoaderIcon
-    },
     mixins: [TwitchMixin],
+
     layout: "modal",
+
     data: () => ({
         poll: empty,
         denied: false,
         firstLoad: true,
         load: false
     }),
+
     computed: {
         canCreate() {
             return (
@@ -94,6 +85,7 @@ export default {
                 this.poll.choices.filter(c => c.title).length >= 2
             );
         },
+
         isActive() {
             return this.poll.status === "ACTIVE";
         }
@@ -107,9 +99,11 @@ export default {
 
         this.firstLoad = false;
     },
+
     beforeDestroy() {
         this.clear();
     },
+
     methods: {
         setChoice(index, value) {
             this.$set(this.poll.choices, index, {
@@ -117,6 +111,7 @@ export default {
                 title: value
             });
         },
+
         async get() {
             const { data } = await this.client.polls.get(this.user.id);
 
@@ -130,6 +125,7 @@ export default {
                 this.poll = data.poll;
             }
         },
+
         async start() {
             this.load = true;
             this.poll = await this.client.polls.create(
@@ -142,6 +138,7 @@ export default {
             updateInterval = setInterval(() => this.get(), updateRate * 1000);
             this.load = false;
         },
+
         async end() {
             this.load = true;
             await this.client.polls.end(this.user.id, this.poll.id);
@@ -149,6 +146,7 @@ export default {
             this.clear();
             this.load = false;
         },
+
         clear() {
             if (updateInterval) {
                 clearInterval(updateInterval);

@@ -19,17 +19,9 @@
 <script>
 import { TrovoAPI } from "simple-trovo-api";
 
-import Input from "~/components/Settings/Input";
-import SolidButton from "~/components/SolidButton";
-
 import OtherMixin from "~/mixins/other";
 
 export default {
-    components: {
-        Input,
-        SolidButton
-    },
-    
     mixins: [OtherMixin],
 
     methods: {

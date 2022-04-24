@@ -16,22 +16,23 @@ import { ipcRenderer } from "electron";
 import { mapActions, mapState } from "vuex";
 
 import MenuError from "~/components/Menu/Notifications/Error";
-import SolidButton from "~/components/SolidButton";
 
 export default {
     components: {
-        MenuError,
-        SolidButton
+        MenuError
     },
+
     computed: {
         ...mapState({
             error: state => state.websocketInstaller.error
         })
     },
+
     methods: {
         ...mapActions({
             installWebsocket: "websocketInstaller/INSTALL"
         }),
+    
         async install() {
             this.$router.replace("/").catch(() => {});
 

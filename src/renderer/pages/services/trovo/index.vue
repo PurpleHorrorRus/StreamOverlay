@@ -34,9 +34,6 @@ import MenuError from "~/components/Menu/Notifications/Error";
 import Item from "~/components/Settings/Item";
 import TrovoSettinsCode from "~/components/Settings/Services/Trovo/Code";
 
-import Title from "~/components/Menu/Title";
-import SolidButton from "~/components/SolidButton";
-
 import CoreMixin from "~/mixins/core";
 import other from "~/mixins/other";
 
@@ -49,10 +46,7 @@ export default {
         MenuError,
 
         Item,
-        TrovoSettinsCode,
-        
-        Title,
-        SolidButton
+        TrovoSettinsCode
     },
 
     mixins: [CoreMixin, other],

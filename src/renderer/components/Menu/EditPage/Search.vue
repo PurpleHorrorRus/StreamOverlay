@@ -1,5 +1,5 @@
 <template>
-    <div id="modal-stream-content-games-search">
+    <div id="modal-stream-content-container-games-search">
         <Game
             v-for="game of search"
             :key="game.id"
@@ -26,11 +26,15 @@ export default {
 </script>
 
 <style lang="scss">
-#modal-stream-content-games-search {
+#modal-stream-content-container-games-search {
     grid-area: games;
 
-    border-top: 1px solid $outline;
+    padding: 10px;
 
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    overflow-x: hidden;
     overflow-y: auto;
 }
 </style>

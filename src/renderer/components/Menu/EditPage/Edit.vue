@@ -1,5 +1,5 @@
 <template>
-    <div id="modal-stream-content-edit">
+    <div id="modal-stream-content-container-edit">
         <Input
             :value="$parent.local.title"
             placeholder="Название трансляции"
@@ -24,16 +24,11 @@
 </template>
 
 <script>
-export default {
-    components: {
-        Input: () => import("~/components/Settings/Input"),
-        SolidButton: () => import("~/components/SolidButton")
-    }
-};
+export default {};
 </script>
 
 <style lang="scss">
-#modal-stream-content-edit {
+#modal-stream-content-container-edit {
     grid-area: edit;
 
     display: flex;

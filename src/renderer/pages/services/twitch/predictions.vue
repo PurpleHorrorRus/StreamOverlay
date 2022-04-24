@@ -37,12 +37,7 @@
 </template>
 
 <script>
-import SolidButton from "~/components/SolidButton";
-import Title from "~/components/Menu/Title";
 import Outcomes from "~/components/Menu/Predictions/Outcomes";
-import Input from "~/components/Settings/Input";
-
-import LoaderIcon from "~/assets/icons/loader.svg";
 
 import TwitchMixin from "~/mixins/twitch";
 
@@ -56,20 +51,20 @@ let updateInterval = null;
 
 export default {
     components: {
-        Title,
-        Input,
-        Outcomes,
-        SolidButton,
-        LoaderIcon
+        Outcomes
     },
+
     mixins: [TwitchMixin],
+
     layout: "modal",
+
     data: () => ({
         prediction: empty,
         denied: false,
         firstLoad: true,
         load: false
     }),
+
     computed: {
         canCreate() {
             return (
@@ -77,13 +72,13 @@ export default {
                 !~this.prediction.outcomes.findIndex(o => !o.title)
             );
         },
+
         isActive() {
-            return (
-                this.prediction.status === "ACTIVE" ||
-                this.prediction.status === "LOCKED"
-            );
+            return this.prediction.status === "ACTIVE" 
+                || this.prediction.status === "LOCKED";
         }
     },
+
     async created() {
         await this.get();
 
@@ -93,9 +88,11 @@ export default {
 
         this.firstLoad = false;
     },
+
     beforeDestroy() {
         this.clear();
     },
+
     methods: {
         async get() {
             const [prediction] = await this.client.predictions.get(this.user.id);
@@ -110,9 +107,9 @@ export default {
             this.load = true;
 
             this.prediction = await this.client.predictions.create(
-                this.user.id,
-                this.prediction.title,
-                this.prediction.outcomes,
+                this.user.id, 
+                this.prediction.title, 
+                this.prediction.outcomes, 
                 60
             );
 
@@ -124,29 +121,22 @@ export default {
             if (this.isActive) {
                 this.load = true;
 
-                await this.client.predictions.end(
-                    this.user.id,
-                    this.prediction.id,
-                    "RESOLVED",
-                    {
-                        winning_outcome_id: this.prediction.outcomes[index].id
-                    }
-                );
+                await this.client.predictions.end(this.user.id, this.prediction.id, "RESOLVED", {
+                    winning_outcome_id: this.prediction.outcomes[index].id
+                });
 
                 this.clear();
                 this.load = false;
             }
         },
+
         async cancel() {
             this.load = true;
-            await this.client.predictions.end(
-                this.user.id,
-                this.prediction.id,
-                "CANCELED"
-            );
+            await this.client.predictions.end(this.user.id, this.prediction.id, "CANCELED");
             this.clear();
             this.load = false;
         },
+
         clear() {
             this.prediction = empty;
 

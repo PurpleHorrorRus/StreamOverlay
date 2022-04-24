@@ -31,10 +31,6 @@ import MenuError from "~/components/Menu/Notifications/Error";
 import TwitchSettingsAccessToken from "~/components/Settings/Services/Twitch/AccessToken";
 import TwitchSettingsOAuthToken from "~/components/Settings/Services/Twitch/OAuthToken";
 
-import Title from "~/components/Menu/Title";
-import Input from "~/components/Settings/Input";
-import SolidButton from "~/components/SolidButton";
-
 import CoreMixin from "~/mixins/core";
 import other from "~/mixins/other";
 
@@ -48,11 +44,7 @@ export default {
         MenuError,
 
         TwitchSettingsAccessToken,
-        TwitchSettingsOAuthToken,
-        
-        Title,
-        Input,
-        SolidButton
+        TwitchSettingsOAuthToken
     },
 
     mixins: [CoreMixin, other],

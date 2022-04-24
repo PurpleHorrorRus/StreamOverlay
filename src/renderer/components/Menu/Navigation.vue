@@ -1,5 +1,5 @@
 <template>
-    <div id="modal-container-items">
+    <div id="modal-container-navigation">
         <div
             v-for="item of items"
             :key="item.link"
@@ -57,8 +57,8 @@ export default {
 </script>
 
 <style lang="scss">
-#modal-container-items {
-    grid-area: items;
+#modal-container-navigation {
+    grid-area: navigation;
 
     .menu-item {
         width: 50px;

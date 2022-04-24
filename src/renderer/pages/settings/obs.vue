@@ -28,10 +28,6 @@
 <script>
 import { mapState } from "vuex";
 
-import Title from "~/components/Menu/Title";
-import Input from "~/components/Settings/Input";
-import SolidButton from "~/components/SolidButton";
-
 import Install from "~/components/OBS/Settings/Websocket/Install";
 import Installation from "~/components/OBS/Settings/Websocket/Installation";
 
@@ -40,10 +36,6 @@ import other from "~/mixins/other";
 
 export default {
     components: {
-        Title,
-        Input,
-        SolidButton,
-
         Install,
         Installation
     },

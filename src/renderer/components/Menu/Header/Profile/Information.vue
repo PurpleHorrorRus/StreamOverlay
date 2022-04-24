@@ -4,6 +4,7 @@
         <span
             v-if="user.description"
             id="menu-header-profile-info-description"
+            class="small-text"
             v-text="user.description"
         />
     </div>
@@ -33,10 +34,7 @@ export default {
 
     &-name {
         font-size: 26px;
-    }
-
-    &-description {
-        font-size: 12px;
+        font-weight: bold;
     }
 }
 </style>

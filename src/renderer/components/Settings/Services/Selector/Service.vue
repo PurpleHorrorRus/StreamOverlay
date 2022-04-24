@@ -2,7 +2,7 @@
     <div class="service clickable">
         <div class="service-information">
             <CheckIcon v-if="service.active" class="icon" />
-            <img :src="service.image" class="service-information-image">
+            <img :src="`/images/${service.id}.png`" class="service-information-image">
             <span class="service-information-name" v-text="service.name" />
         </div>
         

@@ -20,17 +20,11 @@
 <script>
 import Helix from "simple-helix-api";
 
-import Input from "~/components/Settings/Input";
-import SolidButton from "~/components/SolidButton";
-
 import OtherMixin from "~/mixins/other";
 
 export default {
-    components: {
-        Input,
-        SolidButton
-    },
     mixins: [OtherMixin],
+
     methods: {
         async getToken() {
             const url = new Helix({

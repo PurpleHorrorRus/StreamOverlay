@@ -31,8 +31,7 @@ let interval = null;
 export default {
     components: { 
         Movable,
-        ViewersListCategory: () => import("~/components/ViewersList/Category"),
-        LoaderIcon: () => import("~/assets/icons/loader.svg")
+        ViewersListCategory: () => import("~/components/ViewersList/Category")
     },
     
     mixins: [CoreMixin],

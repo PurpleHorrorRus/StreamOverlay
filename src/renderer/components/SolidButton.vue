@@ -6,28 +6,26 @@
 </template>
 
 <script>
-import LoaderIcon from "~/assets/icons/loader.svg";
-
 export default {
-    components: {
-        LoaderIcon
-    },
     props: {
         load: {
             type: Boolean,
             required: false,
             default: false
         },
+
         label: {
             type: String,
             required: true
         },
+
         disabled: {
             type: Boolean,
             required: false,
             default: false
         }
     },
+
     methods: {
         click() {
             if (!this.load && !this.disabled) {

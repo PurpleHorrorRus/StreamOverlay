@@ -18,6 +18,7 @@ export default {
     components: {
         SolidButton
     },
+
     props: {
         ...SolidButton.props,
         tooltip: {
