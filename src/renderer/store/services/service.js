@@ -90,7 +90,7 @@ export default {
                 }, rootState.settings.settings.chat.timeout * 1000);
             }
 
-            if (!message.system && !message.service) {
+            if (!message.system && !message.past) {
                 if (rootState.settings.settings.chat.sound) {
                     dispatch("PLAY_SOUND");
                 }
