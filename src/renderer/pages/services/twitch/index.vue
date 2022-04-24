@@ -32,7 +32,7 @@ import TwitchSettingsAccessToken from "~/components/Settings/Services/Twitch/Acc
 import TwitchSettingsOAuthToken from "~/components/Settings/Services/Twitch/OAuthToken";
 
 import CoreMixin from "~/mixins/core";
-import other from "~/mixins/other";
+import OtherMixin from "~/mixins/other";
 
 const accessTokenRegex = /access_token=(.*?)&/;
 const oauthRegex = /oauth:/;
@@ -47,7 +47,7 @@ export default {
         TwitchSettingsOAuthToken
     },
 
-    mixins: [CoreMixin, other],
+    mixins: [CoreMixin, OtherMixin],
 
     layout: "modal",
 

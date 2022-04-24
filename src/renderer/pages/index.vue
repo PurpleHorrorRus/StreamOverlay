@@ -29,7 +29,7 @@ import OBSMixin from "~/mixins/obs";
 import TwitchMixin from "~/mixins/twitch";
 import TrovoMixin from "~/mixins/trovo";
 import WidgetsMixin from "~/mixins/widgets";
-import other from "~/mixins/other";
+import OtherMixin from "~/mixins/other";
 
 const notifications = {
     controls: {
@@ -54,7 +54,7 @@ export default {
         Widget
     },
 
-    mixins: [OBSMixin, TwitchMixin, TrovoMixin, WidgetsMixin, other],
+    mixins: [OBSMixin, TwitchMixin, TrovoMixin, WidgetsMixin, OtherMixin],
 
     computed: {
         showOBS() {

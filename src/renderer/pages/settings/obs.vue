@@ -32,7 +32,7 @@ import Install from "~/components/OBS/Settings/Websocket/Install";
 import Installation from "~/components/OBS/Settings/Websocket/Installation";
 
 import CoreMixin from "~/mixins/core";
-import other from "~/mixins/other";
+import OtherMixin from "~/mixins/other";
 
 export default {
     components: {
@@ -40,7 +40,7 @@ export default {
         Installation
     },
 
-    mixins: [CoreMixin, other],
+    mixins: [CoreMixin, OtherMixin],
     
     layout: "modal",
 

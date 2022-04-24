@@ -35,7 +35,7 @@ import Item from "~/components/Settings/Item";
 import TrovoSettinsCode from "~/components/Settings/Services/Trovo/Code";
 
 import CoreMixin from "~/mixins/core";
-import other from "~/mixins/other";
+import OtherMixin from "~/mixins/other";
 
 const accessTokenRegex = /code=(.*?)&/;
 
@@ -49,7 +49,7 @@ export default {
         TrovoSettinsCode
     },
 
-    mixins: [CoreMixin, other],
+    mixins: [CoreMixin, OtherMixin],
 
     layout: "modal",
 
