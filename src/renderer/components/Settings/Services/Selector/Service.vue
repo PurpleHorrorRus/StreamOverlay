@@ -7,6 +7,7 @@
         </div>
         
         <SettingsIcon 
+            v-if="!settings.first"
             v-tooltip="tooltip" 
             class="icon clickable"
             @click.stop="open"
@@ -15,11 +16,15 @@
 </template>
 
 <script>
+import CoreMixin from "~/mixins/core";
+
 export default {
     components: {
         CheckIcon: () => import("~/assets/icons/check.svg"),
         SettingsIcon: () => import("~/assets/icons/settings.svg")
     },
+
+    mixins: [CoreMixin],
 
     props: {
         service: {
