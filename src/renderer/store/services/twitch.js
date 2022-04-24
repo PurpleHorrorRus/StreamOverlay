@@ -64,23 +64,14 @@ export default {
                 return false;
             }
 
-            const invalidService = {
-                error: true,
-                redirect: "/services/twitch"
-            };
-
             const config = rootState.config.twitch;
             if (!config.username || !config.access_token || !config.oauth_token) {
-                return invalidService;
+                return await dispatch("LOGIN_ERROR");
             }
             
-            const response = await dispatch("INIT", config).catch(() => {
-                return invalidService;
+            const response = await dispatch("INIT", config).catch(async () => {
+                return await dispatch("LOGIN_ERROR");
             });
-
-            if (response.error) {
-                return response;
-            }
 
             return Boolean(response);
         },
@@ -121,6 +112,7 @@ export default {
         LOGIN_ERROR: ({ commit, rootState }) => {
             rootState.settings.settings.first = true;
             commit("LOGIN_REDIRECT");
+            return false;
         },
 
         CONNECT: async ({ dispatch, rootState, state }, credits) => {

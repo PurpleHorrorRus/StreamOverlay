@@ -79,7 +79,7 @@ export default {
     
     async mounted() {
         if (this.active) {
-            return;
+            return false;
         }
 
         if (!this.config) {
@@ -127,16 +127,7 @@ export default {
                 return false;
             }
 
-            const auth = await this.serviceDispatch("AUTH");
-            if (!auth) {
-                return false;
-            }
-
-            if (auth.error) {
-                return await this.serviceDispatch("LOGIN_ERROR");
-            }
-
-            return true;
+            return await this.serviceDispatch("AUTH");
         },
 
         registerIPC() {

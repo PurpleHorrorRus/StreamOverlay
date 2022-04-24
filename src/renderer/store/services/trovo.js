@@ -65,23 +65,14 @@ export default {
                 return false;
             }
 
-            const invalidService = {
-                error: true,
-                redirect: "/services/trovo"
-            };
-
             const config = rootState.config.trovo;
             if (!config.access_token) {
-                return invalidService;
+                return await dispatch("LOGIN_ERROR");
             }
 
-            const response = await dispatch("INIT", config).catch(() => {
-                return invalidService;
+            const response = await dispatch("INIT", config).catch(async () => {
+                return await dispatch("LOGIN_ERROR");
             });
-
-            if (response.error) {
-                return response;
-            }
 
             return Boolean(response);
         },
@@ -100,7 +91,7 @@ export default {
                 throw e;
             });
 
-            client.requests.on("error", () => dispatch("LOGIN_REDIRECT"));
+            client.requests.on("error", () => dispatch("LOGIN_ERROR"));
             client = await dispatch("service/SET_CLIENT", client, { root: true });
 
             let user = await client.users.getUserInfo();
@@ -131,6 +122,7 @@ export default {
         LOGIN_ERROR: ({ commit, rootState }) => {
             rootState.settings.settings.first = true;
             commit("LOGIN_REDIRECT");
+            return false;
         },
 
         ON_READY: ({ dispatch, rootState }) => {
