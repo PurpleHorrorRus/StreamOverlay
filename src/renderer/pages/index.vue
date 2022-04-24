@@ -122,7 +122,7 @@ export default {
     
         async authService() {
             if (this.settings.service === "none") {
-                this.$route.replace("/settings/services").catch(() => {});
+                this.$router.replace("/services").catch(() => {});
                 return false;
             }
 
