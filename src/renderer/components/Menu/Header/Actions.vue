@@ -16,44 +16,46 @@
 </template>
 
 <script>
-import Link from "~/components/Menu/Header/Link";
-import ActionsAd from "~/components/Menu/Header/ActionsAd";
-import Button from "~/components/Menu/Header/Button";
-
 import OBSMixin from "~/mixins/obs";
 import TwitchMixin from "~/mixins/twitch";
 
 export default {
     components: {
-        Link,
-        ActionsAd,
-        Button
+        Link: () => import("~/components/Menu/Header/Link"),
+        ActionsAd: () => import("~/components/Menu/Header/ActionsAd"),
+        Button: () => import("~/components/Menu/Header/Button")
     },
+
     mixins: [OBSMixin, TwitchMixin],
+
     data: () => ({
         items: [
             {
                 title: "Голосование",
-                to: "services/twitch/polls"
+                to: "/services/twitch/polls"
             },
+
             {
                 title: "Предсказание",
-                to: "services/twitch/predictions"
+                to: "/services/twitch/predictions"
             }
         ],
         loadAd: false,
         loadClip: false
     }),
+
     computed: {
         isPartner() {
             return this.user.broadcaster_type.length > 0;
         }
     },
+
     created() {
         if (!this.isPartner) {
             this.items.splice(1, 1);
         }
     },
+
     methods: {
         async createClip() {
             this.loadClip = true;
