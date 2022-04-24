@@ -69,9 +69,9 @@ export default {
     },
 
     async created() {
-        if (this.$route.query?.edit) {
-            this.active = true;
-            ipcRenderer.send("turnMouse", true);
+        this.active = Boolean(this.$route.query?.edit);
+        if (this.active) {
+            ipcRenderer.send("turnMouse", this.active);
         }
     },
     
@@ -139,7 +139,7 @@ export default {
                 }
 
                 this.$router.replace(sequence ? "/stream" : "/").catch(() => {});
-                this.active = false;
+                this.$nextTick(() => this.active = false);
             });
 
             ipcRenderer.on("turnViewersList", () => {

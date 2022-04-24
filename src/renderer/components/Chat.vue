@@ -20,7 +20,9 @@ export default {
         MessagesBlock,
         ChatInput
     },
+
     mixins: [CoreMixin],
+
     props: {
         input: {
             type: Boolean,
@@ -28,12 +30,14 @@ export default {
             default: false
         }
     },
+
     methods: {
         onResize(x, y, width, height) {
             this.settings.chat.width = width;
             this.settings.chat.height = height;
             this.onDrag(x, y);
         },
+
         onDrag(x, y) {
             this.settings.chat.x = x;
             this.settings.chat.y = y;
@@ -54,6 +58,8 @@ export default {
     border-radius: 5px;
 
     overflow: hidden;
+
+    z-index: 1;
 
     &.input {
         grid-template-rows: 1fr 30px;

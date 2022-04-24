@@ -26,6 +26,7 @@ module.exports = {
     loading: false,
     build: {
         publicPath: "./_nuxt/",
+
         extend(config, { isClient }) {
             if (isClient) {
                 config.target = "electron-renderer";
@@ -140,7 +141,7 @@ module.exports = {
                 polyfill: false,
                 directiveOnly: true,
 
-                defaultImage: "/lazy_avatar.png"
+                defaultImage: "./lazy_avatar.png"
             }
         ]
     ],
