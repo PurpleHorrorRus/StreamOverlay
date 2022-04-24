@@ -12,6 +12,7 @@
         />
         <img
             v-if="showAvatar"
+            v-lazy-load
             :style="avatarStyle"
             :src="message.avatar"
             class="message-avatar"
