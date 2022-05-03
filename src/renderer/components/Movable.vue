@@ -1,8 +1,10 @@
 <template>
     <VueDraggableResizable
         ref="movable"
+        v-click-away="resetZIndex"
         class="movable"
         :class="{ edit, selected }"
+        :style="{ zIndex }"
         :draggable="edit"
         :resizable="edit && resizable"
         :minWidth="source.minWidth || 0"
@@ -19,6 +21,7 @@
         @dragging="onDragging"
         @dragstop="onDrag"
         @resizestop="onResize"
+        @click.native="changeZIndex(999)"
     >
         <MovableName v-if="edit && name" />
         <slot v-if="$slots.default" />
@@ -32,8 +35,6 @@ import { debounce } from "lodash";
 import VueDraggableResizable from "vue-draggable-resizable";
 
 import WidgetsMixin from "~/mixins/widgets";
-
-const snapOffset = 15;
 
 let emitDebounce = null;
 let mouseDebounce = null;
@@ -68,6 +69,12 @@ export default {
             type: Boolean,
             required: false,
             default: undefined
+        },
+
+        canBringTop: {
+            type: Boolean,
+            required: false,
+            default: false
         }
     },
 
@@ -178,6 +185,18 @@ export default {
                 }
             }
 
+            emitDebounce();
+            mouseDebounce();
+        },
+
+        changeZIndex(index = 0) {
+            if (this.canBringTop) {
+                this.zIndex = index;
+            }
+        },
+
+        resetZIndex() {
+            this.changeZIndex(0);
             emitDebounce();
             mouseDebounce();
         }
