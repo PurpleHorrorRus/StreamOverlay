@@ -1,32 +1,35 @@
 <template>
     <div id="notifications">
         <transition-group id="notifications-common" name="fade" tag="div">
-            <Notification v-for="notification of notifications" :key="notification.text" :notification="notification" />
+            <Notification 
+                v-for="notification of notifications" 
+                :key="notification.text" 
+                :notification="notification" 
+            />
         </transition-group>
 
         <LowBitrate v-show="showLowBitrate" />
         <LowFPS v-show="showLowFPS" />
         <Update v-if="update.show" :release="update.release" />
-        <Notification v-show="showChatDisconnect" :notification="solidNotifications.CHAT_DISCONNECT" />
-        <!-- <Notification v-show="!online" :notification="solidNotifications.NO_CONNECTION" /> -->
+
+        <Notification 
+            v-show="showChatDisconnect" 
+            :notification="solidNotifications.CHAT_DISCONNECT" 
+        />
     </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
 
-import Notification from "~/components/notifications/notification";
-import LowBitrate from "~/components/notifications/lowbitrate";
-import LowFPS from "~/components/notifications/lowfps";
-import Update from "~/components/notifications/update";
-
 export default {
     components: {
-        Notification,
-        LowBitrate,
-        LowFPS,
-        Update
+        Notification: () => import("~/components/notifications/notification"),
+        LowBitrate: () => import("~/components/notifications/lowbitrate"),
+        LowFPS: () => import("~/components/notifications/lowfps"),
+        Update: () => import("~/components/notifications/update")
     },
+
     computed: {
         ...mapState({
             online: state => state.twitch.online,
@@ -36,11 +39,13 @@ export default {
             showChatDisconnect: state => state.notifications.chatdisconnect,
             update: state => state.notifications.update
         }),
+
         error() {
             return {
                 color: "#ff0000"
             };
         },
+
         solidNotifications() {
             return {
                 LOW: this.error,

@@ -23,9 +23,11 @@ export default {
             required: true
         }
     },
+
     data: () => ({
         percent: 0
     }),
+
     computed: {
         line() {
             return {
@@ -33,8 +35,11 @@ export default {
             };
         }
     },
+
     created() {
-        ipcRenderer.on("download-progress", (_, progress) => (this.percent = Math.round(progress.percent)));
+        ipcRenderer.on("download-progress", (_, progress) => {
+            this.percent = Math.round(progress.percent);
+        });
     }
 };
 </script>
@@ -42,6 +47,7 @@ export default {
 <style lang="scss">
 #update {
     display: grid;
+    grid-template-columns: 40px 1fr;
     grid-template-rows: 20px max-content;
     grid-template-areas:
         "progress label"
@@ -49,22 +55,19 @@ export default {
 
     background: $backdrop;
 
-    column-gap: 10px;
+    gap: 10px;
 
     &-progress {
         grid-area: progress;
 
         display: flex;
-        align-content: center;
-        flex-wrap: wrap;
+        flex-direction: column;
         row-gap: 2px;
 
         &-percent {
-            justify-self: center;
-
             width: 100%;
 
-            font-size: 9pt;
+            font-size: 12px;
         }
 
         &-line {
@@ -78,16 +81,14 @@ export default {
         grid-area: label;
 
         align-self: center;
-
-        width: 85%;
     }
 
     &-release {
         grid-area: release;
 
-        width: 88%;
-
-        padding-top: 10px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 5px;
 
         &-notes {
             font-size: 9pt;

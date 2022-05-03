@@ -7,7 +7,8 @@ export default {
         lowfps: false,
         chatdisconnect: false,
         update: {
-            show: false
+            show: false,
+            release: {}
         }
     }),
 
@@ -41,6 +42,12 @@ export default {
 
         TURN_LOWBITRATE: ({ state }, sequence) => {
             state.lowbitrate = sequence;
+            return true;
+        },
+
+        TURN_UPDATE: ({ state }, release) => {
+            state.update.release = release;
+            state.update.show = true;
             return true;
         }
     }
