@@ -3,13 +3,15 @@ import { app } from "electron";
 
 import MainWindow from "./main";
 import OverlayTray from "./tray";
-
-import common from "./common";
 import Handlers from "./handlers";
 import Hotkeys from "./hotkeys";
+import Addon from "./addon";
+import Updater from "./updater";
+
+import common from "./common";
+import protocol from "./protocol";
 
 let mainWindowInstance = null;
-let hotkeysInstance = null;
 
 if (app.requestSingleInstanceLock()) {
     if (!common.storage.config.settings.hardwareAcceleration) {
@@ -17,17 +19,27 @@ if (app.requestSingleInstanceLock()) {
     }
     
     app.commandLine.appendSwitch("enable-features", "SharedArrayBuffer");
-    app.on("window-all-closed", app.quit);
+    app.once("window-all-closed", app.quit);
     app.whenReady().then(async () => {
+        if (!common.isDev) {
+            protocol.register();
+        }
+
         mainWindowInstance = new MainWindow();
         mainWindowInstance.tray = new OverlayTray(mainWindowInstance);
-        
-        hotkeysInstance = new Hotkeys(mainWindowInstance.window);
-        new Handlers(mainWindowInstance, hotkeysInstance);
-        await mainWindowInstance.load();
+        mainWindowInstance.handlers = new Handlers(mainWindowInstance);
+        await mainWindowInstance.create();
 
-        hotkeysInstance.register();
-        hotkeysInstance.registerIndexHotkeys();
+        mainWindowInstance.hotkeys = new Hotkeys(mainWindowInstance.window);
+        mainWindowInstance.hotkeys.register();
+        mainWindowInstance.hotkeys.registerIndexHotkeys();
+
+        mainWindowInstance.addon = new Addon(mainWindowInstance.window);
+        mainWindowInstance.addon.moveTop().interval(4000);
+        mainWindowInstance.addon.clearMemory().interval(70000);
+
+        mainWindowInstance.updater = new Updater(mainWindowInstance.window).init();
+        mainWindowInstance.updater.interval(60 * 1000 * 5);
     });
 } else {
     app.quit();

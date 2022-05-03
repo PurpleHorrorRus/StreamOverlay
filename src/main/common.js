@@ -3,7 +3,7 @@ import { app } from "electron";
 import path from "path";
 
 import storage from "./storage";
-import windows from "./windows";
+import WindowsLogic from "./windows";
 
 app.getVersion = () => "1.6.8";
 
@@ -14,5 +14,5 @@ export default {
     icon,
     isDev,
     storage,
-    windows
+    windows: new WindowsLogic()
 };

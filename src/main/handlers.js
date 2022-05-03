@@ -3,17 +3,21 @@ import { app, dialog, ipcMain, screen } from "electron";
 import common from "./common";
 
 class Handlers {
-    constructor (mainWindowInstance, hotkeysInstance) {
+    constructor (mainWindowInstance) {
         const config = () => {
             common.storage.config.display = screen.getPrimaryDisplay().size;
             return common.storage.config;
         };
 
-        common.isDev ? ipcMain.handle("config", config) : ipcMain.handleOnce("config", config);
+        common.isDev 
+            ? ipcMain.handle("config", config) 
+            : ipcMain.handleOnce("config", config);
 
         ipcMain.on("turnMouse", (_event, enabled) => {
             mainWindowInstance.window.setIgnoreMouseEvents(!enabled);
-            enabled ? hotkeysInstance.registerMenuHotkeys() : hotkeysInstance.registerIndexHotkeys();
+            enabled 
+                ? mainWindowInstance.hotkeys.registerMenuHotkeys()
+                : mainWindowInstance.hotkeys.registerIndexHotkeys();
         });
         
         ipcMain.on("saveSettings", (_, args) => {

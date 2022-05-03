@@ -89,7 +89,7 @@ export default {
         if (await this.authService()) {
             this.addNotification(notifications.controls);
             this.registerIPC();
-            ipcRenderer.send("finish-load");
+            ipcRenderer.send("dom-ready");
 
             if (this.settings.first) {
                 this.settings.first = false;

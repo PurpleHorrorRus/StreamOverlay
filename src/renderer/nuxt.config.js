@@ -42,15 +42,11 @@ module.exports = {
 
             if (isClient) {
                 config.target = "electron-renderer";
-                config.optimization.splitChunks.maxSize = optimizationConfig.maxSize;
                 config.devtool = "source-map";
             }
             
             config.mode = process.env.NODE_ENV;
-
-            if (!isDev) {
-                config.performance = optimizationConfig.performance;
-            }
+            config.performance = optimizationConfig.performance;
 
             config.module.rules.find(rule => rule.test.test(".svg")).test = /\.(gif|webp)$/;
             config.module.rules = config.module.rules.concat(webpackRules);

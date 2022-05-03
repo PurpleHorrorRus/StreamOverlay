@@ -15,9 +15,8 @@ class Addon {
     }
 
     clearMemory () {
-        addon.SetLowPriority();
-
         if (common.storage.config.settings.RAMClean) {
+            addon.SetLowPriority();
             addon.ReduceWorkingSet();
         }
 

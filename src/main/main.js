@@ -1,14 +1,8 @@
 /* eslint-disable no-undef */
 
-import { app, BrowserWindow, ipcMain } from "electron";
-import path from "path";
+import { app, BrowserWindow } from "electron";
 
-import Addon from "./addon";
-import Updater from "./updater";
 import common from "./common";
-
-const INDEX_PATH = path.join(__dirname, "..", "renderer", "index.html");
-const DEV_SERVER_URL = process.env.DEV_SERVER_URL;
 
 const params = {
     icon: common.icon,
@@ -40,6 +34,11 @@ const params = {
 
 class MainWindow {
     constructor () {
+        this.window = null;
+        this.addonInstance = null;
+    }
+
+    async create() {
         this.window = new BrowserWindow(params);
         this.window.setSkipTaskbar(true);
         this.window.showInactive();
@@ -47,26 +46,13 @@ class MainWindow {
         this.window.setIgnoreMouseEvents(true);
         this.window.setContentProtection(common.storage.config.settings.contentProtection);
         this.window.setAlwaysOnTop(true, "screen-saver");
-        this.addonInstance = new Addon(this.window);
         
         if (common.isDev || common.storage.config.settings.devtools) {
             this.window.webContents.openDevTools({ mode: "undocked" });
         }
 
         this.window.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
-    }
-
-    load () {
-        return new Promise(resolve => {
-            ipcMain.once("finish-load", () => {
-                new Updater(this.window).init().interval(60 * 1000 * 5);
-                this.addonInstance.moveTop().interval(4000);
-                this.addonInstance.clearMemory().interval(70000);
-                return resolve();
-            });
-    
-            common.isDev ? this.window.loadURL(DEV_SERVER_URL) : this.window.loadFile(INDEX_PATH);
-        });
+        return await common.windows.load(this.window);
     }
 
     close () {
