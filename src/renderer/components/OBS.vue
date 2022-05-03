@@ -3,7 +3,7 @@
         id="obs"
         class="movable-slot"
         :class="OBSClass"
-        :source="source"
+        :source="settings.OBSStatus"
         :resizable="false"
     >
         <div id="obs-main">
@@ -31,11 +31,6 @@ export default {
 
     mixins: [OBSMixin],
 
-    data: () => ({
-        width: 125,
-        height: 80
-    }),
-
     computed: {
         ...mapState({
             chatConnected: state => state.service.connected
@@ -56,13 +51,7 @@ export default {
             return this.settings.OBSStatus.tech
                 && this.OBSConnected;
         },
-
-        source() {
-            return {
-                ...this.settings.OBSStatus,
-                width: this.width,
-                height: this.height
-            };
+            return this.settings.OBSStatus.tech.enable;
         }
     },
 
@@ -89,7 +78,7 @@ export default {
     row-gap: 5px;
 
     width: max-content !important;
-    height: 140px;
+    height: max-content !important;
 
     padding: 5px;
 
@@ -115,6 +104,7 @@ export default {
         > * {
             align-content: center;
         }
+
         span {
             color: #ffffff;
             font-size: 12px;

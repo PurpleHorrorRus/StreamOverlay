@@ -96,13 +96,12 @@ export default {
     },
 
     mounted() {
-        this.rightBorder = this.display.width - this.source.width + snapOffset;
-        this.downBorder = this.display.height - this.source.height;
+        const sourceWidth = this.source.width || this.$refs.movable.$el.offsetWidth;
+        const sourceHeight = this.source.width || this.$refs.movable.$el.offsetHeight;
 
-        this.normalizePosition(
-            (this.source.x || this.source.left) || 0, 
-            (this.source.y || this.source.top) || 0
-        );
+        this.rightBorder = this.display.width - sourceWidth;
+        this.downBorder = this.display.height - sourceHeight;
+        this.normalizePosition(this.source.x, this.source.y);
     },
 
     methods: {
