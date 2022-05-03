@@ -203,6 +203,12 @@ export default {
 
         background-repeat: no-repeat;
         cursor: move;
+
+        z-index: 1000 !important;
+
+        .movable-slot * {
+            pointer-events: none;
+        }
     }
 }
 </style>
