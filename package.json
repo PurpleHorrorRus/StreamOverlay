@@ -1,6 +1,6 @@
 {
     "name": "streamoverlay",
-    "version": "1.6.8",
+    "version": "1.6.9",
     "description": "An overlay for streamers with single display",
     "author": "PurpleHorrorRus <purplehorrorrus@gmail.com>",
     "repository": {
@@ -32,7 +32,6 @@
         "adm-zip": "^0.5.9",
         "bluebird": "^3.7.2",
         "electron-updater": "^5.0.1",
-        "fastify": "^3.28.0",
         "http": "^0.0.1-security",
         "node-fetch": "2.6.7",
         "node-fetch-progress": "^1.0.2",
@@ -60,12 +59,12 @@
         "babel-eslint": "^10.1.0",
         "babel-loader": "^8.2.5",
         "cross-env": "^7.0.3",
-        "electron": "^18.1.0",
+        "electron": "^18.2.0",
         "electron-builder": "^23.0.3",
         "eslint": "^8.14.0",
         "eslint-plugin-vue": "^8.7.1",
         "file-loader": "^6.2.0",
-        "sass": "^1.50.1",
+        "sass": "^1.51.0",
         "sass-loader": "10.1.1",
         "url-loader": "^4.1.1",
         "vue-loader": "15.9.7"
