@@ -16,11 +16,9 @@
 import { ipcRenderer } from "electron";
 import { mapActions, mapState } from "vuex";
 
-import MenuError from "~/components/Menu/Notifications/Error";
-
 export default {
     components: {
-        MenuError
+        MenuError: () => import("~/components/Menu/Notifications/Error")
     },
 
     computed: {

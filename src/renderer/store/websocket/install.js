@@ -24,34 +24,43 @@ const errors = {
 
 export default {
     namespaced: true,
+
     state: () => ({
         active: false,
         error: "",
         progress: 0
     }),
+
     actions: {
         INSTALL: async ({ dispatch, state }, target) => {
             const pathIsValid = await dispatch("VALIDATE_PATH", target);
-            const OBSIsClosed = !(await dispatch("VALIDATE_CLOSED_OBS"));
-            
-            if (pathIsValid && OBSIsClosed) {
-                state.active = true;
-                state.progress = 0;
-                
-                const zipFile = await dispatch("DOWNLOAD");
-                await dispatch("EXTRACT", { zipFile, target })
-                    .catch(e => {
-                        state.error = e;
-                        dispatch("RESET");
-                        throw e;
-                    });
-            } else {
-                if (!pathIsValid) state.error = errors.INVALID_PATH;
-                else if (!OBSIsClosed) state.error = errors.OBS_IS_OPEN;
+            const OBSOpened = await dispatch("VALIDATE_CLOSED_OBS");
+
+            if (!pathIsValid) {
+                dispatch("RESET");
+                state.error = errors.INVALID_PATH;
+                return false;
             }
 
-            dispatch("RESET");
+            if (OBSOpened) {
+                dispatch("RESET");
+                state.error = errors.OBS_IS_OPEN;
+                return false;
+            }
+            
+            state.active = true;
+            state.progress = 0;
+                
+            const zipFile = await dispatch("DOWNLOAD");
+            await dispatch("EXTRACT", { zipFile, target }).catch(e => {
+                state.error = e;
+                dispatch("RESET");
+                throw e;
+            });
+
+            return await dispatch("RESET");
         },
+
         DOWNLOAD: async ({ state }) => {
             const zipFile = path.resolve("websocket.zip");
             const stream = fs.createWriteStream(zipFile);
@@ -69,6 +78,7 @@ export default {
                 stream.once("finish", () => resolve(zipFile));
             });
         },
+
         EXTRACT: async (_, { zipFile, target }) => {
             const zip = new AdmZip(zipFile);
             const entries = zip.getEntries();
@@ -82,13 +92,17 @@ export default {
             
             return true;
         },
+
         RESET: ({ state }) => {
             state.active = false;
             state.progress = 0;
+            return true;
         },
+
         VALIDATE_CLOSED_OBS: async () => {
             return await ipcRenderer.invoke("FindWindow", exeName);
         },
+
         VALIDATE_PATH: (_, folder) => {
             const exeFile = path.resolve(folder, "bin", "64bit", exeName);
             return fs.existsSync(exeFile);

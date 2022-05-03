@@ -35,7 +35,6 @@ const params = {
 class MainWindow {
     constructor () {
         this.window = null;
-        this.addonInstance = null;
     }
 
     async create() {

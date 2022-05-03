@@ -35,7 +35,10 @@ class Handlers {
             app.exit(0);
         });
 
-        ipcMain.handle("FindWindow", (_, window) => mainWindowInstance.addonInstance.FindWindow(window));
+        ipcMain.handle("FindWindow", (_, window) => {
+            return mainWindowInstance.addon.FindWindow(window);
+        });
+
         ipcMain.handle("select", async (_, options) => {
             const { canceled, filePaths } = await dialog.showOpenDialog(options);
             return !canceled ? filePaths : false;
