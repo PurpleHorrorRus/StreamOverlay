@@ -302,9 +302,10 @@ export default {
         },
 
         CHATTERS: async ({ rootState }) => {
-            // eslint-disable-next-line max-len
-            const { chatters, custom_roles } = await rootState.service.client.channel.viewers(rootState.service.user.id);
-            let allRoles = Object.assign(chatters, custom_roles);
+            const client = rootState.service.client;
+            const user_id = rootState.service.user.id;
+            const { chatters, custome_roles } = await client.channel.viewers(user_id);
+            let allRoles = { ...chatters, ...custome_roles };
 
             allRoles = lodash.pickBy(allRoles, category => {
                 return category.viewers.length > 0;
@@ -319,11 +320,10 @@ export default {
             });
 
             const entries = Object.entries(allRoles);
-            for (let i = 0; i < entries.length; i++) {
+            for (let i = 0; i < entries.length - 1; i++) {
                 for (let j = i + 1; j < entries.length; j++) {
-                    if (entries[i][1].length > 0) {
-                        entries[i][1] = lodash.difference(entries[i][1], entries[j][1]);
-                    }
+                    entries[i][1] = lodash.difference(entries[i][1], entries[j][1]);
+                    entries[j][1] = lodash.difference(entries[j][1], entries[i][1]);
                 }
             }
 
