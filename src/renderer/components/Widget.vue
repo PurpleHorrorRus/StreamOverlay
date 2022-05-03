@@ -1,27 +1,20 @@
 <template>
     <Movable
-        ref="widget"
-        class="widget"
         :source="widget.style"
         :name="widget.name"
         :visible="widget.visible"
-        @onDrag="onDrag"
-        @onResize="onResize"
         @turnVisible="turnVisible"
     >
-        <WebView v-if="widget.visible" :src="widget.src" />
+        <WebView v-if="widget.visible" :src="widget.src" class="movable-slot" />
     </Movable>
 </template>
 
 <script>
-import WebView from "~/components/WebView";
-
 import WidgetsMixin from "~/mixins/widgets";
 
 export default {
-    components: { 
-        Movable,
-        WebView
+    components: {
+        WebView: () => import("~/components/WebView")
     },
 
     mixins: [WidgetsMixin],
@@ -62,14 +55,3 @@ export default {
     }
 };
 </script>
-
-<style lang="scss">
-.widget {
-    position: absolute;
-
-    .webview {
-        width: 100%;
-        height: 100%;
-    }
-}
-</style>

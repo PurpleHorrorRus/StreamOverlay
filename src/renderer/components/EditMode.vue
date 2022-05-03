@@ -1,9 +1,7 @@
 <template>
-    <div id="edit-mode">
-        <div id="edit-mode-notification">
-            <span id="edit-mode-notification-label" v-text="'Режим редактирования'" />
-            <SolidButton :label="'Виджеты'" @clicked="openFullEdit" />
-        </div>
+    <div id="edit-mode-notification">
+        <span id="edit-mode-notification-label" v-text="'Режим редактирования'" />
+        <SolidButton :label="'Виджеты'" @clicked="openFullEdit" />
     </div>
 </template>
 
@@ -17,6 +15,11 @@ export default {
 
     beforeDestroy() {
         ipcRenderer.send("turnMouse", false);
+        this.active = false;
+    },
+
+    created() {
+        ipcRenderer.send("turnMouse", true);
     },
 
     methods: {
@@ -28,32 +31,25 @@ export default {
 </script>
 
 <style lang="scss">
-#edit-mode {
+#edit-mode-notification {
     position: absolute;
+    top: 0px;
+    left: 40%;
 
-    width: 100%;
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    justify-self: center;
+    row-gap: 10px;
 
-    &-notification {
-        position: absolute;
-        top: 0px;
-        left: 45%;
+    width: 250px;
+    height: max-content;
 
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        justify-self: center;
-        row-gap: 10px;
+    padding: 15px;
 
-        width: 250px;
-        height: max-content;
-
-        padding: 15px;
-
-        border-radius: 0px 0px 8px 8px;
-
-        background: #181818cc;
-    }
+    border-radius: 0px 0px 8px 8px;
+    background: #181818cc;
 }
 </style>

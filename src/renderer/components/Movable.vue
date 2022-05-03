@@ -1,7 +1,8 @@
 <template>
     <VueDraggableResizable
         ref="movable"
-        :class="{ active }"
+        class="movable"
+        :class="{ active, selected }"
         :draggable="active"
         :resizable="resizable && active"
         :minWidth="source.minWidth || 0"
@@ -12,6 +13,7 @@
         :h="source.height"
         :x="x"
         :y="y"
+        :active="selected"
         @activated="onActivated"
         @deactivated="onDeactivated"
         @dragging="onDragging"
@@ -28,7 +30,6 @@ import { mapState } from "vuex";
 import { debounce } from "lodash";
 
 import VueDraggableResizable from "vue-draggable-resizable";
-import MovableName from "~/components/Movable/MovableName";
 
 import WidgetsMixin from "~/mixins/widgets";
 
@@ -40,7 +41,7 @@ let mouseDebounce = null;
 export default {
     components: {
         VueDraggableResizable,
-        MovableName
+        MovableName: () => import("~/components/Movable/MovableName")
     },
     
     mixins: [WidgetsMixin],
@@ -71,6 +72,7 @@ export default {
     },
 
     data: () => ({
+        selected: false,
         x: 0,
         y: 0,
         rightBorder: 0,
@@ -85,29 +87,28 @@ export default {
         })
     },
 
+    watch: {
+        active: function(active) {
+            if (!active) {
+                this.onDeactivated();
+            }
+        }
+    },
+
     mounted() {
-        this.rightBorder = this.display.width - this.source.width;
-        this.downBorder = this.display.height - this.source.height - snapOffset;
+        this.rightBorder = this.display.width - this.source.width + snapOffset;
+        this.downBorder = this.display.height - this.source.height;
 
         this.normalizePosition(
             (this.source.x || this.source.left) || 0, 
             (this.source.y || this.source.top) || 0
         );
-
-        if (this.active) {
-            emitDebounce = debounce(() => this.$parent.onDrag(this.x, this.y), 1000);
-            mouseDebounce = debounce(() => (this.mouse = true), 500);
-        }
-    },
-    
-    beforeDestroy() {
-        this.onDeactivated();
     },
 
     methods: {
         normalizePosition(x, y) {
-            this.x = Math.max(Math.min(x, this.rightBorder + snapOffset), 0);
-            this.y = Math.max(Math.min(y, this.downBorder + snapOffset), 0);
+            this.x = Math.max(Math.min(x, this.rightBorder), 0);
+            this.y = Math.max(Math.min(y, this.downBorder), 0);
         },
 
         onResize(...args) {
@@ -115,19 +116,19 @@ export default {
         },
 
         onDragging(x, y) {
-            this.normalizePosition(x, y);
-
-            if (this.mouse) {
-                if (x !== this.x) {
-                    this.$children[0].moveHorizontally(this.x);
-                }
-
-                if (y !== this.y) {
-                    this.$children[0].moveVertically(this.y);
-                }
+            if (!this.selected) {
+                return false;
             }
 
+            if (this.mouse) {
+                if (x !== this.x) this.$children[0].moveHorizontally(this.x);
+                if (y !== this.y) this.$children[0].moveVertically(this.y);
+            }
+
+            this.normalizePosition(x, y);
             emitDebounce();
+
+            return true;
         },
 
         onDrag() {
@@ -136,15 +137,17 @@ export default {
 
         onActivated() {
             if (this.active) {
+                this.selected = true;
+                emitDebounce = debounce(() => this.$parent.onDrag(this.x, this.y), 1000);
+                mouseDebounce = debounce(() => (this.mouse = true), 500);
                 document.addEventListener("keydown", this.move);
             }
         },
 
         onDeactivated() {
-            if (this.active) {
-                emitDebounce();
-                document.removeEventListener("keydown", this.move);
-            }
+            this.selected = false;
+            emitDebounce();
+            document.removeEventListener("keydown", this.move);
         },
 
         move({ key }) {
@@ -176,20 +179,18 @@ export default {
                 }
             }
 
-            if (emitDebounce) {
-                emitDebounce();
-                mouseDebounce();
-            }
+            emitDebounce();
+            mouseDebounce();
         }
     }
 };
 </script>
 
 <style lang="scss">
-.vdr {
+.movable {
     position: absolute;
-    left: 0px;
     top: 0px;
+    left: 0px;
 
     border: none;
 
@@ -202,11 +203,10 @@ export default {
 
         background-repeat: no-repeat;
         cursor: move;
-    }
 
-    &:not(.active) {
-        background: none;
-        cursor: default;
+        .movable-slot * {
+            pointer-events: none;
+        }
     }
 }
 </style>

@@ -1,10 +1,9 @@
 <template>
-    <Movable
-        id="viewers-list"
-        :source="settings.ViewersList"
-        name="Список зрителей"
-        @onDrag="onDrag"
-        @onResize="onResize"
+    <Movable 
+        id="viewers-list" 
+        :source="settings.ViewersList" 
+        name="Список зрителей" 
+        class="movable-slot"
     >
         <div v-if="!loading" id="viewers-list-categories">
             <ViewersListCategory
@@ -22,15 +21,13 @@
 </template>
 
 <script>
-import Movable from "~/components/Movable";
 
 import CoreMixin from "~/mixins/core";
 
 let interval = null;
 
 export default {
-    components: { 
-        Movable,
+    components: {
         ViewersListCategory: () => import("~/components/ViewersList/Category")
     },
     

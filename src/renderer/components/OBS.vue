@@ -1,11 +1,10 @@
 <template>
     <Movable
         id="obs"
-        ref="OBSStatus"
+        class="movable-slot"
         :class="OBSClass"
         :source="source"
         :resizable="false"
-        @onDrag="onDrag"
     >
         <div id="obs-main">
             <Devices v-if="OBSConnected && showDevices" />
@@ -20,19 +19,13 @@
 <script>
 import { mapState } from "vuex";
 
-import Devices from "~/components/OBS/Devices";
-import ServiceInfo from "~/components/OBS/ServiceInfo";
-import Status from "~/components/OBS/Status";
-
 import OBSMixin from "~/mixins/obs";
 
 export default {
     components: {
-        Movable,
-
-        Devices,
-        ServiceInfo,
-        Status,
+        Devices: () => import("~/components/OBS/Devices"),
+        ServiceInfo: () => import("~/components/OBS/ServiceInfo"),
+        Status: () => import("~/components/OBS/Status"),
         OBSTech: () => import("~/components/OBS/Tech")
     },
 
@@ -49,7 +42,8 @@ export default {
         }),
 
         showStatus() {
-            return this.status.stream || this.status.record;
+            return this.status.stream 
+                || this.status.record;
         },
 
         showDevices() {

@@ -17,8 +17,18 @@ export default {
             required: true
         }
     },
+
     mounted() {
-        this.$refs.webview.addEventListener("dom-ready", () => this.$refs.webview?.setAudioMuted(true));
+        this.$refs.webview.addEventListener("dom-ready", () => {
+            this.$refs.webview?.setAudioMuted(true);
+        });
     }
 };
 </script>
+
+<style lang="scss">
+.webview {
+    width: 100%;
+    height: 100%;
+}
+</style>
