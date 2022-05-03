@@ -26,26 +26,31 @@ export default {
                 link: "/stream",
                 icon: () => import("~/assets/icons/broadcast.svg")
             },
+
             {
                 text: "Режим редактирования",
                 link: "/?edit=true",
                 icon: () => import("~/assets/icons/pencil.svg")
             },
+
             {
                 text: "Настройки OBS",
                 link: "/settings/obs",
                 icon: () => import("~/assets/icons/wrench.svg")
             },
+
             {
                 text: "Настройки сервисов",
                 link: "/services",
                 icon: () => import("~/assets/icons/twitch.svg")
             },
+
             {
                 text: "Настройки чата",
                 link: "/settings/chat",
                 icon: () => import("~/assets/icons/chat.svg")
             },
+
             {
                 text: "Прочие настройки",
                 link: "/settings/other",

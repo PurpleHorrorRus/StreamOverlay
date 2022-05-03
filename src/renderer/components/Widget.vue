@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import Movable from "~/components/Movable";
 import WebView from "~/components/WebView";
 
 import WidgetsMixin from "~/mixins/widgets";

@@ -33,7 +33,6 @@
                     <Item
                         :text="'Зачитывать текст сообщения'"
                         :checked="settings.chat.tts.enable"
-                        tip="Если не работает, установите пакет русского языка для диктора Windows в параметрах системы"
                         @change="deepChange(settings.chat.tts, 'enable')"
                     />
 

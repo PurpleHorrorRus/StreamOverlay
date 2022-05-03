@@ -49,7 +49,7 @@ const clear = {
 
             ServiceInfo: {
                 enable: true,
-                enableFollowers: true
+                followers: true
             }
         },
 

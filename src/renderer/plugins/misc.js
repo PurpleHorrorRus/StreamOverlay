@@ -5,18 +5,20 @@ export default {
         const response = await fetch(url, params);
         return !params.raw ? await response.json() : await response.text();
     },
-    formatTime: time => {
-        let { hours: h, mins: m, seconds: s } = time;
 
-        if (time.seconds < 10) s = `0${time.seconds}`;
-        if (time.mins < 10) m = `0${time.mins}`;
+    formatTime: time => {
+        let { seconds, mins, hours } = time;
+
+        if (time.seconds < 10) seconds = `0${time.seconds}`;
+        if (time.mins < 10) mins = `0${time.mins}`;
         if (time.hours !== undefined) {
-            if (time.hours < 10) h = `0${time.hours}`;
-            return `${h}:${m}:${s}`;
+            if (time.hours < 10) hours = `0${hours}`;
+            return `${hours}:${mins}:${seconds}`;
         }
 
-        return `${m}:${s}`;
+        return `${mins}:${seconds}`;
     },
+
     arrayMove(arr, oldIndex, newIndex) {
         if (newIndex >= arr.length) {
             let k = newIndex - arr.length + 1;

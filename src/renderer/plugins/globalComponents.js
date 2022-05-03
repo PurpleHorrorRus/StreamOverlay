@@ -1,14 +1,12 @@
 import Vue from "vue";
 
-import Title from "~/components/Menu/Title";
-import Input from "~/components/Settings/Input";
-import SolidButton from "~/components/SolidButton";
-
-import LoaderIcon from "~/assets/icons/loader.svg";
-
 const components = {
-    Title, Input, SolidButton,
-    LoaderIcon
+    Title: () => import("~/components/Menu/Title"), 
+    Input: () => import("~/components/Settings/Input"),
+    SolidButton: () => import("~/components/SolidButton"),
+    Movable: () => import("~/components/Movable"),
+
+    LoaderIcon: () => import("~/assets/icons/loader.svg")
 };
 
 Object.entries(components).forEach(([name, component]) => {

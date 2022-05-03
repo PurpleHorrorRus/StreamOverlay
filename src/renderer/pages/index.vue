@@ -1,8 +1,8 @@
 <template>
-    <div v-if="settings" id="content">
+    <div id="content">
         <EditMode v-if="active" />
 
-        <div id="content-valid">
+        <div v-if="settings" id="content-valid">
             <Notifications />
             <OBS v-if="showOBS" />
             <Chat v-if="settings.chat.enable" />
@@ -56,26 +56,19 @@ export default {
 
     computed: {
         showOBS() {
-            const ServiceInfoEnabled = this.settings.OBSStatus.ServiceInfo 
-                || this.settings.OBSStatus.ServiceInfo.enableFollowers;
-                
-            return this.connected && ServiceInfoEnabled;
+            const ServiceInfo = this.settings.OBSStatus.ServiceInfo;
+            return this.connected && (ServiceInfo.enable || ServiceInfo.followers);
         },
 
         showViewersList() {
-            return this.user 
+            return this.connected 
                 && this.settings.ViewersList.enable;
-        }
-    },
-
-    async created() {
-        this.active = Boolean(this.$route.query?.edit);
-        if (this.active) {
-            ipcRenderer.send("turnMouse", this.active);
         }
     },
     
     async mounted() {
+        this.active = Boolean(this.$route.query.edit);
+
         if (this.active) {
             return false;
         }
@@ -85,7 +78,7 @@ export default {
             this.setConfig(config);
         }
 
-        if (this.config.obs && !this.connected) {
+        if (this.config.obs && !this.OBSConnected) {
             this.connectOBS(this.config.obs);
         }
 
@@ -134,12 +127,12 @@ export default {
             });
 
             ipcRenderer.on("turnMenu", (_event, sequence) => {
-                if (!this.user || this.settings.first) {
-                    return;
+                if (!this.connected || this.settings.first) {
+                    return false;
                 }
 
-                this.$router.replace(sequence ? "/stream" : "/").catch(() => {});
-                this.$nextTick(() => this.active = false);
+                this.$router.push(sequence ? "/stream" : "/");
+                this.active = false;
             });
 
             ipcRenderer.on("turnViewersList", () => {
@@ -156,33 +149,5 @@ export default {
         width: 100%;
         height: 100%;
     }
-}
-
-#overlays {
-    position: absolute;
-
-    width: 100%;
-    height: 100%;
-}
-
-#editNotification {
-    position: absolute;
-    top: 0px;
-    left: 45%;
-
-    width: 200px;
-    height: 60px;
-
-    background: rgba(0, 0, 0, 0.4);
-    text-align: center;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    z-index: 9;
-}
-
-#editText {
-    display: inline-block;
-
-    margin-bottom: 5px;
 }
 </style>

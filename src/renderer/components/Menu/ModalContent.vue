@@ -10,20 +10,16 @@
 
 <script>
 import Chat from "~/components/Chat";
-import Time from "~/components/Menu/Time";
-
-import Header from "~/components/Menu/Header";
-import ModalContainer from "~/components/Menu/ModalContainer";
 
 import CoreMixin from "~/mixins/core";
 
 export default {
     components: {
         Chat,
-        Time,
+        Time: () => import("~/components/Menu/Time"),
 
-        Header,
-        ModalContainer
+        Header: () => import("~/components/Menu/Header"),
+        ModalContainer: () => import("~/components/Menu/ModalContainer")
     },
 
     mixins: [CoreMixin],

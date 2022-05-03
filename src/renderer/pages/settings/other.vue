@@ -9,8 +9,8 @@
             />
             <Item
                 :text="'Показать количество фолловеров'"
-                :checked="settings.OBSStatus.ServiceInfo.enableFollowers"
-                @change="deepChange(settings.OBSStatus.ServiceInfo, 'enableFollowers')"
+                :checked="settings.OBSStatus.ServiceInfo.followers"
+                @change="deepChange(settings.OBSStatus.ServiceInfo, 'followers')"
             />
 
             <Item

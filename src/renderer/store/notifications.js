@@ -1,5 +1,6 @@
 export default {
     namespaced: true,
+
     state: () => ({
         notifications: [],
         lowbitrate: false,
@@ -9,29 +10,38 @@ export default {
             show: false
         }
     }),
+
     actions: {
         ADD: ({ state }, notification) => {
-            setTimeout(
-                () => state.notifications.splice(state.notifications.indexOf(notification), 1),
-                notification.handle ? notification.handle * 1000 : 4 * 1000
-            );
+            setTimeout(() => {
+                const index = state.notifications.findIndex(n => {
+                    return n.id === notification.id;
+                });
 
-            state.notifications = [...state.notifications, notification];
+                state.notifications.splice(index, 1);
+            }, notification.handle ? notification.handle * 1000 : 4 * 1000);
+
+            state.notifications.push(notification);
+            return true;
         },
+    
         TURN: ({ state }, data) => {
             if (state[data.name] === data.show) {
-                return;
+                return false;
             }
 
             state[data.name] = data.show;
+            return true;
         },
-        TURN_UPDATE: ({ state }, release) => {
-            state.update = {
-                show: true,
-                release
-            };
+
+        TURN_LOWFPS: ({ state }, sequence) => {
+            state.lowfps = sequence;
+            return true;
         },
-        TURN_LOWFPS: ({ state }, sequence) => state.lowfps = sequence,
-        TURN_LOWBITRATE: ({ state }, sequence) => state.lowbitrate = sequence
+
+        TURN_LOWBITRATE: ({ state }, sequence) => {
+            state.lowbitrate = sequence;
+            return true;
+        }
     }
 };

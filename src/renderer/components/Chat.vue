@@ -8,17 +8,14 @@
 </template>
 
 <script>
-import Movable from "~/components/Movable";
 import MessagesBlock from "~/components/Chat/MessagesBlock";
-import ChatInput from "~/components/Chat/Input";
 
 import CoreMixin from "~/mixins/core";
 
 export default {
     components: {
-        Movable,
         MessagesBlock,
-        ChatInput
+        ChatInput: () => import("~/components/Chat/Input")
     },
 
     mixins: [CoreMixin],
