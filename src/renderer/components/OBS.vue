@@ -6,9 +6,9 @@
         :source="settings.OBSStatus"
         :resizable="false"
     >
-        <div id="obs-main">
-            <Devices v-if="OBSConnected && showDevices" />
-            <Status v-if="connected && showStatus" />
+        <div v-if="OBSConnected" id="obs-main">
+            <Devices v-if="showDevices" />
+            <Status v-if="showStatus" />
             <OBSTech v-if="showTech" />
         </div>
 
@@ -48,9 +48,6 @@ export default {
         },
 
         showTech() {
-            return this.settings.OBSStatus.tech
-                && this.OBSConnected;
-        },
             return this.settings.OBSStatus.tech.enable;
         }
     },
