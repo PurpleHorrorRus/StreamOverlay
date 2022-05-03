@@ -8,7 +8,7 @@
         @onDrag="onDrag"
     >
         <div id="obs-main">
-            <Devices v-if="connected && showDevices" />
+            <Devices v-if="OBSConnected && showDevices" />
             <Status v-if="connected && showStatus" />
             <OBSTech v-if="showTech" />
         </div>
@@ -19,8 +19,6 @@
 
 <script>
 import { mapState } from "vuex";
-
-import Movable from "~/components/Movable";
 
 import Devices from "~/components/OBS/Devices";
 import ServiceInfo from "~/components/OBS/ServiceInfo";
@@ -55,12 +53,14 @@ export default {
         },
 
         showDevices() {
-            return !this.devices.mic || !this.devices.sound || this.devices.camera !== null;
+            return !this.devices.mic 
+                || !this.devices.sound 
+                || this.devices.camera !== null;
         },
 
         showTech() {
             return this.settings.OBSStatus.tech
-                && this.connected;
+                && this.OBSConnected;
         },
 
         source() {

@@ -12,34 +12,24 @@ export default {
             devices: state => state.obs.devices
         }),
         
-        connected() {
+        OBSConnected() {
             return this.obs._connected;
         },
 
         streaming() {
-            return this.connected && this.status.stream;
+            return this.OBSConnected && this.status.stream;
         },
 
         recording() {
-            return this.connected && this.status.record;
-        },
-
-        isLeft() {
-            return this.settings.OBSStatus.x < window.innerWidth / 2;
-        },
-
-        isRight() {
-            return !this.isLeft;
+            return this.OBSConnected && this.status.record;
         },
 
         OBSClass() {
             return {
-                connected: this.connected && !this.streaming && !this.recording,
-                disconnected: !this.connected,
+                connected: this.OBSConnected && !this.streaming && !this.recording,
+                disconnected: !this.OBSConnected,
                 streaming: this.streaming,
-                recording: this.recording,
-                left: this.isLeft,
-                right: this.isRight
+                recording: this.recording
             };
         }
     },
