@@ -68,6 +68,7 @@ export default {
             width: 100%;
 
             font-size: 12px;
+            text-align: center;
         }
 
         &-line {
@@ -91,13 +92,19 @@ export default {
         row-gap: 5px;
 
         &-notes {
-            font-size: 9pt;
+            font-size: 12px;
 
             ul {
                 padding-left: 10px;
 
                 li {
                     margin-top: 5px;
+                }
+            }
+
+            h1, h2, h3, h4, h5, h6 {
+                &:not(:first-child) {
+                    margin-top: 15px;
                 }
             }
         }
