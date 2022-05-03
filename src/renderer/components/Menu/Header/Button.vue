@@ -6,7 +6,6 @@
             :load="load"
             :icon="icon"
             :disabled="disabled"
-            @clicked="$emit('clicked')"
         />
     </div>
 </template>
@@ -15,10 +14,6 @@
 import SolidButton from "~/components/SolidButton";
 
 export default {
-    components: {
-        SolidButton
-    },
-
     props: {
         ...SolidButton.props,
         tooltip: {

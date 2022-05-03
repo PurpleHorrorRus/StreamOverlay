@@ -1,5 +1,5 @@
 <template>
-    <div class="solid-button" :class="{ disabled }" @click.stop="click">
+    <div class="solid-button" :class="{ disabled }">
         <span v-if="!load" class="solid-button-text" v-text="label" />
         <LoaderIcon v-else class="icon spin" />
     </div>
@@ -23,14 +23,6 @@ export default {
             type: Boolean,
             required: false,
             default: false
-        }
-    },
-
-    methods: {
-        click() {
-            if (!this.load && !this.disabled) {
-                this.$emit("clicked");
-            }
         }
     }
 };

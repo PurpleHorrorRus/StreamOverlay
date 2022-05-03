@@ -8,7 +8,6 @@
 <script>
 export default {
     components: {
-        Title: () => import("~/components/Menu/Title"),
         StreamContainer: () => import("~/components/Menu/EditPage/Container")
     },
 

@@ -1,23 +1,23 @@
 <template>
     <div id="menu-header-toggles">
-        <Item text="Чат только для фолловеров" :checked="tags['followers-only'] !== '-1'" @change="turnFollwoersOnly" />
+        <ToggleButton 
+            text="Чат только для фолловеров" 
+            :checked="tags['followers-only'] !== '-1'" 
+            @change="turnFollwoersOnly" 
+        />
     </div>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex";
 
-import Item from "~/components/Settings/Item";
-
 export default {
-    components: {
-        Item
-    },
     computed: {
         ...mapState({
             tags: state => state.twitch.tags
         })
     },
+
     methods: {
         ...mapActions({
             turnFollwoersOnly: "twitch/TURN_FOLLOWERS_ONLY"

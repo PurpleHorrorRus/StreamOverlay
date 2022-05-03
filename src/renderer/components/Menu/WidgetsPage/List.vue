@@ -12,13 +12,13 @@
         <div id="widgets-page-content-container-list-actions">
             <SolidButton 
                 :label="'Добавить'" 
-                @clicked="$parent.add" 
+                @click.native="$parent.add" 
             />
 
             <SolidButton 
                 :label="'Удалить'" 
                 :disabled="$parent.disabled" 
-                @clicked="$parent.delete" 
+                @click.native="$parent.delete" 
             />
         </div>
     </div>

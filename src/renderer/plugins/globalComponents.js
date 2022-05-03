@@ -3,6 +3,8 @@ import Vue from "vue";
 const components = {
     Title: () => import("~/components/Menu/Title"), 
     Input: () => import("~/components/Settings/Input"),
+    ToggleButton: () => import("~/components/Settings/Item"),
+    Range: () => import("~/components/Settings/Range"),
     SolidButton: () => import("~/components/SolidButton"),
     Movable: () => import("~/components/Movable"),
 

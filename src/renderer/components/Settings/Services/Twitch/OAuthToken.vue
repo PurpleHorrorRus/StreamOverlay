@@ -10,7 +10,7 @@
                 @input="$emit('input', $event)"
             />
 
-            <SolidButton :label="'Получить'" @clicked="getOAuth" />
+            <SolidButton :label="'Получить'" @click.native="getOAuth" />
         </div>
     </div>
 </template>

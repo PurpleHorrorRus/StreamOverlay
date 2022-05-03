@@ -8,7 +8,6 @@
 <script>
 export default {
     components: {
-        Title: () => import("~/components/Menu/Title"),
         ServiceSelector: () => import("~/components/Settings/Services/ServiceSelector")
     },
 

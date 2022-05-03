@@ -2,62 +2,62 @@
     <div class="modal-content">
         <Title title="Прочие настройки" />
         <div class="modal-body">
-            <Item
+            <ToggleButton
                 :text="'Показывать количество зрителей'"
                 :checked="settings.OBSStatus.ServiceInfo.enable"
                 @change="deepChange(settings.OBSStatus.ServiceInfo, 'enable')"
             />
-            <Item
+            <ToggleButton
                 :text="'Показать количество фолловеров'"
                 :checked="settings.OBSStatus.ServiceInfo.followers"
                 @change="deepChange(settings.OBSStatus.ServiceInfo, 'followers')"
             />
 
-            <Item
+            <ToggleButton
                 :text="'Включить техническую статистику OBS'"
                 :checked="settings.OBSStatus.tech"
                 @change="deepChange(settings.OBSStatus, 'tech')"
             />
 
-            <Item
+            <ToggleButton
                 :text="'Включить время трансляции/записи'"
                 :checked="settings.OBSStatus.time"
                 @change="deepChange(settings.OBSStatus, 'time')"
             />
 
-            <Item
+            <ToggleButton
                 :text="'Включить аппаратное ускорение'"
                 :checked="settings.hardwareAcceleration"
                 tip="Необходима перезагрузка приложения"
                 @change="deepChange(settings, 'hardwareAcceleration')"
             />
 
-            <Item
+            <ToggleButton
                 :text="'Включить Content Protection'"
                 :checked="settings.contentProtection"
                 tip="Content Protection - защита от отображения в OBS и других приложениях для захвата рабочего стола"
                 @change="deepChange(settings, 'contentProtection')"
             />
 
-            <Item
+            <ToggleButton
                 :text="'Включить оповещение о низком FPS'"
                 :checked="settings.notifications.lowfps"
                 @change="deepChange(settings.notifications, 'lowfps')"
             />
 
-            <Item
+            <ToggleButton
                 :text="'Включить оповещение о низком битрейте'"
                 :checked="settings.notifications.lowbitrate"
                 @change="deepChange(settings.notifications, 'lowbitrate')"
             />
 
-            <Item
+            <ToggleButton
                 :text="'Включить инструменты разработчика'"
                 :checked="settings.devtools"
                 @change="turnDevtools"
             />
 
-            <Item
+            <ToggleButton
                 :text="'Включить очистку ОЗУ'"
                 :tip="'Выполняет очистку памяти приложения каждые 70 секунд.\
                     Отключите эту опцию, если приложение вылетает'"
@@ -71,17 +71,10 @@
 <script>
 import { ipcRenderer } from "electron";
 
-import Title from "~/components/Menu/Title";
-import Item from "~/components/Settings/Item";
-
 import CoreMixin from "~/mixins/core";
 
 export default {
-    components: {
-        Title,
-        Item
-    },
-    
+
     mixins: [CoreMixin],
 
     layout: "modal",

@@ -1,7 +1,10 @@
 <template>
     <div id="edit-mode-notification">
         <span id="edit-mode-notification-label" v-text="'Режим редактирования'" />
-        <SolidButton :label="'Виджеты'" @clicked="openFullEdit" />
+        <SolidButton 
+            :label="'Виджеты'" 
+            @click.native="openFullEdit" 
+        />
     </div>
 </template>
 

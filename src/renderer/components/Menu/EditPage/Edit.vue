@@ -18,7 +18,7 @@
             label="Обновить"
             :disabled="$parent.disabled"
             :load="$parent.loading"
-            @clicked="$parent.update"
+            @click.native="$parent.update"
         />
     </div>
 </template>

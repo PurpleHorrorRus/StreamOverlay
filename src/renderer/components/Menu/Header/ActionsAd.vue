@@ -6,7 +6,7 @@
             :label="`${(index + 1) * 30}`"
             :load="$parent.loadAd"
             :tooltip="`Реклама на ${(index + 1) * 30} секунд`"
-            @clicked="startAd(index)"
+            @click.native="startAd(index)"
         />
     </div>
 </template>

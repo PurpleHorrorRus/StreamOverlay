@@ -15,7 +15,7 @@
         <SolidButton
             :label="'Сохранить'" 
             :disabled="$parent.disabled" 
-            @clicked="$parent.saveWidget" 
+            @click.native="$parent.saveWidget" 
         />
     </div>
 </template>

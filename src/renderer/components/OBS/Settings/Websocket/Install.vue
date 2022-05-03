@@ -8,7 +8,7 @@
             авторизацию по паролю в конфигурации OBS Websocket в OBS Studio.
         </span>
 
-        <SolidButton :label="'Установить OBS Websocket'" @clicked="install" />
+        <SolidButton :label="'Установить OBS Websocket'" @click.native="install" />
     </div>
 </template>
 

@@ -2,7 +2,7 @@
     <div class="modal-content">
         <Title id="modal-chat-content-title" title="Настройка чата" />
         <div class="modal-body">
-            <Item 
+            <ToggleButton 
                 :text="'Включить чат'" 
                 :checked="settings.chat.enable" 
                 @change="deepChange(settings.chat, 'enable')" 
@@ -10,13 +10,13 @@
 
             <div v-if="settings.chat.enable" id="modal-caht-content-settings">
                 <div id="modal-chat-content-appearance">
-                    <Item 
+                    <ToggleButton 
                         :text="'Включить аватарки'" 
                         :checked="settings.chat.avatar" 
                         @change="deepChange(settings.chat, 'avatar')" 
                     />
 
-                    <Item 
+                    <ToggleButton 
                         :text="'Включить бейджики (Twitch)'" 
                         :checked="settings.chat.badges"
                         @change="deepChange(settings.chat, 'badges')" 
@@ -24,19 +24,19 @@
                 </div>
 
                 <div id="modal-chat-content-notifications">
-                    <Item
+                    <ToggleButton
                         :text="'Звуковое оповещение о сообщении в чате'"
                         :checked="settings.chat.sound"
                         @change="deepChange(settings.chat, 'sound')"
                     />
 
-                    <Item
+                    <ToggleButton
                         :text="'Зачитывать текст сообщения'"
                         :checked="settings.chat.tts.enable"
                         @change="deepChange(settings.chat.tts, 'enable')"
                     />
 
-                    <Item
+                    <ToggleButton
                         v-if="settings.chat.tts.enable"
                         :text="'Зачитывать имя пользователя сообщения'"
                         :checked="settings.chat.tts.readName"
@@ -73,19 +73,9 @@
 </template>
 
 <script>
-import Title from "~/components/Menu/Title";
-import Item from "~/components/Settings/Item";
-import Range from "~/components/Settings/Range";
-
 import CoreMixin from "~/mixins/core";
 
 export default {
-    components: {
-        Title,
-        Item,
-        Range
-    },
-    
     mixins: [CoreMixin],
 
     layout: "modal",

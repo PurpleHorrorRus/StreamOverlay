@@ -49,7 +49,9 @@ export default {
         }),
 
         disabled() {
-            return this.local.title.length === 0 || this.local.game.length === 0;
+            return this.loading 
+                || this.local.title.length === 0 
+                || this.local.game.length === 0;
         }
     },
 

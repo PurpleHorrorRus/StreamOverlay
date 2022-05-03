@@ -40,13 +40,13 @@
                     label="Начать"
                     :load="load"
                     :disabled="!canCreate"
-                    @clicked="start"
+                    @click.native="start"
                 />
                 <SolidButton
                     v-else
                     label="Закончить"
                     :load="load"
-                    @clicked="end"
+                    @click.native="end"
                 />
             </div>
         </div>
@@ -56,12 +56,6 @@
 </template>
 
 <script>
-import Title from "~/components/Menu/Title";
-import Input from "~/components/Settings/Input";
-import SolidButton from "~/components/SolidButton";
-
-import LoaderIcon from "~/assets/icons/loader.svg";
-
 import CoreMixin from "~/mixins/core";
 
 const empty = {
@@ -73,13 +67,6 @@ const updateRate = 10;
 let updateInterval = null;
 
 export default {
-    components: {
-        Title,
-        Input,
-        SolidButton,
-        LoaderIcon
-    },
-
     mixins: [CoreMixin],
 
     layout: "modal",

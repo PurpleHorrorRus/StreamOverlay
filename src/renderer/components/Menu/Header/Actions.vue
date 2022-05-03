@@ -9,7 +9,7 @@
                 :load="loadClip"
                 label="Клип"
                 tooltip="Создать клип на 15 секунд"
-                @clicked="createClip"
+                @click.native="createClip"
             />
         </div>
     </div>

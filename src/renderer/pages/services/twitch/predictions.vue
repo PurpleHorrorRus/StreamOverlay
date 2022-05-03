@@ -21,13 +21,13 @@
                     label="Начать"
                     :load="load"
                     :disabled="!canCreate"
-                    @clicked="start"
+                    @click.native="start"
                 />
                 <SolidButton
                     v-else
                     label="Отменить"
                     :load="load"
-                    @clicked="cancel"
+                    @click.native="cancel"
                 />
             </div>
         </div>
@@ -37,12 +37,7 @@
 </template>
 
 <script>
-import SolidButton from "~/components/SolidButton";
-import Title from "~/components/Menu/Title";
 import Outcomes from "~/components/Menu/Predictions/Outcomes";
-import Input from "~/components/Settings/Input";
-
-import LoaderIcon from "~/assets/icons/loader.svg";
 
 import CoreMixin from "~/mixins/core";
 
@@ -56,11 +51,7 @@ let updateInterval = null;
 
 export default {
     components: {
-        Title,
-        Input,
-        Outcomes,
-        SolidButton,
-        LoaderIcon
+        Outcomes
     },
 
     mixins: [CoreMixin],

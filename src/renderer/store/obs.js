@@ -106,15 +106,12 @@ export default {
             dispatch("SETUP_CHECKING_INTERVAL");
         },
 
-        DISCONNECT: ({ state }) => {
+        DISCONNECT: ({ dispatch, state }) => {
             state.obs = { _connected: false };
             state.status.tech = null;
             state.status.videoSettings = null;
 
-            if (interval) {
-                clearInterval(interval);
-                interval = null;
-            }
+            dispatch("STOP_CHECKING_INTERVAL");
         },
 
         SEND: async ({ state }, { event, args }) => {
@@ -124,10 +121,14 @@ export default {
                 });
             }
 
-            return;
+            return false;
         },
 
         CHECK_STATS: async ({ dispatch, state, rootState }) => {
+            if (!state.obs._connected) {
+                return false;
+            }
+
             if (!state.videoSettings) {
                 state.videoSettings = await dispatch("SEND", { 
                     event: "GetVideoInfo"
@@ -148,6 +149,8 @@ export default {
                     dispatch("notifications/TURN_LOWFPS", false, { root: true });
                 }
             }
+
+            return stats;
         },
 
         RESTORE_STATE: async ({ dispatch, state }) => {
@@ -163,7 +166,7 @@ export default {
 
         UPDATE_SCENE: async ({ dispatch, state }) => {
             const scene = await dispatch("SEND", { event: "GetCurrentScene" });
-            state.scene = { name: scene.name };
+            state.scene = scene;
             return scene;
         },
 
@@ -173,10 +176,8 @@ export default {
         },
 
         STOP_CHECKING_INTERVAL: () => {
-            if (interval) {
-                clearInterval(interval);
-                interval = null;
-            }
+            clearInterval(interval);
+            interval = null;
         }
     },
     

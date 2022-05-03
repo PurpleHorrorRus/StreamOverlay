@@ -6,7 +6,7 @@
             <MenuError v-if="error" :error="error" />
 
             <div v-if="!settings.first" id="settings-trovo-notifications">
-                <Item
+                <ToggleButton
                     :text="'Оповещение о присоединении пользователя в чат'"
                     :checked="settings.trovo.notifications.welcome"
                     @change="deepChange(settings.trovo.notifications, 'welcome')"
@@ -19,7 +19,7 @@
                 :label="'Продолжить'"
                 :disabled="disabled"
                 :load="validating"
-                @clicked="next"
+                @click.native="next"
             />
         </div>
     </div>
@@ -28,11 +28,6 @@
 <script>
 import { mapState } from "vuex";
 import { TrovoAPI } from "simple-trovo-api";
-
-import MenuError from "~/components/Menu/Notifications/Error";
-
-import Item from "~/components/Settings/Item";
-import TrovoSettinsCode from "~/components/Settings/Services/Trovo/Code";
 
 import CoreMixin from "~/mixins/core";
 import OtherMixin from "~/mixins/other";
@@ -43,10 +38,8 @@ let TrovoClient = null;
 
 export default {
     components: {
-        MenuError,
-
-        Item,
-        TrovoSettinsCode
+        MenuError: () => import("~/components/Menu/Notifications/Error"),
+        TrovoSettinsCode: () => import("~/components/Settings/Services/Trovo/Code")
     },
 
     mixins: [CoreMixin, OtherMixin],

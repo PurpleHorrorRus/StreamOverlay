@@ -17,7 +17,7 @@
                 :label="'Продолжить'"
                 :disabled="disabled"
                 :load="validating"
-                @clicked="next"
+                @click.native="next"
             />
         </div>
     </div>

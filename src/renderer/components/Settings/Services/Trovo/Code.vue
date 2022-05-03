@@ -9,7 +9,10 @@
 
         <div class="trovo-settings-form">
             <Input @input="$emit('input', $event)" />
-            <SolidButton :label="'Получить'" @clicked="getCode" />
+            <SolidButton 
+                :label="'Получить'"
+                @click.native="getCode" 
+            />
         </div>
     </div>
 </template>

@@ -19,7 +19,7 @@
                 @input="camera = $event"
             />
 
-            <SolidButton :label="'Продолжить'" :disabled="disabled" @clicked="next" />
+            <SolidButton :label="'Продолжить'" :disabled="disabled" @click.native="next" />
         </div>
     </div>
 </template>
