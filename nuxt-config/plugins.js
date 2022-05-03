@@ -1,5 +1,6 @@
 const root = "~plugins";
 const plugins = [
+    "errors",
     "globalComponents",
     "directives",
     "tooltip"
