@@ -33,28 +33,29 @@ export default {
     }),
 
     actions: {
-        CONNECT: ({ dispatch, state }, data) => {
+        CONNECT: ({ dispatch, state, rootState }) => {
             if (state.obs._connected) {
-                return;
+                return false;
             }
 
+            const credits = rootState.config.obs;
             state.obs = new OBSWebSocket({
-                address: `${data.address}:${data.port}`
+                address: `${credits.address}:${credits.port}`
             });
 
             state.obs.connect().then(async () => {
                 await dispatch("RESTORE_STATE");
-                dispatch("LISTEN", data);
+                dispatch("LISTEN");
             }).catch(async () => {
                 await Promise.delay(1000);
-                return await dispatch("CONNECT", data);
+                return await dispatch("CONNECT");
             });
         },
 
-        LISTEN: async ({ dispatch, state, rootState }, data) => {
+        LISTEN: async ({ dispatch, state, rootState }) => {
             state.obs.once("ConnectionClosed", async () => {
                 await dispatch("DISCONNECT");
-                await dispatch("CONNECT", data);
+                await dispatch("CONNECT");
             });
 
             state.obs.on("StreamStarting", () => {

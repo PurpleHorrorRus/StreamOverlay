@@ -4,7 +4,8 @@
 
         <span class="modal-item-tip">
             Необходимо выбрать корневую папку с OBS Studio. Перед началом
-            установки закройте OBS Studio.
+            установки закройте OBS Studio. После установки обязательно отключите
+            авторизацию по паролю в конфигурации OBS Websocket в OBS Studio.
         </span>
 
         <SolidButton :label="'Установить OBS Websocket'" @clicked="install" />

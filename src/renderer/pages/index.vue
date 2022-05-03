@@ -75,11 +75,11 @@ export default {
 
         if (!this.config) {
             const config = await ipcRenderer.invoke("config");
-            this.setConfig(config);
+            await this.setConfig(config);
         }
 
         if (this.config.obs && !this.OBSConnected) {
-            this.connectOBS(this.config.obs);
+            this.connectOBS();
         }
 
         if (this.widgets.length === 0 && this.config.widgets.length > 0) {
