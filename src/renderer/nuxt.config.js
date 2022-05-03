@@ -2,6 +2,9 @@
 const isDev = process.env.NODE_ENV === "development";
 
 module.exports = {
+    target: "server",
+    ssr: false,
+    
     env: require("../../env.json"),
     head: {
         title: "Stream Overlay",
@@ -124,8 +127,6 @@ module.exports = {
     plugins: [
         "~/plugins/errors.js",
         { src: "~plugins/globalComponents.js", mode: "client" },
-        { src: "~plugins/vue-range-component.js", mode: "client" },
-        { src: "~plugins/vue-toggle-button.js", mode: "client" },
         { src: "~plugins/tooltip.js", mode: "client" }
     ],
     buildModules: ["@nuxtjs/style-resources"],

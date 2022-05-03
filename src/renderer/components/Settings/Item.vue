@@ -1,9 +1,16 @@
 <template>
-    <div class="setting-item" :class="{ checked, unchecked: !checked }">
+    <div class="setting-item" :class="toggleButtonClass">
         <div class="setting-item-block">
-            <span class="setting-item-block-name" v-text="text" />
+            <span 
+                class="setting-item-block-name" 
+                v-text="text" 
+            />
 
-            <VueToggleButton ref="toggle-button" :value="checked" :height="25" @change="$emit('change')" />
+            <ToggleButton 
+                :value="checked" 
+                :height="25" 
+                @change="$emit('change')" 
+            />
         </div>
 
         <span 
@@ -15,7 +22,13 @@
 </template>
 
 <script>
+import { ToggleButton } from "vue-js-toggle-button";
+
 export default {
+    components: {
+        ToggleButton
+    },
+
     props: {
         text: {
             type: String,
@@ -33,6 +46,14 @@ export default {
             type: String,
             required: false,
             default: ""
+        }
+    },
+
+    computed: {
+        toggleButtonClass() {
+            return { 
+                checked: this.checked
+            };
         }
     }
 };
@@ -61,7 +82,7 @@ export default {
         }
     }
 
-    &.unchecked {
+    &:not(.checked) {
         .v-switch-core {
             background-color: #242424 !important;
         }

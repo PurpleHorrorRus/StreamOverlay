@@ -31,6 +31,10 @@
 
 <script>
 export default {
+    components: {
+        VueRangeComponent: () => import("vue-range-component")
+    },
+
     props: {
         value: {
             type: Number,
@@ -67,6 +71,7 @@ export default {
             default: ""
         }
     },
+
     computed: {
         tooltipStyle () {
             return {
@@ -77,6 +82,7 @@ export default {
             };
         }
     },
+
     methods: {
         select (value) {
             this.$emit("select", value);
