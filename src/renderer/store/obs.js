@@ -26,9 +26,11 @@ export default {
         status: {
             stream: false,
             record: false,
-
-            tech: null,
-            bitrate: 0
+            
+            tech: {
+                bitrate: 0,
+                fps: 0
+            }
         }
     }),
 
@@ -141,7 +143,7 @@ export default {
             }
 
             if (rootState.settings.settings.notifications.lowfps) {
-                if (stats.fps < state.videoSettings.fps) {
+                if (state.status.tech.fps < state.videoSettings?.fps) {
                     if (!rootState.notifications.lowfps) {
                         dispatch("notifications/TURN_LOWFPS", true, { root: true });
                     }
