@@ -33,7 +33,7 @@ export default {
     },
 
     created() {
-        this.active = false;
+        this.edit = false;
 
         if (this.widgets.length > 0) {
             this.select(0);

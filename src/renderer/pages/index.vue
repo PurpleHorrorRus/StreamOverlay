@@ -1,6 +1,6 @@
 <template>
     <div id="content">
-        <EditMode v-if="active" />
+        <EditMode v-if="edit" />
 
         <div v-if="settings" id="content-valid">
             <Notifications />
@@ -67,9 +67,9 @@ export default {
     },
     
     async mounted() {
-        this.active = Boolean(this.$route.query.edit);
+        this.edit = Boolean(this.$route.query.edit);
 
-        if (this.active) {
+        if (this.edit) {
             return false;
         }
 
@@ -132,7 +132,7 @@ export default {
                 }
 
                 this.$router.push(sequence ? "/stream" : "/");
-                this.active = false;
+                this.edit = false;
             });
 
             ipcRenderer.on("turnViewersList", () => {

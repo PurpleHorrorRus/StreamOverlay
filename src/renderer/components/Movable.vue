@@ -2,9 +2,9 @@
     <VueDraggableResizable
         ref="movable"
         class="movable"
-        :class="{ active, selected }"
-        :draggable="active"
-        :resizable="resizable && active"
+        :class="{ edit, selected }"
+        :draggable="edit"
+        :resizable="edit && resizable"
         :minWidth="source.minWidth || 0"
         :maxWidth="source.maxWidth || 0"
         :minHeight="source.minHeight || 0"
@@ -20,7 +20,7 @@
         @dragstop="onDrag"
         @resizestop="onResize"
     >
-        <MovableName v-if="active && name" />
+        <MovableName v-if="edit && name" />
         <slot v-if="$slots.default" />
     </VueDraggableResizable>
 </template>
@@ -88,8 +88,8 @@ export default {
     },
 
     watch: {
-        active: function(active) {
-            if (!active) {
+        edit: function(edit) {
+            if (!edit) {
                 this.onDeactivated();
             }
         }
@@ -136,7 +136,7 @@ export default {
         },
 
         onActivated() {
-            if (this.active) {
+            if (this.edit) {
                 this.selected = true;
                 emitDebounce = debounce(() => this.$parent.onDrag(this.x, this.y), 1000);
                 mouseDebounce = debounce(() => (this.mouse = true), 500);
@@ -146,8 +146,8 @@ export default {
 
         onDeactivated() {
             this.selected = false;
-            emitDebounce();
             document.removeEventListener("keydown", this.move);
+            if (emitDebounce) emitDebounce();
         },
 
         move({ key }) {
@@ -194,7 +194,7 @@ export default {
 
     border: none;
 
-    &.active {
+    &.edit {
         background: linear-gradient($secondary, $secondary) top
                 center/calc(100%) 2px,
             linear-gradient($secondary, $secondary) bottom center/calc(100%) 2px,
@@ -203,10 +203,6 @@ export default {
 
         background-repeat: no-repeat;
         cursor: move;
-
-        .movable-slot * {
-            pointer-events: none;
-        }
     }
 }
 </style>

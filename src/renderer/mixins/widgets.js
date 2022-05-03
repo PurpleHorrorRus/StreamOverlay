@@ -6,7 +6,7 @@ export default {
     mixins: [CoreMixin],
     
     computed: {
-        active: {
+        edit: {
             get () { return this.$store.state.widgets.edit; },
             set (value) { this.turnEdit(value); }
         },

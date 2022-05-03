@@ -7,14 +7,23 @@ let interval = null;
 
 export default {
     data: () => ({
-        time: new Date().toLocaleTimeString("ru-RU")
+        time: 0
     }),
+
     created() {
-        interval = setInterval(() => (this.time = new Date().toLocaleTimeString("ru-RU")), 1000);
+        this.update();
+        interval = setInterval(() => this.update(), 1000);
     },
+
     beforeDestroy() {
         clearInterval(interval);
         interval = null;
+    },
+
+    methods: {
+        update() {
+            this.time = new Date().toLocaleTimeString("ru-RU");
+        }
     }
 };
 </script>

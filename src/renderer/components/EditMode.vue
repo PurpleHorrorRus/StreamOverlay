@@ -18,7 +18,7 @@ export default {
 
     beforeDestroy() {
         ipcRenderer.send("turnMouse", false);
-        this.active = false;
+        this.edit = false;
     },
 
     created() {

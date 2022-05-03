@@ -96,11 +96,11 @@ div, span, input {
 }
 
 div {
-    &.active {
+    &.edit {
         background: $secondary;
     }
 
-    &:not(.active) {
+    &:not(.edit) {
         &.clickable {
             border-radius: 3px;
     
