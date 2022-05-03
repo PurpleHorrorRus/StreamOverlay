@@ -1,152 +1,65 @@
 /* eslint-disable no-undef */
+const vueConfig = require("../../nuxt-config/vue");
+const headConfig = require("../../nuxt-config/head");
+const optimizationConfig = require("../../nuxt-config/optimization");
+const webpackRules = require("../../nuxt-config/rules");
+const webpackPlugins = require("../../nuxt-config/plugins");
+const webpackModules = require("../../nuxt-config/modules");
+const routerConfig = require("../../nuxt-config/router.json");
+const cssRules = require("../../nuxt-config/css.json");
+
 const isDev = process.env.NODE_ENV === "development";
 
 module.exports = {
     target: "server",
     ssr: false,
-    
-    env: require("../../env.json"),
-    head: {
-        title: "Stream Overlay",
-        meta: [{ charset: "utf-8" }],
-        link: [
-            {
-                rel: "preconnect",
-                href: "https://fonts.gstatic.com"
-            },
-            {
-                rel: "stylesheet",
-                href: "https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"
-            },
-            {
-                rel: "stylesheet",
-                href: "https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap"
-            }
-        ]
-    },
+
     telemetry: false,
     dev: isDev,
     loading: false,
+    
+    env: require("../../env.json"),
+    head: headConfig,
+    router: routerConfig,
+    vue: vueConfig,
+    plugins: webpackPlugins(),
+    css: cssRules,
+    buildModules: ["@nuxtjs/style-resources"],
+    modules: webpackModules,
+
+    styleResources: {
+        scss: [
+            "~assets/css/colors.scss", 
+            "~assets/css/mixins.scss"
+        ]
+    },
+    
     build: {
         publicPath: "./_nuxt/",
 
         extend(config, { isClient }) {
+            config.resolve.alias.vue = "vue/dist/vue.min";
+
             if (isClient) {
                 config.target = "electron-renderer";
-                config.optimization.splitChunks.maxSize = 51200;
+                config.optimization.splitChunks.maxSize = optimizationConfig.maxSize;
+                config.devtool = "source-map";
             }
-
+            
             config.mode = process.env.NODE_ENV;
-            config.devtool = isDev ? "inline-source-map" : false;
-            config.performance = {
-                hints: false,
-                maxEntrypointSize: 512000,
-                maxAssetSize: 512000
-            };
 
-            config.module.rules.find(rule => rule.test.test(".svg")).test = /\.(png|jpe?g|gif|webp)$/;
-            config.module.rules.push({
-                test: /\.svg$/,
-                use: [
-                    "babel-loader",
-                    {
-                        loader: "vue-svg-loader",
-                        options: {
-                            svgo: {
-                                plugins: [{ removeDimensions: true }, { removeViewBox: false }]
-                            }
-                        }
-                    }
-                ]
-            });
+            if (!isDev) {
+                config.performance = optimizationConfig.performance;
+            }
 
-            config.module.rules.push({
-                test: /\.mp3$/,
-                loader: "file-loader"
-            });
+            config.module.rules.find(rule => rule.test.test(".svg")).test = /\.(gif|webp)$/;
+            config.module.rules = config.module.rules.concat(webpackRules);
         },
 
-        html: {
-            minify: {
-                collapseBooleanAttributes: true,
-                decodeEntities: true,
-                minifyCSS: true,
-                minifyJS: true,
-                processConditionalComments: true,
-                removeEmptyAttributes: true,
-                removeRedundantAttributes: true,
-                trimCustomFragments: true,
-                useShortDoctype: true,
-                minifyURLs: true,
-                removeComments: true,
-                removeEmptyElements: true
-            }
-        },
-
-        optimization: {
-            minimize: true,
-            splitChunks: {
-                chunks: "async"
-            }
-        },
-
-        splitChunks: {
-            pages: false,
-            vendor: false,
-            commons: false,
-            runtime: false,
-            layouts: false
-        },
-
-        filenames: !isDev
-            ? {
-                app: () => "[contenthash:7].js",
-                chunk: () => "[contenthash:7].js",
-                css: () => "[contenthash:7].css"
-            }
-            : {},
-
-        extractCSS: true
-    },
-    router: {
-        prefetchLinks: false
-    },
-    vue: {
-        config: {
-            productionTip: false,
-            devtools: false,
-            silent: !isDev,
-            performance: isDev
-        }
-    },
-    css: [
-        "~assets/css/global.scss",
-        "vue-draggable-resizable/dist/VueDraggableResizable.css",
-        "vue-range-component/dist/vue-range-slider.css"
-    ],
-    plugins: [
-        "~/plugins/errors.js",
-        { src: "~plugins/globalComponents.js", mode: "client" },
-        { src: "~plugins/tooltip.js", mode: "client" }
-    ],
-    buildModules: ["@nuxtjs/style-resources"],
-    modules: [
-        [
-            "nuxt-lazy-load",
-            {
-                images: true,
-                videos: false,
-                audios: false,
-                iframes: false,
-                native: false,
-                polyfill: false,
-                directiveOnly: true,
-
-                defaultImage: "./lazy_avatar.png"
-            }
-        ]
-    ],
-    styleResources: {
-        scss: ["~assets/css/colors.scss", "~assets/css/mixins.scss"]
+        html: isDev ? optimizationConfig.html : {},
+        optimization: !isDev ? optimizationConfig.optimization : {},
+        splitChunks: isDev ? optimizationConfig.splitChunks : {},
+        filenames: !isDev ? optimizationConfig.filenames : {},
+        extractCSS: false
     }
 };
