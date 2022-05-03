@@ -1,5 +1,5 @@
 <template>
-    <Movable :source="settings.chat" name="Чат">
+    <Movable :source="settings.chat" name="Чат" :canBringTop="true">
         <div id="chat-block" class="movable-slot" :class="{ input }">
             <MessagesBlock :input="input" />
             <ChatInput v-if="input" />
