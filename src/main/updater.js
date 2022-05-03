@@ -5,7 +5,7 @@ import { autoUpdater } from "electron-updater";
 import common from "./common";
 
 autoUpdater.currentVersion = app.getVersion();
-autoUpdater.autoDownload = false;
+autoUpdater.autoDownload = true;
 class Updater {
     constructor (window) {
         this.window = window;
