@@ -26,11 +26,6 @@
 <script>
 import Helix from "simple-helix-api";
 
-import MenuError from "~/components/Menu/Notifications/Error";
-
-import TwitchSettingsAccessToken from "~/components/Settings/Services/Twitch/AccessToken";
-import TwitchSettingsOAuthToken from "~/components/Settings/Services/Twitch/OAuthToken";
-
 import CoreMixin from "~/mixins/core";
 import OtherMixin from "~/mixins/other";
 
@@ -41,10 +36,10 @@ let helix = null;
 
 export default {
     components: {
-        MenuError,
+        MenuError: () => import("~/components/Menu/Notifications/Error"),
 
-        TwitchSettingsAccessToken,
-        TwitchSettingsOAuthToken
+        TwitchSettingsAccessToken: () => import("~/components/Settings/Services/Twitch/AccessToken"),
+        TwitchSettingsOAuthToken: () => import("~/components/Settings/Services/Twitch/OAuthToken")
     },
 
     mixins: [CoreMixin, OtherMixin],
@@ -61,11 +56,9 @@ export default {
 
     computed: {
         disabled() {
-            return (
-                this.username.length === 0 ||
-                this.access_token.length === 0 ||
-                this.oauth_token.length === 0
-            );
+            return this.username.length === 0 
+                || this.access_token.length === 0 
+                || this.oauth_token.length === 0;
         }
     },
 
@@ -128,10 +121,9 @@ export default {
                 access_token: this.access_token
             });
 
-            const user = await helix.users.getByLogin(this.username.toLowerCase())
-                .catch(() => {
-                    throw this.handleError("Неверный Access Token");
-                });
+            const user = await helix.users.getByLogin(this.username.toLowerCase()).catch(() => {
+                throw this.handleError("Неверный Access Token");
+            });
 
             if (user.length === 0) {
                 throw this.handleError("Пользователь с таким именем не найден");
