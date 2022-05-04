@@ -1,13 +1,6 @@
 import bttv from "~/store/services/twitch/emotes/bttv";
 import ffz from "~/store/services/twitch/emotes/ffz";
 
-const collection = arr => {
-    return {
-        content: arr,
-        ids: arr.map(e => e.code)
-    };
-};
-
 export default {
     namespaced: true,
 
@@ -27,8 +20,8 @@ export default {
                 dispatch("ffz/CHANNEL", name)
             ]);
 
-            state.bttv = collection([...bGlobal, ...bChannel]);
-            state.ffz = collection([...fGlobal, ...fChannel]);
+            state.bttv = bGlobal.concat(bChannel);
+            state.ffz = fGlobal.concat(fChannel);
 
             return 0;
         },
@@ -49,9 +42,14 @@ export default {
             return positions.map(([start, end], index) => {
                 return {
                     url: `http://static-cdn.jtvnw.net/emoticons/v1/${ids[index]}/3.0`,
-                    word: message.text.substring(start, end + 1)
+                    code: message.text.substring(start, end + 1)
                 };
             });
+        },
+
+        FIND: ({ state }, word) => {
+            return state.bttv.find(e => e.code === word)
+            || state.ffz.find(e => e.code === word);
         }
     },
 

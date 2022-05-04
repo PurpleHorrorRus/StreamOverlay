@@ -1,6 +1,7 @@
 import { TrovoAPI } from "simple-trovo-api";
 import lodash from "lodash";
 
+import formatter from "~/store/services/formatter";
 import events from "~/store/services/trovo/events";
 import emotes from "~/store/services/trovo/emotes";
 
@@ -14,11 +15,6 @@ const trovoParams = {
     }
 };
 
-// eslint-disable-next-line max-len
-const linkRegex = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
-// eslint-disable-next-line no-useless-escape
-const domainRegex = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/;
-
 const notifications = {
     CHAT_CONNECTED: {
         text: "Чат успешно подключен",
@@ -31,16 +27,6 @@ const notifications = {
 const colors = {
     default: "#21b36c",
     subscriber: "#c8a86b"
-};
-
-const addMessagePart = (formatted, type, content) => {
-    if (typeof content === "string") {
-        content = content.trim();
-        if (content.length === 0) return formatted;
-    }
-
-    formatted.push({ type, content });
-    return formatted;
 };
 
 export default {
@@ -182,7 +168,7 @@ export default {
         },
 
         FORMAT_MESSAGE: async ({ dispatch }, message) => {
-            const formatted = [];
+            let formatted = [];
             let part = "";
 
             const splitted = message
@@ -193,16 +179,10 @@ export default {
             for (let index in splitted) {
                 index = Number(index);
                 const word = splitted[index];
-
-                if (linkRegex.test(word)) { // Format link
-                    addMessagePart(formatted, "text", part);
+                
+                if (await dispatch("formatter/CHECK_LINK", word)) { // Format link
+                    formatted = await dispatch("formatter/LINK", { formatted, part, word });
                     part = "";
-
-                    addMessagePart(formatted, "link", { 
-                        domain: word.match(domainRegex)[1].replace("www.", ""), 
-                        link: word.replace("www.", "https://")
-                    });
-
                     continue;
                 }
 
@@ -210,18 +190,20 @@ export default {
                     const emote = await dispatch("emotes/FIND_EMOTE", word);
                     
                     if (emote) {
-                        addMessagePart(formatted, "text", part);
+                        formatted = await dispatch("formatter/EMOTE", { 
+                            formatted, part, 
+                            emote: await dispatch("FORMAT_EMOTE", emote)
+                        });
+
                         part = "";
-    
-                        addMessagePart(formatted, "emote", emote.gifp || emote.url);
                         continue;
                     }
                 }
 
-                part += word + " "; // Add word to part
+                part += word + " ";
             }
 
-            return addMessagePart(formatted, "text", part);
+            return await dispatch("formatter/TEXT", { formatted, part });
         },
 
         FORMAT_MESSAGE_TIME: (_, message) => {
@@ -241,6 +223,13 @@ export default {
         SEARCH_GAME: async ({ rootState }, query) => {
             const response = await rootState.service.client.categories.search(query);
             return response.category_info;
+        },
+
+        FORMAT_EMOTE: (_, emote) => {
+            return {
+                name: emote.name,
+                url: emote.gifp || emote.webp || emote.url
+            };
         },
 
         FORMAT_GAME: (_, game) => {
@@ -334,6 +323,8 @@ export default {
         }
     },
     modules: {
+        formatter,
+
         events,
         emotes
     }

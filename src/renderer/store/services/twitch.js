@@ -2,6 +2,7 @@ import Helix from "simple-helix-api";
 import tmi from "tmi.js";
 import lodash from "lodash";
 
+import formatter from "~/store/services/formatter";
 import events from "~/store/services/twitch/events";
 import emotes from "~/store/services/twitch/emotes";
 import badges from "~/store/services/twitch/badges";
@@ -10,32 +11,11 @@ import misc from "~/plugins/misc";
 
 // botID = 169440375;
 
-const types = {
-    TEXT: "text",
-    LINK: "link",
-    EMOTE: "emote"
-};
-
-const addMessagePart = (formatted, type, content) => {
-    if (typeof content === "string") {
-        content = content.trim();
-        if (content.length === 0) return formatted;
-    }
-
-    formatted.push({ type, content });
-    return formatted;
-};
-
 let client = null;
 
 const profilesCacheMax = 50;
 let profilesCacheSize = 0;
 let profilesCache = {};
-
-// eslint-disable-next-line max-len
-const linkRegex = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
-// eslint-disable-next-line no-useless-escape
-const domainRegex = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/;
 
 export default {
     namespaced: true,
@@ -222,48 +202,37 @@ export default {
             return profilesCache[username] || await dispatch("CACHE_PROFILE", username);
         },
 
-        FORMAT_MESSAGE: async ({ dispatch, state }, message) => {
+        FORMAT_MESSAGE: async ({ dispatch }, message) => {
             let formatted = [];
             let part = "";
 
             const twitchEmotes = await dispatch("emotes/FORMAT_TWITCH_EMOTES", message);
-            const twitchEmotesWords = twitchEmotes.map(({ word }) => word);
-            
+
             const splitted = message.text.split(" ");
             for (let wordIndex in splitted) {
                 wordIndex = Number(wordIndex);
                 const word = splitted[wordIndex];
 
-                if (linkRegex.test(word)) {
-                    addMessagePart(formatted, types.TEXT, part);
+                if (await dispatch("formatter/CHECK_LINK", word)) { // Format link
+                    formatted = await dispatch("formatter/LINK", { formatted, part, word });
                     part = "";
-
-                    addMessagePart(formatted, types.LINK, {
-                        domain: word.match(domainRegex)[1],
-                        link: word
-                    });
-
                     continue;
                 }
 
-                const twitchEmoteIndex = twitchEmotesWords.indexOf(word);
-                const bttvEmoteIndex = state.emotes.bttv.ids.indexOf(word);
-                const ffzEmoteIndex = state.emotes.ffz.ids.indexOf(word);
+                const emote = twitchEmotes.find(e => e.code === word) 
+                    || await dispatch("emotes/FIND", word);
 
-                if (~twitchEmoteIndex || ~bttvEmoteIndex || ~ffzEmoteIndex) {
-                    addMessagePart(formatted, types.TEXT, part);
+                if (emote) {
+                    formatted = await dispatch("formatter/EMOTE", { 
+                        formatted, part, 
+                        emote: await dispatch("FORMAT_EMOTE", emote)
+                    });
+
                     part = "";
-
-                    const emote = 
-                        twitchEmotes[twitchEmoteIndex]?.url
-                        || state.emotes.bttv.content[bttvEmoteIndex]?.url
-                        || state.emotes.ffz.content[ffzEmoteIndex]?.url;
-
-                    addMessagePart(formatted, types.EMOTE, emote);
                 } else part += " " + word;
             }
 
-            return addMessagePart(formatted, types.TEXT, part);
+            return await dispatch("formatter/TEXT", { formatted, part });
         },
 
         FORMAT_MESSAGE_TIME: () => {
@@ -345,6 +314,13 @@ export default {
             return games.data || Array.isArray(games) ? games : [games];
         },
 
+        FORMAT_EMOTE: (_, emote) => {
+            return {
+                name: emote.code,
+                url: emote.url
+            };
+        },
+
         FORMAT_GAME: (_, game) => {
             return {
                 name: game.name,
@@ -353,6 +329,7 @@ export default {
         }
     },
     modules: {
+        formatter,
         events,
         emotes,
         badges

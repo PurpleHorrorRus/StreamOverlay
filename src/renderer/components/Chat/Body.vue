@@ -1,34 +1,19 @@
 <template>
     <div class="message-body">
-        <div v-for="(item, index) of items" :key="index" class="item">
-            <span
-                v-if="item.type === 'text'"
-                :style="textStyle"
-                class="text stroke"
-                v-text="item.content"
-            />
-
-            <span
-                v-else-if="item.type === 'link'"
-                v-tooltip="'Нажмите, чтобы перейти по ссылке'"
-                :style="textStyle"
-                class="text link stroke"
-                @click="openLink(item.content.link)"
-                v-text="item.content.domain"
-            />
-
-            <img
-                v-else-if="item.type === 'emote'"
-                class="emoticon"
-                :style="emoticionStyle"
-                :src="item.content"
-            />
-        </div>
+        <Component
+            :is="renderComponent(item)" 
+            v-for="(item, index) of items" 
+            :key="index"
+            class="item"
+            :data="item.content"
+        />
     </div>
 </template>
 
 <script>
-import { shell } from "electron";
+const TextItem = () => import("~/components/Chat/Body/Text");
+const LinkItem = () => import("~/components/Chat/Body/Link");
+const EmoteItem = () => import("~/components/Chat/Body/Emote");
 
 import MessageMixin from "~/components/Chat/Mixin";
 
@@ -42,17 +27,13 @@ export default {
         }
     },
 
-    computed: {
-        emoticionStyle() {
-            return {
-                height: `${this.settings.chat.font + 16}px`
-            };
-        }
-    },
-
     methods: {
-        openLink(link) {
-            shell.openExternal(link);
+        renderComponent(item) {
+            switch(item.type) {
+                case "text": return TextItem;
+                case "link": return LinkItem;
+                case "emote": return EmoteItem;
+            }
         }
     }
 };
@@ -72,26 +53,9 @@ export default {
             margin-left: 5px;
         }
 
-        .text {
+        &.text {
             font-family: "Roboto Condensed";
             font-weight: bold;
-
-            &.link {
-                color: #0077ff;
-                cursor: pointer;
-            }
-        }
-
-        .emoticon {
-            position: relative;
-            bottom: 1px;
-
-            vertical-align: middle;
-        }
-
-        .text,
-        .emoticon {
-            display: inline;
         }
     }
 }
