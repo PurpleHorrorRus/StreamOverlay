@@ -74,6 +74,7 @@ export default {
         }
 
         if (!this.config) {
+            ipcRenderer.send("dom-ready");
             const config = await ipcRenderer.invoke("config");
             await this.setConfig(config);
         }
@@ -89,7 +90,6 @@ export default {
         if (await this.authService()) {
             this.addNotification(notifications.controls);
             this.registerIPC();
-            ipcRenderer.send("dom-ready");
 
             if (this.settings.first) {
                 this.settings.first = false;
@@ -98,7 +98,7 @@ export default {
 
             return true;
         }
-        
+
         return false;
     },
     methods: {
