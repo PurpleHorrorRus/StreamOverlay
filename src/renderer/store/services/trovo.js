@@ -21,9 +21,9 @@ const domainRegex = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/;
 
 const notifications = {
     CHAT_CONNECTED: {
-        text: "[Trovo] Чат успешно подключен",
+        text: "Чат успешно подключен",
         color: "#28a745",
-        icon: () => import("~/assets/icons/chat-bubble.svg"),
+        icon: () => import("~/assets/icons/trovo.svg"),
         handle: 5
     }
 };

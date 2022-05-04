@@ -1,15 +1,15 @@
 const notifications = {
     FOLLOWERS_MODE_ENABLED: {
-        text: "[Twitch] На канале включен режим \"Только для фолловеров\"",
+        text: "На канале включен режим \"Только для фолловеров\"",
         color: "#6441A4",
         icon: () => import("~/assets/icons/twitch.svg"),
         handle: 5
     },
     
     CHAT_CONNECTED: {
-        text: "[Twitch] Чат успешно подключен",
+        text: "Чат успешно подключен",
         color: "#28a745",
-        icon: () => import("~/assets/icons/chat-bubble.svg"),
+        icon: () => import("~/assets/icons/twitch.svg"),
         handle: 5
     }
 };
