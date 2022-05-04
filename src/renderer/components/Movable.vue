@@ -197,8 +197,6 @@ export default {
 
         resetZIndex() {
             this.changeZIndex(0);
-            emitDebounce();
-            mouseDebounce();
         }
     }
 };
