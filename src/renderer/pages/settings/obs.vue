@@ -1,12 +1,22 @@
 <template>
-    <div class="modal-content">
-        <Title id="modal-stream-content-title" title="Настройка OBS" />
+    <div id="modal-obs-content" class="modal-content">
+        <Title id="modal-obs-content-title" title="Настройка OBS" />
         <div class="modal-body">
-            <Install v-if="!installActive" />
-            <Installation v-else />
+            <div id="modal-obs-content-install">
+                <Install v-if="!installActive" />
+                <Installation v-else />
+            </div>
+
+            <ToggleButton
+                :text="'Автопереподключение'"
+                :checked="config.obs.autoreconnect"
+                tip="Необходим перезапуск приложения."
+                @change="deepChange(config.obs, 'autoreconnect', 'obs')"
+            />
 
             <Input text="Адрес подключения" :value="address" @input="address = $event" />
             <Input text="Порт подключения" :value="port" @input="port = $event" />
+            <Input text="Пароль" :value="password" @input="password = $event" />
             <Input
                 text="Название источника с веб-камерой"
                 :value="camera"
@@ -19,7 +29,11 @@
                 @input="camera = $event"
             />
 
-            <SolidButton :label="'Продолжить'" :disabled="disabled" @click.native="next" />
+            <SolidButton
+                :label="'Продолжить'" 
+                :disabled="disabled" 
+                @click.native="next" 
+            />
         </div>
     </div>
 </template>
@@ -97,3 +111,11 @@ export default {
     }
 };
 </script>
+
+<style lang="scss">
+#modal-obs-content {
+    &-install {
+        margin: 10px 0px;
+    }
+}
+</style>

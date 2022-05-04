@@ -29,16 +29,17 @@ export default {
             saveSettings: "settings/SAVE"
         }),
 
-        save(content = this.settings) {
-            this.saveSettings({
-                type: "settings",
-                content
-            });
+        save(content = this.settings, type = "settings") {
+            this.saveSettings({ type, content });
         },
 
-        deepChange(settings, field) {
+        deepChange(settings, field, type = "settings") {
             settings[field] = !settings[field];
-            this.save();
+
+            type === "settings"
+                ? this.save(this.settings)
+                : this.save(settings, type);
+
             return settings;
         },
 

@@ -49,8 +49,10 @@ export default {
                 await dispatch("RESTORE_STATE");
                 dispatch("LISTEN");
             }).catch(async () => {
-                await Promise.delay(1000);
-                return await dispatch("CONNECT");
+                if (rootState.config.obs.autoreconnect) {
+                    await Promise.delay(4000);
+                    return await dispatch("CONNECT");
+                }
             });
         },
 
@@ -81,7 +83,7 @@ export default {
             });
 
             state.obs.on("StreamStatus", status => {
-                state.status.bitrate = status.kbitsPerSec;
+                state.status.tech.bitrate = status.kbitsPerSec;
                 dispatch("events/ON_STREAM_STATUS", status);
             });
 
@@ -110,7 +112,8 @@ export default {
 
         DISCONNECT: ({ dispatch, state }) => {
             state.obs = { _connected: false };
-            state.status.tech = null;
+            state.status.tech.fps = 0;
+            state.status.tech.bitrate = 0;
             state.status.videoSettings = null;
 
             dispatch("STOP_CHECKING_INTERVAL");
@@ -139,7 +142,7 @@ export default {
 
             const { stats } = await dispatch("SEND", { event: "GetStats" });
             if (rootState.settings.settings.OBSStatus.enable) {
-                state.status.tech = stats;
+                state.status.tech.fps = stats.fps;
             }
 
             if (rootState.settings.settings.notifications.lowfps) {

@@ -82,7 +82,8 @@ const clear = {
         address: "localhost",
         port: 4444,
         password: "",
-        camera: []
+        camera: [],
+        autoreconnect: false
     },
 
     widgets: [],
