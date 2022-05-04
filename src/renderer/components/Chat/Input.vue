@@ -5,7 +5,7 @@
             ref="input-field"
             v-model="text"
             type="text"
-            :placeholder="connected ? 'Введите сообщение...' : 'Подключение...'"
+            :placeholder="placeholder"
             :disabled="!connected"
             @keyup.enter="send"
         >
@@ -21,6 +21,14 @@ export default {
     data: () => ({
         text: ""
     }),
+
+    computed: {
+        placeholder() {
+            return this.connected 
+                ? "Введите сообщение..." 
+                : "Подключение...";
+        }
+    },
 
     methods: {
         send() {
@@ -47,6 +55,9 @@ export default {
         border: none;
         border-top: 1px solid $secondary;
         outline: none;
+
+        font-size: 16px;
+        font-weight: bold;
     }
 }
 </style>

@@ -59,7 +59,7 @@ export default {
     z-index: 1;
 
     &.input {
-        grid-template-rows: 1fr 30px;
+        grid-template-rows: 1fr 40px;
 
         background: $primary;
 

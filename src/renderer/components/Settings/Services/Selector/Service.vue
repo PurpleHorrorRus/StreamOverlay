@@ -8,7 +8,7 @@
         
         <SettingsIcon 
             v-if="!settings.first"
-            v-tooltip="tooltip" 
+            v-tooltip="tooltip"
             class="icon clickable"
             @click.stop="open"
         />

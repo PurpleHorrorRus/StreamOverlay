@@ -84,17 +84,18 @@ export default {
         width: 100%;
         padding: 10px;
 
-        background: none;
+        background: #212121;
         border: none;
-        border-bottom: 1px solid $outline;
-        border-radius: 0px;
+        border-bottom: 2px solid #212121;
+        
+        border-radius: 4px;
 
         color: $text;
 
         outline: none;
 
         &:focus {
-            border-bottom: 1px solid $secondary;
+            border-bottom: 2px solid $secondary;
         }
     }
 }

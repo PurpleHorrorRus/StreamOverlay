@@ -216,3 +216,9 @@ a {
 .spin {
     animation: spin 3s infinite linear;
 }
+
+* {
+    &::selection {
+        background: $secondary;
+    }
+}
