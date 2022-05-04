@@ -13,14 +13,16 @@ import { mapState } from "vuex";
 export default {
     computed: {
         ...mapState({
-            status: state => state.obs.status
+            bitrate: state => state.obs.status.tech.bitrate
         }),
+
         text() {
-            return `Обнаружен низкий битрейт: ${this.status.bitrate}`;
+            return `Обнаружен низкий битрейт: ${this.bitrate}`;
         },
+
         line() {
             return {
-                width: `${(this.status.bitrate / 5500) * 100}%`
+                width: `${(this.bitrate / 5500) * 100}%`
             };
         }
     }
@@ -39,6 +41,6 @@ export default {
 
     background: #ffffffcc;
 
-    transition: 0.2s all ease-in;
+    transition: .2s all ease-in;
 }
 </style>
