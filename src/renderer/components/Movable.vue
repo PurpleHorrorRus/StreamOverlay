@@ -119,6 +119,9 @@ export default {
 
         onResize(...args) {
             this.$parent.onResize(...args);
+
+            this.rightBorder = this.display.width - args[2];
+            this.downBorder = this.display.height - args[3];
         },
 
         onDragging(x, y) {
