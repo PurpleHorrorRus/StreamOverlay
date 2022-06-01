@@ -2,18 +2,35 @@ let interval = null;
 
 export default {
     namespaced: true,
+
     state: () => ({
         hours: undefined,
         mins: 0,
         seconds: 0
     }),
-    actions: {
-        SETUP: ({ dispatch }) => {
-            if (interval) {
-                dispatch("CLEAR");
-            }
 
+    actions: {
+        SETUP: async ({ dispatch }) => {
             interval = setInterval(() => dispatch("UPDATE"), 1000);
+        },
+
+        FORMAT_TIME: (_, timecode) => {
+            const [hours, mins, seconds] = timecode.split(":");
+            return {
+                hours: Number(hours) > 0 ? Number(hours) : undefined,
+                mins: Number(mins),
+                seconds: Math.floor(seconds)
+            };
+        },
+
+        SET: async ({ dispatch, state }, time) => {
+            time = await dispatch("FORMAT_TIME", time);
+
+            state.hours = time.hours;
+            state.mins = time.mins;
+            state.seconds = time.seconds;
+
+            return time;
         },
 
         CLEAR: ({ state }) => {
@@ -21,10 +38,8 @@ export default {
             state.mins = 0;
             state.hours = undefined;
 
-            if (interval) {
-                clearInterval(interval);
-                interval = null;
-            }
+            clearInterval(interval);
+            interval = null;
         },
 
         UPDATE: ({ state }) => {

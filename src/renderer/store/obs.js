@@ -164,7 +164,7 @@ export default {
             state.status.record = status.recording;
 
             if (status.streaming || status.recording) {
-                state.time = setTime(status["stream-timecode"] || status["rec-timecode"]);
+                await dispatch("time/SET", status["stream-timecode"] || status["rec-timecode"]);
                 dispatch("time/SETUP");
             }
         },
