@@ -288,11 +288,22 @@ export default {
         },
 
         CHATTERS: async ({ rootState }) => {
-            const name = rootState.service.user.display_name;
-            const response = await rootState.service.client.other.getViewers(name);
-            return lodash.pickBy(response.chatters, category => {
+            const botsRequest = await fetch("https://api.twitchinsights.net/v1/bots/online");
+            const { bots } = botsRequest.ok ? await botsRequest.json() : { bots: [] };
+            const { chatters } = await rootState.service.client.other.getViewers(rootState.service.user.nickname);
+
+            if (!bots || !chatters) {
+                return [];
+            }
+
+            const botNames = bots.map(bot => bot[0]);
+            for (const category in chatters) {
+                chatters[category] = lodash.difference(chatters[category], botNames);
+            }
+
+            return lodash.pickBy(chatters, category => {
                 return category.length > 0;
-            }); 
+            });
         },
         
         SAY: ({ rootState }, message) => {
