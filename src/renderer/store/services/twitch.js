@@ -11,8 +11,6 @@ import misc from "~/plugins/misc";
 
 // botID = 169440375;
 
-let client = null;
-
 const profilesCacheMax = 50;
 let profilesCacheSize = 0;
 let profilesCache = {};
@@ -306,7 +304,7 @@ export default {
         
         SAY: ({ rootState }, message) => {
             if (!rootState.service.connected) return false;
-            client.say(rootState.service.user.nickname, message);
+            rootState.service.chat.say(rootState.service.user.nickname, message);
         },
 
         TURN_FOLLOWERS_ONLY: ({ rootState, state }, duration = 0) => {
