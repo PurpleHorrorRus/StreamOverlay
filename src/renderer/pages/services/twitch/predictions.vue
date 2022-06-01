@@ -14,7 +14,9 @@
                 :maxLength="45"
                 @input="prediction.title = $event"
             />
+
             <Outcomes />
+
             <div id="modal-prediction-content-container-buttons">
                 <SolidButton
                     v-if="!isActive"
@@ -23,6 +25,7 @@
                     :disabled="!canCreate"
                     @click.native="start"
                 />
+
                 <SolidButton
                     v-else
                     label="Отменить"
@@ -37,8 +40,6 @@
 </template>
 
 <script>
-import Outcomes from "~/components/Menu/Predictions/Outcomes";
-
 import CoreMixin from "~/mixins/core";
 
 const empty = {
@@ -51,7 +52,7 @@ let updateInterval = null;
 
 export default {
     components: {
-        Outcomes
+        Outcomes: () => import("~/components/Menu/Predictions/Outcomes")
     },
 
     mixins: [CoreMixin],
@@ -75,7 +76,8 @@ export default {
         },
 
         isActive() {
-            return this.prediction.status === "ACTIVE" || this.prediction.status === "LOCKED";
+            return this.prediction.status === "ACTIVE" 
+                || this.prediction.status === "LOCKED";
         }
     },
 
@@ -136,10 +138,8 @@ export default {
         clear() {
             this.prediction = empty;
 
-            if (updateInterval) {
-                clearInterval(updateInterval);
-                updateInterval = null;
-            }
+            clearInterval(updateInterval);
+            updateInterval = null;
         }
     }
 };

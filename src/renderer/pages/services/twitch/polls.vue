@@ -14,26 +14,20 @@
                     :maxLength="60"
                     @input="poll.title = $event"
                 />
+
                 <div id="modal-polls-content-container-inputs-choices">
                     <Input
                         v-for="(choice, index) of poll.choices"
                         :key="index"
-                        :value="
-                            !isActive
-                                ? choice.title || ''
-                                : `${choice.title} (Проголосовало: ${choice.votes})`
-                        "
-                        :placeholder="
-                            index < 2
-                                ? `Вариант №${index + 1}`
-                                : `Вариант №${index + 1} (необязательно)`
-                        "
+                        :value="choice.title"
+                        :placeholder="choiceLabel(index)"
                         :disabled="isActive"
                         :maxLength="25"
                         @input="setChoice(index, $event)"
                     />
                 </div>
             </div>
+
             <div id="modal-polls-content-container-buttons">
                 <SolidButton
                     v-if="!isActive"
@@ -42,6 +36,7 @@
                     :disabled="!canCreate"
                     @click.native="start"
                 />
+
                 <SolidButton
                     v-else
                     label="Закончить"
@@ -79,12 +74,15 @@ export default {
     }),
 
     computed: {
-        canCreate() {
-            return (
-                this.poll.title.length > 0 &&
-                this.poll.choices.filter(c => c.title).length >= 2
-            );
+        validChoices() {
+            return this.poll.choices.filter(choice => choice.title);
         },
+
+        canCreate() {
+            return  this.poll.title.length > 0 
+                && this.validChoices.length >= 2;
+        },
+
         isActive() {
             return this.poll.status === "ACTIVE";
         }
@@ -113,28 +111,20 @@ export default {
         },
     
         async get() {
-            const { data } = await this.client.polls.get(this.user.id);
+            const [poll] = await this.client.polls.get(this.user.id);
 
-            if (data?.poll.status === "ACTIVE") {
-                if (data.poll.choices.length < 5) {
-                    for (let i = data.poll.choices.length; i < 5; i++) {
-                        data.poll.choices[i] = "";
-                    }
+            if (poll?.status === "ACTIVE") {
+                for (let i = 0; i < poll.choices.length; i++) {
+                    poll.choices[i].title = `${poll.choices[i].title}. Проголосовало: ${poll.choices[i].votes}`;
                 }
 
-                this.poll = data.poll;
+                this.poll = poll;
             }
         },
     
         async start() {
             this.load = true;
-            this.poll = await this.client.polls.create(
-                this.user.id,
-                this.poll.title,
-                this.poll.choices,
-                60
-            );
-
+            this.poll = await this.client.polls.create(this.user.id, this.poll.title, this.validChoices, 60);
             updateInterval = setInterval(() => this.get(), updateRate * 1000);
             this.load = false;
         },
@@ -148,10 +138,14 @@ export default {
         },
 
         clear() {
-            if (updateInterval) {
-                clearInterval(updateInterval);
-                updateInterval = null;
-            }
+            clearInterval(updateInterval);
+            updateInterval = null;
+        },
+
+        choiceLabel(index) {
+            return index < 2
+                ? `Вариант №${index + 1}`
+                : `Вариант №${index + 1} (необязательно)`;
         }
     }
 };
