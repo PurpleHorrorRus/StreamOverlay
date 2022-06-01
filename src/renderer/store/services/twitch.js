@@ -311,7 +311,8 @@ export default {
 
         TURN_FOLLOWERS_ONLY: ({ rootState, state }, duration = 0) => {
             if (rootState.service.connected) {
-                rootState.service.client.chat.updateSettings(rootState.service.user.id, rootState.service.user.id, {
+                const user_id = rootState.service.user.id;
+                rootState.service.client.chat.updateSettings(user_id, user_id, {
                     follower_mode: state.tags["followers-only"] === "-1",
                     follower_mode_duration: duration
                 });
