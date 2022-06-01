@@ -14,6 +14,17 @@
                 @change="deepChange(config.obs, 'autoreconnect', 'obs')"
             />
 
+            <ToggleButton
+                :text="'Включить оповещение о низком FPS'"
+                :checked="settings.notifications.lowfps"
+                @change="deepChange(settings.notifications, 'lowfps')"
+            />
+
+            <ToggleButton
+                :text="'Включить оповещение о низком битрейте'"
+                :checked="settings.notifications.lowbitrate"
+                @change="deepChange(settings.notifications, 'lowbitrate')"
+            />
             <Input text="Адрес подключения" :value="address" @input="address = $event" />
             <Input text="Порт подключения" :value="port" @input="port = $event" />
             <Input text="Пароль" :value="password" @input="password = $event" />

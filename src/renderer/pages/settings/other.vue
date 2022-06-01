@@ -40,18 +40,6 @@
             />
 
             <ToggleButton
-                :text="'Включить оповещение о низком FPS'"
-                :checked="settings.notifications.lowfps"
-                @change="deepChange(settings.notifications, 'lowfps')"
-            />
-
-            <ToggleButton
-                :text="'Включить оповещение о низком битрейте'"
-                :checked="settings.notifications.lowbitrate"
-                @change="deepChange(settings.notifications, 'lowbitrate')"
-            />
-
-            <ToggleButton
                 :text="'Включить инструменты разработчика'"
                 :checked="settings.devtools"
                 @change="turnDevtools"
