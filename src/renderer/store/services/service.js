@@ -112,7 +112,7 @@ export default {
             let message = {
                 id: Date.now(),
                 nickname: isObject ? data.nickname : "SYSTEM",
-                time: await dispatch("twitch/FORMAT_MESSAGE_TIME", null, { root: true }),
+                time: data.time || await dispatch("GET_CURRENT_TIME"),
                 system: true,
 
                 formatted: [{
@@ -167,6 +167,15 @@ export default {
             }
 
             return text;
+        },
+
+        GET_CURRENT_TIME: () => {
+            const time = new Date();
+            return misc.formatTime({
+                hours: time.getHours(),
+                mins: time.getMinutes(),
+                seconds: time.getSeconds()
+            });
         },
 
         UPDATE_RECENT: ({ dispatch, rootState }, data) => {
