@@ -7,8 +7,6 @@ import events from "~/store/services/twitch/events";
 import emotes from "~/store/services/twitch/emotes";
 import badges from "~/store/services/twitch/badges";
 
-import misc from "~/plugins/misc";
-
 // botID = 169440375;
 
 const profilesCacheMax = 50;
