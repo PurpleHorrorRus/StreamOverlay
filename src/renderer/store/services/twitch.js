@@ -126,7 +126,7 @@ export default {
                     formatted: await dispatch("FORMAT_MESSAGE", { text: message, emotes: user.emotes }),
                     time: await dispatch("FORMAT_MESSAGE_TIME"),
                     color: user.color,
-                    mode: user["msg-id"]
+                    type: user["msg-id"] || 0
                 }, { root: true });
             });
 
