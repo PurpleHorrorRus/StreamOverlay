@@ -122,7 +122,7 @@ export default {
                     content: message,
                     badges: await dispatch("badges/FORMAT", user.badges),
                     formatted: await dispatch("FORMAT_MESSAGE", { text: message, emotes: user.emotes }),
-                    time: await dispatch("FORMAT_MESSAGE_TIME"),
+                    time: await dispatch("service/GET_CURRENT_TIME", null, { root: true }),
                     color: user.color,
                     type: user["msg-id"] || 0
                 }, { root: true });
@@ -231,15 +231,6 @@ export default {
             }
 
             return await dispatch("formatter/TEXT", { formatted, part });
-        },
-
-        FORMAT_MESSAGE_TIME: () => {
-            const time = new Date();
-            return misc.formatTime({
-                hours: time.getHours(),
-                mins: time.getMinutes(),
-                seconds: time.getSeconds()
-            });
         },
 
         BAN: async ({ rootState }, data) => {
