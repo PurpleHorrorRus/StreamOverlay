@@ -35,8 +35,7 @@ export default {
             const ids = Object.keys(message.emotes);
 
             const positions = words.map(([position]) => {
-                return position.split("-")
-                    .map(Number);
+                return position.split("-").map(Number);
             });
 
             return positions.map(([start, end], index) => {
@@ -49,7 +48,7 @@ export default {
 
         FIND: ({ state }, word) => {
             return state.bttv.find(e => e.code === word)
-            || state.ffz.find(e => e.code === word);
+                || state.ffz.find(e => e.code === word);
         }
     },
 
