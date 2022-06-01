@@ -72,7 +72,6 @@ export default {
         load: false,
         address: "localhost",
         port: 4444,
-        password: "",
         camera: ""
     }),
 
@@ -112,7 +111,6 @@ export default {
                 content: {
                     address: this.address,
                     port: this.port,
-                    password: this.password,
                     camera: webcamsCollection
                 }
             });

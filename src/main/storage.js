@@ -81,7 +81,6 @@ const clear = {
     obs: {
         address: "localhost",
         port: 4444,
-        password: "",
         camera: [],
         autoreconnect: false
     },
