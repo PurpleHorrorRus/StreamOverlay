@@ -7,15 +7,6 @@ import time from "~/store/obs/time";
 
 let interval = null;
 
-const setTime = timecode => {
-    const [hours, mins, seconds] = timecode.split(":");
-    return {
-        hours: Number(hours) > 0 ? Number(hours) : undefined,
-        mins: Number(mins),
-        seconds: parseInt(seconds)
-    };
-};
-
 export default {
     namespaced: true,
 
