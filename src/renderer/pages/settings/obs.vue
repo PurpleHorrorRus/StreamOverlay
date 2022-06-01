@@ -25,9 +25,9 @@
                 :checked="settings.notifications.lowbitrate"
                 @change="deepChange(settings.notifications, 'lowbitrate')"
             />
+
             <Input text="Адрес подключения" :value="address" @input="address = $event" />
             <Input text="Порт подключения" :value="port" @input="port = $event" />
-            <Input text="Пароль" :value="password" @input="password = $event" />
             <Input
                 text="Название источника с веб-камерой"
                 :value="camera"
