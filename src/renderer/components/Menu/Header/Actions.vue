@@ -5,6 +5,7 @@
             <SolidButton
                 v-tooltip="'Создать клип на 15 секунд'"
                 :load="loadClip"
+                :disabled="loadClip"
                 label="Клип"
                 @click.native="createClip"
             />
@@ -13,14 +14,14 @@
 </template>
 
 <script>
-import OBSMixin from "~/mixins/obs";
+import CoreMixin from "~/mixins/core";
 
 export default {
     components: {
         HeaderLink: () => import("~/components/Menu/Header/Link")
     },
 
-    mixins: [OBSMixin],
+    mixins: [CoreMixin],
 
     data: () => ({
         items: [
@@ -34,7 +35,7 @@ export default {
                 to: "/services/twitch/predictions"
             }
         ],
-        loadAd: false,
+
         loadClip: false
     }),
 
@@ -53,13 +54,16 @@ export default {
     methods: {
         async createClip() {
             this.loadClip = true;
-            await this.client.clips.create(this.user.id);
+            const success = await this.client.clips.create(this.user.id)
+                .catch(() => (false));
 
-            this.addNotification({
-                text: "Клип успешно создан",
-                color: "#28a745",
-                handle: 5
-            });
+            if (success) {
+                this.addNotification({
+                    text: "Клип успешно создан",
+                    color: "#28a745",
+                    handle: 5
+                });
+            }
 
             this.loadClip = false;
         }

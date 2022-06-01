@@ -4,7 +4,8 @@
             v-for="(_, index) of 6"
             :key="index"
             :label="`Реклама: ${(index + 1) * 30} сек.`"
-            :load="$parent.loadAd"
+            :load="loadAd"
+            :disabled="loadAd"
             @click.native="startAd(index)"
         />
     </div>
@@ -16,19 +17,26 @@ import CoreMixin from "~/mixins/core";
 export default {
     mixins: [CoreMixin],
 
+    data: () => ({
+        loadAd: false
+    }),
+
     methods: {
         async startAd(index) {
             const duration = (index + 1) * 30;
-            this.$parent.loadAd = true;
-            await this.client.commercial.start(this.user.id, duration);
+            this.loadAd = true;
+            const success = await this.client.commercial.start(this.user.id, duration)
+                .catch(() => (false));
+            
+            if (success) {
+                this.addNotification({
+                    text: `Вы запустили рекламу на ${duration} секунд`,
+                    color: "#28a745",
+                    handle: 5
+                });
+            }
 
-            this.addNotification({
-                text: `Вы запустили рекламу на ${duration} секунд`,
-                color: "#28a745",
-                handle: 5
-            });
-
-            this.$parent.loadAd = false;
+            this.loadAd = false;
         }
     }
 };
