@@ -4,7 +4,7 @@
             v-for="service of servicesList"
             :key="service.id"
             :service="service"
-            @click.self.native="changeService(service)"
+            @click.native="changeService(service)"
         />
     </div>
 </template>
@@ -45,7 +45,7 @@ export default {
     methods: {
         async changeService(service) {
             if (this.settings.service === service.id) {
-                return;
+                return false;
             }
 
             this.settings.service = service.id;
