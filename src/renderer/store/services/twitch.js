@@ -139,7 +139,9 @@ export default {
                 state.tags["followers-only"] = enabled ? "0" : "-1";
                 
                 // eslint-disable-next-line max-len
-                return dispatch("ADD_SYSTEM_MESSAGE", `Режим "только для фолловеров" ${enabled ? "включен" : "выключен"}`);
+                return dispatch("service/ADD_SYSTEM_MESSAGE", `Режим "только для фолловеров" ${enabled ? "включен" : "выключен"}`, {
+                    root: true
+                });
             });
 
             chat.on("connected", () => {
