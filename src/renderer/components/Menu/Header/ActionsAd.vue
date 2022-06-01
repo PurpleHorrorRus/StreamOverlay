@@ -1,26 +1,19 @@
 <template>
     <div id="menu-header-actions-ad">
-        <Button
+        <SolidButton
             v-for="(_, index) of 6"
             :key="index"
-            :label="`${(index + 1) * 30}`"
+            :label="`Реклама: ${(index + 1) * 30} сек.`"
             :load="$parent.loadAd"
-            :tooltip="`Реклама на ${(index + 1) * 30} секунд`"
             @click.native="startAd(index)"
         />
     </div>
 </template>
 
 <script>
-import Button from "~/components/Menu/Header/Button";
-
 import CoreMixin from "~/mixins/core";
 
 export default {
-    components: {
-        Button
-    },
-
     mixins: [CoreMixin],
 
     methods: {

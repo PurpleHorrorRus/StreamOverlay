@@ -1,14 +1,11 @@
 <template>
     <div id="menu-header-actions">
-        <Link v-for="item of items" :key="item.to" :item="item" />
-        <ActionsAd v-if="streaming && isPartner" />
+        <HeaderLink v-for="item of items" :key="item.to" :item="item" />
         <div id="menu-header-actions-other">
-            <Button
-                v-if="streaming"
-                :icon="['fas', 'film']"
+            <SolidButton
+                v-tooltip="'Создать клип на 15 секунд'"
                 :load="loadClip"
                 label="Клип"
-                tooltip="Создать клип на 15 секунд"
                 @click.native="createClip"
             />
         </div>
@@ -20,9 +17,7 @@ import OBSMixin from "~/mixins/obs";
 
 export default {
     components: {
-        Link: () => import("~/components/Menu/Header/Link"),
-        ActionsAd: () => import("~/components/Menu/Header/ActionsAd"),
-        Button: () => import("~/components/Menu/Header/Button")
+        HeaderLink: () => import("~/components/Menu/Header/Link")
     },
 
     mixins: [OBSMixin],
