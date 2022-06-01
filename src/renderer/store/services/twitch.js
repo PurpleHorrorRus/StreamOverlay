@@ -248,11 +248,9 @@ export default {
             data.nickname = data.nickname.toLowerCase();
             const username = rootState.service.user.nickname.toLowerCase();
 
-            if (data.duration) {
-                client.timeout(username, data.nickname, data.duration, data.reason);
-            } else {
-                client.ban(username, data.nickname, data.reason);
-            }
+            data.duration
+                ? rootState.service.chat.timeout(username, data.nickname, data.duration, data.reason)
+                : rootState.service.chat.ban(username, data.nickname, data.reason);
         },
         
         UPDATE: async ({ dispatch, rootState }, data) => {
