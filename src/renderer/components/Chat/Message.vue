@@ -30,7 +30,7 @@
             v-text="message.nickname"
         />
 
-        <Body v-if="!message.banned" :items="message.formatted" />
+        <MessageBody v-if="!message.banned" :items="message.formatted" />
         <span
             v-else
             class="message-banned stroke"
@@ -42,7 +42,7 @@
 
 <script>
 import Badges from "~/components/Chat/Badges";
-import Body from "~/components/Chat/Body";
+import MessageBody from "~/components/Chat/Body";
 
 import CoreMixin from "~/mixins/core";
 import MessageMixin from "~/components/Chat/Mixin";
@@ -50,7 +50,7 @@ import MessageMixin from "~/components/Chat/Mixin";
 export default {
     components: {
         Badges,
-        Body
+        MessageBody
     },
 
     mixins: [CoreMixin, MessageMixin],
