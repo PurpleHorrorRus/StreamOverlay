@@ -20,7 +20,8 @@
         "ansi-regex": "^5.0.1",
         "ansi-html": "^0.0.8",
         "nth-check": "^2.0.1",
-        "is-svg": "^4.2.2"
+        "is-svg": "^4.2.2",
+        "async": "^3.2.2"
     },
     "scripts": {
         "dev": "node .electron-nuxt/dev.js",
