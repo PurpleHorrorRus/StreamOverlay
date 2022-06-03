@@ -25,6 +25,7 @@
 import CoreMixin from "~/mixins/core";
 
 let interval = null;
+let timeout = null;
 
 export default {
     components: {
@@ -39,18 +40,20 @@ export default {
     }),
 
     async created() {
-        this.loading = true;
-        await this.get();
         interval = setInterval(() => this.get(), 15 * 1000);
-        this.loading = false;
+    },
+
+    mounted() {
+        timeout = setTimeout(async () => {
+            await this.get();
+            this.loading = false;
+        }, 1000);
     },
 
     beforeDestroy() {
-        this.exit();
-    },
-    
-    destroyed() {
-        this.exit();
+        clearTimeout(timeout);
+        clearInterval(interval);
+        interval = null;
     },
 
     methods: {
@@ -68,13 +71,6 @@ export default {
             this.settings.ViewersList.x = x;
             this.settings.ViewersList.y = y;
             this.save();
-        },
-
-        exit() {
-            if (interval) {
-                clearInterval(interval);
-                interval = null;
-            }
         }
     }
 };
