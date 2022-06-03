@@ -273,7 +273,7 @@ export default {
         },
 
         GET_STREAM: async ({ rootState }) => {
-            const channel = await rootState.service.client.channels.get(rootState.service.user.nickname);
+            const channel = await rootState.service.client.channels.get(rootState.service.user.id);
             return {
                 title: channel.live_title,
                 game: channel.category_name
@@ -281,7 +281,7 @@ export default {
         },
 
         VIEWERS_COUNT: async ({ rootState }) => {
-            const channel = await rootState.service.client.channels.get(rootState.service.user.nickname);
+            const channel = await rootState.service.client.channels.get(rootState.service.user.id);
             return Number(channel?.current_viewers) || 0;
         },
 
