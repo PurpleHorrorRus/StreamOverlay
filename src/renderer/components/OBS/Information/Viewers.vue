@@ -15,9 +15,16 @@ export default {
 
     mixins: [MetaInfoMixin],
 
+    computed: {
+        interval: {
+            get() { return this.$store.state.service.intervals.viewers; },
+            set(value) { this.$store.state.service.intervals.viewers = value; }
+        }
+    },
+
     methods: {
         async update() {
-            this.count = await this.serviceDispatch("VIEWERS_COUNT") || 0;
+            this.count = await this.serviceDispatch("VIEWERS_COUNT");
         }
     }
 };

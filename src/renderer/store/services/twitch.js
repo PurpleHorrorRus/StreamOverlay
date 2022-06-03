@@ -266,12 +266,12 @@ export default {
                 user_id: rootState.service.user.id 
             });
 
-            return stream?.viewer_count;
+            return Number(stream?.viewer_count) || 0;
         },
 
         FOLLOWERS_COUNT: async ({ rootState }) => {
             const follows = await rootState.service.client.users.follows(rootState.service.user.id);
-            return follows?.total || 0;
+            return Number(follows?.total) || 0;
         },
 
         CHATTERS: async ({ rootState }) => {

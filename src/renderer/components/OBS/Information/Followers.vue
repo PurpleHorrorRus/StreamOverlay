@@ -15,6 +15,13 @@ export default {
 
     mixins: [MetaInfoMixin],
 
+    computed: {
+        interval: {
+            get() { return this.$store.state.service.intervals.followers; },
+            set(value) { this.$store.state.service.intervals.followers = value; }
+        }
+    },
+
     methods: {
         async update() {
             this.count = await this.serviceDispatch("FOLLOWERS_COUNT");

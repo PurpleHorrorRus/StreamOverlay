@@ -50,7 +50,12 @@ export default {
         connected: false,
 
         messages: [],
-        stream: emptyStream
+        stream: emptyStream,
+
+        intervals: {
+            viewers: null,
+            followers: null
+        }
     }),
 
     actions: {

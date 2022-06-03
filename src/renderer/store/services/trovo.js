@@ -282,7 +282,7 @@ export default {
 
         VIEWERS_COUNT: async ({ rootState }) => {
             const channel = await rootState.service.client.channels.get(rootState.service.user.nickname);
-            return channel?.current_viewers;
+            return Number(channel?.current_viewers) || 0;
         },
 
         FOLLOWERS_COUNT: async ({ rootState }) => {
