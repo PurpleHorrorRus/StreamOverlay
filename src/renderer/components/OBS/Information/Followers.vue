@@ -27,7 +27,7 @@ export default {
 
     methods: {
         async update() {
-            this.count = await this.serviceDispatch("VIEWERS_COUNT");
+            this.count = await this.serviceDispatch("FOLLOWERS_COUNT");
         }
     }
 };
