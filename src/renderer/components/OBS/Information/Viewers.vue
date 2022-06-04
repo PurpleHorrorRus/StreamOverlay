@@ -8,6 +8,8 @@
 <script>
 import MetaInfoMixin from "~/components/OBS/Information/Mixin";
 
+let interval = null;
+
 export default {
     components: {
         ViewersIcon: () => import("~/assets/icons/eye.svg")
@@ -15,11 +17,12 @@ export default {
 
     mixins: [MetaInfoMixin],
 
-    computed: {
-        interval: {
-            get() { return this.$store.state.service.intervals.viewers; },
-            set(value) { this.$store.state.service.intervals.viewers = value; }
-        }
+    mounted() {
+        interval = setInterval(() => this.update(), 10 * 1000);
+    },
+
+    beforeDestroy() {
+        clearInterval(interval);
     },
 
     methods: {

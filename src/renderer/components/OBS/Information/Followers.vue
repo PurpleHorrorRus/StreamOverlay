@@ -8,6 +8,8 @@
 <script>
 import MetaInfoMixin from "~/components/OBS/Information/Mixin";
 
+let interval = null;
+
 export default {
     components: {
         HeartIcon: () => import("~/assets/icons/heart.svg")
@@ -15,16 +17,17 @@ export default {
 
     mixins: [MetaInfoMixin],
 
-    computed: {
-        interval: {
-            get() { return this.$store.state.service.intervals.followers; },
-            set(value) { this.$store.state.service.intervals.followers = value; }
-        }
+    mounted() {
+        interval = setInterval(() => this.update(), 10 * 1000);
+    },
+
+    beforeDestroy() {
+        clearInterval(interval);
     },
 
     methods: {
         async update() {
-            this.count = await this.serviceDispatch("FOLLOWERS_COUNT");
+            this.count = await this.serviceDispatch("VIEWERS_COUNT");
         }
     }
 };
