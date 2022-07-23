@@ -31,10 +31,9 @@ import OtherMixin from "~/mixins/other";
 
 const notifications = {
     controls: {
-        text:
-                        "Управление:<br/>\
-                        Alt + R - меню<br/>\
-                        Alt + K - список зрителей",
+        text: "Управление:<br/>\
+            Alt + R - меню<br/>\
+            Alt + K - список зрителей",
 
         color: "#343a40",
         icon: () => import("~/assets/icons/keyboard.svg"),
@@ -73,7 +72,6 @@ export default {
         }
 
         if (!this.config) {
-            ipcRenderer.send("dom-ready");
             const config = await ipcRenderer.invoke("config");
             await this.setConfig(config);
         }
@@ -94,7 +92,7 @@ export default {
             this.setActivity();
 
             this.addNotification(notifications.controls);
-            return true;
+            return ipcRenderer.send("dom-ready");
         }
 
         return false;
@@ -123,6 +121,7 @@ export default {
 
         registerIPC() {
             ipcRenderer.once("update-available", (_, release) => {
+                console.log(release);
                 return this.turnUpdate(release);
             });
 

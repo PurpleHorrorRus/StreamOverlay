@@ -46,6 +46,7 @@ export default {
         },
 
         TURN_UPDATE: ({ state }, release) => {
+            console.log(release);
             state.update.release = release;
             state.update.show = true;
             return true;

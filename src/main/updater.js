@@ -12,14 +12,20 @@ class Updater {
     }
 
     init () {
-        autoUpdater.on("error", () => {
-            return;
+        autoUpdater.on("error", () => {});
+
+        autoUpdater.on("download-progress", progress => {
+            return common.windows.send(this.window, "download-progress", progress);
         });
 
-        // eslint-disable-next-line max-len
-        autoUpdater.on("download-progress", progress => common.windows.send(this.window, "download-progress", progress));
-        autoUpdater.once("update-available", info => common.windows.send(this.window, "update-available", info));
-        autoUpdater.once("update-downloaded", () => autoUpdater.quitAndInstall(true, true));
+        autoUpdater.once("update-available", info => {
+            return common.windows.send(this.window, "update-available", info);
+        });
+
+        autoUpdater.once("update-downloaded", () => {
+            return autoUpdater.quitAndInstall(true, true);
+        });
+
         autoUpdater.checkForUpdates();
 
         return {
