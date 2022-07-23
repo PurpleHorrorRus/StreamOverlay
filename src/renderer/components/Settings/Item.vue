@@ -79,7 +79,7 @@ export default {
 
     &.checked {
         .v-switch-core {
-            background-color: $secondary !important;
+            background-color: var(--secondary) !important;
         }
     }
 

@@ -77,7 +77,7 @@ export default {
                     
                     margin: 10px 0px;
 
-                    color: $small-text;
+                    color: var(--small-text);
                     font-size: 12px;
                 }
 

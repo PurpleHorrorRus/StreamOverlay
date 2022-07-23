@@ -77,7 +77,7 @@ export default {
 
     padding: 10px;
 
-    border-left: 1px solid $outline;
+    border-left: 1px solid var(--outline);
 
     &-other {
         display: flex;
@@ -110,7 +110,7 @@ export default {
     }
 
     &:hover {
-        background: $secondary;
+        background: var(--secondary);
         cursor: pointer;
     }
 

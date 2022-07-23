@@ -90,12 +90,12 @@ export default {
         
         border-radius: 4px;
 
-        color: $text;
+        color: var(--text);
 
         outline: none;
 
         &:focus {
-            border-bottom: 2px solid $secondary;
+            border-bottom: 2px solid var(--secondary);
         }
     }
 }

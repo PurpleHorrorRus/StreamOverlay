@@ -1,5 +1,6 @@
 [
     "~assets/css/global.scss",
+    "~assets/css/colors.css",
     "vue-draggable-resizable/dist/VueDraggableResizable.css",
     "vue-range-component/dist/vue-range-slider.css"
 ]

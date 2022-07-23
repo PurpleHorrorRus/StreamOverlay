@@ -34,12 +34,12 @@ export default {
     &-line {
         height: 2px;
 
-        background: $secondary;
+        background: var(--secondary);
         border-radius: 4px;
     }
 
     &-percent {
-        color: $small-text;
+        color: var(--small-text);
         font-size: 12px;
     }
 }

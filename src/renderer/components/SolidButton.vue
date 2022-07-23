@@ -41,7 +41,7 @@ export default {
 
     padding: 0px 5px 0px 5px;
 
-    background: $secondary;
+    background: var(--secondary);
     border-radius: 4px;
 
     font-size: 9pt;
@@ -51,7 +51,7 @@ export default {
 
     &.disabled {
         cursor: not-allowed;
-        background: $disabled;
+        background: var(--disabled);
 
         * {
             &:hover {
@@ -67,13 +67,13 @@ export default {
 
         &:hover {
             cursor: pointer;
-            background: $secondary-hover;
+            background: var(--secondary-hover);
         }
     }
 
     &-text {
         display: inline-block;
-        color: $text;
+        color: var(--text);
     }
 
     .icon {

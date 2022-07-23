@@ -22,11 +22,19 @@ export default {
     align-content: center;
 
     width: 30px;
+    height: 30px !important;
 
     @include obs-item;
 
+    transition: border .1s ease-in-out;
+
     &.disabled {
         border: 1px solid #740a0a;
+    }
+
+    .icon {
+        width: auto;
+        height: 75%;
     }
 }
 </style>

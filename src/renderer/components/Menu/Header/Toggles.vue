@@ -44,7 +44,7 @@ export default {
 
     padding: 10px;
 
-    border-left: 1px solid $outline;
+    border-left: 1px solid var(--outline);
 
     .setting-item-block-name {
         font-size: 12px;

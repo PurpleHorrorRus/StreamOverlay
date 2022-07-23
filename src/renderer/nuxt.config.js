@@ -28,14 +28,21 @@ module.exports = {
     modules: webpackModules,
 
     styleResources: {
-        scss: [
-            "~assets/css/colors.scss", 
-            "~assets/css/mixins.scss"
-        ]
+        scss: ["~assets/css/mixins.scss"]
     },
     
     build: {
         publicPath: "./_nuxt/",
+
+        babel: {
+            presets() {
+                return [
+                    ["@nuxt/babel-preset-app", {
+                        corejs: { version: 3 }
+                    }]
+                ];
+            }
+        },
 
         extend(config, { isClient }) {
             config.resolve.alias.vue = "vue/dist/vue.min";

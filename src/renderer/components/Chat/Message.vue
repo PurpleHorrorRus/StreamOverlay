@@ -178,7 +178,7 @@ export default {
         position: relative;
         top: 2px;
 
-        color: $small-text;
+        color: var(--small-text);
         font-family: "Roboto Condensed";
     }
 }

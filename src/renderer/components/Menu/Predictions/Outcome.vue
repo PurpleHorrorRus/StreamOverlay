@@ -37,7 +37,7 @@ export default {
     border-radius: 5px;
 
     &:hover {
-        border: 1px solid $secondary;
+        border: 1px solid var(--secondary);
         
         cursor: pointer;
     }

@@ -36,6 +36,8 @@ export default {
     },
 
     created() {
+        document.getElementsByTagName("html")[0].classList.add(this.settings.service);
+
         this.turnLock(true);
 
         ipcRenderer.on("turnLock", (_event, mouse) => {

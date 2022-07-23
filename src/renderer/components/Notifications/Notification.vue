@@ -40,7 +40,7 @@ export default {
     margin-bottom: 10px;
     padding: 15px;
 
-    background: $backdrop;
+    background: var(--backdrop);
     box-shadow: 0 3px 6px #00000029, 0 3px 6px #00000003;
     border-radius: 4px;
 

@@ -214,11 +214,11 @@ export default {
     border: none;
 
     &.edit {
-        background: linear-gradient($secondary, $secondary) top
+        background: linear-gradient(var(--secondary), var(--secondary)) top
                 center/calc(100%) 2px,
-            linear-gradient($secondary, $secondary) bottom center/calc(100%) 2px,
-            linear-gradient($secondary, $secondary) left center/2px calc(100%),
-            linear-gradient($secondary, $secondary) right center/2px calc(100%);
+            linear-gradient(var(--secondary), var(--secondary)) bottom center/calc(100%) 2px,
+            linear-gradient(var(--secondary), var(--secondary)) left center/2px calc(100%),
+            linear-gradient(var(--secondary), var(--secondary)) right center/2px calc(100%);
 
         background-repeat: no-repeat;
         cursor: move;

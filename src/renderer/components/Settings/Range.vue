@@ -98,7 +98,7 @@ export default {
 
     .slider  {
         .slider-process {
-            background-color: $secondary !important;
+            background-color: var(--secondary) !important;
         }
     }
 }

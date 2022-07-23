@@ -53,7 +53,7 @@ export default {
         "progress label"
         "release release";
 
-    background: $backdrop;
+    background: var(--backdrop);
 
     gap: 10px;
 
@@ -74,7 +74,7 @@ export default {
         &-line {
             height: 2px;
 
-            background-color: $secondary;
+            background-color: var(--secondary);
         }
     }
 

@@ -48,8 +48,8 @@ export default {
 
     position: relative;
 
-    background: $primary;
-    border-top: 2px solid $secondary;
+    background: var(--primary);
+    border-top: 2px solid var(--secondary);
     border-radius: 4px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 
@@ -62,7 +62,7 @@ export default {
 
     &.stream {
         #menu-header-profile-avatar-image {
-            border: 2px solid $secondary;
+            border: 2px solid var(--secondary);
         }
     }
 }

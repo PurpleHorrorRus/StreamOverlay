@@ -7,8 +7,18 @@ html {
 	-webkit-font-smoothing: antialiased;
     box-sizing: border-box;
 
+    --secondary: #9c3536;
+    --secondary-hover: #c24244;
+    --disabled: #702526;
+
     * {
         user-select: none;
+    }
+
+    &.trovo {
+        --secondary: #21b36c;
+        --secondary-hover: #24ca7a;
+        --disabled: #178550;
     }
 }
 
@@ -26,7 +36,7 @@ html, body, #__nuxt, #__layout, #content {
 
 div, span, input {
 	font-family: Roboto;
-	color: $text;
+	color: var(--text);
 }
 
 .nowrap {
@@ -37,12 +47,12 @@ div, span, input {
 }
 
 .small-text {
-    color: $small-text;
+    color: var(--small-text);
     font-size: 9pt;
 }
 
 .link {
-    color: $outline;
+    color: var(--outline);
     cursor: pointer;
 }
 
@@ -86,18 +96,18 @@ div, span, input {
         cursor: pointer;
         
         &.feather {
-            stroke: $secondary;
+            stroke: var(--secondary);
         }
 
         &:not(.feather) {
-            fill: $secondary
+            fill: var(--secondary)
         }
     }
 }
 
 div {
     &.edit {
-        background: $secondary;
+        background: var(--secondary);
     }
 
     &:not(.edit) {
@@ -111,7 +121,7 @@ div {
             }
     
             &:hover {
-                background: $outline;
+                background: var(--outline);
             }
         }
     }
@@ -119,7 +129,7 @@ div {
 
 a {
     &.active {
-        background: $secondary;
+        background: var(--secondary);
     }
 
     &.clickable {
@@ -133,7 +143,7 @@ a {
             }
     
             &:hover {
-                background: $secondary;
+                background: var(--secondary);
             }
         }
     }
@@ -146,7 +156,7 @@ a {
     box-shadow: 0 10px 20px rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0, 0, .23);
   
     .tooltip-inner {
-        background: $secondary;
+        background: var(--secondary);
         color: #fff;
         border-radius: 10px;
         padding: 10px;
@@ -159,7 +169,7 @@ a {
         position: absolute;
         margin: 5px;
         margin-right: 15px;
-        border-color: $secondary;
+        border-color: var(--secondary);
         z-index: 1;
     }
   
@@ -219,6 +229,6 @@ a {
 
 * {
     &::selection {
-        background: $secondary;
+        background: var(--secondary);
     }
 }

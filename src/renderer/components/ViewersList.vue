@@ -83,7 +83,7 @@ export default {
     width: 100%;
     height: 100%;
 
-    background: $backdrop !important;
+    background: var(--backdrop) !important;
     border-radius: 3px;
     z-index: 50;
 

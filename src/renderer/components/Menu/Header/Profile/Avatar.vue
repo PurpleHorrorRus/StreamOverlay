@@ -49,7 +49,7 @@ export default {
 
         border-radius: 5px;
 
-        background: $secondary;
+        background: var(--secondary);
 
         font-size: 12px
     }

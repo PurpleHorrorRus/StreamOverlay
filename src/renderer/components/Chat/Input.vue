@@ -51,9 +51,9 @@ export default {
 
         padding: 10px;
 
-        background: $primary;
+        background: var(--primary);
         border: none;
-        border-top: 1px solid $secondary;
+        border-top: 1px solid var(--secondary);
         outline: none;
 
         font-size: 16px;

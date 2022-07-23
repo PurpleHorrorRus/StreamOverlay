@@ -61,7 +61,7 @@ export default {
     &.input {
         grid-template-rows: 1fr 40px;
 
-        background: $primary;
+        background: var(--primary);
 
         box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 

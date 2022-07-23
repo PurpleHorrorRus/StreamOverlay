@@ -25,6 +25,6 @@ export default {
     font-size: 18px;
     font-weight: bold;
 
-    border-bottom: 1px solid $secondary;
+    border-bottom: 1px solid var(--secondary);
 }
 </style>

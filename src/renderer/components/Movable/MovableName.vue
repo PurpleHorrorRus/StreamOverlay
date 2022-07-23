@@ -50,7 +50,7 @@ export default {
 
     padding: 2px;
 
-    background: $secondary;
+    background: var(--secondary);
 
     border-radius: 4px 4px 0px 0px;
 
