@@ -78,10 +78,6 @@ export default {
             await this.setConfig(config);
         }
 
-        if (this.config.obs && !this.OBSConnected) {
-            this.connectOBS();
-        }
-
         if (this.widgets.length === 0 && this.config.widgets.length > 0) {
             this.setWidgets(this.config.widgets);
         }
@@ -93,6 +89,7 @@ export default {
             }
 
             this.initService();
+            this.connectOBS();
             this.registerIPC();
             this.setActivity();
 
