@@ -4,6 +4,12 @@
         <div class="modal-body">
             <MenuError v-if="error" :error="error" />
 
+            <ToggleButton 
+                :text="'Включить бейджики'" 
+                :checked="settings.chat.badges"
+                @change="deepChange(settings.chat, 'badges')" 
+            />
+
             <Input
                 text="Имя пользователя Twitch"
                 :value="username"

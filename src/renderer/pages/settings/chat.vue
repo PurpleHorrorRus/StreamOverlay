@@ -15,12 +15,6 @@
                         :checked="settings.chat.avatar" 
                         @change="deepChange(settings.chat, 'avatar')" 
                     />
-
-                    <ToggleButton 
-                        :text="'Включить бейджики (Twitch)'" 
-                        :checked="settings.chat.badges"
-                        @change="deepChange(settings.chat, 'badges')" 
-                    />
                 </div>
 
                 <div id="modal-chat-content-notifications">
