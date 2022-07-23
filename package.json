@@ -11,23 +11,6 @@
     "engines": {
         "node": ">=16.8.0"
     },
-    "resolutions": {
-        "glob-parent": "^5.1.2",
-        "css-what": "^5.0.1",
-        "normalize-url": "^4.5.1",
-        "set-value": "^4.0.1",
-        "node-fetch": "2.6.7",
-        "ansi-regex": "^5.0.1",
-        "ansi-html": "^0.0.8",
-        "nth-check": "^2.0.1",
-        "is-svg": "^4.2.2",
-        "async": "^3.2.2",
-        "parse-url": "^6.0.1",
-        "shell-quote": "^1.7.3",
-        "terser": "^4.8.1",
-        "parse-path": "^5.0.0",
-        "got": "^11.8.5"
-    },
     "scripts": {
         "dev": "node .electron-nuxt/dev.js",
         "build": "node .electron-nuxt/build.js",
