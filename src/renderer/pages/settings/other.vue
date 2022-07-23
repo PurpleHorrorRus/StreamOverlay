@@ -26,6 +26,12 @@
             />
 
             <ToggleButton
+                :text="'Включить интеграцию с Discord'"
+                :checked="settings.discord"
+                @change="turnDiscord"
+            />
+
+            <ToggleButton
                 :text="'Включить аппаратное ускорение'"
                 :checked="settings.hardwareAcceleration"
                 tip="Необходима перезагрузка приложения"
@@ -68,6 +74,13 @@ export default {
     layout: "modal",
 
     methods: {
+        turnDiscord() {
+            this.deepChange(this.settings, "discord");
+            return this.settings.discord 
+                ? this.setActivity()
+                : this.clearActivity();
+        },
+
         turnDevtools() {
             this.deepChange(this.settings, "devtools");
             ipcRenderer.send("devTools", this.settings.devtools);

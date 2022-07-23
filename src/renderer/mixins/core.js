@@ -26,7 +26,10 @@ export default {
 
             setConfig: "SET_CONFIG",
             setSettings: "settings/SET",
-            saveSettings: "settings/SAVE"
+            saveSettings: "settings/SAVE",
+
+            setActivity: "discord/SET_ACTIVITY",
+            clearActivity: "discord/CLEAR_ACTIVITY"
         }),
 
         save(content = this.settings, type = "settings") {

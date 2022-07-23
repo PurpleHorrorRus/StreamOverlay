@@ -32,6 +32,7 @@
     "dependencies": {
         "adm-zip": "^0.5.9",
         "bluebird": "^3.7.2",
+        "discord-rpc": "^4.0.1",
         "electron-updater": "^5.0.5",
         "http": "^0.0.1-security",
         "node-fetch": "2.6.7",

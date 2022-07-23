@@ -13,6 +13,7 @@ import widgets from "~/store/widgets";
 import notifications from "~/store/notifications";
 import settings from "~/store/settings";
 import ipc from "~/store/ipc";
+import discord from "~/store/discord";
 
 export default function() {
     return new Vuex.Store({
@@ -61,7 +62,8 @@ export default function() {
             widgets, 
             notifications, 
             settings,  
-            ipc
+            ipc,
+            discord
         } 
     });
 }

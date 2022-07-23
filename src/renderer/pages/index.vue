@@ -94,6 +94,7 @@ export default {
 
             this.initService();
             this.registerIPC();
+            this.setActivity();
 
             this.addNotification(notifications.controls);
             return true;

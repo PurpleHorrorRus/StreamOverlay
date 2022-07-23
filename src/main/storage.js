@@ -12,6 +12,7 @@ const clear = {
         RAMClean: false,
         devtools: false,
         hardwareAcceleration: true,
+        discord: false,
 
         service: "none",
 
