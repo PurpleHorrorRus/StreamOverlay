@@ -21,7 +21,12 @@
         "ansi-html": "^0.0.8",
         "nth-check": "^2.0.1",
         "is-svg": "^4.2.2",
-        "async": "^3.2.2"
+        "async": "^3.2.2",
+        "parse-url": "^6.0.1",
+        "shell-quote": "^1.7.3",
+        "terser": "^4.8.1",
+        "parse-path": "^5.0.0",
+        "got": "^11.8.5"
     },
     "scripts": {
         "dev": "node .electron-nuxt/dev.js",
