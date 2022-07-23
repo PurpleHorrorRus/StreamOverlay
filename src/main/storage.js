@@ -12,7 +12,6 @@ const clear = {
         RAMClean: false,
         devtools: false,
         hardwareAcceleration: true,
-        outputDeviceId: "default",
 
         service: "none",
 
@@ -94,7 +93,11 @@ const clear = {
     }
 };
 
-const readJSON = dir => JSON.parse(fs.readFileSync(dir, "UTF-8"));
+const readJSON = dir => {
+    const content = fs.readFileSync(dir, "utf-8");
+    return JSON.parse(content);
+};
+
 const writeJSON = (dir, content) => {
     fs.writeFileSync(dir, JSON.stringify(content, null, 4));
     return content;
