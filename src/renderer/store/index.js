@@ -29,7 +29,9 @@ export default function() {
                 }
             },
 
-            SERVICE_DISPATCH: async ({ dispatch, state }, { action, data }) => {
+            SERVICE_DISPATCH: async ({ dispatch, state }, request) => {
+                const action = request.action || request;
+                const data = request.data || null;
                 const service = state.settings.settings.service;
                 return await dispatch(`${service}/${action}`, data);
             },

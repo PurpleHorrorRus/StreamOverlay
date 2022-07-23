@@ -1,34 +1,22 @@
 <template>
     <div id="meta-info-followers">
         <HeartIcon class="icon" />
-        <span id="meta-info-followers-count" v-text="count" />
+        <span id="meta-info-followers-count" v-text="followers" />
     </div>
 </template>
 
 <script>
-import MetaInfoMixin from "~/components/OBS/Information/Mixin";
-
-let interval = null;
+import { mapState } from "vuex";
 
 export default {
     components: {
         HeartIcon: () => import("~/assets/icons/heart.svg")
     },
 
-    mixins: [MetaInfoMixin],
-
-    mounted() {
-        interval = setInterval(() => this.update(), 10 * 1000);
-    },
-
-    beforeDestroy() {
-        clearInterval(interval);
-    },
-
-    methods: {
-        async update() {
-            this.count = await this.serviceDispatch("FOLLOWERS_COUNT");
-        }
+    computed: {
+        ...mapState({
+            followers: state => state.service.followers
+        })
     }
 };
 </script>

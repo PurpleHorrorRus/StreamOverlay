@@ -40,6 +40,8 @@ const ReadTTS = async file => {
     };
 };
 
+let serviceInfoInterval = null;
+
 export default {
     namespaced: true,
 
@@ -52,10 +54,8 @@ export default {
         messages: [],
         stream: emptyStream,
 
-        intervals: {
-            viewers: null,
-            followers: null
-        }
+        viewers: 0,
+        followers: 0
     }),
 
     actions: {
@@ -77,6 +77,21 @@ export default {
         SET_STREAM: ({ state }, stream) => {
             state.stream = stream;
             return state.stream;
+        },
+
+        INIT: async ({ dispatch }) => {
+            dispatch("UPDATE_INFO");
+            serviceInfoInterval = setInterval(() => dispatch("UPDATE_INFO"), 10000);
+        },
+
+        UPDATE_INFO: async ({ dispatch, state }) => {
+            const [viewers, followers] = await Promise.all([
+                dispatch("SERVICE_DISPATCH", "VIEWERS_COUNT", { root: true }),
+                dispatch("SERVICE_DISPATCH", "FOLLOWERS_COUNT", { root: true })
+            ]);
+
+            state.viewers = viewers;
+            state.followers = followers;
         },
 
         ADD_MESSAGE: async ({ dispatch, state, rootState }, message) => {

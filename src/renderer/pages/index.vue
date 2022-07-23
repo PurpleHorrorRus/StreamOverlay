@@ -68,7 +68,6 @@ export default {
     
     async mounted() {
         this.edit = Boolean(this.$route.query.edit);
-
         if (this.edit) {
             return false;
         }
@@ -88,14 +87,15 @@ export default {
         }
 
         if (await this.authService()) {
-            this.addNotification(notifications.controls);
-            this.registerIPC();
-
             if (this.settings.first) {
                 this.settings.first = false;
                 this.save();
             }
 
+            this.initService();
+            this.registerIPC();
+
+            this.addNotification(notifications.controls);
             return true;
         }
 
@@ -103,6 +103,8 @@ export default {
     },
     methods: {
         ...mapActions({
+            initService: "service/INIT",
+
             turnLock: "ipc/TURN_LOCK",
 
             connectOBS: "obs/CONNECT",
