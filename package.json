@@ -11,6 +11,12 @@
     "engines": {
         "node": ">=16.8.0"
     },
+    "resolutions": {
+        "nth-check": "^2.0.1",
+        "glob-parent": "^5.1.2",
+        "parse-path": "^5.0.0",
+        "got": "^11.8.5"
+    },
     "scripts": {
         "dev": "node .electron-nuxt/dev.js",
         "build": "node .electron-nuxt/build.js",
