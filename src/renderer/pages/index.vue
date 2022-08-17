@@ -88,7 +88,6 @@ export default {
             this.setActivity();
 
             this.addNotification(notifications.controls);
-            return ipcRenderer.send("dom-ready");
         }
 
         return ipcRenderer.send("dom-ready");
