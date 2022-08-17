@@ -4,6 +4,10 @@ import common from "./common";
 
 class Handlers {
     constructor (mainWindowInstance) {
+        this.mainWindowInstance = mainWindowInstance;
+    }
+
+    main() {
         const config = () => {
             common.storage.config.display = screen.getPrimaryDisplay().size;
             return common.storage.config;
@@ -14,20 +18,23 @@ class Handlers {
             : ipcMain.handleOnce("config", config);
 
         ipcMain.on("turnMouse", (_event, enabled) => {
-            mainWindowInstance.window.setIgnoreMouseEvents(!enabled);
-            enabled 
-                ? mainWindowInstance.hotkeys.registerMenuHotkeys()
-                : mainWindowInstance.hotkeys.registerIndexHotkeys();
+            this.mainWindowInstance.window.setIgnoreMouseEvents(!enabled);
+
+            enabled
+                ? this.mainWindowInstance.hotkeys.registerMenuHotkeys()
+                : this.mainWindowInstance.hotkeys.registerIndexHotkeys();
         });
-        
+    }
+
+    create() {
         ipcMain.on("saveSettings", (_, args) => {
             common.storage.save(args.type, args.content);
         });
 
         ipcMain.on("devTools", (_event, sequence) => {
             sequence 
-                ? mainWindowInstance.window.webContents.openDevTools({ mode: "undocked" }) 
-                : mainWindowInstance.window.webContents.closeDevTools();
+                ? this.mainWindowInstance.window.webContents.openDevTools({ mode: "undocked" }) 
+                : this.mainWindowInstance.window.webContents.closeDevTools();
         });
 
         ipcMain.once("restart", () => {
@@ -36,7 +43,7 @@ class Handlers {
         });
 
         ipcMain.handle("FindWindow", (_, window) => {
-            return mainWindowInstance.addon.FindWindow(window);
+            return this.mainWindowInstance.addon.FindWindow(window);
         });
 
         ipcMain.handle("select", async (_, options) => {

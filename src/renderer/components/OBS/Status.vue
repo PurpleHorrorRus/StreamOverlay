@@ -1,6 +1,9 @@
 <template>
     <div id="status">
-        <DotIcon id="status-icon" class="icon" />
+        <div id="status-icon">
+            <img v-if="streaming" id="status-icon-streaming" :src="user.avatar">
+            <DotIcon v-if="recording" id="status-icon-recording" class="icon" />
+        </div>
 
         <div id="status-information">
             <span 
@@ -20,26 +23,26 @@
 <script>
 import { mapState } from "vuex";
 
-import DotIcon from "~/assets/icons/dot.svg";
-
 import misc from "~/plugins/misc";
+
+import OBSMixin from "~/mixins/obs";
 
 export default {
     components: {
-        DotIcon
+        DotIcon: () => import("~/assets/icons/dot.svg")
     },
+
+    mixins: [OBSMixin],
 
     computed: {
         ...mapState({
-            status: state => state.obs.status,
-            time: state => state.obs.time,
-            settings: state => state.settings.settings
+            time: state => state.obs.time
         }),
 
         label() {
-            if (this.status.stream && this.status.record) return "LIVE/REC";
-            else if (this.status.stream) return "LIVE";
-            else if (this.status.record) return "REC";
+            if (this.streaming && this.recording) return "LIVE/REC";
+            else if (this.streaming) return "LIVE";
+            else if (this.recording) return "REC";
             return "";
         },
         
@@ -54,20 +57,44 @@ export default {
 #status {
     display: flex;
     align-items: center;
-    column-gap: 5px;
+    column-gap: 8px;
 
     width: max-content;
 
     @include obs-item;
 
-    .icon {
-        width: 13px !important;
-    }
-
     &-information {
         display: flex;
         align-items: center;
         column-gap: 5px;
+
+        span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+    }
+
+    &-icon {
+        display: flex;
+        align-items: center;
+        column-gap: 10px;
+
+        &-streaming {
+            width: 20px;
+
+            border-radius: 100%;
+        }
+
+        &-recording {
+            position: relative;
+            top: 1px;
+
+            width: 10px !important;
+            
+            g, path {
+                fill: #ff0000 !important;
+            }
+        }
     }
 }
 </style>

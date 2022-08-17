@@ -12,6 +12,7 @@ export default {
     actions: {
         SETUP: async ({ dispatch }) => {
             interval = setInterval(() => dispatch("UPDATE"), 1000);
+            return interval;
         },
 
         FORMAT_TIME: (_, timecode) => {

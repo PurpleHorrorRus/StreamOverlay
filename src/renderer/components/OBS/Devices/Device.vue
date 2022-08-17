@@ -1,5 +1,5 @@
 <template>
-    <div class="device">
+    <div class="device" :class="deviceClass">
         <Component :is="icon" class="icon" />
     </div>
 </template>
@@ -10,6 +10,19 @@ export default {
         icon: {
             type: Object,
             required: true
+        },
+
+        disabled: {
+            type: Boolean,
+            required: true
+        }
+    },
+
+    computed: {
+        deviceClass() {
+            return {
+                disabled: this.disabled
+            };
         }
     }
 };
@@ -21,8 +34,8 @@ export default {
     justify-content: center;
     align-content: center;
 
-    width: 30px;
-    height: 30px !important;
+    width: 35px;
+    height: 35px !important;
 
     @include obs-item;
 

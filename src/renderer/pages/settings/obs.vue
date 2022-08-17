@@ -2,15 +2,9 @@
     <div id="modal-obs-content" class="modal-content">
         <Title id="modal-obs-content-title" title="Настройка OBS" />
         <div class="modal-body">
-            <div id="modal-obs-content-install">
-                <Install v-if="!installActive" />
-                <Installation v-else />
-            </div>
-
             <ToggleButton
                 :text="'Автопереподключение'"
                 :checked="config.obs.autoreconnect"
-                tip="Необходим перезапуск приложения."
                 @change="deepChange(config.obs, 'autoreconnect', 'obs')"
             />
 
@@ -18,12 +12,6 @@
                 :text="'Включить оповещение о низком FPS'"
                 :checked="settings.notifications.lowfps"
                 @change="deepChange(settings.notifications, 'lowfps')"
-            />
-
-            <ToggleButton
-                :text="'Включить оповещение о низком битрейте'"
-                :checked="settings.notifications.lowbitrate"
-                @change="deepChange(settings.notifications, 'lowbitrate')"
             />
 
             <Input text="Адрес подключения" :value="address" @input="address = $event" />
@@ -50,20 +38,10 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-
-import Install from "~/components/OBS/Settings/Websocket/Install";
-import Installation from "~/components/OBS/Settings/Websocket/Installation";
-
 import CoreMixin from "~/mixins/core";
 import OtherMixin from "~/mixins/other";
 
 export default {
-    components: {
-        Install,
-        Installation
-    },
-
     mixins: [CoreMixin, OtherMixin],
     
     layout: "modal",
@@ -71,15 +49,12 @@ export default {
     data: () => ({
         load: false,
         address: "localhost",
-        port: 4444,
+        port: 4455,
+        password: "",
         camera: ""
     }),
 
     computed: {
-        ...mapState({
-            installActive: state => state.websocketInstaller.active
-        }),
-
         disabled() {
             return this.address.length === 0 || this.port.length === 0;
         }
@@ -111,6 +86,7 @@ export default {
                 content: {
                     address: this.address,
                     port: this.port,
+                    password: this.password,
                     camera: webcamsCollection
                 }
             });
