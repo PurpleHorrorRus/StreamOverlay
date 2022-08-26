@@ -116,7 +116,6 @@ export default {
 
         registerIPC() {
             ipcRenderer.once("update-available", (_, release) => {
-                console.log(release);
                 return this.turnUpdate(release);
             });
 
