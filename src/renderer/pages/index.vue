@@ -4,7 +4,7 @@
 
         <div v-if="settings" id="content-valid">
             <Notifications />
-            <OBS v-if="showOBS" />
+            <OBS v-if="OBSConnected" />
             <Chat v-if="settings.chat.enable" />
             <Widget v-for="widget of widgets" :key="widget.id" :widget="widget" />
             <ViewersList v-if="showViewersList" />
@@ -54,11 +54,6 @@ export default {
     mixins: [OBSMixin, WidgetsMixin, OtherMixin],
 
     computed: {
-        showOBS() {
-            const ServiceInfo = this.settings.OBSStatus.ServiceInfo;
-            return this.connected && (ServiceInfo.enable || ServiceInfo.followers);
-        },
-
         showViewersList() {
             return this.connected 
                 && this.settings.ViewersList.enable;
@@ -67,6 +62,7 @@ export default {
     
     async mounted() {
         this.edit = Boolean(this.$route.query.edit);
+
         if (this.edit) {
             return false;
         }
@@ -92,10 +88,9 @@ export default {
             this.setActivity();
 
             this.addNotification(notifications.controls);
-            return ipcRenderer.send("dom-ready");
         }
 
-        return false;
+        return ipcRenderer.send("dom-ready");
     },
     methods: {
         ...mapActions({

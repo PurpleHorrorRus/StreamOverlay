@@ -27,13 +27,17 @@ if (app.requestSingleInstanceLock()) {
 
         mainWindowInstance = new MainWindow();
         mainWindowInstance.tray = new OverlayTray(mainWindowInstance);
+
         mainWindowInstance.handlers = new Handlers(mainWindowInstance);
+        mainWindowInstance.handlers.main();
+
         await mainWindowInstance.create();
 
         mainWindowInstance.hotkeys = new Hotkeys(mainWindowInstance.window);
         mainWindowInstance.hotkeys.register();
         mainWindowInstance.hotkeys.registerIndexHotkeys();
-
+        mainWindowInstance.handlers.create();
+        
         mainWindowInstance.addon = new Addon(mainWindowInstance.window);
         mainWindowInstance.addon.moveTop().interval(4000);
         mainWindowInstance.addon.clearMemory().interval(70000);
