@@ -30,6 +30,11 @@ if (app.requestSingleInstanceLock()) {
 
         mainWindowInstance.handlers = new Handlers(mainWindowInstance);
         mainWindowInstance.handlers.main();
+
+        await mainWindowInstance.create();
+
+        mainWindowInstance.handlers = new Handlers(mainWindowInstance);
+        mainWindowInstance.handlers.main();
         
         await mainWindowInstance.create();
         
