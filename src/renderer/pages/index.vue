@@ -54,6 +54,12 @@ export default {
     mixins: [OBSMixin, WidgetsMixin, OtherMixin],
 
     computed: {
+        showOBS() {
+            return this.connected
+                && (this.settings.OBSStatus.ServiceInfo.enable 
+                || this.settings.OBSStatus.ServiceInfo.followers);
+        },
+
         showViewersList() {
             return this.connected 
                 && this.settings.ViewersList.enable;
@@ -116,7 +122,6 @@ export default {
 
         registerIPC() {
             ipcRenderer.once("update-available", (_, release) => {
-                console.log(release);
                 return this.turnUpdate(release);
             });
 
