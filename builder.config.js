@@ -37,7 +37,8 @@ module.exports = Object.assign(windowsOS, {
         "!dist/renderer/icons",
         "!dist/win-unpacked",
         "package.json",
-        "node_modules"
+        "node_modules",
+        "!node_modules/prettier"
     ],
     
     extraResources: [

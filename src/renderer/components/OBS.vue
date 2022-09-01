@@ -7,7 +7,7 @@
         :resizable="false"
     >
         <div v-if="OBSConnected" id="obs-main">
-            <Devices v-if="showDevices" />
+            <Devices />
             <Status v-if="showStatus" />
             <OBSTech v-if="showTech" />
         </div>
@@ -41,14 +41,8 @@ export default {
                 || this.status.record;
         },
 
-        showDevices() {
-            return !this.devices.mic 
-                || !this.devices.sound 
-                || this.devices.camera !== null;
-        },
-
         showTech() {
-            return this.settings.OBSStatus.tech.enable;
+            return this.settings.OBSStatus.tech;
         }
     },
 
@@ -101,7 +95,6 @@ export default {
         > * {
             align-content: center;
         }
-
         span {
             color: #ffffff;
             font-size: 12px;

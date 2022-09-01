@@ -8,12 +8,11 @@ export default {
     computed: {
         ...mapState({
             obs: state => state.obs.obs,
-            status: state => state.obs.status,
-            devices: state => state.obs.devices
+            status: state => state.obs.status
         }),
         
         OBSConnected() {
-            return this.obs._connected;
+            return this.obs.socket !== undefined;
         },
 
         streaming() {

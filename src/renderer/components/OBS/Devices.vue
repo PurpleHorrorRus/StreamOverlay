@@ -2,18 +2,18 @@
     <div id="devices">
         <Device
             :icon="icons.mic"
-            :class="{ disabled: !devices.mic }"
+            :disabled="!devices.mic"
         />
 
         <Device
             :icon="icons.sound"
-            :class="{ disabled: !devices.sound }"
+            :disabled="!devices.sound"
         />
 
         <Device 
             v-if="devices.camera !== null"
             :icon="icons.camera"
-            :class="{ disabled: !devices.camera }"
+            :disabled="!devices.camera"
         />
     </div>
 </template>

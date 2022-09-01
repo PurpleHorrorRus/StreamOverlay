@@ -3,7 +3,6 @@ import fs from "fs-extra";
 import path from "path";
 
 import obs from "~/store/obs";
-import websocketInstaller from "~/store/websocket/install";
 
 import service from "~/store/services/service";
 import twitch from "~/store/services/twitch";
@@ -53,7 +52,6 @@ export default function() {
         
         modules: {
             obs,
-            websocketInstaller,
 
             service,
             twitch, 

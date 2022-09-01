@@ -4,7 +4,7 @@
 
         <div v-if="settings" id="content-valid">
             <Notifications />
-            <OBS v-if="showOBS" />
+            <OBS v-if="OBSConnected" />
             <Chat v-if="settings.chat.enable" />
             <Widget v-for="widget of widgets" :key="widget.id" :widget="widget" />
             <ViewersList v-if="showViewersList" />

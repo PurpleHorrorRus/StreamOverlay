@@ -24,10 +24,10 @@ import { mapState } from "vuex";
 
 export default {
     components: {
-        Notification: () => import("~/components/Notifications/Notification"),
-        LowBitrate: () => import("~/components/Notifications/LowBitrate"),
-        LowFPS: () => import("~/components/Notifications/LowFPS"),
-        Update: () => import("~/components/Notifications/Update")
+        Notification: () => import("./Notification.vue"),
+        LowFPS: () => import("./LowFPS.vue"),
+        LowBitrate: () => import("./LowBitrate.vue"),
+        Update: () => import("./Update.vue")
     },
 
     computed: {
