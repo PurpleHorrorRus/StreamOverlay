@@ -33,11 +33,6 @@ if (app.requestSingleInstanceLock()) {
 
         await mainWindowInstance.create();
 
-        mainWindowInstance.handlers = new Handlers(mainWindowInstance);
-        mainWindowInstance.handlers.main();
-        
-        await mainWindowInstance.create();
-        
         mainWindowInstance.hotkeys = new Hotkeys(mainWindowInstance.window);
         mainWindowInstance.hotkeys.register();
         mainWindowInstance.hotkeys.registerIndexHotkeys();
