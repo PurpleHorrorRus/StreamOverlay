@@ -13,6 +13,7 @@ export default {
         ON_STREAM_STOPPING: ({ dispatch, rootState }) => {
             dispatch("notifications/TURN", { name: "lowbitrate", show: false }, { root: true });
             dispatch("notifications/TURN", { name: "lowfps", show: false }, { root: true });
+            rootState.obs.status.tech.bitrate = 0;
 
             if (!rootState.obs.status.record) {
                 dispatch("obs/time/CLEAR", null, { root: true });

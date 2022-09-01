@@ -7,6 +7,9 @@ import time from "~/store/obs/time";
 
 let interval = null;
 
+const BITRATE_UPDATE_SECONDS = 2;
+let bitrateUpdateSeconds = 0;
+
 export default {
     namespaced: true,
 
@@ -20,6 +23,8 @@ export default {
             record: false,
             
             tech: {
+                bitrate: 0,
+                lastBytes: 0,
                 fps: 0
             }
         }
@@ -127,7 +132,7 @@ export default {
         DISCONNECT: ({ dispatch, state }) => {
             state.obs = { socket: undefined };
             state.status.tech.fps = 0;
-            state.status.videoSettings = null;
+            state.videoSettings = null;
 
             dispatch("STOP_CHECKING_INTERVAL");
             return true;
@@ -143,7 +148,22 @@ export default {
         },
 
         CHECK_STATS: async ({ dispatch, state, rootState }) => {
-            if (!state.status.videoSettings) {
+            if (state.status.stream && ++bitrateUpdateSeconds === BITRATE_UPDATE_SECONDS) {
+                dispatch("SEND", { event: "GetStreamStatus" }).then(status => {         
+                    const difference = status.outputBytes - state.status.tech.lastBytes;
+                    const kbitPerSec = (difference * 8) / 2000;           
+                    state.status.tech.bitrate = Math.ceil(kbitPerSec);
+                    state.status.tech.lastBytes = status.outputBytes;
+                    
+                    if (rootState.settings.settings.notifications.lowbitrate) {
+                        dispatch("notifications/TURN_LOWBITRATE", state.status.tech.bitrate < 2000, { root: true });
+                    }
+
+                    bitrateUpdateSeconds = 0;
+                });
+            }
+
+            if (!state.videoSettings) {
                 state.videoSettings = await dispatch("SEND", { event: "GetVideoSettings" });
             }
 
@@ -151,11 +171,11 @@ export default {
             state.status.tech.fps = Math.floor(stats.activeFps);
 
             if (rootState.settings.settings.notifications.lowfps) {
-                if (state.status.tech.fps < state.videoSettings.fpsNumerator && !rootState.notifications.lowfps) {
-                    dispatch("notifications/TURN_LOWFPS", true, { root: true });
-                } else if (rootState.notifications.lowfps) {
-                    dispatch("notifications/TURN_LOWFPS", false, { root: true });
-                }
+                dispatch(
+                    "notifications/TURN_LOWFPS", 
+                    state.status.tech.fps < state.videoSettings.fpsNumerator, 
+                    { root: true }
+                );
             }
 
             return state.status.tech;

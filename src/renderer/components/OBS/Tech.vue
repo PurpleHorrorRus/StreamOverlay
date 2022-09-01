@@ -10,7 +10,8 @@ export default {
 
     computed: {
         text() {
-            return `${this.status.tech.fps} FPS`;
+            const bitrate = (this.status.tech.bitrate / 1024).toFixed(1);
+            return `${this.status.tech.fps} FPS, ${bitrate} MB/s`;
         }
     }
 };
