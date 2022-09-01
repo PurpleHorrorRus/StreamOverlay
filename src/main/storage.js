@@ -163,6 +163,7 @@ const config = {
 if (config.obs.address === "localhost") {
     config.obs.address = "127.0.0.1";
     config.obs.port = 4455;
+    writeJSON(paths.obs, config.obs);
 }
 
 export default {
