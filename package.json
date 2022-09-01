@@ -15,7 +15,8 @@
         "nth-check": "^2.0.1",
         "glob-parent": "^5.1.2",
         "parse-path": "^5.0.0",
-        "got": "^11.8.5"
+        "got": "^11.8.5",
+        "nan": "github:jkleinsc/nan#remove_accessor_signature"
     },
     "scripts": {
         "dev": "cross-env NODE_ENV=development node .electron-nuxt/index.js",
@@ -24,7 +25,6 @@
         "deps": "yarn && yarn postinstall && modclean -r"
     },
     "dependencies": {
-        "adm-zip": "^0.5.9",
         "bluebird": "^3.7.2",
         "discord-rpc": "^4.0.1",
         "electron-updater": "^5.2.1",
@@ -35,7 +35,7 @@
         "nuxt-lazy-load": "^1.2.9",
         "obs-websocket-js": "^5.0.1",
         "overlayaddon": "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git",
-        "simple-helix-api": "https://github.com/PurpleHorrorRus/simple-helix-api#v2",
+        "simple-helix-api": "^3.0.0",
         "simple-trovo-api": "^1.1.10",
         "stream-gtts": "https://github.com/PurpleHorrorRus/StreamGTTS",
         "tmi.js": "^1.8.5",
@@ -56,14 +56,14 @@
         "@xpda-dev/webpack-step": "0.1.5",
         "babel-eslint": "^10.1.0",
         "babel-loader": "^8.2.5",
-        "core-js": "^3.24.1",
+        "core-js": "^3.25.0",
         "cross-env": "^7.0.3",
-        "electron": "19.0.10",
+        "electron": "^20.1.1",
         "electron-builder": "^23.3.3",
-        "eslint": "^8.22.0",
-        "eslint-plugin-vue": "^9.3.0",
+        "eslint": "^8.23.0",
+        "eslint-plugin-vue": "^9.4.0",
         "file-loader": "^6.2.0",
-        "sass": "^1.54.4",
+        "sass": "^1.54.8",
         "sass-loader": "10.1.1",
         "url-loader": "^4.1.1",
         "vue-loader": "15.9.7"
