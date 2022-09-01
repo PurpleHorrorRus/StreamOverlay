@@ -131,7 +131,7 @@ export default {
 
         DISCONNECT: ({ dispatch, state }) => {
             state.obs = { socket: undefined };
-            state.status.tech.fps = 0;
+            state.status.tech.bitrate = 0;
             state.videoSettings = null;
 
             dispatch("STOP_CHECKING_INTERVAL");
