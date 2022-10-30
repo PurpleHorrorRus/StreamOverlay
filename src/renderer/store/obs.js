@@ -1,3 +1,4 @@
+import { throttle } from "lodash";
 import Promise from "bluebird";
 import OBSWebSocket, { EventSubscription } from "obs-websocket-js";
 
@@ -18,10 +19,18 @@ export default {
         videoSettings: null,
         scene: null,
 
+        meters: {
+            mic: {
+                volume: 0,
+                init: false,
+                throttle: () => (false)
+            }
+        },
+
         status: {
             stream: false,
             record: false,
-            
+
             tech: {
                 bitrate: 0,
                 lastBytes: 0,
@@ -40,11 +49,12 @@ export default {
             const address = `ws://${credits.address}:${credits.port}`;
             const obs = new OBSWebSocket();
             const connected = await obs.connect(address, undefined, {
-                eventSubscriptions: EventSubscription.General 
+                eventSubscriptions: EventSubscription.General
                     | EventSubscription.Inputs
                     | EventSubscription.Outputs
                     | EventSubscription.Scenes
                     | EventSubscription.SceneItems
+                    | EventSubscription.InputVolumeMeters
             }).catch(async () => {
                 return await dispatch("RECONNECT");
             });
@@ -72,7 +82,7 @@ export default {
 
             state.obs.on("StreamStateChanged", data => {
                 state.status.stream = data.outputActive;
-                
+
                 state.status.stream
                     ? dispatch("events/ON_STREAM_STARTING")
                     : dispatch("events/ON_STREAM_STOPPING");
@@ -82,7 +92,7 @@ export default {
 
             state.obs.on("RecordStateChanged", data => {
                 state.status.record = data.outputActive;
-                
+
                 state.status.record
                     ? dispatch("events/ON_RECORDING_STARTED")
                     : dispatch("events/ON_RECORDING_STOPPING");
@@ -112,6 +122,22 @@ export default {
                 state.devices.list.camera = await dispatch("devices/GET_CAMERA_VISIBLE");
             });
 
+            state.obs.on("InputVolumeMeters", data => {
+                if (!state.meters.mic.init) {
+                    state.meters.mic.throttle = throttle(inputs => {
+                        const mul = inputs.find(input => {
+                            return input.inputName === state.devices.sources.mic;
+                        }).inputLevelsMul[0][2];
+
+                        state.meters.mic.volume = Math.max(20 * Math.log10(mul), -80);
+                    }, 500);
+
+                    state.meters.mic.init = true;
+                }
+
+                state.meters.mic.throttle(data.inputs);
+            });
+
             dispatch("SETUP_CHECKING_INTERVAL");
             return true;
         },
@@ -131,6 +157,7 @@ export default {
 
         DISCONNECT: ({ dispatch, state }) => {
             state.obs = { socket: undefined };
+            state.status.tech.fps = 0;
             state.status.tech.bitrate = 0;
             state.videoSettings = null;
 
@@ -149,13 +176,13 @@ export default {
 
         CHECK_STATS: async ({ dispatch, state, rootState }) => {
             if (state.status.stream && ++bitrateUpdateSeconds === BITRATE_UPDATE_SECONDS) {
-                dispatch("SEND", { event: "GetStreamStatus" }).then(status => {         
+                dispatch("SEND", { event: "GetStreamStatus" }).then(status => {
                     const difference = status.outputBytes - state.status.tech.lastBytes;
-                    const kbitPerSec = (difference * 8) / 2000;           
+                    const kbitPerSec = (difference * 8) / 2000;
                     state.status.tech.bitrate = Math.ceil(kbitPerSec);
                     state.status.tech.lastBytes = status.outputBytes;
-                    
-                    if (rootState.settings.settings.notifications.lowbitrate) {
+
+                    if (rootState.settings.settings.notifications.lowbitrate && state.status.tech.bitrate >= 0) {
                         dispatch("notifications/TURN_LOWBITRATE", state.status.tech.bitrate < 2000, { root: true });
                     }
 
@@ -172,8 +199,8 @@ export default {
 
             if (rootState.settings.settings.notifications.lowfps) {
                 dispatch(
-                    "notifications/TURN_LOWFPS", 
-                    state.status.tech.fps < state.videoSettings.fpsNumerator, 
+                    "notifications/TURN_LOWFPS",
+                    state.status.tech.fps < state.videoSettings.fpsNumerator,
                     { root: true }
                 );
             }
@@ -191,10 +218,10 @@ export default {
             state.status.record = record.outputActive;
 
             if (state.status.stream || state.status.record) {
-                const timecode = state.status.stream 
-                    ? stream.outputTimecode 
+                const timecode = state.status.stream
+                    ? stream.outputTimecode
                     : record.outputTimecode;
-    
+
                 dispatch("time/SET", timecode);
                 dispatch("time/SETUP");
             }

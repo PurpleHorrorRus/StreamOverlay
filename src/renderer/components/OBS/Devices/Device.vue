@@ -39,10 +39,17 @@ export default {
 
     @include obs-item;
 
-    transition: border .1s ease-in-out;
+    border-width: 1px;
+    border-style: solid;
+
+    transition: border-color .1s ease-in-out;
 
     &.disabled {
-        border: 1px solid #740a0a;
+        border-color: #740a0a;
+    }
+
+    &.highlight:not(.disabled) {
+        border-color: #84ff84;
     }
 
     .icon {

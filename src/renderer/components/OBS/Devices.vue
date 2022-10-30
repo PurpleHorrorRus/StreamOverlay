@@ -1,8 +1,10 @@
 <template>
     <div id="devices">
         <Device
+            v-tooltip="micTooltip"
             :icon="icons.mic"
             :disabled="!devices.mic"
+            :class="micClass"
         />
 
         <Device
@@ -10,7 +12,7 @@
             :disabled="!devices.sound"
         />
 
-        <Device 
+        <Device
             v-if="devices.camera !== null"
             :icon="icons.camera"
             :disabled="!devices.camera"
@@ -32,11 +34,12 @@ import CameraDisabledIcon from "~/assets/icons/camera-disabled.svg";
 
 export default {
     components: {
-        Device: () => import("~/components/OBS/Devices/Device")
+        Device: () => import("./Devices/Device.vue")
     },
 
     computed: {
         ...mapState({
+            meters: state => state.obs.meters,
             devices: state => state.obs.devices.list
         }),
 
@@ -45,6 +48,21 @@ export default {
                 mic: this.devices.mic ? MicrophoneIcon : MicrophoneMutedIcon,
                 sound: this.devices.sound ? SoundIcon : SoundMutedIcon,
                 camera: this.devices.camera ? CameraIcon : CameraDisabledIcon
+            };
+        },
+
+        micClass() {
+            return {
+                highlight: this.meters.mic.volume > -80
+            };
+        },
+
+        micTooltip() {
+            return {
+                content: "Похоже, что вы говорите<br/>с выключенным микрофоном!",
+                show: !this.devices.mic && this.meters.mic.volume > -60,
+                placement: "top-end",
+                offset: 5
             };
         }
     }
