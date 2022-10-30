@@ -1,6 +1,6 @@
 <template>
     <div class="solid-button" :class="{ disabled }">
-        <span v-if="!load" class="solid-button-text" v-text="label" />
+        <span v-if="!load" class="solid-button-label" v-text="label" />
         <LoaderIcon v-else class="icon spin" />
     </div>
 </template>
@@ -34,20 +34,20 @@ export default {
     justify-content: center;
     align-items: center;
 
-    min-width: 100px;
+    min-width: 60px;
     width: max-content;
     max-width: 400px;
     height: 30px;
 
-    padding: 0px 5px 0px 5px;
+    padding: 16px 12px;
 
     background: var(--secondary);
     border-radius: 4px;
 
-    font-size: 9pt;
+    font-size: 12px;
     text-align: center;
 
-    transition: all 0.5s ease;
+    transition: background .25s ease;
 
     &.disabled {
         cursor: not-allowed;
@@ -71,13 +71,14 @@ export default {
         }
     }
 
-    &-text {
-        display: inline-block;
-        color: var(--text);
-    }
-
     .icon {
         width: 16px;
+    }
+
+    &-label {
+        color: #ffffff;
+        font-weight: 600;
+        text-transform: uppercase;
     }
 }
 </style>
