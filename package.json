@@ -16,7 +16,7 @@
         "glob-parent": "^5.1.2",
         "parse-path": "^5.0.0",
         "got": "^11.8.5",
-        "nan": "github:jkleinsc/nan#remove_accessor_signature"
+        "minimatch": "^3.0.5"
     },
     "scripts": {
         "dev": "cross-env NODE_ENV=development node --openssl-legacy-provider .electron-nuxt/index.js",
