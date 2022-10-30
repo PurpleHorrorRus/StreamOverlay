@@ -1,9 +1,13 @@
-import fetch from "node-fetch";
+import axios from "axios";
 
 export default {
     syncRequest: async (url, params = {}) => {
-        const response = await fetch(url, params);
-        return !params.raw ? await response.json() : await response.text();
+        const response = await axios({
+            url,
+            ...params
+        });
+
+        return response.data;
     },
 
     formatTime: time => {
@@ -27,5 +31,9 @@ export default {
 
         arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0]);
         return arr;
+    },
+
+    textToId(text = "") {
+        return text.trim().replaceAll(" ", "").toLowerCase();
     }
 };
