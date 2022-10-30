@@ -24,7 +24,7 @@ let updateSearchResultsDebounce = null;
 export default {
     components: {
         Edit: () => import("./Edit.vue"),
-        Recent: () => import("~/components/Recent"),
+        Recent: () => import("~/components/Recent.vue"),
         Search: () => import("./Search.vue")
     },
 
@@ -105,8 +105,10 @@ export default {
         async updateSearchResults(query) {
             const categories = await this.serviceDispatch("SEARCH_GAME", query);
 
-            this.select(categories.game);
             this.search = categories.list;
+            if (categories.game?.name === this.local.game) {
+                this.select(categories.game);
+            }
 
             return Boolean(this.game);
         }
