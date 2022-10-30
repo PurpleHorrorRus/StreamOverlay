@@ -130,7 +130,7 @@ export default {
                         }).inputLevelsMul[0][2];
 
                         state.meters.mic.volume = Math.max(20 * Math.log10(mul), -80);
-                    }, 500);
+                    }, 300);
 
                     state.meters.mic.init = true;
                 }
