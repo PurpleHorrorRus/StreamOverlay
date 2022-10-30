@@ -3,8 +3,8 @@
         <img id="modal-stream-content-container-art-image" :src="game.icon" />
         <Edit />
         <Recent v-show="recent.length > 0" :recent="recent" />
-        <Search 
-            v-if="search.length > 0" 
+        <Search
+            v-if="search.length > 0"
             :search="search"
             @select="select"
         />
@@ -16,7 +16,6 @@
 <script>
 import { mapState } from "vuex";
 import { debounce } from "lodash";
-import Promise from "bluebird";
 
 import CoreMixin from "~/mixins/core";
 
@@ -24,9 +23,9 @@ let updateSearchResultsDebounce = null;
 
 export default {
     components: {
-        Edit: () => import("~/components/Menu/EditPage/Edit"),
+        Edit: () => import("./Edit.vue"),
         Recent: () => import("~/components/Recent"),
-        Search: () => import("~/components/Menu/EditPage/Search")
+        Search: () => import("./Search.vue")
     },
 
     mixins: [CoreMixin],
@@ -37,6 +36,7 @@ export default {
 
         game: null,
         search: [],
+
         local: {
             title: "",
             game: ""
@@ -49,9 +49,9 @@ export default {
         }),
 
         disabled() {
-            return this.loading 
-                || this.local.title.length === 0 
-                || this.local.game.length === 0;
+            return this.local.title.length === 0
+                || this.local.game.length === 0
+                || this.loading;
         }
     },
 
@@ -60,7 +60,7 @@ export default {
             if (!this.firstLoad && game !== this.game.name) {
                 if (game.length === 0) {
                     this.search = [];
-                    return;
+                    return this.select(null);
                 }
 
                 updateSearchResultsDebounce(game);
@@ -91,29 +91,24 @@ export default {
         },
 
         select(game) {
+            game = game || {
+                icon: "https://static-cdn.jtvnw.net/ttv-boxart/66082-100x130.jpg",
+                name: this.local.game
+            };
+
             this.game = game;
             this.local.game = game.name;
+
             return true;
         },
-        
+
         async updateSearchResults(query) {
-            this.search = await this.searchGame(query);
+            const categories = await this.serviceDispatch("SEARCH_GAME", query);
 
-            const gameInSearch = this.search.find(game => {
-                return game.name === query;
-            });
+            this.select(categories.game);
+            this.search = categories.list;
 
-            return gameInSearch
-                ? this.select(gameInSearch)
-                : false;
-        },
-
-        async searchGame(query) {
-            const games = await this.serviceDispatch("SEARCH_GAME", query);
-
-            return await Promise.map(games, async game => {
-                return await this.serviceDispatch("FORMAT_GAME", game);
-            });
+            return Boolean(this.game);
         }
     }
 };

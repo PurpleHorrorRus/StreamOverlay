@@ -10,12 +10,11 @@
 </template>
 
 <script>
-import Game from "~/components/Menu/EditPage/Game";
-
 export default {
     components: {
-        Game
+        Game: () => import("./Game.vue")
     },
+
     props: {
         search: {
             type: Array,
