@@ -1,13 +1,14 @@
 import Helix from "simple-helix-api";
 import tmi from "tmi.js";
 import lodash from "lodash";
+import Promise from "bluebird";
 
 import formatter from "~/store/services/formatter";
 import events from "~/store/services/twitch/events";
 import emotes from "~/store/services/twitch/emotes";
 import badges from "~/store/services/twitch/badges";
 
-// botID = 169440375;
+import misc from "~/plugins/misc";
 
 const profilesCacheMax = 50;
 let profilesCacheSize = 0;
@@ -308,9 +309,29 @@ export default {
             }
         },
 
-        SEARCH_GAME: async ({ rootState }, query) => {
-            const games = await rootState.service.client.search.categories(query);
-            return games.data || Array.isArray(games) ? games : [games];
+        GET_CATEGORIES: async ({ dispatch, rootState }, query) => {
+            const categories = await rootState.service.client.search.categories(query);
+            const games = Array.isArray(categories)
+                ? categories
+                : (categories ? (categories.data || [categories]) : []);
+
+            return await Promise.map(games, async game => {
+                return await dispatch("FORMAT_GAME", game);
+            });
+        },
+
+        SEARCH_GAME: async ({ dispatch }, query) => {
+            const games = await dispatch("GET_CATEGORIES", query);
+
+            const gameId = query = misc.textToId(query);
+            const game = games.find(game => {
+                return misc.textToId(game.name) === gameId;
+            });
+
+            return {
+                list: games,
+                game
+            };
         },
 
         FORMAT_EMOTE: (_, emote) => {

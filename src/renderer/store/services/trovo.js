@@ -220,9 +220,25 @@ export default {
             rootState.service.client.chat.send(message);
         },
 
-        SEARCH_GAME: async ({ rootState }, query) => {
+        GET_CATEGORIES: async ({ dispatch, rootState }, query) => {
             const response = await rootState.service.client.categories.search(query);
-            return response.category_info;
+            return await Promise.map(response.category_info, async game => {
+                return await dispatch("FORMAT_GAME", game);
+            });
+        },
+
+        SEARCH_GAME: async ({ dispatch }, query) => {
+            const games = await dispatch("GET_CATEGORIES", query);
+            const gameId = misc.textToId(query);
+
+            const game = games.find(game => {
+                return misc.textToId(game) === gameId;
+            });
+
+            return {
+                list: games,
+                game: game || games[0]
+            };
         },
 
         FORMAT_EMOTE: (_, emote) => {

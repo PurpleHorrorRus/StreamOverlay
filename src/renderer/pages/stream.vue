@@ -2,7 +2,7 @@
     <div id="modal-stream-content" class="modal-content">
         <Title id="modal-stream-content-title" title="Трансляция" />
         <StreamContainer class="modal-body" />
-</div>
+    </div>
 </template>
 
 <script>
