@@ -20,16 +20,13 @@ jobs:
       - name: Install Dependencies
         run: yarn
 
-      - name: Clean node_modules
-        run: npx modclean -r
-
       - name: Build Application
         run: yarn build
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
       
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3.1.1
+        uses: actions/upload-artifact@v3
         with:
           name: streamoverlay.exe
           path: build/streamoverlay-*.exe

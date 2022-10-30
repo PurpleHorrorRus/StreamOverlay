@@ -22,7 +22,7 @@
         "dev": "cross-env NODE_ENV=development node --openssl-legacy-provider .electron-nuxt/index.js",
         "build": "cross-env NODE_ENV=production node --openssl-legacy-provider .electron-nuxt/index.js",
         "postinstall": "electron-builder install-app-deps",
-        "deps": "yarn && yarn postinstall && modclean -r"
+        "deps": "yarn && yarn postinstall"
     },
     "dependencies": {
         "bluebird": "^3.7.2",
