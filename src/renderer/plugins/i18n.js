@@ -23,6 +23,4 @@ export default (_context, inject) => {
 
     inject("strings", strings.pack);
     inject("i18n", i18n);
-
-    console.log(i18n);
 };

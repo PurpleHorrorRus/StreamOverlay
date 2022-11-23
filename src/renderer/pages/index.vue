@@ -67,7 +67,6 @@ export default {
         }
 
         if (!this.config) {
-            console.clear();
             const config = await ipcRenderer.invoke("config");
             await this.setConfig(config);
             await this.loadLanguage("ru");
