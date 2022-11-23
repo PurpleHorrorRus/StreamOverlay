@@ -62,7 +62,9 @@ export default {
 
     async mounted() {
         this.edit = Boolean(this.$route.query.edit);
+
         if (this.edit) {
+            this.inited = true;
             return false;
         }
 
