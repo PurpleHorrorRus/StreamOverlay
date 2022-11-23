@@ -33,7 +33,7 @@
         "discord-rpc": "^4.0.1",
         "electron-updater": "^5.3.0",
         "http": "^0.0.1-security",
-        "nuxt": "^3.0.0",
+        "nuxt": "2.15.8",
         "nuxt-lazy-load": "^1.2.9",
         "obs-websocket-js": "^5.0.2",
         "overlayaddon": "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git",
