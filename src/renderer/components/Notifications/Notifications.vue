@@ -3,7 +3,7 @@
         <div id="notifications-common">
             <Notification
                 v-for="notification of notifications.regular"
-                :key="notification.text"
+                :key="notification.id"
                 :notification="notification"
             />
 
@@ -20,7 +20,7 @@
         <transition-group id="notifications-presense" name="slide" tag="div">
             <PresenseNotification
                 v-for="notification of notifications.presense"
-                :key="notification.text"
+                :key="notification.id"
                 :notification="notification"
             />
         </transition-group>

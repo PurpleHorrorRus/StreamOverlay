@@ -19,6 +19,8 @@ export default {
 
     actions: {
         ADD: ({ state }, notification) => {
+            notification.id = Math.floor(Date.now() / 1000);
+
             const collection = !notification.presense
                 ? state.notifications.regular
                 : state.notifications.presense;
