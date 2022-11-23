@@ -3,6 +3,7 @@
     "version": "2.2.0",
     "description": "An overlay for streamers with single display",
     "author": "PurpleHorrorRus <purplehorrorrus@gmail.com>",
+    "license": "CC-BY-NC-SA-4.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/PurpleHorrorRus/StreamOverlayStandart/"
