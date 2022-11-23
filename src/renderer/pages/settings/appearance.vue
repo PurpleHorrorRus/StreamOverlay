@@ -20,14 +20,14 @@
                     :text="$strings.MENU.APPEARANCE.OBSPANEL.SETTINGS.OPACITY"
                     :value="settings.OBSStatus.mini.opacity"
                     :max="100"
-                    @select="changeOBSStatusValue('opacity', $event)"
+                    @select="deepChange(settings.OBSStatus.mini, 'opacity', Number($event))"
                 />
 
                 <Range
                     :text="$strings.MENU.APPEARANCE.OBSPANEL.SETTINGS.RADIUS"
                     :value="settings.OBSStatus.mini.radius"
                     :max="100"
-                    @select="changeOBSStatusValue('radius', $event)"
+                    @select="deepChange(settings.OBSStatus.mini, 'radius', Number($event))"
                 />
 
                 <Range
@@ -36,7 +36,7 @@
                     :max="1.5"
                     :min="0.5"
                     :step="0.01"
-                    @select="changeOBSStatusValue('scale', $event)"
+                    @select="deepChange(settings.OBSStatus.mini, 'scale', Number($event))"
                 />
 
                 <ToggleButton
@@ -62,14 +62,7 @@ import CoreMixin from "~/mixins/core";
 export default {
     mixins: [CoreMixin],
 
-    layout: "modal",
-
-    methods: {
-        changeOBSStatusValue(type, value) {
-            this.settings.OBSStatus.mini[type] = value;
-            this.save();
-        }
-    }
+    layout: "modal"
 };
 </script>
 

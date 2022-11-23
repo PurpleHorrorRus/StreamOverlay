@@ -207,18 +207,20 @@ export default {
                 return item.title === data.title && item.game === data.game;
             });
 
-            recent = ~index
+            ~index
                 ? misc.arrayMove(recent, index, 0)
-                : [data, ...recent];
+                : recent.unshift(data);
 
             if (recent.length > 5) {
                 recent = recent.splice(0, 5);
             }
 
-            dispatch("settings/SAVE", {
+            dispatch("settings/SAVE_CUSTOM", {
                 type: "recent",
-                content: recent
+                settings: recent
             },{ root: true });
+
+            return true;
         }
     }
 };

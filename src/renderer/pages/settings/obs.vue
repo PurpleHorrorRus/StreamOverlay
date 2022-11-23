@@ -27,7 +27,7 @@
             <ToggleButton
                 :text="$strings.MENU.OBS.NOTIFICATIONS.MUTEDMIC.TITLE"
                 :checked="config.obs.meters.mic.enable"
-                @change="changeMicMeter('enable', !config.obs.meters.mic.enable)"
+                @change="deepChange(config.obs.meters.mic, 'enable', null, 'obs')"
             />
 
             <ModalCategory
@@ -39,7 +39,7 @@
                     :value="config.obs.meters.mic.limit"
                     :max="0"
                     :min="-80"
-                    @select="changeMicMeter('limit', Number($event))"
+                    @select="deepChange(config.obs.meters.mic, 'limit', Number($event), 'obs')"
                 />
 
                 <Range
@@ -48,7 +48,7 @@
                     :value="config.obs.meters.mic.timeout"
                     :max="1000"
                     :min="50"
-                    @select="changeMicMeter('timeout', Number($event))"
+                    @select="deepChange(config.obs.meters.mic, 'timeout', Number($event), 'obs')"
                 />
             </ModalCategory>
 
@@ -128,20 +128,12 @@ export default {
             const webcamSet = new Set(webcamMapped);
             this.config.obs.camera = Array.from(webcamSet);
 
-            this.saveSettings({
+            this.saveCustom({
                 type: "obs",
-                content: this.config.obs
+                settings: this.config.obs
             });
 
             this.$router.replace("/");
-        },
-
-        changeMicMeter(field, value) {
-            this.config.obs.meters.mic[field] = value;
-            this.saveSettings({
-                type: "obs",
-                content: this.config.obs
-            });
         }
     }
 };

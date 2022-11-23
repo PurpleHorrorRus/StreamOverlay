@@ -19,9 +19,9 @@ export default {
 
         SAVE: ({ dispatch, state }, widgets) => {
             state.widgets = widgets;
-            dispatch("settings/SAVE", {
+            dispatch("settings/SAVE_CUSTOM", {
                 type: "widgets",
-                content: widgets
+                settings: widgets
             }, { root: true });
         }
     }

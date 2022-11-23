@@ -1,8 +1,8 @@
 <template>
-    <Movable 
-        id="viewers-list" 
-        :source="settings.ViewersList" 
-        name="Список зрителей" 
+    <Movable
+        id="viewers-list"
+        :source="settings.ViewersList"
+        name="Список зрителей"
         class="movable-slot"
     >
         <div v-if="!loading" id="viewers-list-categories">
@@ -31,7 +31,7 @@ export default {
     components: {
         ViewersListCategory: () => import("~/components/ViewersList/Category")
     },
-    
+
     mixins: [CoreMixin],
 
     data: () => ({

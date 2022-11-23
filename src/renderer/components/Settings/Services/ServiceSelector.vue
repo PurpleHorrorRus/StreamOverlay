@@ -47,9 +47,7 @@ export default {
                 return false;
             }
 
-            this.settings.service = service.id;
-            this.save();
-
+            this.deepChange(this.settings, "service", service.id);
             ipcRenderer.send("restart");
         }
     }

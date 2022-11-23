@@ -130,9 +130,9 @@ export default {
             });
 
             if (success) {
-                this.saveSettings({
+                this.saveCustom({
                     type: "twitch",
-                    content: {
+                    settings: {
                         ...this.config.twitch,
                         username: this.username,
                         access_token: this.access_token,

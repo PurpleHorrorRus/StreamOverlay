@@ -16,6 +16,7 @@
 import { mapActions } from "vuex";
 import { ipcRenderer } from "electron";
 
+import CoreMixin from "~/mixins/core";
 import OBSMixin from "~/mixins/obs";
 import WidgetsMixin from "~/mixins/widgets";
 
@@ -41,8 +42,8 @@ export default {
         ViewersList: () => import("~/components/ViewersList.vue")
     },
 
-    mixins: [OBSMixin, WidgetsMixin],
-    
+    mixins: [CoreMixin, OBSMixin, WidgetsMixin],
+
     data: () => ({
         inited: false
     }),
@@ -80,8 +81,7 @@ export default {
 
         if (await this.authService()) {
             if (this.settings.first) {
-                this.settings.first = false;
-                this.save();
+                this.deepChange(this.settings, "first", false);
             }
 
             this.initService();

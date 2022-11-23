@@ -24,12 +24,12 @@ export default {
             return settings;
         },
 
-        SAVE_CUSTOM: async ({ dispatch }, { type, settings }) => {
+        SAVE_CUSTOM: async ({ dispatch, rootState }, { type, settings }) => {
             if (type === "settings") {
                 return await dispatch("SAVE", settings);
             }
 
-            console.log(type, settings);
+            rootState.config[type] = settings;
 
             ipcRenderer.send("saveSettings", {
                 type,

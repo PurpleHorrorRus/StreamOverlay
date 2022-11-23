@@ -44,13 +44,13 @@
                         :value="settings.chat.timeout"
                         :max="600"
                         :tip="$strings.MENU.CHAT.TIMEOUT.TIP"
-                        @select="changeChatNumber('timeout', $event)"
+                        @select="deepChange(settings.chat, 'timeout', Number($event))"
                     />
 
                     <Range
                         :text="$strings.MENU.CHAT.OPACITY"
                         :value="settings.chat.opacity"
-                        @select="changeChatNumber('opacity', $event)"
+                        @select="deepChange(settings.chat, 'opacity', Number($event))"
                     />
 
                     <Range
@@ -58,7 +58,7 @@
                         :value="settings.chat.font"
                         :min="8"
                         :max="16"
-                        @select="changeChatNumber('font', $event)"
+                        @select="deepChange(settings.chat, 'font', Number($event))"
                     />
                 </div>
             </div>
@@ -72,13 +72,6 @@ import CoreMixin from "~/mixins/core";
 export default {
     mixins: [CoreMixin],
 
-    layout: "modal",
-
-    methods: {
-        changeChatNumber(field, value) {
-            this.settings.chat[field] = Number(value);
-            this.save();
-        }
-    }
+    layout: "modal"
 };
 </script>
