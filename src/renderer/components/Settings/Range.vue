@@ -10,7 +10,7 @@
             :max="max"
             :tooltip="'hover'"
             :speed="0"
-            :step="1"
+            :step="step"
             :height="4"
             :dot-size="8"
             :tooltip-style="{ display: 'none' }"
@@ -21,10 +21,10 @@
             </template>
         </VueRangeComponent>
 
-        <span 
-            v-if="tip.length > 0" 
-            class="modal-item-tip" 
-            v-text="tip" 
+        <span
+            v-if="tip.length > 0"
+            class="modal-item-tip"
+            v-text="tip"
         />
     </div>
 </template>
@@ -51,6 +51,12 @@ export default {
             type: Number,
             required: false,
             default: 100
+        },
+
+        step: {
+            type: Number,
+            required: false,
+            default: 1
         },
 
         text: {

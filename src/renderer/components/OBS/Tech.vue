@@ -18,6 +18,10 @@ export default {
 </script>
 
 <style lang="scss">
+#obs-content.mini #obs-tech {
+    min-width: 135px;
+}
+
 #obs-tech {
     @include obs-item;
 

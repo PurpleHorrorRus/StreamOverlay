@@ -29,6 +29,29 @@ export default {
 </script>
 
 <style lang="scss">
+#obs-content.mini .device {
+    border: none;
+
+    width: 35px;
+    height: 35px !important;
+
+    padding: 0px;
+
+    background: none;
+
+    &.disabled .icon path {
+        fill: #be1414;
+    }
+
+    &.highlight:not(.disabled) .icon path {
+        fill: #84ff84;
+    }
+
+    .icon {
+        height: 65%;
+    }
+}
+
 .device {
     display: flex;
     justify-content: center;

@@ -44,7 +44,7 @@ export default {
         VueDraggableResizable,
         MovableName: () => import("~/components/Movable/MovableName")
     },
-    
+
     mixins: [WidgetsMixin],
 
     props: {
@@ -80,10 +80,16 @@ export default {
 
     data: () => ({
         selected: false,
+
         x: 0,
         y: 0,
-        rightBorder: 0,
-        downBorder: 0,
+
+        leftBorder: -Infinity,
+        upBorder: -Infinity,
+
+        rightBorder: Infinity,
+        downBorder: Infinity,
+
         mouse: true,
         zIndex: 0
     }),
@@ -103,25 +109,28 @@ export default {
     },
 
     mounted() {
-        const sourceWidth = this.source.width || this.$refs.movable.$el.offsetWidth;
-        const sourceHeight = this.source.width || this.$refs.movable.$el.offsetHeight;
+        if (this.settings.restriction) {
+            const sourceWidth = this.source.width || this.$refs.movable.$el.offsetWidth;
+            const sourceHeight = this.source.width || this.$refs.movable.$el.offsetHeight;
 
-        this.rightBorder = this.display.width - sourceWidth;
-        this.downBorder = this.display.height - sourceHeight;
+            this.leftBorder = 0;
+            this.upBorder = 0;
+
+            this.rightBorder = this.display.width - sourceWidth;
+            this.downBorder = this.display.height - sourceHeight;
+        }
+
         this.normalizePosition(this.source.x, this.source.y);
     },
 
     methods: {
         normalizePosition(x, y) {
-            this.x = Math.max(Math.min(x, this.rightBorder), 0);
-            this.y = Math.max(Math.min(y, this.downBorder), 0);
+            this.x = Math.max(Math.min(x, this.rightBorder), this.leftBorder);
+            this.y = Math.max(Math.min(y, this.downBorder), this.upBorder);
         },
 
         onResize(...args) {
             this.$parent.onResize(...args);
-
-            this.rightBorder = this.display.width - args[2];
-            this.downBorder = this.display.height - args[3];
         },
 
         onDragging(x, y) {
@@ -170,11 +179,11 @@ export default {
                 }
 
                 case "ArrowLeft": {
-                    this.x = Math.max(this.x - 1, 0);
+                    this.x = Math.max(this.x - 1, this.leftBorder);
                     this.$children[0].moveHorizontally(this.x);
                     break;
                 }
-                
+
                 case "ArrowDown": {
                     this.y = Math.min(this.y + 1, this.downBorder);
                     this.$children[0].moveVertically(this.y);
@@ -182,7 +191,7 @@ export default {
                 }
 
                 case "ArrowUp": {
-                    this.y = Math.max(this.y - 1, 0);
+                    this.y = Math.max(this.y - 1, this.upBorder);
                     this.$children[0].moveVertically(this.y);
                     break;
                 }
@@ -193,13 +202,14 @@ export default {
         },
 
         changeZIndex(index = 0) {
-            if (this.canBringTop) {
-                this.zIndex = index;
-            }
+            if (!this.canBringTop) return false;
+
+            this.zIndex = index;
+            return true;
         },
 
         resetZIndex() {
-            this.changeZIndex(0);
+            return this.changeZIndex(0);
         }
     }
 };

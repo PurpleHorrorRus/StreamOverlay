@@ -2,17 +2,18 @@
     <Movable
         id="obs"
         class="movable-slot"
-        :class="OBSClass"
         :source="settings.OBSStatus"
         :resizable="false"
     >
-        <div v-if="OBSConnected" id="obs-main">
-            <Devices />
-            <Status v-if="showStatus" />
-            <OBSTech v-if="showTech" />
-        </div>
+        <div id="obs-content" :style="OBSStyle" :class="OBSClass">
+            <div v-if="OBSConnected" id="obs-content-main">
+                <Devices />
+                <Status v-if="showStatus" />
+                <OBSTech v-if="showTech" />
+            </div>
 
-        <ServiceInfo v-if="chatConnected" />
+            <ServiceInfo v-if="chatConnected" />
+        </div>
     </Movable>
 </template>
 
@@ -37,12 +38,44 @@ export default {
         }),
 
         showStatus() {
-            return this.status.stream 
-                || this.status.record;
+            return this.streaming
+                || this.recording;
         },
 
         showTech() {
             return this.settings.OBSStatus.tech;
+        },
+
+        OBSClass() {
+            return {
+                mini: this.settings.OBSStatus.mini.enable,
+                connected: this.OBSConnected && !this.streaming && !this.recording,
+                disconnected: !this.OBSConnected,
+                streaming: this.streaming,
+                recording: this.recording
+            };
+        },
+
+        OBSStyle() {
+            if (this.settings.OBSStatus.mini.enable) {
+                const OBSPanelMini = this.settings.OBSStatus.mini;
+
+                return {
+                    background: `rgba(0, 0, 0, ${OBSPanelMini.opacity}%)`,
+                    borderRadius: `${OBSPanelMini.radius}px`,
+                    transform: `scale(${OBSPanelMini.scale})`,
+
+                    border: OBSPanelMini.border
+                        ? `1px solid rgba(225, 225, 225, ${Math.min(OBSPanelMini.opacity, 50)}%`
+                        : "none",
+
+                    filter: OBSPanelMini.border && OBSPanelMini.shadow
+                        ? `drop-shadow(2px 2px 2px rgba(0, 0, 0, ${Math.min(OBSPanelMini.opacity, 80)}%))`
+                        : "noneunset"
+                };
+            }
+
+            return {};
         }
     },
 
@@ -58,46 +91,85 @@ export default {
 
 <style lang="scss">
 #obs {
-    position: absolute;
-    bottom: 0px;
-    right: 0px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    align-content: center;
-    row-gap: 5px;
-
     width: max-content !important;
     height: max-content !important;
 
-    padding: 5px;
-
-    .icon {
-        height: 20px;
-
-        g, path {
-            fill: #ffffff;
-        }
-    }
-
-    &-main {
+    &-content {
         display: flex;
-        justify-content: center;
-        align-items: center;
+        flex-direction: column;
+        align-items: flex-start;
         align-content: center;
-        column-gap: 5px;
+        row-gap: 5px;
 
-        * {
+        padding: 5px;
+
+        &.mini {
+            flex-direction: row;
             align-items: center;
+            column-gap: 15px;
+            row-gap: 0px;
+
+            padding: 5px 10px 5px 5px;
+
+            #obs-content-main {
+                column-gap: 10px;
+            }
+
+            #obs-content-main, #meta-info {
+                > div, > span {
+                    height: 100%;
+
+                    padding: 0px;
+
+                    border: none;
+                    background: none;
+                }
+
+                span {
+                    font-size: 1rem;
+                    top: 0px;
+                }
+            }
+
+            #meta-info {
+                height: 100%;
+
+                span {
+                    font-size: 1rem;
+                }
+            }
+
+            .icon path {
+                transition: fill .2s ease-in-out;
+            }
         }
 
-        > * {
-            align-content: center;
+        .icon {
+            height: 20px;
+
+            g, path {
+                fill: #ffffff;
+            }
         }
-        span {
-            color: #ffffff;
-            font-size: 12px;
+
+        &-main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+            column-gap: 5px;
+
+            * {
+                align-items: center;
+            }
+
+            > * {
+                align-content: center;
+            }
+            span {
+                color: #ffffff;
+                font-size: 12px;
+            }
         }
     }
 }

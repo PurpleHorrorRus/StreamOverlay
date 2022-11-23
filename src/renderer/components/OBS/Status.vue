@@ -6,9 +6,9 @@
         </div>
 
         <div id="status-information">
-            <span 
-                id="status-information-label" 
-                v-text="label" 
+            <span
+                id="status-information-label"
+                v-text="label"
             />
 
             <span
@@ -29,7 +29,7 @@ import OBSMixin from "~/mixins/obs";
 
 export default {
     components: {
-        DotIcon: () => import("~/assets/icons/dot.svg")
+        DotIcon: () => import("~icons/dot.svg")
     },
 
     mixins: [OBSMixin],
@@ -45,7 +45,7 @@ export default {
             else if (this.recording) return "REC";
             return "";
         },
-        
+
         formatTime() {
             return misc.formatTime(this.time);
         }
@@ -54,6 +54,10 @@ export default {
 </script>
 
 <style lang="scss">
+#obs-content.mini #status {
+    min-width: 115px;
+}
+
 #status {
     display: flex;
     align-items: center;
@@ -69,7 +73,6 @@ export default {
         column-gap: 5px;
 
         span {
-            font-size: 14px;
             font-weight: 500;
         }
     }
@@ -90,7 +93,7 @@ export default {
             top: 1px;
 
             width: 10px !important;
-            
+
             g, path {
                 fill: #ff0000 !important;
             }

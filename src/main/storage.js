@@ -9,11 +9,11 @@ const clear = {
     settings: {
         first: true,
         contentProtection: true,
+        restriction: true,
         RAMClean: false,
         devtools: false,
         hardwareAcceleration: true,
         discord: false,
-
         service: "none",
 
         chat: {
@@ -48,6 +48,15 @@ const clear = {
             tech: false,
             x: -37,
             y: 1022,
+
+            mini: {
+                enable: false,
+                opacity: 80,
+                radius: 8,
+                scale: 1,
+                border: true,
+                shadow: true
+            },
 
             ServiceInfo: {
                 enable: true,
