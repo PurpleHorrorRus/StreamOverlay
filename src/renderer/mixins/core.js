@@ -33,8 +33,8 @@ export default {
             clearActivity: "discord/CLEAR_ACTIVITY"
         }),
 
-        save(content = this.settings, type = "settings") {
-            this.saveSettings({ type, content });
+        save(content = this.settings) {
+            this.saveSettings(content);
         },
 
         deepChange(category, option, value = "", type = "settings") {
