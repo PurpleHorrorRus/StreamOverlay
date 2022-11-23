@@ -343,7 +343,10 @@ export default {
 
             return {
                 list: games,
-                game: game || games[0]
+                game: game || {
+                    name: query,
+                    icon: "https://static-cdn.jtvnw.net/ttv-static/404_boxart-288x386.jpg"
+                }
             };
         },
 
