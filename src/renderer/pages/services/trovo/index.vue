@@ -14,7 +14,7 @@
 
                 <ToggleButton
                     :text="$strings.MENU.SERVICES.TROVO.PAST.TITLE"
-                    :checked="settings.trovo.past"
+                    :checked="config.trovo.past"
                     :tip="$strings.MENU.SERVICES.TROVO.PAST.TIP"
                     @change="deepChange(config.trovo, 'past', null, 'trovo')"
                 />
