@@ -16,7 +16,7 @@ export default {
                 fontSize: `${this.settings.chat.font}pt`
             };
         },
-        
+
         pictureStyle() {
             return {
                 width: `${this.settings.chat.font + 14}px`

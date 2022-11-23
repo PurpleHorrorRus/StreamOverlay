@@ -2,10 +2,15 @@ export default {
     namespaced: true,
 
     state: () => ({
-        notifications: [],
-        lowbitrate: false,
+        notifications: {
+            regular: [],
+            presense: []
+        },
+
         lowfps: false,
+        lowbitrate: false,
         chatdisconnect: false,
+
         update: {
             show: false,
             release: {}
@@ -14,18 +19,26 @@ export default {
 
     actions: {
         ADD: ({ state }, notification) => {
+            const collection = !notification.presense
+                ? state.notifications.regular
+                : state.notifications.presense;
+
+            const timeout = notification.handle
+                ? notification.handle * 1000
+                : 4 * 1000;
+
             setTimeout(() => {
-                const index = state.notifications.findIndex(n => {
+                const index = collection.findIndex(n => {
                     return n.id === notification.id;
                 });
 
-                state.notifications.splice(index, 1);
-            }, notification.handle ? notification.handle * 1000 : 4 * 1000);
+                collection.splice(index, 1);
+            }, timeout);
 
-            state.notifications.push(notification);
+            collection.push(notification);
             return true;
         },
-    
+
         TURN: ({ state }, data) => {
             if (state[data.name] === data.show) {
                 return false;
@@ -52,7 +65,7 @@ export default {
             state.lowbitrate = sequence;
             return true;
         },
-
+        
         TURN_UPDATE: ({ state }, release) => {
             state.update.release = release;
             state.update.show = true;

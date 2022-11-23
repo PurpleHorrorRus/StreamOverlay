@@ -199,6 +199,19 @@ a {
     opacity: 0;
 }
 
+.slide-leave-active,
+.slide-enter-active {
+    transition: 1s;
+}
+
+.slide-enter {
+    transform: translate(100%, 0);
+}
+
+.slide-leave-to {
+    transform: translate(100%, 0);
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);

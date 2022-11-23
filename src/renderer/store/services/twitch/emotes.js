@@ -1,15 +1,10 @@
-import bttv from "~/store/services/twitch/emotes/bttv";
-import ffz from "~/store/services/twitch/emotes/ffz";
+import bttv from "./emotes/bttv";
+import ffz from "./emotes/ffz";
 
 export default {
     namespaced: true,
 
-    state: () => ({
-        emotes: {
-            bttv: [],
-            ffz: []
-        }
-    }),
+    state: () => ({}),
 
     actions: {
         LOAD: async ({ dispatch, state }, { id, name }) => {
@@ -20,35 +15,24 @@ export default {
                 dispatch("ffz/CHANNEL", name)
             ]);
 
-            state.bttv = bGlobal.concat(bChannel);
-            state.ffz = fGlobal.concat(fChannel);
+            state.bttv.emotes = bGlobal.concat(bChannel);
+            state.ffz.emotes = fGlobal.concat(fChannel);
 
-            return 0;
+            return true;
         },
 
-        FORMAT_TWITCH_EMOTES: (_, message) => {
-            if (!message.emotes) {
-                return [];
-            }
-
-            const words = Object.values(message.emotes);
-            const ids = Object.keys(message.emotes);
-
-            const positions = words.map(([position]) => {
-                return position.split("-").map(Number);
-            });
-
-            return positions.map(([start, end], index) => {
-                return {
-                    url: `http://static-cdn.jtvnw.net/emoticons/v1/${ids[index]}/3.0`,
-                    code: message.text.substring(start, end + 1)
-                };
-            });
+        FORMAT_TWITCH_EMOTES: (_, emotes) => {
+            return emotes.map(emote => {
+                return emote.positions.map(() => ({
+                    url: `http://static-cdn.jtvnw.net/emoticons/v1/${emote.id}/3.0`,
+                    code: emote.code
+                }));
+            }).flat(2);
         },
 
         FIND: ({ state }, word) => {
-            return state.bttv.find(e => e.code === word)
-                || state.ffz.find(e => e.code === word);
+            return state.bttv.emotes.find(e => e.code === word)
+                || state.ffz.emotes.find(e => e.code === word);
         }
     },
 

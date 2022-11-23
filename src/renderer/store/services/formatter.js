@@ -22,15 +22,15 @@ export default {
         PART: (_, { formatted, types }) => {
             for (const type of Object.keys(types)) {
                 let content = types[type];
-        
+
                 if (typeof content === "string") {
                     content = content.trim();
                     if (content.length === 0) continue;
                 }
-        
+
                 formatted.push({ type, content });
             }
-        
+
             return formatted;
         },
 
@@ -55,7 +55,7 @@ export default {
                 }
             });
         },
-        
+
         EMOTE: async ({ dispatch, state }, data) => {
             return await dispatch("PART", {
                 formatted: data.formatted,

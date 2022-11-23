@@ -16,18 +16,9 @@
 import { mapActions } from "vuex";
 import { ipcRenderer } from "electron";
 
-import EditMode from "~/components/EditMode";
-
-import OBS from "~/components/OBS";
-
-import Notifications from "~/components/Notifications/Notifications";
-import Chat from "~/components/Chat";
-import ViewersList from "~/components/ViewersList";
-import Widget from "~/components/Widget";
-
 import OBSMixin from "~/mixins/obs";
 import WidgetsMixin from "~/mixins/widgets";
-import OtherMixin from "~/mixins/other";
+import other from "~/mixins/other";
 
 const notifications = {
     controls: {
@@ -43,37 +34,41 @@ const notifications = {
 
 export default {
     components: {
-        EditMode,
-        OBS,
-        Notifications,
-        Chat,
-        ViewersList,
-        Widget
+        EditMode: () => import("~/components/EditMode.vue"),
+        OBS: () => import("~/components/OBS.vue"),
+        Notifications: () => import("~/components/Notifications/Notifications.vue"),
+        Chat: () => import("~/components/Chat.vue"),
+        Widget: () => import("~/components/Widget.vue"),
+        ViewersList: () => import("~/components/ViewersList.vue")
     },
 
-    mixins: [OBSMixin, WidgetsMixin, OtherMixin],
+    mixins: [OBSMixin, WidgetsMixin, other],
 
     computed: {
         showOBS() {
             return this.connected
-                && (this.settings.OBSStatus.ServiceInfo.enable 
+                && (this.settings.OBSStatus.ServiceInfo.enable
                 || this.settings.OBSStatus.ServiceInfo.followers);
         },
 
         showViewersList() {
-            return this.connected 
+            return this.connected
                 && this.settings.ViewersList.enable;
         }
     },
-    
+
+    async created() {
+        await this.loadLanguage("ru");
+    },
+
     async mounted() {
         this.edit = Boolean(this.$route.query.edit);
-
         if (this.edit) {
             return false;
         }
 
         if (!this.config) {
+            console.clear();
             const config = await ipcRenderer.invoke("config");
             await this.setConfig(config);
         }
@@ -91,8 +86,9 @@ export default {
             this.initService();
             this.connectOBS();
             this.registerIPC();
-            this.setActivity();
 
+            await this.startFollowers();
+            this.setActivity();
             this.addNotification(notifications.controls);
         }
 
@@ -100,16 +96,19 @@ export default {
     },
     methods: {
         ...mapActions({
+            loadLanguage: "strings/LOAD",
+
             initService: "service/INIT",
+
+            startFollowers: "followers/START",
 
             turnLock: "ipc/TURN_LOCK",
 
             connectOBS: "obs/CONNECT",
 
-            addNotification: "notifications/ADD",
-            turnUpdate: "notifications/TURN_UPDATE"
+            addNotification: "notifications/ADD"
         }),
-    
+
         async authService() {
             if (this.settings.service === "none") {
                 this.$router.replace("/services").catch(() => {});
@@ -148,5 +147,33 @@ export default {
         width: 100%;
         height: 100%;
     }
+}
+
+#overlays {
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+}
+
+#editNotification {
+    position: absolute;
+    top: 0px;
+    left: 45%;
+
+    width: 200px;
+    height: 60px;
+
+    background: rgba(0, 0, 0, 0.4);
+    text-align: center;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    z-index: 9;
+}
+
+#editText {
+    display: inline-block;
+
+    margin-bottom: 5px;
 }
 </style>

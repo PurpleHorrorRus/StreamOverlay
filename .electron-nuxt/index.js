@@ -13,7 +13,7 @@ const NuxtApp = require("./renderer/NuxtApp");
 const isDev = process.env.NODE_ENV === "development";
 
 const electronLogger = new Logger("Electron", "teal");
-electronLogger.ignore(text => text.includes("nhdogjmejiglipccpnnnanhbledajbpd"));
+electronLogger.ignore(text => text.includes("nhdogjmejiglipccpnnnanhbledajbpd")); // Clear vue devtools errors
 
 const launcher = new ElectronLauncher({
     logger: electronLogger,
@@ -22,15 +22,11 @@ const launcher = new ElectronLauncher({
 });
 
 function hasConfigArgument(array) {
-    return array.some(el => {
-        return el === "--config" || el === "-c";
-    });
+    for (const el of array) if (el === "--config" || el === "-c") return true;
+    return false;
 }
-
 const argumentsArray = process.argv.slice(2);
-if (!hasConfigArgument(argumentsArray)) {
-    argumentsArray.push("--config", "builder.config.js");
-}
+if (!hasConfigArgument(argumentsArray)) argumentsArray.push("--config", "builder.config.js");
 
 const builder = new ElectronBuilder({
     processArgv: argumentsArray
@@ -45,7 +41,7 @@ const webpackConfig = Webpack.getBaseConfig({
     plugins: [
         new webpack.DefinePlugin({
             "process.resourcesPath": resourcesPath.mainProcess(),
-            "process.env.DEV_SERVER_URL": `"${SERVER_HOST}:${SERVER_PORT}"`
+            "process.env.DEV_SERVER_URL": `'${SERVER_HOST}:${SERVER_PORT}'`
         })
     ]
 });

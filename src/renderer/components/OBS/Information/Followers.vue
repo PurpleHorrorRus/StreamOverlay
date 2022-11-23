@@ -10,7 +10,7 @@ import { mapState } from "vuex";
 
 export default {
     components: {
-        HeartIcon: () => import("~/assets/icons/heart.svg")
+        HeartIcon: () => import("~icons/heart.svg")
     },
 
     computed: {

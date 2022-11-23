@@ -1,4 +1,6 @@
 /* eslint-disable no-undef */
+const path = require("path");
+
 const vueConfig = require("../../nuxt-config/vue");
 const headConfig = require("../../nuxt-config/head");
 const optimizationConfig = require("../../nuxt-config/optimization");
@@ -17,7 +19,7 @@ module.exports = {
     telemetry: false,
     dev: isDev,
     loading: false,
-    
+
     env: require("../../env.json"),
     head: headConfig,
     router: routerConfig,
@@ -30,7 +32,7 @@ module.exports = {
     styleResources: {
         scss: ["~assets/css/mixins.scss"]
     },
-    
+
     build: {
         publicPath: "./_nuxt/",
 
@@ -51,7 +53,7 @@ module.exports = {
                 config.target = "electron-renderer";
                 config.devtool = "source-map";
             }
-            
+
             config.mode = process.env.NODE_ENV;
             config.performance = optimizationConfig.performance;
 
@@ -64,5 +66,9 @@ module.exports = {
         splitChunks: isDev ? optimizationConfig.splitChunks : {},
         filenames: !isDev ? optimizationConfig.filenames : {},
         extractCSS: false
+    },
+
+    alias: {
+        "~icons": path.resolve(__dirname, "assets/icons")
     }
 };

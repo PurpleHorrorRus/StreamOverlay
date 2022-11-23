@@ -13,25 +13,33 @@ process.on("message", async ({ action, target }) => {
 
     await nuxt.ready();
 
+    // https://github.com/nuxt/nuxt.js/blob/dev/packages/builder/src/builder.js
     const builder = new Builder(nuxt);
-    if (target === "development") {
-        await builder.build().catch(err => {
-            console.error(err);
-            process.send({ status: "error", err: err.message });
-        });
-    
-        nuxt.listen(SERVER_PORT);
-        process.send({ status: "ok" });
-    } else {
-        const { errors } = await new Generator(nuxt, builder).generate({
-            build: true,
-            init: true
-        }).catch(err => {
-            console.error(err);
-            process.send({ status: "error", err: err.message });
-        });
 
-        if (errors.length === 0) process.send({ status: "ok" }); 
-        else process.send({ status: "error", err: "Error occurred while generating pages" });
+    // https://github.com/nuxt/nuxt.js/blob/dev/packages/generator/src/generator.js
+    const generator = new Generator(nuxt, builder);
+
+    if (target === "development") {
+        builder
+            .build()
+            .then(() => {
+                nuxt.listen(SERVER_PORT);
+                process.send({ status: "ok" });
+            })
+            .catch(err => {
+                console.error(err);
+                process.send({ status: "error", err: err.message });
+            });
+    } else {
+        generator
+            .generate({ build: true, init: true })
+            .then(({ errors }) => {
+                if (errors.length === 0) process.send({ status: "ok" });
+                else process.send({ status: "error", err: "Error occurred while generating pages" });
+            })
+            .catch(err => {
+                console.error(err);
+                process.send({ status: "error", err: err.message });
+            });
     }
 });

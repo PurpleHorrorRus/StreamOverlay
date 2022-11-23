@@ -1,7 +1,7 @@
 @mixin obs-item {
     height: 30px;
 
-    padding: 5px;
+    padding: 0px 5px;
 
     border: 1px solid #2e2e2e;
     border-radius: 4px;
@@ -9,4 +9,9 @@
     background: #202020;
 
     filter: drop-shadow(2px 2px 2px #000000b3);
+
+    span {
+        position: relative;
+        top: 1px;
+    }
 }

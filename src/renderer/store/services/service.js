@@ -1,4 +1,3 @@
-
 import fs from "fs-extra";
 import path from "path";
 import Promise from "bluebird";
@@ -40,8 +39,6 @@ const ReadTTS = async file => {
     };
 };
 
-let serviceInfoInterval = null;
-
 export default {
     namespaced: true,
 
@@ -81,7 +78,7 @@ export default {
 
         INIT: async ({ dispatch }) => {
             dispatch("UPDATE_INFO");
-            serviceInfoInterval = setInterval(() => dispatch("UPDATE_INFO"), 10000);
+            setInterval(() => dispatch("UPDATE_INFO"), 10000);
         },
 
         UPDATE_INFO: async ({ dispatch, state }) => {
@@ -110,11 +107,11 @@ export default {
                 }, rootState.settings.settings.chat.timeout * 1000);
             }
 
-            if (!message.system && !message.past) {
+            if (!message.system && !message.service && !message.past) {
                 if (rootState.settings.settings.chat.sound) {
                     dispatch("PLAY_SOUND");
                 }
-    
+
                 if (rootState.settings.settings.chat.tts.enable) {
                     dispatch("VOICE_MESSAGE", {
                         name: message.nickname,
@@ -132,8 +129,8 @@ export default {
             let message = {
                 id: Date.now(),
                 nickname: isObject ? data.nickname : "SYSTEM",
-                time: data.time || await dispatch("GET_CURRENT_TIME"),
                 system: true,
+                time: data.time || await dispatch("GET_CURRENT_TIME"),
 
                 formatted: [{
                     type: "text",
@@ -145,14 +142,14 @@ export default {
                 message = Object.assign(message, data);
             }
 
-            dispatch("ADD_MESSAGE", message);
+            return await dispatch("ADD_MESSAGE", message);
         },
 
         REMOVE_MESSAGE: ({ state }, id) => {
             const message = state.messages.find(message => {
                 return message.id === id;
             });
-            
+
             if (message) message.show = false;
             return Boolean(message);
         },
@@ -181,7 +178,7 @@ export default {
             const folder = await dispatch("PREPARE_TEMP_FOLDER", "tts", { root: true });
             const file = await DownloadTTS(text, folder);
             TTSQuery.push(file);
-            
+
             if (TTSQuery.length === 1) {
                 return await ReadTTS(TTSQuery[0]);
             }
@@ -198,6 +195,10 @@ export default {
             });
         },
 
+        STREAM_VOICE: async (_, text) => {
+            return await TTSClient.stream(text);
+        },
+
         UPDATE_RECENT: ({ dispatch, rootState }, data) => {
             data = { ...data };
             let recent = [...rootState.config.recent];
@@ -206,7 +207,9 @@ export default {
                 return item.title === data.title && item.game === data.game;
             });
 
-            recent = ~index ? misc.arrayMove(recent, index, 0) : [data, ...recent];
+            recent = ~index
+                ? misc.arrayMove(recent, index, 0)
+                : [data, ...recent];
 
             if (recent.length > 5) {
                 recent = recent.splice(0, 5);

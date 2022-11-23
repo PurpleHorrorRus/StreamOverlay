@@ -10,11 +10,7 @@
             class="icon"
             :class="{ spin: Boolean(notification.spin) }"
         />
-
-        <span 
-            class="notification-text" 
-            v-html="notification.text" 
-        />
+        <span class="notification-text" v-html="notification.text" />
     </div>
 </template>
 

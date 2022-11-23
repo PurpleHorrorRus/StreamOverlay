@@ -10,7 +10,7 @@ import { mapState } from "vuex";
 
 export default {
     components: {
-        ViewersIcon: () => import("~/assets/icons/eye.svg")
+        ViewersIcon: () => import("~icons/eye.svg")
     },
 
     computed: {

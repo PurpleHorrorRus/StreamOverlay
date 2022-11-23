@@ -70,7 +70,18 @@ const clear = {
     twitch: {
         username: "",
         access_token: "",
-        oauth_token: ""
+        version: 1,
+        eventsubDebug: false,
+        chatDebug: false,
+        chatSecure: true,
+
+        notifications: {
+            "channel.update": true,
+            "channel.follow": true,
+            "channel.subscribe": true,
+            "channel.ban": true,
+            "stream.online": true
+        }
     },
 
     trovo: {
@@ -111,7 +122,10 @@ if (!fs.existsSync(configRoot)) {
     fs.mkdirSync(configRoot);
 }
 
-const configPath = isDev ? path.join(configRoot, "StreamOverlay") : configRoot;
+const configPath = isDev
+    ? path.join(configRoot, "StreamOverlay")
+    : configRoot;
+
 if (!fs.existsSync(configPath)) {
     fs.mkdirSync(configPath);
 }
@@ -136,9 +150,18 @@ const nested = (settings, clear) => {
     return settings;
 };
 
-const dataPath = filename => path.join(configPath, filename);
-const exist = path => fs.existsSync(path);
-const data = (path, clear) => (exist(path) ? nested(readJSON(path), clear) : writeJSON(path, clear));
+const dataPath = filename => {
+    return path.join(configPath, filename);
+};
+
+const data = (path, clear, ignoreMissingFields = false) => {
+    if (fs.existsSync(path)) {
+        const content = readJSON(path);
+        return nested(content, clear, ignoreMissingFields);
+    }
+
+    return writeJSON(path, clear);
+};
 
 const paths = {
     configPath,
