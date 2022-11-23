@@ -18,7 +18,7 @@
         "got": "^11.8.5",
         "minimatch": "^3.0.5",
         "loader-utils": "^2.0.4",
-        "webpack": "4.46.0"
+        "webpack": "5.75.0"
     },
     "scripts": {
         "dev": "cross-env NODE_ENV=development node .electron-nuxt/index.js",
@@ -32,7 +32,7 @@
         "discord-rpc": "^4.0.1",
         "electron-updater": "^5.3.0",
         "http": "^0.0.1-security",
-        "nuxt": "^2.15.8",
+        "nuxt": "^3.0.0",
         "nuxt-lazy-load": "^1.2.9",
         "obs-websocket-js": "^5.0.2",
         "overlayaddon": "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git",
@@ -67,6 +67,6 @@
         "sass-loader": "10.1.1",
         "url-loader": "^4.1.1",
         "vue-loader": "15.9.7",
-        "webpack": "4.46.0"
+        "webpack": "5.75.0"
     }
 }
