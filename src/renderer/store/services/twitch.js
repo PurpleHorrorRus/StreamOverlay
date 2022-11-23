@@ -286,18 +286,6 @@ export default {
             return Number(follows?.total) || 0;
         },
 
-        LATEST_FOLLOWER: async ({ dispatch, rootState }) => {
-            const response = await rootState.service.client.users.follows(rootState.service.user.id);
-            const follower = response.data.find(user => {
-                return user.from_name !== "BernkastelBot";
-            });
-
-            const id = Number(follower.from_id);
-            const profile = await rootState.service.client.users.get(id);
-
-            return await dispatch("FORMAT_PROFILE", profile);
-        },
-
         CHATTERS: async ({ rootState }) => {
             const [botsRequest, { chatters }] = await Promise.all([
                 axios.get("https://api.twitchinsights.net/v1/bots/online"),
