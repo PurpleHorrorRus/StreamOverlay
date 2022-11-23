@@ -3,10 +3,10 @@
         <HeaderLink v-for="item of items" :key="item.to" :item="item" />
         <div id="menu-header-actions-other">
             <SolidButton
-                v-tooltip="'Создать клип на 15 секунд'"
+                v-tooltip="$strings.HEADER.TWITCH.BUTTONS.CLIP.TOOLTIP"
                 :load="loadClip"
                 :disabled="loadClip"
-                label="Клип"
+                :label="$strings.HEADER.TWITCH.BUTTONS.CLIP.TITLE"
                 @click.native="createClip"
             />
         </div>

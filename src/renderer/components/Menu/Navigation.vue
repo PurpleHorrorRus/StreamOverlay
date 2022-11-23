@@ -20,44 +20,52 @@
 <script>
 export default {
     data: () => ({
-        items: [
-            {
-                text: "Трансляция",
-                link: "/stream",
-                icon: () => import("~/assets/icons/broadcast.svg")
-            },
+        items: []
+    }),
 
-            {
-                text: "Режим редактирования",
-                link: "/?edit=true",
-                icon: () => import("~/assets/icons/pencil.svg")
-            },
+    created() {
+        this.items = [{
+            text: this.$strings.MENU.NAVIGATION.STREAM,
+            link: "/stream",
+            icon: () => import("~icons/broadcast.svg")
+        },
 
-            {
-                text: "Настройки OBS",
-                link: "/settings/obs",
-                icon: () => import("~/assets/icons/wrench.svg")
-            },
+        {
+            text: this.$strings.MENU.NAVIGATION.EDIT,
+            link: "/?edit=true",
+            icon: () => import("~icons/pencil.svg")
+        },
 
-            {
-                text: "Настройки сервисов",
-                link: "/services",
-                icon: () => import("~/assets/icons/twitch.svg")
-            },
+        {
+            text: this.$strings.MENU.NAVIGATION.OBS,
+            link: "/settings/obs",
+            icon: () => import("~icons/wrench.svg")
+        },
 
-            {
-                text: "Настройки чата",
-                link: "/settings/chat",
-                icon: () => import("~/assets/icons/chat.svg")
-            },
+        {
+            text: this.$strings.MENU.NAVIGATION.SERVICES,
+            link: "/services",
+            icon: () => import("~icons/twitch.svg")
+        },
 
-            {
-                text: "Прочие настройки",
-                link: "/settings/other",
-                icon: () => import("~/assets/icons/settings.svg")
-            }
-        ]
-    })
+        {
+            text: this.$strings.MENU.NAVIGATION.CHAT,
+            link: "/settings/chat",
+            icon: () => import("~icons/chat.svg")
+        },
+
+        {
+            text: this.$strings.MENU.NAVIGATION.APPEARANCE,
+            link: "/settings/appearance",
+            icon: () => import("~icons/brush.svg")
+        },
+
+        {
+            text: this.$strings.MENU.NAVIGATION.OTHER,
+            link: "/settings/other",
+            icon: () => import("~icons/settings.svg")
+        }];
+    }
 };
 </script>
 

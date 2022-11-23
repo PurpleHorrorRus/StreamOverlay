@@ -3,6 +3,7 @@ import fs from "fs-extra";
 import path from "path";
 
 import obs from "~/store/obs";
+import strings from "./i18n";
 
 import service from "~/store/services/service";
 import twitch from "~/store/services/twitch";
@@ -51,6 +52,7 @@ export default function() {
         },
         
         modules: {
+            strings,
             obs,
 
             service,

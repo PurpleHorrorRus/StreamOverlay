@@ -1,9 +1,9 @@
 <template>
     <div id="menu-header-toggles">
-        <ToggleButton 
-            text="Чат только для фолловеров" 
-            :checked="tags['followers-only'] !== '-1'" 
-            @change="turnFollwoersOnly" 
+        <ToggleButton
+            :text="$strings.HEADER.TWITCH.FOLLOWERS_ONLY"
+            :checked="followersOnly"
+            @change="turnFollwoersOnly"
         />
 
         <div id="menu-header-actions-ad">
@@ -17,13 +17,17 @@ import { mapActions, mapState } from "vuex";
 
 export default {
     components: {
-        ActionsAd: () => import("~/components/Menu/Header/ActionsAd")
+        ActionsAd: () => import("./ActionsAd.vue")
     },
 
     computed: {
         ...mapState({
             tags: state => state.twitch.tags
-        })
+        }),
+
+        followersOnly() {
+            return this.tags["followers-only"] !== -1;
+        }
     },
 
     methods: {

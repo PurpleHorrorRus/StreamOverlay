@@ -1,24 +1,24 @@
 <template>
     <div id="widgets-page-content-container-list">
         <div id="widgets-page-content-container-list-items">
-            <WidgetListItem 
+            <WidgetListItem
                 v-for="(widget, index) of $parent.widgets"
                 :key="widget.id"
-                :widget="widget" 
+                :widget="widget"
                 @click.native="$parent.select(index)"
             />
         </div>
 
         <div id="widgets-page-content-container-list-actions">
-            <SolidButton 
-                :label="'Добавить'" 
-                @click.native="$parent.add" 
+            <SolidButton
+                :label="$strings.MENU.WIDGETS.ADD"
+                @click.native="$parent.add"
             />
 
-            <SolidButton 
-                :label="'Удалить'" 
-                :disabled="$parent.disabled" 
-                @click.native="$parent.delete" 
+            <SolidButton
+                :label="$strings.MENU.WIDGETS.REMOVE"
+                :disabled="$parent.disabled"
+                @click.native="$parent.delete"
             />
         </div>
     </div>
@@ -27,7 +27,7 @@
 <script>
 export default {
     components: {
-        WidgetListItem: () => import("~/components/Menu/WidgetsPage/List/Item")
+        WidgetListItem: () => import("./List/Item.vue")
     }
 };
 </script>

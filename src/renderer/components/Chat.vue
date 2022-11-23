@@ -1,5 +1,9 @@
 <template>
-    <Movable :source="settings.chat" name="Чат" :canBringTop="true">
+    <Movable
+        :source="settings.chat"
+        :name="$strings.MENU.EDIT.ELEMENTS.CHAT"
+        :canBringTop="true"
+    >
         <div id="chat-block" class="movable-slot" :class="{ input }">
             <MessagesBlock :input="input" />
             <ChatInput v-if="input" />

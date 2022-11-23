@@ -1,21 +1,21 @@
 <template>
     <div id="widgets-page-content-container-edit">
         <Input
-            :value="$parent.widget.name" 
-            :placeholder="'Название'" 
-            @input="$parent.widget.name = $event" 
+            :value="$parent.widget.name"
+            :placeholder="$strings.MENU.WIDGETS.NAME"
+            @input="$parent.widget.name = $event"
         />
 
         <Input
-            :value="$parent.widget.src" 
-            :placeholder="'Ссылка'" 
-            @input="$parent.widget.src = $event" 
+            :value="$parent.widget.src"
+            :placeholder="$strings.MENU.WIDGETS.LINK"
+            @input="$parent.widget.src = $event"
         />
 
         <SolidButton
-            :label="'Сохранить'" 
-            :disabled="$parent.disabled" 
-            @click.native="$parent.saveWidget" 
+            :label="$strings.MENU.WIDGETS.SAVE"
+            :disabled="$parent.disabled"
+            @click.native="$parent.saveWidget"
         />
     </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
     <div id="services-page" class="modal-content">
-        <Title title="Настройки сервисов" />
+        <Title :title="$strings.MENU.SERVICES.TITLE" />
         <ServiceSelector class="modal-body" />
     </div>
 </template>

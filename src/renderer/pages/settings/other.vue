@@ -3,58 +3,64 @@
         <Title title="Прочие настройки" />
         <div class="modal-body">
             <ToggleButton
-                :text="'Показывать количество зрителей'"
+                :text="$strings.MENU.OTHER.VIEWERS"
                 :checked="settings.OBSStatus.ServiceInfo.enable"
                 @change="deepChange(settings.OBSStatus.ServiceInfo, 'enable')"
             />
+
             <ToggleButton
-                :text="'Показать количество фолловеров'"
+                :text="$strings.MENU.OTHER.FOLLOWERS"
                 :checked="settings.OBSStatus.ServiceInfo.followers"
                 @change="deepChange(settings.OBSStatus.ServiceInfo, 'followers')"
             />
 
             <ToggleButton
-                :text="'Включить техническую статистику OBS'"
+                :text="$strings.MENU.OTHER.OBSTECH"
                 :checked="settings.OBSStatus.tech"
                 @change="deepChange(settings.OBSStatus, 'tech')"
             />
 
             <ToggleButton
-                :text="'Включить время трансляции/записи'"
+                :text="$strings.MENU.OTHER.STREAM_RECORD_TIME"
                 :checked="settings.OBSStatus.time"
                 @change="deepChange(settings.OBSStatus, 'time')"
             />
 
             <ToggleButton
-                :text="'Включить интеграцию с Discord'"
+                :text="$strings.MENU.OTHER.DISCORD"
                 :checked="settings.discord"
                 @change="turnDiscord"
             />
 
             <ToggleButton
-                :text="'Включить аппаратное ускорение'"
+                :text="$strings.MENU.OTHER.HARDWARE_ACCELERATION.TITLE"
                 :checked="settings.hardwareAcceleration"
-                tip="Необходима перезагрузка приложения"
+                :tip="$strings.MENU.OTHER.HARDWARE_ACCELERATION.TIP"
                 @change="deepChange(settings, 'hardwareAcceleration')"
             />
 
             <ToggleButton
-                :text="'Включить Content Protection'"
+                :text="$strings.MENU.OTHER.CONTENT_PROTECTION.TITLE"
                 :checked="settings.contentProtection"
-                tip="Content Protection - защита от отображения в OBS и других приложениях для захвата рабочего стола"
+                :tip="$strings.MENU.OTHER.CONTENT_PROTECTION.TIP"
                 @change="deepChange(settings, 'contentProtection')"
             />
 
             <ToggleButton
-                :text="'Включить инструменты разработчика'"
+                :text="$strings.MENU.OTHER.RESTRICTION"
+                :checked="settings.restriction"
+                @change="deepChange(settings, 'restriction')"
+            />
+
+            <ToggleButton
+                :text="$strings.MENU.OTHER.DEVTOOLS"
                 :checked="settings.devtools"
                 @change="turnDevtools"
             />
 
             <ToggleButton
-                :text="'Включить очистку ОЗУ'"
-                :tip="'Выполняет очистку памяти приложения каждые 70 секунд.\
-                    Отключите эту опцию, если приложение вылетает'"
+                :text="$strings.MENU.OTHER.RAMCLEAN.TITLE"
+                :tip="$strings.MENU.OTHER.RAMCLEAN.TIP"
                 :checked="settings.RAMClean"
                 @change="deepChange(settings, 'RAMClean')"
             />
@@ -68,7 +74,6 @@ import { ipcRenderer } from "electron";
 import CoreMixin from "~/mixins/core";
 
 export default {
-
     mixins: [CoreMixin],
 
     layout: "modal",
@@ -76,7 +81,7 @@ export default {
     methods: {
         turnDiscord() {
             this.deepChange(this.settings, "discord");
-            return this.settings.discord 
+            return this.settings.discord
                 ? this.setActivity()
                 : this.clearActivity();
         },

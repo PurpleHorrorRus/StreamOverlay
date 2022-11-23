@@ -24,16 +24,16 @@ export default {
 
     computed: {
         placeholder() {
-            return this.connected 
-                ? "Введите сообщение..." 
-                : "Подключение...";
+            return this.connected
+                ? this.$strings.CHAT.MESSAGE
+                : this.$strings.CHAT.CONNECTING;
         }
     },
 
     methods: {
         send() {
             this.text = this.text.trim();
-            
+
             if (this.text.length > 0 && this.connected) {
                 this.serviceDispatch("SAY", this.text);
                 this.text = "";

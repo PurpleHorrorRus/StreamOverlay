@@ -1,9 +1,9 @@
 const root = "~plugins";
 const plugins = [
-    "errors",
     "globalComponents",
     "directives",
-    "tooltip"
+    "tooltip",
+    "i18n"
 ];
 
 // eslint-disable-next-line no-undef

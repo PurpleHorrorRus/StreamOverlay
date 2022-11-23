@@ -4,11 +4,15 @@
         id="modal-prediction-content"
         class="modal-content"
     >
-        <Title id="modal-prediction-title" title="Предсказание" />
+        <Title
+            id="modal-prediction-title"
+            :title="$strings.MENU.PREDICTIONS.TITLE"
+        />
+
         <div id="modal-prediction-content-container">
             <Input
                 id="modal-prediction-content-container-title"
-                placeholder="Название предсказания"
+                :placeholder="$strings.MENU.PREDICTIONS.NAME"
                 :value="prediction.title"
                 :disabled="isActive"
                 :maxLength="45"
@@ -20,7 +24,7 @@
             <div id="modal-prediction-content-container-buttons">
                 <SolidButton
                     v-if="!isActive"
-                    label="Начать"
+                    :label="$strings.MENU.PREDICTIONS.START"
                     :load="load"
                     :disabled="!canCreate"
                     @click.native="start"
@@ -28,7 +32,7 @@
 
                 <SolidButton
                     v-else
-                    label="Отменить"
+                    :label="$strings.MENU.PREDICTIONS.CANCEL"
                     :load="load"
                     @click.native="cancel"
                 />
@@ -44,7 +48,11 @@ import CoreMixin from "~/mixins/core";
 
 const empty = {
     title: "",
-    outcomes: [{ title: "" }, { title: "" }]
+    outcomes: new Array(10).fill({
+        title: "",
+        users: 0,
+        channel_points: 0
+    })
 };
 
 const updateRate = 10;
@@ -52,7 +60,7 @@ let updateInterval = null;
 
 export default {
     components: {
-        Outcomes: () => import("~/components/Menu/Predictions/Outcomes")
+        Outcomes: () => import("~/components/Menu/Predictions/Outcomes.vue")
     },
 
     mixins: [CoreMixin],
@@ -60,7 +68,7 @@ export default {
     layout: "modal",
 
     data: () => ({
-        prediction: empty,
+        prediction: { ...empty },
         denied: false,
         firstLoad: true,
         load: false
@@ -68,20 +76,26 @@ export default {
 
     computed: {
         canCreate() {
-            const isEmptyOutcome = this.prediction.outcomes.some(outcome => {
-                return !outcome.title;
+            const isEmptyRequiredOutcome = this.prediction.outcomes.some((outcome, index) => {
+                return index <= 1 && !outcome.title;
             });
 
-            return this.prediction.title && !isEmptyOutcome;
+            return this.prediction.title
+                && !isEmptyRequiredOutcome;
         },
 
         isActive() {
-            return this.prediction.status === "ACTIVE" 
+            return this.prediction.status === "ACTIVE"
                 || this.prediction.status === "LOCKED";
         }
     },
 
     async created() {
+        this.prediction.outcomes = this.prediction.outcomes.map((outcome, index) => ({
+            ...outcome,
+            id: index
+        }));
+
         await this.get();
 
         if (this.isActive) {
@@ -98,32 +112,43 @@ export default {
     methods: {
         async get() {
             const [prediction] = await this.client.predictions.get(this.user.id);
+
             if (prediction.status === "ACTIVE" || prediction.status === "LOCKED") {
                 this.prediction = prediction;
             }
+
+            return prediction;
         },
 
         async start() {
             this.load = true;
 
             // eslint-disable-next-line max-len
-            this.prediction = await this.client.predictions.create(this.user.id, this.prediction.title, this.prediction.outcomes, 60);
+            this.prediction = await this.client.predictions.create(
+                this.user.id,
+                this.prediction.title,
+                this.prediction.outcomes.filter(outcome => outcome.title.length > 0),
+                60
+            );
+
             updateInterval = setInterval(() => this.get(), updateRate * 1000);
 
             this.load = false;
         },
 
         async end(index) {
-            if (this.isActive) {
-                this.load = true;
-
-                await this.client.predictions.end(this.user.id, this.prediction.id, "RESOLVED", {
-                    winning_outcome_id: this.prediction.outcomes[index].id
-                });
-
-                this.clear();
-                this.load = false;
+            if (!this.isActive) {
+                return false;
             }
+
+            this.load = true;
+
+            await this.client.predictions.end(this.user.id, this.prediction.id, "RESOLVED", {
+                winning_outcome_id: this.prediction.outcomes[index].id
+            });
+
+            this.clear();
+            this.load = false;
         },
 
         async cancel() {
@@ -136,7 +161,7 @@ export default {
         },
 
         clear() {
-            this.prediction = empty;
+            this.prediction = { ...empty };
 
             clearInterval(updateInterval);
             updateInterval = null;

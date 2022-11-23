@@ -2,20 +2,20 @@
     <div id="modal-stream-content-container-edit">
         <Input
             :value="$parent.local.title"
-            placeholder="Название трансляции"
+            :placeholder="$strings.MENU.STREAM.STREAM_TITLE"
             @input="$parent.local.title = $event"
             @keypress.enter.native="$parent.update"
         />
 
         <Input
             :value="$parent.local.game"
-            :placeholder="'Название игры'"
+            :placeholder="$strings.MENU.STREAM.STREAM_CATEGORY"
             @input="$parent.local.game = $event"
             @keypress.enter.native="$parent.update"
         />
 
         <SolidButton
-            label="Обновить"
+            :label="$strings.MENU.STREAM.UPDATE"
             :disabled="$parent.disabled"
             :load="$parent.loading"
             @click.native="$parent.update"

@@ -1,19 +1,19 @@
 <template>
     <div id="twitch-settings-access-token" class="twitch-settings">
-        <span class="modal-item-tip">
-            Access Token - нужен для того, чтобы менять название стрима и игру через оверлей
-        </span>
+        <div class="modal-item-tip">
+            <span
+                class="modal-item-tip-text"
+                v-text="$strings.MENU.SERVICES.TWITCH.ACCESS_TOKEN"
+            />
+        </div>
 
-        <div class="twitch-settings-form">
+        <div class="input-form">
             <Input
                 :value="$parent.access_token"
                 @input="$emit('input', $event)"
             />
-            
-            <SolidButton 
-                :label="'Получить'" 
-                @click.native="getToken" 
-            />
+
+            <SolidButton :label="$strings.GET" @click.native="getToken" />
         </div>
     </div>
 </template>
@@ -28,7 +28,7 @@ export default {
 
     methods: {
         async getToken() {
-            const url = new Helix({
+            const url = await new Helix({
                 // eslint-disable-next-line no-undef
                 client_id: process.env.twitch_client_id
             }).getAuthLink([], "https://purplehorrorrus.github.io/token");

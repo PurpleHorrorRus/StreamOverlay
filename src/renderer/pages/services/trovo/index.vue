@@ -1,22 +1,29 @@
 <template>
     <div id="settings-trovo" class="modal-content">
-        <Title title="Настройки Trovo" />
-        
+        <Title :title="$strings.MENU.SERVICES.TROVO.TITLE" />
+
         <div class="modal-body">
             <MenuError v-if="error" :error="error" />
 
             <div v-if="!settings.first" id="settings-trovo-notifications">
                 <ToggleButton
-                    :text="'Оповещение о присоединении пользователя в чат'"
+                    :text="$strings.MENU.SERVICES.TROVO.JOIN"
                     :checked="settings.trovo.notifications.welcome"
                     @change="deepChange(settings.trovo.notifications, 'welcome')"
                 />
+
+                <ToggleButton
+                    :text="$strings.MENU.SERVICES.TROVO.PAST.TITLE"
+                    :checked="settings.trovo.past"
+                    :tip="$strings.MENU.SERVICES.TROVO.PAST.TIP"
+                    @change="deepChange(settings.trovo, 'past')"
+                />
             </div>
-            
+
             <TrovoSettinsCode @input="code = $event" />
 
             <SolidButton
-                :label="'Продолжить'"
+                :label="$strings.CONTINUE"
                 :disabled="disabled"
                 :load="validating"
                 @click.native="next"
@@ -38,8 +45,8 @@ let TrovoClient = null;
 
 export default {
     components: {
-        MenuError: () => import("~/components/Menu/Notifications/Error"),
-        TrovoSettinsCode: () => import("~/components/Settings/Services/Trovo/Code")
+        MenuError: () => import("~/components/Menu/Notifications/Error.vue"),
+        TrovoSettinsCode: () => import("~/components/Settings/Services/Trovo/Code.vue")
     },
 
     mixins: [CoreMixin, OtherMixin],
@@ -105,7 +112,7 @@ export default {
                     credits: this.paths.trovo
                 });
             }
-            
+
             return await TrovoClient.exchange(this.code);
         },
 

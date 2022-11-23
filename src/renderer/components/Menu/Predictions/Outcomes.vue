@@ -1,38 +1,59 @@
 <template>
     <div id="modal-prediction-content-container-outcomes">
-        <div v-if="!$parent.isActive" id="modal-prediction-content-container-outcomes-inputs">
+        <div
+            v-if="!$parent.isActive"
+            id="modal-prediction-content-container-outcomes-inputs"
+        >
             <Input
+                v-for="outcome of $parent.prediction.outcomes"
+                :key="outcome.id"
+                :placeholder="outcomeTitle(outcome.id)"
                 :disabled="$parent.isActive"
-                placeholder="Первый вариант"
-                :maxLength="25"
-                :value="$parent.prediction.outcomes[0].title"
-                @input="$parent.prediction.outcomes[0].title = $event"
-            />
-            <Input
-                :disabled="$parent.isActive"
-                placeholder="Второй вариант"
-                :maxLength="25"
-                :value="$parent.prediction.outcomes[1].title"
-                @input="$parent.prediction.outcomes[1].title = $event"
+                :maxlength="25"
+                :value="$parent.prediction.outcomes[outcome.id].title"
+                @input="changeOutcome(outcome.id, $event)"
             />
         </div>
+
         <div v-else id="modal-prediction-content-container-outcomes-choosing">
             <Outcome
-                v-for="(outcome, index) of $parent.prediction.outcomes"
+                v-for="outcome of $parent.prediction.outcomes"
                 :key="outcome.id"
                 :outcome="outcome"
-                @click.native="$parent.end(index)"
+                @click.native="$parent.end(outcome.id)"
             />
         </div>
     </div>
 </template>
 
 <script>
-import Outcome from "~/components/Menu/Predictions/Outcome";
-
 export default {
     components: {
-        Outcome
+        Outcome: () => import("~/components/Menu/Predictions/Outcome")
+    },
+
+    data: () => ({
+        requires: 2
+    }),
+
+    methods: {
+        outcomeTitle(outcome) {
+            return this.$i18n(
+                this.$strings.MENU.PREDICTIONS[
+                    outcome < this.requires
+                        ? "OUTCOME_REQUIRED"
+                        : "OUTCOME_OPTIONAL"
+                ],
+
+                "outcome",
+                outcome + 1
+            );
+        },
+
+        changeOutcome(outcome, value) {
+            this.$parent.prediction.outcomes[outcome].title = value;
+            return value;
+        }
     }
 };
 </script>
@@ -46,7 +67,8 @@ export default {
     &-inputs,
     &-choosing {
         display: flex;
-        column-gap: 5px;
+        flex-direction: column;
+        row-gap: 5px;
     }
 
     &-choosing {

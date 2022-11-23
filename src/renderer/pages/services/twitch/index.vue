@@ -1,26 +1,51 @@
 <template>
     <div class="modal-content">
-        <Title title="Настройки Twitch" />
-        <div class="modal-body">
+        <Title :title="$strings.MENU.SERVICES.TWITCH.TITLE" />
+
+        <div id="twitch-settings" class="modal-body">
             <MenuError v-if="error" :error="error" />
 
-            <ToggleButton 
-                :text="'Включить бейджики'" 
+            <MenuLink
+                v-if="!settings.first"
+                :text="$strings.MENU.SERVICES.TWITCH.NOTIFICATIONS_SETTINGS"
+                :link="'/services/twitch/notifications'"
+            />
+
+            <ToggleButton
+                :text="$strings.MENU.SERVICES.TWITCH.CHAT_SECURE"
+                :checked="config.twitch.chatSecure"
+                @change="deepChange(config.twitch, 'chatSecure', 'twitch')"
+            />
+
+            <ToggleButton
+                :text="$strings.MENU.SERVICES.TWITCH.DEBUG_CHAT"
+                :checked="config.twitch.chatDebug"
+                @change="deepChange(config.twitch, 'chatDebug', 'twitch')"
+            />
+
+            <ToggleButton
+                :text="$strings.MENU.SERVICES.TWITCH.DEBUG_EVENTSUB"
+                :checked="config.twitch.eventsubDebug"
+                @change="deepChange(config.twitch, 'eventsubDebug', 'twitch')"
+            />
+
+            <ToggleButton
+                v-if="!settings.first"
+                :text="$strings.MENU.SERVICES.TWITCH.BADGES"
                 :checked="settings.chat.badges"
-                @change="deepChange(settings.chat, 'badges')" 
+                @change="deepChange(settings.chat, 'badges')"
             />
 
             <Input
-                text="Имя пользователя Twitch"
+                :text="$strings.MENU.SERVICES.TWITCH.USERNAME"
                 :value="username"
                 @input="username = $event"
             />
 
             <TwitchSettingsAccessToken @input="access_token = $event" />
-            <TwitchSettingsOAuthToken @input="oauth_token = $event" />
 
             <SolidButton
-                :label="'Продолжить'"
+                :label="$strings.CONTINUE"
                 :disabled="disabled"
                 :load="validating"
                 @click.native="next"
@@ -30,13 +55,14 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 import Helix from "simple-helix-api";
 
 import CoreMixin from "~/mixins/core";
 import OtherMixin from "~/mixins/other";
 
 const accessTokenRegex = /access_token=(.*?)&/;
-const oauthRegex = /oauth:/;
 
 let helix = null;
 
@@ -44,8 +70,7 @@ export default {
     components: {
         MenuError: () => import("~/components/Menu/Notifications/Error"),
 
-        TwitchSettingsAccessToken: () => import("~/components/Settings/Services/Twitch/AccessToken"),
-        TwitchSettingsOAuthToken: () => import("~/components/Settings/Services/Twitch/OAuthToken")
+        TwitchSettingsAccessToken: () => import("~/components/Settings/Services/Twitch/AccessToken.vue")
     },
 
     mixins: [CoreMixin, OtherMixin],
@@ -55,16 +80,20 @@ export default {
     data: () => ({
         username: "",
         access_token: "",
-        oauth_token: "",
         error: "",
         validating: false
     }),
 
     computed: {
+        ...mapState({
+            version: state => state.twitch.version
+        }),
+
         disabled() {
-            return this.username.length === 0 
-                || this.access_token.length === 0 
-                || this.oauth_token.length === 0;
+            return (
+                this.username.length === 0 ||
+                this.access_token.length === 0
+            );
         }
     },
 
@@ -73,17 +102,6 @@ export default {
             if (accessTokenRegex.test(access_token)) {
                 this.access_token = access_token.match(accessTokenRegex)[1];
             }
-        },
-
-        oauth_token(oauth_token) {
-            if (oauth_token.length === 0) {
-                this.oauth_token = "oauth:";
-                return;
-            }
-            
-            if (!oauthRegex.test(oauth_token)) {
-                this.oauth_token = `oauth:${oauth_token}`;
-            }
         }
     },
 
@@ -91,7 +109,12 @@ export default {
         if (this.config.twitch.username) {
             this.username = this.config.twitch.username;
             this.access_token = this.config.twitch.access_token;
-            this.oauth_token = this.config.twitch.oauth_token;
+
+            if (this.$route.query.outdated) {
+                this.settings.first = true;
+                this.access_token = "";
+                this.error = this.$strings.MENU.SERVICES.TWITCH.ERROR.OUTDATED;
+            }
         }
     },
 
@@ -110,9 +133,10 @@ export default {
                 this.saveSettings({
                     type: "twitch",
                     content: {
+                        ...this.config.twitch,
                         username: this.username,
                         access_token: this.access_token,
-                        oauth_token: this.oauth_token
+                        version: this.version
                     }
                 });
 
@@ -127,12 +151,13 @@ export default {
                 access_token: this.access_token
             });
 
-            const user = await helix.users.getByLogin(this.username.toLowerCase()).catch(() => {
-                throw this.handleError("Неверный Access Token");
-            });
+            const user = await helix.users.getByLogin(this.username.toLowerCase())
+                .catch(() => {
+                    throw this.handleError(this.$strings.MENU.SERVICES.TWITCH.ERROR.INVALID);
+                });
 
             if (user.length === 0) {
-                throw this.handleError("Пользователь с таким именем не найден");
+                throw this.handleError(this.$strings.MENU.SERVICES.TWITCH.ERROR.NOT_FOUND);
             }
 
             const data = await helix.channel.get(user.id);
@@ -155,15 +180,9 @@ export default {
 </script>
 
 <style lang="scss">
-.twitch-settings {
-    &-form {
-        display: flex;
-
-        gap: 10px;
-
-        .solid-button {
-            min-width: 85px;
-        }
-    }
+#twitch-settings {
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
 }
 </style>

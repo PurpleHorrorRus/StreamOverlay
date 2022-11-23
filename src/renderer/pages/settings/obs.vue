@@ -1,37 +1,80 @@
 <template>
     <div id="modal-obs-content" class="modal-content">
-        <Title id="modal-obs-content-title" title="Настройка OBS" />
+        <Title
+            id="modal-obs-content-title"
+            :title="$strings.MENU.OBS.TITLE"
+        />
+
         <div class="modal-body">
             <ToggleButton
-                :text="'Автопереподключение'"
+                :text="$strings.MENU.OBS.AUTORECONNECT"
                 :checked="config.obs.autoreconnect"
                 @change="deepChange(config.obs, 'autoreconnect', 'obs')"
             />
 
             <ToggleButton
-                :text="'Включить оповещение о низком FPS'"
+                :text="$strings.MENU.OBS.NOTIFICATIONS.LOWFPS"
                 :checked="settings.notifications.lowfps"
                 @change="deepChange(settings.notifications, 'lowfps')"
             />
 
-            <Input text="Адрес подключения" :value="address" @input="address = $event" />
-            <Input text="Порт подключения" :value="port" @input="port = $event" />
+            <ToggleButton
+                :text="$strings.MENU.OBS.NOTIFICATIONS.LOWBITRATE"
+                :checked="settings.notifications.lowbitrate"
+                @change="deepChange(settings.notifications, 'lowbitrate')"
+            />
+
+            <ToggleButton
+                :text="$strings.MENU.OBS.NOTIFICATIONS.MUTEDMIC.TITLE"
+                :checked="config.obs.meters.mic.enable"
+                @change="changeMicMeter('enable', !config.obs.meters.mic.enable)"
+            />
+
+            <ModalCategory
+                v-if="config.obs.meters.mic.enable"
+                :name="$strings.MENU.OBS.NOTIFICATIONS.MUTEDMIC.METER.TITLE"
+            >
+                <Range
+                    :text="$strings.MENU.OBS.NOTIFICATIONS.MUTEDMIC.METER.LIMIT"
+                    :value="config.obs.meters.mic.limit"
+                    :max="0"
+                    :min="-80"
+                    @select="changeMicMeter('limit', Number($event))"
+                />
+
+                <Range
+                    :text="$strings.MENU.OBS.NOTIFICATIONS.MUTEDMIC.METER.TIMEOUT.TITLE"
+                    :tip="$strings.MENU.OBS.NOTIFICATIONS.MUTEDMIC.METER.TIMEOUT.TIP"
+                    :value="config.obs.meters.mic.timeout"
+                    :max="1000"
+                    :min="50"
+                    @select="changeMicMeter('timeout', Number($event))"
+                />
+            </ModalCategory>
+
             <Input
-                text="Название источника с веб-камерой"
+                :text="$strings.MENU.OBS.ADDRESS"
+                :value="address"
+                @input="address = $event"
+            />
+
+            <Input
+                :text="$strings.MENU.OBS.PORT"
+                :value="port"
+                @input="port = $event"
+            />
+
+            <Input
+                :text="$strings.MENU.OBS.WEBCAM.TITLE"
                 :value="camera"
-                :tip="
-                    'Впишите сюда названия источников с веб-камерой.\
-                Если у вас веб-камера находтися в группе, то впишите название группы.\
-                Если у вас нет веб-камеры или вы не палите лицо на стриме, оставьте это поле пустым.\
-                Если у вас несколько источников или групп с камерой в OBS, то впишите их названия через запятую.'
-                "
+                :tip="$strings.MENU.OBS.WEBCAM.TIP"
                 @input="camera = $event"
             />
 
             <SolidButton
-                :label="'Продолжить'" 
-                :disabled="disabled" 
-                @click.native="next" 
+                :label="$strings.CONTINUE"
+                :disabled="disabled"
+                @click.native="next"
             />
         </div>
     </div>
@@ -43,12 +86,12 @@ import OtherMixin from "~/mixins/other";
 
 export default {
     mixins: [CoreMixin, OtherMixin],
-    
+
     layout: "modal",
 
     data: () => ({
         load: false,
-        address: "localhost",
+        address: "127.0.0.1",
         port: 4455,
         password: "",
         camera: ""
@@ -56,7 +99,8 @@ export default {
 
     computed: {
         disabled() {
-            return this.address.length === 0 || this.port.length === 0;
+            return this.address.length === 0
+                || this.port.length === 0;
         }
     },
 
@@ -77,21 +121,27 @@ export default {
         async next() {
             this.load = true;
 
+            this.config.obs.address = this.address;
+            this.config.obs.port = this.port;
+
             const webcamMapped = this.camera.split(",").map(c => c.trim());
             const webcamSet = new Set(webcamMapped);
-            const webcamsCollection = Array.from(webcamSet);
+            this.config.obs.camera = Array.from(webcamSet);
 
             this.saveSettings({
                 type: "obs",
-                content: {
-                    address: this.address,
-                    port: this.port,
-                    password: this.password,
-                    camera: webcamsCollection
-                }
+                content: this.config.obs
             });
 
             this.$router.replace("/");
+        },
+
+        changeMicMeter(field, value) {
+            this.config.obs.meters.mic[field] = value;
+            this.saveSettings({
+                type: "obs",
+                content: this.config.obs
+            });
         }
     }
 };

@@ -3,7 +3,7 @@
         <SolidButton
             v-for="(_, index) of 6"
             :key="index"
-            :label="`Реклама: ${(index + 1) * 30} сек.`"
+            :label="$i18n($strings.HEADER.TWITCH.BUTTONS.AD, 'time', (index + 1) * 30)"
             :load="loadAd"
             :disabled="loadAd"
             @click.native="startAd(index)"
@@ -23,20 +23,22 @@ export default {
 
     methods: {
         async startAd(index) {
-            const duration = (index + 1) * 30;
             this.loadAd = true;
+
+            const duration = (index + 1) * 30;
             const success = await this.client.commercial.start(this.user.id, duration)
                 .catch(() => (false));
-            
+
             if (success) {
                 this.addNotification({
-                    text: `Вы запустили рекламу на ${duration} секунд`,
+                    text: this.$i18n(this.$strings.NOTIFICATIONS.TWITCH.AD, "duration", duration),
                     color: "#28a745",
                     handle: 5
                 });
             }
 
             this.loadAd = false;
+            return success;
         }
     }
 };

@@ -17,7 +17,11 @@ export default {
         }),
 
         text() {
-            return `Обнаружен низкий битрейт: ${this.bitrate}`;
+            return this.$i18n(
+                this.$strings.NOTIFICATIONS.OBS.LOWBITRATE,
+                "bitrate",
+                this.bitrate
+            );
         },
 
         line() {

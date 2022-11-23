@@ -2,37 +2,37 @@
     <div class="modal-content">
         <Title id="modal-chat-content-title" title="Настройка чата" />
         <div class="modal-body">
-            <ToggleButton 
-                :text="'Включить чат'" 
-                :checked="settings.chat.enable" 
-                @change="deepChange(settings.chat, 'enable')" 
+            <ToggleButton
+                :text="$strings.MENU.CHAT.ENABLE"
+                :checked="settings.chat.enable"
+                @change="deepChange(settings.chat, 'enable')"
             />
 
             <div v-if="settings.chat.enable" id="modal-caht-content-settings">
                 <div id="modal-chat-content-appearance">
-                    <ToggleButton 
-                        :text="'Включить аватарки'" 
-                        :checked="settings.chat.avatar" 
-                        @change="deepChange(settings.chat, 'avatar')" 
+                    <ToggleButton
+                        :text="$strings.MENU.CHAT.AVATAR"
+                        :checked="settings.chat.avatar"
+                        @change="deepChange(settings.chat, 'avatar')"
                     />
                 </div>
 
                 <div id="modal-chat-content-notifications">
                     <ToggleButton
-                        :text="'Звуковое оповещение о сообщении в чате'"
+                        :text="$strings.MENU.CHAT.SOUND"
                         :checked="settings.chat.sound"
                         @change="deepChange(settings.chat, 'sound')"
                     />
 
                     <ToggleButton
-                        :text="'Зачитывать текст сообщения'"
+                        :text="$strings.MENU.CHAT.READ"
                         :checked="settings.chat.tts.enable"
                         @change="deepChange(settings.chat.tts, 'enable')"
                     />
 
                     <ToggleButton
                         v-if="settings.chat.tts.enable"
-                        :text="'Зачитывать имя пользователя сообщения'"
+                        :text="$strings.MENU.CHAT.READ_NAME"
                         :checked="settings.chat.tts.readName"
                         @change="deepChange(settings.chat.tts, 'readName')"
                     />
@@ -40,25 +40,25 @@
 
                 <div id="modal-chat-content-ranges">
                     <Range
-                        text="Время сообщения в чате (в секундах)"
-                        :value="Number(settings.chat.timeout)"
+                        :text="$strings.MENU.CHAT.TIMEOUT.TITLE"
+                        :value="settings.chat.timeout"
                         :max="600"
-                        :tip="'Установив 0, сообщения не будут удаляться'"
-                        @select="changeTimeout"
+                        :tip="$strings.MENU.CHAT.TIMEOUT.TIP"
+                        @select="changeChatNumber('timeout', $event)"
                     />
 
                     <Range
-                        text="Непрозрачность фона сообщений"
-                        :value="Number(settings.chat.opacity)"
-                        @select="changeOpactiy"
+                        :text="$strings.MENU.CHAT.OPACITY"
+                        :value="settings.chat.opacity"
+                        @select="changeChatNumber('opacity', $event)"
                     />
 
                     <Range
-                        text="Размер текста сообщений"
-                        :value="Number(settings.chat.font)"
+                        :text="$strings.MENU.CHAT.FONT"
+                        :value="settings.chat.font"
                         :min="8"
                         :max="16"
-                        @select="changeFont"
+                        @select="changeChatNumber('font', $event)"
                     />
                 </div>
             </div>
@@ -75,18 +75,8 @@ export default {
     layout: "modal",
 
     methods: {
-        changeTimeout(value) {
-            this.settings.chat.timeout = Number(value);
-            this.save();
-        },
-
-        changeOpactiy(value) {
-            this.settings.chat.opacity = Number(value);
-            this.save();
-        },
-
-        changeFont(value) {
-            this.settings.chat.font = Number(value);
+        changeChatNumber(field, value) {
+            this.settings.chat[field] = Number(value);
             this.save();
         }
     }

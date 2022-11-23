@@ -1,17 +1,17 @@
 <template>
     <div id="trovo-settings-access-token" class="trovo-settings">
-        <span class="modal-item-tip">
-            На этой странице необходимо получить одноразовый код доступа к
-            Trovo, который в последствии в автоматическом режиме будет изменён
-            на Access Token и Refresh Token для доступа к Trovo API и чату.
-            Из-за особенностей Trovo код необходимо разменивать повторно каждые 30 дней
-        </span>
+        <div class="modal-item-tip">
+            <span
+                class="modal-item-tip-text"
+                v-text="$strings.MENU.SERVICES.TROVO.TIP"
+            />
+        </div>
 
-        <div class="trovo-settings-form">
+        <div class="input-form">
             <Input @input="$emit('input', $event)" />
-            <SolidButton 
-                :label="'Получить'"
-                @click.native="getCode" 
+            <SolidButton
+                :label="$strings.GET"
+                @click.native="getCode"
             />
         </div>
     </div>
@@ -27,7 +27,7 @@ export default {
 
     methods: {
         async getCode() {
-            const url = new TrovoAPI({ 
+            const url = new TrovoAPI({
                 // eslint-disable-next-line no-undef
                 client_id: process.env.trovo_client_id,
                 // eslint-disable-next-line no-undef

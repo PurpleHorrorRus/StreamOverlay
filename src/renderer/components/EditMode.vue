@@ -1,9 +1,13 @@
 <template>
     <div id="edit-mode-notification">
-        <span id="edit-mode-notification-label" v-text="'Режим редактирования'" />
-        <SolidButton 
-            :label="'Виджеты'" 
-            @click.native="openFullEdit" 
+        <span
+            id="edit-mode-notification-label"
+            v-text="$strings.MENU.EDIT.TITLE"
+        />
+
+        <SolidButton
+            :label="$strings.MENU.EDIT.WIDGETS"
+            @click.native="openFullEdit"
         />
     </div>
 </template>
