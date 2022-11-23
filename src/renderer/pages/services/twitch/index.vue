@@ -14,19 +14,19 @@
             <ToggleButton
                 :text="$strings.MENU.SERVICES.TWITCH.CHAT_SECURE"
                 :checked="config.twitch.chatSecure"
-                @change="deepChange(config.twitch, 'chatSecure', 'twitch')"
+                @change="deepChange(config.twitch, 'chatSecure', null, 'twitch')"
             />
 
             <ToggleButton
                 :text="$strings.MENU.SERVICES.TWITCH.DEBUG_CHAT"
                 :checked="config.twitch.chatDebug"
-                @change="deepChange(config.twitch, 'chatDebug', 'twitch')"
+                @change="deepChange(config.twitch, 'chatDebug', null, 'twitch')"
             />
 
             <ToggleButton
                 :text="$strings.MENU.SERVICES.TWITCH.DEBUG_EVENTSUB"
                 :checked="config.twitch.eventsubDebug"
-                @change="deepChange(config.twitch, 'eventsubDebug', 'twitch')"
+                @change="deepChange(config.twitch, 'eventsubDebug', null, 'twitch')"
             />
 
             <ToggleButton

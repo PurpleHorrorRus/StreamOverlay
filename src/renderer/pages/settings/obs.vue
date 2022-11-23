@@ -9,7 +9,7 @@
             <ToggleButton
                 :text="$strings.MENU.OBS.AUTORECONNECT"
                 :checked="config.obs.autoreconnect"
-                @change="deepChange(config.obs, 'autoreconnect', 'obs')"
+                @change="deepChange(config.obs, 'autoreconnect', null, 'obs')"
             />
 
             <ToggleButton

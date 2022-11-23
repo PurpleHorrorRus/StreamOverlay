@@ -34,14 +34,6 @@ const clear = {
             }
         },
 
-        trovo: {
-            past: false,
-
-            notifications: {
-                welcome: true
-            }
-        },
-
         OBSStatus: {
             enable: true,
             time: true,
@@ -112,7 +104,12 @@ const clear = {
 
     trovo: {
         access_token: "",
-        refresh_token: ""
+        refresh_token: "",
+        past: false,
+
+        notifications: {
+            welcome: true
+        }
     },
 
     widgets: [],

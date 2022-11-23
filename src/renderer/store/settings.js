@@ -4,7 +4,7 @@ export default {
     namespaced: true,
 
     state: () => ({
-        settings: null
+        settings: {}
     }),
 
     actions: {
@@ -13,17 +13,30 @@ export default {
             return settings;
         },
 
-        SAVE: async ({ dispatch, rootState }, settings) => {
-            if (!settings.type) {
-                return console.error("You must to specify settings type", settings);
+        SAVE: ({ state }, settings) => {
+            state.settings = settings || state.settings;
+
+            ipcRenderer.send("saveSettings", {
+                type: "settings",
+                content: settings
+            });
+
+            return settings;
+        },
+
+        SAVE_CUSTOM: async ({ dispatch }, { type, settings }) => {
+            if (type === "settings") {
+                return await dispatch("SAVE", settings);
             }
 
-            if (settings.type !== "settings") {
-                rootState.config[settings.type] = settings.content;
-            }
+            console.log(type, settings);
 
-            ipcRenderer.send("saveSettings", settings);
-            return await dispatch("SET_CONFIG", rootState.config, { root: true });
+            ipcRenderer.send("saveSettings", {
+                type,
+                content: settings
+            });
+
+            return settings;
         }
     }
 };
