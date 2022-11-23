@@ -9,7 +9,7 @@
 
             <LowFPS v-show="showLowFPS" />
             <LowBitrate v-show="showLowBitrate" />
-            <Update v-if="update.show" :release="update.release" />
+            <Update v-if="update.show" />
 
             <Notification
                 v-if="showChatDisconnect"
@@ -37,7 +37,8 @@ export default {
         Notification: () => import("./Notification.vue"),
         PresenseNotification: () => import("./Presense.vue"),
         LowFPS: () => import("./LowFPS.vue"),
-        LowBitrate: () => import("./LowBitrate.vue")
+        LowBitrate: () => import("./LowBitrate.vue"),
+        Update: () => import("./Update.vue")
     },
 
     mixins: [OBSMixin],

@@ -108,7 +108,8 @@ export default {
 
             connectOBS: "obs/CONNECT",
 
-            addNotification: "notifications/ADD"
+            addNotification: "notifications/ADD",
+            turnUpdate: "notifications/TURN_UPDATE"
         }),
 
         async authService() {

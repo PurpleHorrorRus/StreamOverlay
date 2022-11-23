@@ -15,20 +15,18 @@
 
 <script>
 import { ipcRenderer } from "electron";
+import { mapState } from "vuex";
 
 export default {
-    props: {
-        release: {
-            type: Object,
-            required: true
-        }
-    },
-
     data: () => ({
         percent: 0
     }),
 
     computed: {
+        ...mapState({
+            release: state => state.notifications.update.release
+        }),
+
         line() {
             return {
                 width: `${this.percent}%`
