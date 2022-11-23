@@ -43,7 +43,7 @@ export default {
     methods: {
         empty() {
             return {
-                id: Math.floor(Math.random() * 1000),
+                id: Math.floor(Date.now() / 1000),
                 name: "",
                 src: "",
                 visible: true,
