@@ -11,8 +11,8 @@ import OtherMixin from "~/mixins/other";
 
 export default {
     components: {
-        WidgetsList: () => import("~/components/Menu/WidgetsPage/List"),
-        WidgetEdit: () => import("~/components/Menu/WidgetsPage/Edit")
+        WidgetsList: () => import("./List.vue"),
+        WidgetEdit: () => import("./Edit.vue")
     },
 
     mixins: [WidgetsMixin, OtherMixin],
@@ -24,7 +24,7 @@ export default {
     computed: {
         disabled() {
             if (this.widget) {
-                return this.widget.name.length === 0 
+                return this.widget.name.length === 0
                     || this.widget.src.length === 0;
             }
 
@@ -33,7 +33,7 @@ export default {
     },
 
     created() {
-        this.edit = false;
+        this.active = false;
 
         if (this.widgets.length > 0) {
             this.select(0);

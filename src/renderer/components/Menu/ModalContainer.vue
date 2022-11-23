@@ -27,7 +27,7 @@ export default {
     grid-template-columns: 50px 1fr;
     grid-template-rows: 1fr;
     grid-template-areas: "navigation page";
-    grid-gap: 20px 10px;
+    gap: 20px 10px;
 
     min-width: 600px;
     height: max-content;

@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import EyeIcon from "~/assets/icons/eye.svg";
-import EyeCrossedIcon from "~/assets/icons/eye-crossed.svg";
+import EyeIcon from "~icons/eye.svg";
+import EyeCrossedIcon from "~icons/eye-crossed.svg";
 
 export default {
     components: {

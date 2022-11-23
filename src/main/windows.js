@@ -9,12 +9,12 @@ class WindowLogic {
 
     load(window) {
         return new Promise(resolve => {
-            ipcMain.on("dom-ready", () => {
+            ipcMain.once("dom-ready", () => {
                 return resolve(this.isWindowAlive(window));
             });
-            
-            const url = isDev 
-                ? process.env.DEV_SERVER_URL 
+
+            const url = isDev
+                ? process.env.DEV_SERVER_URL
                 : "overlay://./index.html";
 
             window.loadURL(url);

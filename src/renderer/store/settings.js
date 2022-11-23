@@ -2,7 +2,7 @@ import { ipcRenderer } from "electron";
 
 export default {
     namespaced: true,
-    
+
     state: () => ({
         settings: null
     }),

@@ -3,8 +3,8 @@ import { ipcRenderer } from "electron";
 export default {
     namespaced: true,
 
-    state: () => ({ 
-        locked: false 
+    state: () => ({
+        locked: false
     }),
 
     actions: {

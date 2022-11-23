@@ -106,7 +106,7 @@ export default {
             const categories = await this.serviceDispatch("SEARCH_GAME", query);
 
             this.search = categories.list;
-            if (categories.game?.name === this.local.game) {
+            if (categories.game.name === this.local.game) {
                 this.select(categories.game);
             }
 

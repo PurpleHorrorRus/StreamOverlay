@@ -1,7 +1,7 @@
 <template>
-    <div 
-        class="message" 
-        :style="messageStyle" 
+    <div
+        class="message"
+        :style="messageStyle"
         :class="messageClass"
     >
         <span
@@ -100,10 +100,10 @@ export default {
                 width: `${this.settings.chat.font + 14}px`
             };
         },
-        
+
         messageClass() {
-            return { 
-                system: this.message.system 
+            return {
+                system: this.message.system
             };
         }
     },
@@ -164,8 +164,7 @@ export default {
 
         pointer-events: all;
 
-        font-family: Roboto;
-        font-weight: bold;
+        font-weight: 700;
 
         &.clickable:hover {
             cursor: pointer;
@@ -179,7 +178,6 @@ export default {
         top: 2px;
 
         color: var(--small-text);
-        font-family: "Roboto Condensed";
     }
 }
 </style>

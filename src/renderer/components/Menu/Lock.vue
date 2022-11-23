@@ -9,8 +9,8 @@
 <script>
 export default {
     components: {
-        LockIcon: () => import("~/assets/icons/lock.svg"),
-        UnlockIcon: () => import("~/assets/icons/unlock.svg")
+        LockIcon: () => import("~icons/lock.svg"),
+        UnlockIcon: () => import("~icons/unlock.svg")
     },
 
     props: {

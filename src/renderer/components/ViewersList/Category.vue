@@ -1,7 +1,7 @@
 <template>
     <div class="viewers-list-category">
         <span 
-            class="viewers-list-category-name" 
+            class="viewers-list-category-name nowrap" 
             v-text="categoryName" 
         />
 
@@ -21,6 +21,7 @@ export default {
             type: String,
             required: true
         },
+
         users: {
             type: Array,
             required: true

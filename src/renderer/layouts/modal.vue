@@ -64,7 +64,7 @@ export default {
     width: 100%;
     height: 100%;
 
-    background: #111111cc;
+    background: var(--primary);
 
     &.hidden {
         background: none;

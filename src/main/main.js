@@ -45,12 +45,16 @@ class MainWindow {
         this.window.setIgnoreMouseEvents(true);
         this.window.setContentProtection(common.storage.config.settings.contentProtection);
         this.window.setAlwaysOnTop(true, "screen-saver");
-        
+        this.window.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
+
         if (common.isDev || common.storage.config.settings.devtools) {
             this.window.webContents.openDevTools({ mode: "undocked" });
         }
 
-        this.window.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
+        return this.window;
+    }
+
+    async load() {
         return await common.windows.load(this.window);
     }
 

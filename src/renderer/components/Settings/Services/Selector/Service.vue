@@ -5,9 +5,8 @@
             <img :src="`./images/${service.id}.png`" class="service-information-image">
             <span class="service-information-name" v-text="service.name" />
         </div>
-        
-        <SettingsIcon 
-            v-if="!settings.first"
+
+        <SettingsIcon
             v-tooltip="tooltip"
             class="icon clickable"
             @click.stop="open"
@@ -16,15 +15,11 @@
 </template>
 
 <script>
-import CoreMixin from "~/mixins/core";
-
 export default {
     components: {
-        CheckIcon: () => import("~/assets/icons/check.svg"),
-        SettingsIcon: () => import("~/assets/icons/settings.svg")
+        CheckIcon: () => import("~icons/check.svg"),
+        SettingsIcon: () => import("~icons/settings.svg")
     },
-
-    mixins: [CoreMixin],
 
     props: {
         service: {
@@ -59,7 +54,7 @@ export default {
         display: flex;
         align-items: center;
         column-gap: 10px;
-        
+
         &-image {
             width: 36px;
             height: 36px;

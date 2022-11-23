@@ -17,7 +17,7 @@ if (app.requestSingleInstanceLock()) {
     if (!common.storage.config.settings.hardwareAcceleration) {
         app.disableHardwareAcceleration();
     }
-    
+
     app.commandLine.appendSwitch("enable-features", "SharedArrayBuffer");
     app.once("window-all-closed", app.quit);
     app.whenReady().then(async () => {
@@ -27,23 +27,22 @@ if (app.requestSingleInstanceLock()) {
 
         mainWindowInstance = new MainWindow();
         mainWindowInstance.tray = new OverlayTray(mainWindowInstance);
-
         mainWindowInstance.handlers = new Handlers(mainWindowInstance);
-        mainWindowInstance.handlers.main();
 
         await mainWindowInstance.create();
 
         mainWindowInstance.hotkeys = new Hotkeys(mainWindowInstance.window);
         mainWindowInstance.hotkeys.register();
         mainWindowInstance.hotkeys.registerIndexHotkeys();
-        mainWindowInstance.handlers.create();
-        
+
         mainWindowInstance.addon = new Addon(mainWindowInstance.window);
         mainWindowInstance.addon.moveTop().interval(4000);
         mainWindowInstance.addon.clearMemory().interval(70000);
 
         mainWindowInstance.updater = new Updater(mainWindowInstance.window).init();
         mainWindowInstance.updater.interval(60 * 1000 * 5);
+
+        return await mainWindowInstance.load();
     });
 } else {
     app.quit();

@@ -1,38 +1,35 @@
 <template>
-    <div id="modal-locked" :class="{ first: settings.first }">
+    <div id="modal-locked">
         <Chat v-if="showChat" :input="true" />
-        <Time v-if="$parent.locked" />
+        <ModalTime v-if="$parent.locked" />
 
-        <Header v-if="showHeader" />
+        <MenuHeader v-if="showHeader" />
         <ModalContainer />
     </div>
 </template>
 
 <script>
-import Chat from "~/components/Chat";
-
 import CoreMixin from "~/mixins/core";
 
 export default {
     components: {
-        Chat,
-        Time: () => import("~/components/Menu/Time"),
+        Chat: () => import("../Chat.vue"),
+        ModalTime: () => import("./Time.vue"),
 
-        Header: () => import("~/components/Menu/Header"),
-        ModalContainer: () => import("~/components/Menu/ModalContainer")
+        MenuHeader: () => import("./Header.vue"),
+        ModalContainer: () => import("./ModalContainer.vue")
     },
 
     mixins: [CoreMixin],
 
     computed: {
         showChat() {
-            return !this.settings.first 
-                && this.settings.chat.enable;
+            return this.settings.chat.enable;
         },
 
         showHeader() {
-            return !this.settings.first 
-                && this.user;
+            return this.user
+                && !this.settings.first;
         }
     }
 };
@@ -56,7 +53,10 @@ export default {
 
     background: none;
 
+    z-index: 0;
+
     &.first {
+        grid-template-columns: 1fr;
         grid-template-rows: minmax(300px, max-content);
         grid-template-areas: "container";
     }
@@ -67,14 +67,14 @@ export default {
         grid-template-rows: 35px 1fr;
         grid-template-areas: "title" "body";
         row-gap: 10px;
-        
+
         .modal-body {
             grid-area: body;
 
             .modal-item {
                 &-tip {
                     display: block;
-                    
+
                     margin: 10px 0px;
 
                     color: var(--small-text);

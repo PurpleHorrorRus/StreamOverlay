@@ -23,8 +23,8 @@ import { mapState } from "vuex";
 
 export default {
     components: {
-        ChevronLeft: () => import("~/assets/icons/chevron-left.svg"),
-        ChevronRight: () => import("~/assets/icons/chevron-right.svg"),
+        ChevronLeft: () => import("~icons/chevron-left.svg"),
+        ChevronRight: () => import("~icons/chevron-right.svg"),
 
         Expanded: () => import("~/components/Menu/Header/Expanded")
     },

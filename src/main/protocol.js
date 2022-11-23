@@ -7,12 +7,12 @@ const PRODUCTION_APP_PROTOCOL = "overlay";
 const PRODUCTION_APP_PATH = path.join(__dirname, "..", "renderer");
 
 protocol.registerSchemesAsPrivileged([
-    { 
-        scheme: PRODUCTION_APP_PROTOCOL, 
-        privileges: { 
-            secure: true, 
-            standard: true 
-        } 
+    {
+        scheme: PRODUCTION_APP_PROTOCOL,
+        privileges: {
+            secure: true,
+            standard: true
+        }
     }
 ]);
 

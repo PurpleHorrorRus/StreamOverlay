@@ -38,22 +38,22 @@ export default {
                 return await dispatch("AUTH");
             }
 
-            const activity = rootState.service.stream.game;
+            const activity = rootState.service.stream.title + "_" + rootState.service.stream.game;
             if (activity !== latestActivity) {
-                const [category] = await dispatch("SERVICE_DISPATCH", {
+                const response = await dispatch("SERVICE_DISPATCH", {
                     action: "SEARCH_GAME",
                     data: rootState.service.stream.game
                 }, { root: true });
-    
+
                 const updated = await client.setActivity({
                     details: rootState.service.stream.title,
                     state: rootState.service.stream.game,
-                    largeImageKey: category.icon_url,
+                    largeImageKey: response.game.box_art_url || response.game.icon,
                     largeImageText: rootState.service.user.link,
                     smallImageKey: service,
                     smallImageText: serivceName,
                     instance: false,
-    
+
                     buttons: [{
                         label: "Смотреть",
                         url: `https://${rootState.service.user.link}`

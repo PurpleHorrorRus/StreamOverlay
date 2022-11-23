@@ -7,7 +7,7 @@
             @click="select(index)"
         >
             <span class="recent-streams-item-title" v-text="item.title" />
-            <span class="recent-streams-item-game" v-text="item.game" />
+            <span class="recent-streams-item-game small-text" v-text="item.game" />
         </div>
     </div>
 </template>
@@ -20,6 +20,7 @@ export default {
             required: true
         }
     },
+
     methods: {
         select(index) {
             this.$parent.local.title = this.recent[index].title;
@@ -43,6 +44,7 @@ export default {
         justify-content: flex-start;
         align-items: center;
         flex-wrap: wrap;
+        row-gap: 5px;
 
         height: max-content;
 
@@ -50,18 +52,12 @@ export default {
 
         margin-bottom: 2px;
 
-        &-title {
+        &-title, &-game {
             width: 100%;
-
-            font-size: 10pt;
         }
 
-        &-game {
-            width: 100%;
-            margin-top: 5px;
-
-            font-size: 9pt;
-            color: #ccc;
+        &-title {
+            font-size: 12px;
         }
     }
 }

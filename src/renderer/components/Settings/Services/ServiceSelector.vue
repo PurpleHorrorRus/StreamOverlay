@@ -16,7 +16,7 @@ import CoreMixin from "~/mixins/core";
 
 export default {
     components: {
-        Service: () => import("~/components/Settings/Services/Selector/Service")
+        Service: () => import("./Selector/Service.vue")
     },
 
     mixins: [CoreMixin],
@@ -27,7 +27,6 @@ export default {
                 id: "twitch",
                 name: "Twitch"
             },
-
             {
                 id: "trovo",
                 name: "Trovo"
@@ -58,7 +57,7 @@ export default {
 </script>
 
 <style lang="scss">
-#service-selector {
+.service-selector {
     display: flex;
     flex-direction: column;
     row-gap: 5px;

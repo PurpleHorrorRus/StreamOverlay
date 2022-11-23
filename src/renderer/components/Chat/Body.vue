@@ -1,8 +1,8 @@
 <template>
     <div class="message-body">
         <Component
-            :is="renderComponent(item)" 
-            v-for="(item, index) of items" 
+            :is="renderComponent(item)"
+            v-for="(item, index) of items"
             :key="index"
             class="item"
             :data="item.content"
@@ -54,8 +54,7 @@ export default {
         }
 
         &.text {
-            font-family: "Roboto Condensed";
-            font-weight: bold;
+            font-weight: 600;
         }
     }
 }

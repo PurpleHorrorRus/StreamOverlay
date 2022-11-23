@@ -50,7 +50,6 @@ export default {
 
     background: var(--primary);
     border-top: 2px solid var(--secondary);
-    border-radius: 4px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 
     z-index: 100;
