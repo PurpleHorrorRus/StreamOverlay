@@ -44,9 +44,13 @@ export default {
                     break;
                 }
 
-                case "string": case "number": {
-                    if (!value) return;
-                    category[option] = value;
+                case "string": {
+                    category[option] = String(value);
+                    break;
+                }
+
+                case "number": {
+                    category[option] = Number(value);
                     break;
                 }
             }

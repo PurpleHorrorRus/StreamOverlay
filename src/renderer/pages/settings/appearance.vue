@@ -20,14 +20,14 @@
                     :text="$strings.MENU.APPEARANCE.OBSPANEL.SETTINGS.OPACITY"
                     :value="settings.OBSStatus.mini.opacity"
                     :max="100"
-                    @select="deepChange(settings.OBSStatus.mini, 'opacity', Number($event))"
+                    @select="deepChange(settings.OBSStatus.mini, 'opacity', $event)"
                 />
 
                 <Range
                     :text="$strings.MENU.APPEARANCE.OBSPANEL.SETTINGS.RADIUS"
                     :value="settings.OBSStatus.mini.radius"
                     :max="100"
-                    @select="deepChange(settings.OBSStatus.mini, 'radius', Number($event))"
+                    @select="deepChange(settings.OBSStatus.mini, 'radius', $event)"
                 />
 
                 <Range
@@ -36,7 +36,7 @@
                     :max="1.5"
                     :min="0.5"
                     :step="0.01"
-                    @select="deepChange(settings.OBSStatus.mini, 'scale', Number($event))"
+                    @select="deepChange(settings.OBSStatus.mini, 'scale', $event)"
                 />
 
                 <ToggleButton

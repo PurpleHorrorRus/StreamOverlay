@@ -39,7 +39,7 @@
                     :value="config.obs.meters.mic.limit"
                     :max="0"
                     :min="-80"
-                    @select="deepChange(config.obs.meters.mic, 'limit', Number($event), 'obs')"
+                    @select="deepChange(config.obs.meters.mic, 'limit', $event, 'obs')"
                 />
 
                 <Range
@@ -48,7 +48,7 @@
                     :value="config.obs.meters.mic.timeout"
                     :max="1000"
                     :min="50"
-                    @select="deepChange(config.obs.meters.mic, 'timeout', Number($event), 'obs')"
+                    @select="deepChange(config.obs.meters.mic, 'timeout', $event, 'obs')"
                 />
             </ModalCategory>
 

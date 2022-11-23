@@ -44,13 +44,13 @@
                         :value="settings.chat.timeout"
                         :max="600"
                         :tip="$strings.MENU.CHAT.TIMEOUT.TIP"
-                        @select="deepChange(settings.chat, 'timeout', Number($event))"
+                        @select="deepChange(settings.chat, 'timeout', $event)"
                     />
 
                     <Range
                         :text="$strings.MENU.CHAT.OPACITY"
                         :value="settings.chat.opacity"
-                        @select="deepChange(settings.chat, 'opacity', Number($event))"
+                        @select="deepChange(settings.chat, 'opacity', $event)"
                     />
 
                     <Range
@@ -58,7 +58,7 @@
                         :value="settings.chat.font"
                         :min="8"
                         :max="16"
-                        @select="deepChange(settings.chat, 'font', Number($event))"
+                        @select="deepChange(settings.chat, 'font', $event)"
                     />
                 </div>
             </div>
