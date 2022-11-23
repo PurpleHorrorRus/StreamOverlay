@@ -343,6 +343,6 @@ export default {
         formatter,
         events,
         emotes
-        
+
     }
 };

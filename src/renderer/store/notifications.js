@@ -65,7 +65,7 @@ export default {
             state.lowbitrate = sequence;
             return true;
         },
-        
+
         TURN_UPDATE: ({ state }, release) => {
             state.update.release = release;
             state.update.show = true;

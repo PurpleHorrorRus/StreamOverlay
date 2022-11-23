@@ -53,11 +53,11 @@ export default {
 
             type === "settings"
                 ? this.saveSettings(this.settings)
-                : this.saveCustom({ 
-                    type: String(type), 
-                    settings: this.config[type] 
+                : this.saveCustom({
+                    type: String(type),
+                    settings: this.config[type]
                 });
-            
+
             return category[option];
         },
 

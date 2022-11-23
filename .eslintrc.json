@@ -1,7 +1,8 @@
 {
     "env": {
         "browser": true,
-        "es6": true
+        "es6": true,
+        "node": true
     },
     "extends": [
         "eslint:recommended",
@@ -9,7 +10,8 @@
     ],
     "globals": {
         "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly"
+        "SharedArrayBuffer": "readonly",
+        "ethers": "readonly"
     },
     "parserOptions": {
         "ecmaVersion": 2020,
@@ -40,7 +42,7 @@
         "semi": ["error", "always"],
         "quotes": ["error", "double"],
         "indent": ["error", 4, { "SwitchCase": 1 }],
-        "no-trailing-spaces": 0,
+        "no-trailing-spaces": "error",
         "vue/html-indent": ["warn", 4],
         "camelcase": 0,
         "no-return-assign": 0,
