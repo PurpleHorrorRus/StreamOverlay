@@ -85,7 +85,7 @@ export default {
 
             let chat = await client.chat.connect({
                 messages: {
-                    fetchPastMessages: rootState.config.trovo.past
+                    fetchPastMessages: rootState.settings.settings.trovo.past
                 }
             });
 

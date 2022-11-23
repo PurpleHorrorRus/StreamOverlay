@@ -8,15 +8,15 @@
             <div v-if="!settings.first" id="settings-trovo-notifications">
                 <ToggleButton
                     :text="$strings.MENU.SERVICES.TROVO.JOIN"
-                    :checked="config.trovo.notifications.welcome"
-                    @change="deepChange(config.trovo.notifications, 'welcome', null, 'trovo')"
+                    :checked="settings.trovo.notifications.welcome"
+                    @change="deepChange(settings.trovo.notifications, 'welcome', null, 'trovo')"
                 />
 
                 <ToggleButton
                     :text="$strings.MENU.SERVICES.TROVO.PAST.TITLE"
-                    :checked="config.trovo.past"
+                    :checked="settings.trovo.past"
                     :tip="$strings.MENU.SERVICES.TROVO.PAST.TIP"
-                    @change="deepChange(config.trovo, 'past', null, 'trovo')"
+                    @change="deepChange(settings.trovo, 'past', null, 'trovo')"
                 />
             </div>
 

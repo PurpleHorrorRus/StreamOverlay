@@ -67,6 +67,14 @@ const clear = {
         notifications: {
             lowfps: true,
             lowbitrate: true
+        },
+
+        trovo: {
+            past: false,
+
+            notifications: {
+                welcome: true
+            }
         }
     },
 
@@ -104,12 +112,7 @@ const clear = {
 
     trovo: {
         access_token: "",
-        refresh_token: "",
-        past: false,
-
-        notifications: {
-            welcome: true
-        }
+        refresh_token: ""
     },
 
     widgets: [],
@@ -184,7 +187,7 @@ const paths = {
 const config = {
     settings: data(paths.settings, clear.settings),
     twitch: data(paths.twitch, clear.twitch),
-    trovo: data(paths.trovo, clear.trovo),
+    trovo: data(paths.trovo, clear.trovo, true),
     obs: data(paths.obs, clear.obs),
     widgets: data(paths.widgets, clear.widgets),
     recent: data(paths.recent, clear.recent)
