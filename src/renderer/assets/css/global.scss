@@ -34,9 +34,19 @@ html, body, #__nuxt, #__layout, #content {
 	margin: 0;
 }
 
-div, span, input {
-	font-family: Roboto;
-	color: var(--text);
+span, input, textarea, select, div {
+    color: var(--text);
+    font-family: Inter;
+    font-weight: 500;
+
+    user-select: none;
+    outline: none;
+    -webkit-font-smoothing: subpixel-antialiased;
+    text-rendering: optimizeSpeed;
+
+    &::selection {
+        background: var(--secondary);
+    }
 }
 
 .nowrap {
