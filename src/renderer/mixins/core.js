@@ -38,11 +38,7 @@ export default {
 
         deepChange(settings, field, type = "settings") {
             settings[field] = !settings[field];
-
-            type === "settings"
-                ? this.save(this.settings)
-                : this.save(settings, type);
-
+            this.save(settings, type);
             return settings;
         },
 

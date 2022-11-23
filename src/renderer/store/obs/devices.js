@@ -8,7 +8,7 @@ export default {
             camera: null
         },
 
-        sources: []
+        sources: {}
     }),
 
     actions: {
@@ -23,7 +23,9 @@ export default {
             return state.sources;
         },
 
-        LISTEN: ({ state, rootState }, inputNames) => {
+        LISTEN: async ({ dispatch, state, rootState }) => {
+            const inputNames = await dispatch("GET");
+
             rootState.obs.obs.on("InputMuteStateChanged", ({ inputName, inputMuted }) => {
                 switch (inputName) {
                     case inputNames.mic: {
@@ -87,20 +89,6 @@ export default {
         UPDATE_CAMERA: async ({ dispatch, state }) => {
             state.list.camera = await dispatch("GET_CAMERA_VISIBLE");
             return state.list.camera;
-        },
-
-        ON_SOURCE_MUTE_STATE_CHANGED: ({ state }, { sourceName, muted }) => {
-            switch (sourceName) {
-                case state.sources["mic-1"]: {
-                    state.list.mic = !muted;
-                    break;
-                } 
-                
-                case state.sources["desktop-1"]: {
-                    state.list.sound = !muted;
-                    break;
-                }
-            }
         }
     }
 };

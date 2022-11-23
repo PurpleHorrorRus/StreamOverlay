@@ -67,6 +67,21 @@ const clear = {
         }
     },
 
+    obs: {
+        address: "127.0.0.1",
+        port: 4455,
+        password: "",
+        camera: [],
+        autoreconnect: false,
+        meters: {
+            mic: {
+                enable: true,
+                limit: -60,
+                timeout: 300
+            }
+        }
+    },
+
     twitch: {
         username: "",
         access_token: "",
@@ -89,27 +104,11 @@ const clear = {
         refresh_token: ""
     },
 
-    obs: {
-        address: "localhost",
-        port: 4444,
-        camera: [],
-        autoreconnect: false
-    },
-
     widgets: [],
-    recent: [],
-
-    autoprocess: {
-        enable: false,
-        list: []
-    }
+    recent: []
 };
 
-const readJSON = dir => {
-    const content = fs.readFileSync(dir, "utf-8");
-    return JSON.parse(content);
-};
-
+const readJSON = dir => JSON.parse(fs.readFileSync(dir, "UTF-8"));
 const writeJSON = (dir, content) => {
     fs.writeFileSync(dir, JSON.stringify(content, null, 4));
     return content;
@@ -130,7 +129,7 @@ if (!fs.existsSync(configPath)) {
     fs.mkdirSync(configPath);
 }
 
-const nested = (settings, clear) => {
+const nested = (settings, clear, ignoreMissingFields = false) => {
     for (const key of Object.keys(clear)) {
         if (settings[key] === undefined) {
             settings[key] = clear[key];
@@ -139,7 +138,7 @@ const nested = (settings, clear) => {
         }
     }
 
-    if (!Array.isArray(settings)) {
+    if (!Array.isArray(settings) && !ignoreMissingFields) {
         for (const key of Object.keys(settings)) {
             if (clear[key] === undefined) {
                 delete settings[key];
@@ -194,7 +193,7 @@ export default {
         config[type] = content;
         writeJSON(paths[type], content);
     },
-    
+
     config: {
         paths,
         ...config

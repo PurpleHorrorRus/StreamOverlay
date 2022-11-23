@@ -71,10 +71,8 @@ export default {
             const scene = await dispatch("SEND", { event: "GetCurrentProgramScene" });
             state.scene = { sceneName: scene.currentProgramSceneName };
 
-            const inputNames = await dispatch("devices/GET");
-            await dispatch("devices/LISTEN", inputNames);
-
-            dispatch("RESTORE_STATE");
+            await dispatch("devices/LISTEN");
+            await dispatch("RESTORE_STATE");
 
             state.obs.once("ExitStarted", async () => {
                 return await dispatch("RECONNECT");
@@ -101,19 +99,21 @@ export default {
             });
 
             state.obs.on("SceneItemEnableStateChanged", async scene => {
-                if (scene.sceneName === state.scene.sceneName) {
-                    const { sceneItems } = await dispatch("SEND", {
-                        event: "GetSceneItemList",
-                        args: state.scene
-                    });
+                if (scene.sceneName !== state.scene.sceneName) {
+                    return false;
+                }
 
-                    const source = sceneItems.find(source => {
-                        return source.sceneItemId === scene.sceneItemId;
-                    });
+                const { sceneItems } = await dispatch("SEND", {
+                    event: "GetSceneItemList",
+                    args: state.scene
+                });
 
-                    if (rootState.config.obs.camera.includes(source.sourceName)) {
-                        state.devices.list.camera = scene.sceneItemEnabled;
-                    }
+                const source = sceneItems.find(source => {
+                    return source.sceneItemId === scene.sceneItemId;
+                });
+
+                if (rootState.config.obs.camera.includes(source.sourceName)) {
+                    state.devices.list.camera = scene.sceneItemEnabled;
                 }
             });
 
@@ -130,7 +130,7 @@ export default {
                         }).inputLevelsMul[0][2];
 
                         state.meters.mic.volume = Math.max(20 * Math.log10(mul), -80);
-                    }, 300);
+                    }, rootState.config.obs.meters.mic.timeout);
 
                     state.meters.mic.init = true;
                 }
@@ -157,9 +157,14 @@ export default {
 
         DISCONNECT: ({ dispatch, state }) => {
             state.obs = { socket: undefined };
+            state.videoSettings = null;
+
             state.status.tech.fps = 0;
             state.status.tech.bitrate = 0;
-            state.videoSettings = null;
+
+            state.meters.mic.volume = 0;
+            state.meters.mic.init = false;
+            state.meters.mic.throttle = () => (false);
 
             dispatch("STOP_CHECKING_INTERVAL");
             return true;
@@ -227,12 +232,6 @@ export default {
             }
 
             return state.status.stream || state.status.record;
-        },
-
-        UPDATE_SCENE: async ({ dispatch, state }) => {
-            const scene = await dispatch("SEND", { event: "GetCurrentScene" });
-            state.scene = { name: scene.name };
-            return scene;
         },
 
         SETUP_CHECKING_INTERVAL: ({ dispatch }) => {

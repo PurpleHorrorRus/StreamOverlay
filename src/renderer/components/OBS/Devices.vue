@@ -23,19 +23,23 @@
 <script>
 import { mapState } from "vuex";
 
-import MicrophoneIcon from "~/assets/icons/microphone.svg";
-import MicrophoneMutedIcon from "~/assets/icons/microphone-muted.svg";
+import MicrophoneIcon from "~icons/microphone.svg";
+import MicrophoneMutedIcon from "~icons/microphone-muted.svg";
 
-import SoundIcon from "~/assets/icons/sound.svg";
-import SoundMutedIcon from "~/assets/icons/sound-muted.svg";
+import SoundIcon from "~icons/sound.svg";
+import SoundMutedIcon from "~icons/sound-muted.svg";
 
-import CameraIcon from "~/assets/icons/camera.svg";
-import CameraDisabledIcon from "~/assets/icons/camera-disabled.svg";
+import CameraIcon from "~icons/camera.svg";
+import CameraDisabledIcon from "~icons/camera-disabled.svg";
+
+import CoreMixin from "~/mixins/core";
 
 export default {
     components: {
         Device: () => import("./Devices/Device.vue")
     },
+
+    mixins: [CoreMixin],
 
     computed: {
         ...mapState({
@@ -53,15 +57,16 @@ export default {
 
         micClass() {
             return {
-                highlight: this.meters.mic.volume > -80
+                highlight: this.meters.mic.volume > this.config.obs.meters.mic.limit
             };
         },
 
         micTooltip() {
             return {
-                content: "Похоже, что вы говорите<br/>с выключенным микрофоном!",
-                show: !this.devices.mic && this.meters.mic.volume > -60,
+                content: this.$strings.NOTIFICATIONS.MICMUTED,
+                show: this.config.obs.meters.mic.enable && !this.devices.mic && this.micClass.highlight,
                 placement: "top-end",
+                trigger: "manual",
                 offset: 5
             };
         }
@@ -70,6 +75,10 @@ export default {
 </script>
 
 <style lang="scss">
+#obs-content.mini #devices {
+    column-gap: 5px;
+}
+
 #devices {
     display: flex;
     column-gap: 5px;
