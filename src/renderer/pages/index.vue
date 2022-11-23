@@ -84,8 +84,6 @@ export default {
                 this.save();
             }
 
-            this.inited = true;
-
             this.initService();
             this.connectOBS();
             this.registerIPC();
@@ -95,6 +93,7 @@ export default {
             this.addNotification(notifications.controls);
         }
 
+        this.inited = true;
         return ipcRenderer.send("dom-ready");
     },
     methods: {
