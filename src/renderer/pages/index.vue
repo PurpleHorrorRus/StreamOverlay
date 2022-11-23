@@ -57,10 +57,6 @@ export default {
         }
     },
 
-    async created() {
-        await this.loadLanguage("ru");
-    },
-
     async mounted() {
         this.edit = Boolean(this.$route.query.edit);
         if (this.edit) {
@@ -71,6 +67,7 @@ export default {
             console.clear();
             const config = await ipcRenderer.invoke("config");
             await this.setConfig(config);
+            await this.loadLanguage("ru");
         }
 
         if (this.widgets.length === 0 && this.config.widgets.length > 0) {
