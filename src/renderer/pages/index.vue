@@ -2,7 +2,7 @@
     <div id="content">
         <EditMode v-if="edit" />
 
-        <div v-if="settings" id="content-valid">
+        <div v-if="inited" id="content-valid">
             <Notifications />
             <OBS v-if="showOBS" />
             <Chat v-if="settings.chat.enable" />
@@ -42,6 +42,10 @@ export default {
     },
 
     mixins: [OBSMixin, WidgetsMixin],
+    
+    data: () => ({
+        inited: false
+    }),
 
     computed: {
         showOBS() {
@@ -78,6 +82,8 @@ export default {
                 this.settings.first = false;
                 this.save();
             }
+
+            this.inited = true;
 
             this.initService();
             this.connectOBS();
