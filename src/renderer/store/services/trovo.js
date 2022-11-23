@@ -7,13 +7,12 @@ import events from "~/store/services/trovo/events";
 import emotes from "~/store/services/trovo/emotes";
 import misc from "~/plugins/misc";
 
-// eslint-disable-next-line no-undef
-const isDev =  process.env.NODE_ENV === "development";
-
 const colors = {
     default: "#51bbaa",
     subscriber: "#c8a86b"
 };
+
+const nocover = "https://img.trovo.live/imgupload/category/20211122_m7cnaau19ji,20211122_m7cnaau19ji.jpg";
 
 export default {
     namespaced: true,
@@ -107,7 +106,7 @@ export default {
             rootState.service.connected = true;
 
             dispatch("notifications/ADD", {
-                text: global.$nuxt.$strings.NOTIFICATIONS.TROVO.CONNECTED,
+                text: global.$nuxt.$strings.NOTIFICATIONS.CONNECTED,
                 color: "#28a745",
                 icon: () => import("~icons/trovo.svg"),
                 handle: 5
@@ -231,12 +230,15 @@ export default {
             const gameId = misc.textToId(query);
 
             const game = games.find(game => {
-                return misc.textToId(game) === gameId;
+                return misc.textToId(game.name) === gameId;
             });
 
             return {
                 list: games,
-                game: game || games[0]
+                game: game || {
+                    name: query,
+                    icon: nocover
+                }
             };
         },
 

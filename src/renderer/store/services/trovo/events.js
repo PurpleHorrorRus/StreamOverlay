@@ -2,7 +2,7 @@ export default {
     namespaced: true,
 
     actions: {
-        MESSAGE: async ({ dispatch, rootState }, message) => {
+        MESSAGE: async ({ dispatch }, message) => {
             if (typeof message.content !== "object") {
                 message.content = String(message.content);
             }
