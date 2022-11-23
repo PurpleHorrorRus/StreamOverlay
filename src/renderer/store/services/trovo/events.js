@@ -1,20 +1,15 @@
 export default {
     namespaced: true,
-    
+
     actions: {
-        MESSAGE: async ({ dispatch }, message) => {
+        MESSAGE: async ({ dispatch, rootState }, message) => {
             if (typeof message.content !== "object") {
                 message.content = String(message.content);
             }
 
+            message = await dispatch("trovo/FORMAT", message, { root: true });
             message.formatted = await dispatch("trovo/FORMAT_MESSAGE", message.content, { root: true });
-            message = await dispatch("service/ADD_MESSAGE", message, { root: true });
-
-            if (message.system || message.past) {
-                return message;
-            }
-
-            return message;
+            return await dispatch("service/ADD_MESSAGE", message, { root: true });
         },
 
         PAST_MESSAGES: async ({ dispatch, rootState }, messages) => {
@@ -31,20 +26,26 @@ export default {
             return messages;
         },
 
-        WELCOME: ({ dispatch }, user) => {
+        WELCOME: async ({ dispatch }, user) => {
+            user = await dispatch("trovo/FORMAT", user, { root: true });
             user.content = "вошёл в чат";
+
             dispatch("service/ADD_SYSTEM_MESSAGE", user, { root: true });
             return user;
         },
 
-        FOLLOW: ({ dispatch }, follow) => {
+        FOLLOW: async ({ dispatch }, follow) => {
             follow.content = "зафолловил канал";
+            follow = await dispatch("trovo/FORMAT", follow, { root: true });
+
             dispatch("service/ADD_SYSTEM_MESSAGE", follow, { root: true });
             return follow;
         },
 
-        SUBSCRIPTION: ({ dispatch }, subscriber) => {
+        SUBSCRIPTION: async ({ dispatch }, subscriber) => {
             subscriber.content = "оформил платную подписку";
+            subscriber = await dispatch("trovo/FORMAT", subscriber, { root: true });
+
             dispatch("service/ADD_SYSTEM_MESSAGE", subscriber, { root: true });
             return subscriber;
         },
@@ -66,13 +67,15 @@ export default {
             return gift;
         },
 
-        SPELLS: ({ dispatch }, message) => {
+        SPELLS: async ({ dispatch }, message) => {
             const spell = message.content.gift;
             const count = message.content.num;
             const cost = message.content.gift_value;
             const value = message.content.value_type;
+
             message.content = `использует ${count}x${spell} за ${cost} ${value}`;
-            
+            message = await dispatch("trovo/FORMAT", message, { root: true });
+
             dispatch("service/ADD_SYSTEM_MESSAGE", message, { root: true });
             return message;
         },
@@ -85,8 +88,12 @@ export default {
             return raider;
         },
 
-        SUPER_CAP: ({ dispatch }, message) => {
+        SUPER_CAP: async ({ dispatch }, message) => {
             dispatch("MESSAGE", message);
+            dispatch("service/VOICE_MESSAGE", {
+                message: message.content
+            }, { root: true });
+
             return message;
         },
 

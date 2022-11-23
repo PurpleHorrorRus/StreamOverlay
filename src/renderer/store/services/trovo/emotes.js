@@ -1,12 +1,16 @@
 const findInCollection = (name, collection) => {
-    return collection.find(emote => emote.name === name);
+    return collection.find(emote => {
+        return emote.name === name;
+    });
 };
 
 export default {
     namespaced: true,
+
     stats: () => ({
         collections: []
     }),
+
     actions: {
         LOAD: async ({ state, rootState }) => {
             const emotes = await rootState.service.client.channel.emotes(0, [rootState.service.user.id]);

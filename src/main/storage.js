@@ -35,6 +35,8 @@ const clear = {
         },
 
         trovo: {
+            past: false,
+
             notifications: {
                 welcome: true
             }

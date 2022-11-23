@@ -1,31 +1,17 @@
 import { TrovoAPI } from "simple-trovo-api";
 import lodash from "lodash";
+import Promise from "bluebird";
 
 import formatter from "~/store/services/formatter";
 import events from "~/store/services/trovo/events";
 import emotes from "~/store/services/trovo/emotes";
-
 import misc from "~/plugins/misc";
 
 // eslint-disable-next-line no-undef
 const isDev =  process.env.NODE_ENV === "development";
-const trovoParams = {
-    messages: {
-        fetchPastMessages: isDev
-    }
-};
-
-const notifications = {
-    CHAT_CONNECTED: {
-        text: "Чат успешно подключен",
-        color: "#28a745",
-        icon: () => import("~/assets/icons/trovo.svg"),
-        handle: 5
-    }
-};
 
 const colors = {
-    default: "#21b36c",
+    default: "#51bbaa",
     subscriber: "#c8a86b"
 };
 
@@ -86,7 +72,8 @@ export default {
                 id: Number(user.userId),
                 nickname: user.nickName,
                 avatar: user.profilePic,
-                description: user.info
+                description: user.info,
+                link: `trovo.live/${user.userName}`
             }, { root: true });
 
             dispatch("emotes/LOAD");
@@ -96,8 +83,13 @@ export default {
                 title: channel.live_title,
                 game: channel.category_name
             }, { root: true });
-            
-            let chat = await client.chat.connect(trovoParams);
+
+            let chat = await client.chat.connect({
+                messages: {
+                    fetchPastMessages: rootState.settings.settings.trovo.past
+                }
+            });
+
             chat.on(chat.events.READY, () => dispatch("ON_READY"));
             chat.on(chat.events.DISCONNECTED, () => dispatch("ON_DISCONNECTED"));
             chat = await dispatch("service/SET_CHAT", chat, { root: true });
@@ -114,18 +106,25 @@ export default {
         ON_READY: ({ dispatch, rootState }) => {
             rootState.service.connected = true;
 
-            dispatch("notifications/ADD", notifications.CHAT_CONNECTED, { root: true });
-            dispatch("notifications/TURN", { 
-                name: "chatdisconnect", 
-                show: false 
+            dispatch("notifications/ADD", {
+                text: global.$nuxt.$strings.NOTIFICATIONS.TROVO.CONNECTED,
+                color: "#28a745",
+                icon: () => import("~icons/trovo.svg"),
+                handle: 5
             }, { root: true });
 
-            const eventNames = Object.keys(events.actions);
-            for (const event of eventNames) {
+            dispatch("notifications/TURN", {
+                name: "chatdisconnect",
+                show: false
+            }, { root: true });
+
+            for (const event of Object.keys(events.actions)) {
                 if (event !== "COMMAND") {
                     dispatch("REGISTER_EVENT", event);
                 }
             }
+
+            return true;
         },
 
         REGISTER_EVENT: ({ dispatch, rootState }, event) => {
@@ -143,15 +142,15 @@ export default {
         ON_DISCONNECTED: ({ dispatch }) => {
             dispatch("DISCONNECT");
 
-            dispatch("notifications/TURN", { 
-                name: "chatdisconnect", 
-                show: true 
+            dispatch("notifications/TURN", {
+                name: "chatdisconnect",
+                show: true
             }, { root: true });
         },
 
         DISCONNECT: ({ rootState }) => {
             rootState.service.connected = false;
-            
+
             const events = Object.values(rootState.service.chat.messages.events);
             ["message", ...events].forEach(event => {
                 rootState.service.chat.messages.removeAllListeners(event);
@@ -179,7 +178,7 @@ export default {
             for (let index in splitted) {
                 index = Number(index);
                 const word = splitted[index];
-                
+
                 if (await dispatch("formatter/CHECK_LINK", word)) { // Format link
                     formatted = await dispatch("formatter/LINK", { formatted, part, word });
                     part = "";
@@ -188,10 +187,10 @@ export default {
 
                 if (word.includes(":")) { // Format Emote
                     const emote = await dispatch("emotes/FIND_EMOTE", word);
-                    
+
                     if (emote) {
-                        formatted = await dispatch("formatter/EMOTE", { 
-                            formatted, part, 
+                        formatted = await dispatch("formatter/EMOTE", {
+                            formatted, part,
                             emote: await dispatch("FORMAT_EMOTE", emote)
                         });
 
@@ -269,14 +268,14 @@ export default {
             const game = await dispatch("FIND_GAME", {
                 game: data.game,
                 collection: response.category_info
-            });
+            }) || response.category_info?.[0];
 
             data.game = game.name;
 
             await rootState.service.client.channel.edit(rootState.service.user.id, data.title, game.id, "RU");
             await dispatch("service/SET_STREAM", data, { root: true });
             await dispatch("service/UPDATE_RECENT", data, { root: true });
-            
+
             return response.category_info[0];
         },
 
@@ -340,8 +339,8 @@ export default {
     },
     modules: {
         formatter,
-
         events,
         emotes
+        
     }
 };
