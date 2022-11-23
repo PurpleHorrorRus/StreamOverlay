@@ -18,7 +18,6 @@ import { ipcRenderer } from "electron";
 
 import OBSMixin from "~/mixins/obs";
 import WidgetsMixin from "~/mixins/widgets";
-import other from "~/mixins/other";
 
 const notifications = {
     controls: {
@@ -42,7 +41,7 @@ export default {
         ViewersList: () => import("~/components/ViewersList.vue")
     },
 
-    mixins: [OBSMixin, WidgetsMixin, other],
+    mixins: [OBSMixin, WidgetsMixin],
 
     computed: {
         showOBS() {

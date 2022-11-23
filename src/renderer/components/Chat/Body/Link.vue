@@ -11,17 +11,13 @@
 <script>
 import { shell } from "electron";
 
+import OtherMixin from "~/mixins/other";
+
 export default {
     props: {
         data: {
             type: Object,
             required: true
-        }
-    },
-
-    methods: {
-        openLink(link) {
-            shell.openExternal(link);
         }
     }
 };
