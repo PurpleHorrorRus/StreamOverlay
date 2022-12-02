@@ -51,6 +51,7 @@
     "devDependencies": {
         "@babel/runtime-corejs3": "^7.20.1",
         "@nuxtjs/style-resources": "^1.2.1",
+        "@volar-plugins/vetur": "^0.1.0",
         "@xpda-dev/core": "^0.1.6",
         "@xpda-dev/electron-builder": "^0.2.1",
         "@xpda-dev/electron-launcher": "^0.3.0",

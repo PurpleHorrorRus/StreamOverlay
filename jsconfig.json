@@ -1,0 +1,17 @@
+{
+    "include": ["./src/**/*"],
+
+    "compilerOptions": {
+        "paths": {
+            "~/*": ["./*"],
+            "~icons/*": ["./assets/icons/*"]
+        },
+    },
+
+    "vueCompilerOptions": {
+        "experimentalShamefullySupportOptionsApi": false,
+        "experimentalDisableTemplateSupport": true,
+        "extensions": ["vue"],
+        "target": 2.7
+    }
+}
