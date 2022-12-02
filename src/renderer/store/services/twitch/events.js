@@ -40,7 +40,7 @@ export default {    namespaced: true,
         ON_CLEAR_CHAT: ({ dispatch }) => {
             return dispatch(
                 "service/ADD_SYSTEM_MESSAGE",
-                global.$nuxt.$strings.NOTIFICATIONS.SYSTEM.CLEAR,
+                global.$nuxt.$strings.NOTIFICATIONS.TWITCH.SYSTEM.CLEAR,
                 { root: true }
             );
         },
