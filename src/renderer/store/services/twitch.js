@@ -274,11 +274,11 @@ export default {
         },
 
         VIEWERS_COUNT: async ({ rootState }) => {
-            const stream = await rootState.service.client.stream.streams({
+            const response = await rootState.service.client.stream.streams({
                 user_id: rootState.service.user.id
             });
 
-            return Number(stream?.viewer_count) || 0;
+            return Number(response?.data?.[0].viewer_count) || 0;
         },
 
         FOLLOWERS_COUNT: async ({ rootState }) => {
