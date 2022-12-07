@@ -27,11 +27,11 @@
         "deps": "yarn && yarn postinstall"
     },
     "dependencies": {
-        "axios": "^1.2.0",
         "bluebird": "^3.7.2",
         "discord-rpc": "^4.0.1",
         "electron-updater": "^5.3.0",
         "http": "^0.0.1-security",
+        "node-fetch": "2.6.7",
         "nuxt": "2.15.8",
         "nuxt-lazy-load": "^1.2.9",
         "obs-websocket-js": "^5.0.2",
@@ -61,13 +61,12 @@
         "cross-env": "^7.0.3",
         "electron": "^22.0.0",
         "electron-builder": "^23.6.0",
-        "eslint": "^8.28.0",
+        "eslint": "^8.29.0",
         "eslint-plugin-vue": "^9.8.0",
         "file-loader": "^6.2.0",
         "sass": "^1.56.1",
         "sass-loader": "10.1.1",
         "url-loader": "^4.1.1",
-        "vue-loader": "15.9.7",
         "webpack": "4.46.0"
     }
 }
