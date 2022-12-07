@@ -1,5 +1,3 @@
-import { delay } from "bluebird";
-
 import events from "./eventsub/events";
 
 const EVENTSUB_CONNECTED = {
@@ -26,24 +24,11 @@ export default {
                 broadcaster_user_id: String(rootState.service.user.id)
             }];
 
-            const eventsubClient = rootState.service.client.EventSub;
+            state.client = rootState.service.client.EventSub;
 
-            eventsubClient.events.on(eventsubClient.WebsocketEvents.CONNECTED, () => {
+            state.client.events.on(state.client.WebsocketEvents.CONNECTED, async () => {
                 dispatch("notifications/ADD", EVENTSUB_CONNECTED, { root: true });
-            });
 
-            eventsubClient.events.on(eventsubClient.WebsocketEvents.DISCONNECTED, async reason => {
-                console.error(reason);
-                await delay(4000);
-                state.client = null;
-                return await dispatch("CONNECT");
-            });
-
-            state.client = await rootState.service.client.EventSub.connect({
-                debug: rootState.config.twitch.eventsubDebug
-            });
-
-            if (state.client) {
                 for (const type of Object.keys(events.actions)) {
                     await state.client.subscribe(type, conditions[0], data => {
                         if (rootState.config.twitch.notifications[type]) {
@@ -51,7 +36,15 @@ export default {
                         }
                     });
                 }
-            }
+            });
+
+            state.client.events.on(state.client.WebsocketEvents.DISCONNECTED, reason => {
+                console.error(reason);
+            });
+
+            state.client = await state.client.connect({
+                debug: rootState.config.twitch.eventsubDebug
+            });
 
             return state.client;
         }
