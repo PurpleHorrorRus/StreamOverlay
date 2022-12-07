@@ -291,11 +291,11 @@ export default {
                 rootState.service.client.other.getViewers(rootState.service.user.nickname)
             ]);
 
-            if (!botsRequest?.data?.bots || !chatters) {
+            if (!botsRequest?.bots || !chatters) {
                 return [];
             }
 
-            const botNames = botsRequest.data.bots.map(bot => bot[0]);
+            const botNames = botsRequest.bots.map(bot => bot[0]);
             for (const category in chatters) {
                 chatters[category] = lodash.difference(chatters[category], botNames);
             }
