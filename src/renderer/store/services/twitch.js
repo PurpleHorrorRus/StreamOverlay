@@ -1,5 +1,4 @@
 import Helix from "simple-helix-api";
-import axios from "axios";
 import lodash from "lodash";
 import Promise from "bluebird";
 
@@ -288,7 +287,7 @@ export default {
 
         CHATTERS: async ({ rootState }) => {
             const [botsRequest, { chatters }] = await Promise.all([
-                axios.get("https://api.twitchinsights.net/v1/bots/online"),
+                misc.syncRequest("https://api.twitchinsights.net/v1/bots/online"),
                 rootState.service.client.other.getViewers(rootState.service.user.nickname)
             ]);
 

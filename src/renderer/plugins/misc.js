@@ -1,13 +1,9 @@
-import axios from "axios";
+
 
 export default {
     syncRequest: async (url, params = {}) => {
-        const response = await axios({
-            url,
-            ...params
-        });
-
-        return response.data;
+        const response = await fetch(url, params);
+        return await response.json();
     },
 
     formatTime: time => {
