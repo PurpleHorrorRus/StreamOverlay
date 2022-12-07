@@ -278,7 +278,7 @@ export default {
                 user_id: rootState.service.user.id
             });
 
-            return Number(response?.data?.[0].viewer_count) || 0;
+            return Number(response.viewer_count ?? response.data?.[0].viewer_count) || 0;
         },
 
         FOLLOWERS_COUNT: async ({ rootState }) => {
