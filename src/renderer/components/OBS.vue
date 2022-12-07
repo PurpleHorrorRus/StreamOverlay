@@ -24,10 +24,10 @@ import OBSMixin from "~/mixins/obs";
 
 export default {
     components: {
-        Devices: () => import("~/components/OBS/Devices"),
-        ServiceInfo: () => import("~/components/OBS/ServiceInfo"),
-        Status: () => import("~/components/OBS/Status"),
-        OBSTech: () => import("~/components/OBS/Tech")
+        Devices: () => import("~/components/OBS/Devices.vue"),
+        ServiceInfo: () => import("~/components/OBS/ServiceInfo.vue"),
+        Status: () => import("~/components/OBS/Status.vue"),
+        OBSTech: () => import("~/components/OBS/Tech.vue")
     },
 
     mixins: [OBSMixin],
@@ -71,7 +71,7 @@ export default {
 
                     filter: OBSPanelMini.border && OBSPanelMini.shadow
                         ? `drop-shadow(2px 2px 2px rgba(0, 0, 0, ${Math.min(OBSPanelMini.opacity, 80)}%))`
-                        : "noneunset"
+                        : "unset"
                 };
             }
 
@@ -110,6 +110,8 @@ export default {
             row-gap: 0px;
 
             padding: 5px 10px 5px 5px;
+
+            -webkit-transform-origin-x: 0;
 
             #obs-content-main {
                 column-gap: 10px;

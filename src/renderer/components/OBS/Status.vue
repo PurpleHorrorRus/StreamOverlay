@@ -54,10 +54,6 @@ export default {
 </script>
 
 <style lang="scss">
-#obs-content.mini #status {
-    min-width: 115px;
-}
-
 #status {
     display: flex;
     align-items: center;
