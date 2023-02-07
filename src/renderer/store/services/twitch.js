@@ -12,8 +12,6 @@ import badges from "./twitch/badges";
 
 import misc from "~/plugins/misc";
 
-// botID = 169440375;
-
 const profilesCacheMax = 50;
 let profilesCacheSize = 0;
 let profilesCache = {};
@@ -306,18 +304,6 @@ export default {
         FOLLOWERS_COUNT: async ({ rootState }) => {
             const follows = await rootState.service.client.users.follows(rootState.service.user.id);
             return follows.total || 0;
-        },
-
-        LATEST_FOLLOWER: async ({ dispatch, rootState }) => {
-            const response = await rootState.service.client.users.follows(rootState.service.user.id);
-            const follower = response.data.find(user => {
-                return user.from_name !== "BernkastelBot";
-            });
-
-            const id = Number(follower.from_id);
-            const profile = (await rootState.service.client.users.get(id)).data[0];
-
-            return await dispatch("FORMAT_PROFILE", profile);
         },
 
         CHATTERS: async ({ rootState }) => {

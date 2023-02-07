@@ -43,7 +43,6 @@
             />
 
             <TwitchSettingsAccessToken @input="access_token = $event" />
-            <TwitchSettingsOAuthToken @input="oauth_token = $event" />
 
             <SolidButton
                 :label="$strings.CONTINUE"
@@ -71,9 +70,7 @@ let helix = null;
 export default {
     components: {
         MenuError: () => import("~/components/Menu/Notifications/Error"),
-
-        TwitchSettingsAccessToken: () => import("~/components/Settings/Services/Twitch/AccessToken.vue"),
-        TwitchSettingsOAuthToken: () => import("~/components/Settings/Services/Twitch/OAuthToken.vue")
+        TwitchSettingsAccessToken: () => import("~/components/Settings/Services/Twitch/AccessToken.vue")
     },
 
     mixins: [CoreMixin, OtherMixin],
