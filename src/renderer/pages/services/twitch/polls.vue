@@ -79,7 +79,7 @@ export default {
         },
 
         canCreate() {
-            return  this.poll.title.length > 0 
+            return  this.poll.title.length > 0
                 && this.validChoices.length >= 2;
         },
 
@@ -109,9 +109,10 @@ export default {
                 title: value
             });
         },
-    
+
         async get() {
-            const [poll] = await this.client.polls.get(this.user.id);
+            const response = await this.client.polls.get(this.user.id);
+            const poll = response.data[0];
 
             if (poll?.status === "ACTIVE") {
                 for (let i = 0; i < poll.choices.length; i++) {
@@ -121,7 +122,7 @@ export default {
                 this.poll = poll;
             }
         },
-    
+
         async start() {
             this.load = true;
             this.poll = await this.client.polls.create(this.user.id, this.poll.title, this.validChoices, 60);

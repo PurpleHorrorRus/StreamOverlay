@@ -111,7 +111,8 @@ export default {
 
     methods: {
         async get() {
-            const [prediction] = await this.client.predictions.get(this.user.id);
+            const response = await this.client.predictions.get(this.user.id);
+            const prediction = response.data[0];
 
             if (prediction.status === "ACTIVE" || prediction.status === "LOCKED") {
                 this.prediction = prediction;
