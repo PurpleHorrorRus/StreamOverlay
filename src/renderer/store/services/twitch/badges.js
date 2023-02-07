@@ -8,11 +8,14 @@ export default {
     }),
 
     actions: {
-        LOAD: async ({ state, rootState }, id) => {
-            const [global, channel] = await Promise.all([
+        LOAD: async ({ state, rootState }) => {
+            let [global, channel] = await Promise.all([
                 rootState.service.client.chat.globalBadges(),
-                rootState.service.client.chat.badges(id)
+                rootState.service.client.chat.badges(rootState.service.user.id)
             ]);
+
+            global = global.data;
+            channel = channel.data[0];
 
             const values = Object.values({ ...global, ...channel });
             const mapped = values.map(({ set_id, versions }) => {
@@ -21,7 +24,7 @@ export default {
 
             state.badges = {
                 ...Object.fromEntries(mapped),
-                subscriber: channel.versions?.[0].image_url_1x || ""
+                subscriber: channel.versions[0].image_url_1x
             };
 
             return 0;

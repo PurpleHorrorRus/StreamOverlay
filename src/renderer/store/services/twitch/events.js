@@ -18,7 +18,7 @@ export default {    namespaced: true,
                 show: false
             }, { root: true });
 
-            if (rootState.settings.settings.chat.enable) {
+            if (rootState.config.settings.chat.enable) {
                 dispatch("notifications/ADD", {
                     text: global.$nuxt.$strings.NOTIFICATIONS.CONNECTED,
                     color: "#28a745",
@@ -29,7 +29,7 @@ export default {    namespaced: true,
         },
 
         ON_DISCONNECTED: ({ dispatch, rootState }) => {
-            if (rootState.settings.settings.chat.enable) {
+            if (rootState.config.settings.chat.enable) {
                 dispatch("notifications/TURN", {
                     name: "chatdisconnect",
                     show: true

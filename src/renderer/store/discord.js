@@ -16,7 +16,7 @@ export default {
     actions: {
         AUTH: async ({ dispatch, rootState }) => {
             if (!interval) {
-                service = rootState.settings.settings.service;
+                service = rootState.config.settings.service;
                 serivceName = service.charAt(0).toUpperCase() + service.slice(1);
 
                 interval = setInterval(() => {
@@ -30,7 +30,7 @@ export default {
         },
 
         SET_ACTIVITY: async ({ dispatch, rootState }) => {
-            if (!rootState.settings.settings.discord) {
+            if (!rootState.config.settings.discord) {
                 return false;
             }
 

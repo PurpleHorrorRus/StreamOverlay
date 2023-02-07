@@ -8,8 +8,8 @@
 <script>
 export default {
     components: {
-        Avatar: () => import("~/components/Menu/Header/Profile/Avatar"),
-        Information: () => import("~/components/Menu/Header/Profile/Information")
+        Avatar: () => import("./Profile/Avatar.vue"),
+        Information: () => import("./Profile/Information")
     }
 };
 </script>

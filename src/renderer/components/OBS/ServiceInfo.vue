@@ -1,7 +1,7 @@
 <template>
     <div id="meta-info">
-        <Viewers v-if="settings.OBSStatus.ServiceInfo.enable" />
-        <Followers v-if="settings.OBSStatus.ServiceInfo.followers" />
+        <Viewers v-if="config.settings.OBSStatus.ServiceInfo.enable" />
+        <Followers v-if="config.settings.OBSStatus.ServiceInfo.followers" />
     </div>
 </template>
 

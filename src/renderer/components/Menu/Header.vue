@@ -1,5 +1,5 @@
 <template>
-    <div id="menu-header" :class="{ stream: streaming, expanded }">
+    <div id="menu-header" :class="headerClass">
         <Profile />
         <Expand v-if="showExpand" />
     </div>
@@ -12,8 +12,8 @@ import OBSMixin from "~/mixins/obs";
 
 export default {
     components: {
-        Profile: () => import("~/components/Menu/Header/Profile"),
-        Expand: () => import("~/components/Menu/Header/Expand")
+        Profile: () => import("./Header/Profile.vue"),
+        Expand: () => import("./Header/Expand.vue")
     },
 
     mixins: [OBSMixin],
@@ -28,9 +28,16 @@ export default {
             tags: state => state.twitch.tags
         }),
 
+        headerClass() {
+            return {
+                stream: this.streaming,
+                expanded: this.expanded
+            };
+        },
+
         showExpand() {
-            return this.settings.service === "twitch" &&
-                this.connected && 
+            return this.config.settings.service === "twitch" &&
+                this.connected &&
                 this.tags !== null;
         }
     }

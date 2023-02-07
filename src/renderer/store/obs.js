@@ -187,7 +187,7 @@ export default {
                     state.status.tech.bitrate = Math.ceil(kbitPerSec);
                     state.status.tech.lastBytes = status.outputBytes;
 
-                    if (rootState.settings.settings.notifications.lowbitrate && state.status.tech.bitrate >= 0) {
+                    if (rootState.config.settings.notifications.lowbitrate && state.status.tech.bitrate >= 0) {
                         dispatch("notifications/TURN_LOWBITRATE", state.status.tech.bitrate < 2000, { root: true });
                     }
 
@@ -202,7 +202,7 @@ export default {
             const stats = await dispatch("SEND", { event: "GetStats" });
             state.status.tech.fps = Math.floor(stats.activeFps);
 
-            if (rootState.settings.settings.notifications.lowfps) {
+            if (rootState.config.settings.notifications.lowfps) {
                 dispatch(
                     "notifications/TURN_LOWFPS",
                     state.status.tech.fps < state.videoSettings.fpsNumerator,

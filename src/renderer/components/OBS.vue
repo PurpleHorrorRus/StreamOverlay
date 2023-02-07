@@ -2,7 +2,7 @@
     <Movable
         id="obs"
         class="movable-slot"
-        :source="settings.OBSStatus"
+        :source="config.settings.OBSStatus"
         :resizable="false"
     >
         <div id="obs-content" :style="OBSStyle" :class="OBSClass">
@@ -43,12 +43,12 @@ export default {
         },
 
         showTech() {
-            return this.settings.OBSStatus.tech;
+            return this.config.settings.OBSStatus.tech;
         },
 
         OBSClass() {
             return {
-                mini: this.settings.OBSStatus.mini.enable,
+                mini: this.config.settings.OBSStatus.mini.enable,
                 connected: this.OBSConnected && !this.streaming && !this.recording,
                 disconnected: !this.OBSConnected,
                 streaming: this.streaming,
@@ -57,8 +57,8 @@ export default {
         },
 
         OBSStyle() {
-            if (this.settings.OBSStatus.mini.enable) {
-                const OBSPanelMini = this.settings.OBSStatus.mini;
+            if (this.config.settings.OBSStatus.mini.enable) {
+                const OBSPanelMini = this.config.settings.OBSStatus.mini;
 
                 return {
                     background: `rgba(0, 0, 0, ${OBSPanelMini.opacity}%)`,
@@ -81,9 +81,9 @@ export default {
 
     methods: {
         onDrag(x, y) {
-            this.settings.OBSStatus.x = x;
-            this.settings.OBSStatus.y = y;
-            this.save();
+            this.config.settings.OBSStatus.x = x;
+            this.config.settings.OBSStatus.y = y;
+            return this.config.settings.save();
         }
     }
 };

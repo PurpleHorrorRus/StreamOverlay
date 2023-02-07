@@ -1,7 +1,14 @@
 <template>
     <div id="menu-header-profile-info-name">
-        <img id="menu-header-profile-info-name-service" :src="`./images/${settings.service}.png`">
-        <span id="menu-header-profile-info-name-text" v-text="user.nickname" />
+        <img
+            id="menu-header-profile-info-name-service"
+            :src="`./images/${config.settings.service}.png`"
+        >
+
+        <span
+            id="menu-header-profile-info-name-text"
+            v-text="user.nickname"
+        />
     </div>
 </template>
 

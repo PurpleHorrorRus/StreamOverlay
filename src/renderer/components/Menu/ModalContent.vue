@@ -1,6 +1,10 @@
 <template>
     <div id="modal-locked">
-        <Chat v-if="showChat" :input="true" />
+        <Chat
+            v-if="showChat"
+            :input="!config.settings.first"
+        />
+
         <ModalTime v-if="$parent.locked" />
 
         <MenuHeader v-if="showHeader" />
@@ -24,12 +28,12 @@ export default {
 
     computed: {
         showChat() {
-            return this.settings.chat.enable;
+            return this.config.settings.chat.enable;
         },
 
         showHeader() {
             return this.user
-                && !this.settings.first;
+                && !this.config.settings.first;
         }
     }
 };
@@ -40,9 +44,8 @@ export default {
     display: grid;
     grid-template-columns: 950px;
     grid-template-rows: 170px minmax(300px, max-content);
-    grid-template-areas:
-        "header"
-        "container";
+    grid-template-areas: "header"
+                        "container";
 
     column-gap: 10px;
     row-gap: 5px;

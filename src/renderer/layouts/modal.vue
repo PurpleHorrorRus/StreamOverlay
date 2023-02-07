@@ -10,17 +10,13 @@
 import { ipcRenderer } from "electron";
 import { mapActions, mapState } from "vuex";
 
-import Notifications from "~/components/Notifications/Notifications";
-import Lock from "~/components/Menu/Lock";
-import ModalContent from "~/components/Menu/ModalContent";
-
 import CoreMixin from "~/mixins/core";
 
 export default {
     components: {
-        Notifications,
-        Lock,
-        ModalContent
+        Notifications: () => import("~/components/Notifications/Notifications.vue"),
+        Lock: () => import("~/components/Menu/Lock.vue"),
+        ModalContent: () => import("~/components/Menu/ModalContent.vue")
     },
 
     mixins: [CoreMixin],
@@ -36,7 +32,7 @@ export default {
     },
 
     created() {
-        document.getElementsByTagName("html")[0].classList.add(this.settings.service);
+        document.getElementsByTagName("html")[0].classList.add(this.config.settings.service);
 
         this.turnLock(true);
 
@@ -48,7 +44,7 @@ export default {
     beforeDestroy() {
         this.hidden = false;
         this.turnLock(false);
-        ipcRenderer.removeAllListeners("turnLock");
+        return ipcRenderer.removeAllListeners("turnLock");
     },
 
     methods: {

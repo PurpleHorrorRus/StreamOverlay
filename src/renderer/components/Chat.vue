@@ -1,6 +1,6 @@
 <template>
     <Movable
-        :source="settings.chat"
+        :source="config.settings.chat"
         :name="$strings.MENU.EDIT.ELEMENTS.CHAT"
         :canBringTop="true"
     >
@@ -12,14 +12,12 @@
 </template>
 
 <script>
-import MessagesBlock from "~/components/Chat/MessagesBlock";
-
 import CoreMixin from "~/mixins/core";
 
 export default {
     components: {
-        MessagesBlock,
-        ChatInput: () => import("~/components/Chat/Input")
+        MessagesBlock: () => import("./Chat/MessagesBlock.vue"),
+        ChatInput: () => import("./Chat/Input.vue")
     },
 
     mixins: [CoreMixin],
@@ -34,15 +32,15 @@ export default {
 
     methods: {
         onResize(x, y, width, height) {
-            this.settings.chat.width = width;
-            this.settings.chat.height = height;
+            this.config.settings.chat.width = width;
+            this.config.settings.chat.height = height;
             this.onDrag(x, y);
         },
 
         onDrag(x, y) {
-            this.settings.chat.x = x;
-            this.settings.chat.y = y;
-            this.save();
+            this.config.settings.chat.x = x;
+            this.config.settings.chat.y = y;
+            return this.config.settings.save();
         }
     }
 };

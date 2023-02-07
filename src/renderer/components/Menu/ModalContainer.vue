@@ -1,6 +1,7 @@
 <template>
-    <div id="modal-locked-container" :class="{ first: settings.first }">
-        <Navigation v-if="!settings.first" />
+    <div id="modal-locked-container" :class="containerClass">
+        <Navigation v-if="!config.settings.first" />
+
         <div id="modal-locked-container-page">
             <nuxt />
         </div>
@@ -8,16 +9,22 @@
 </template>
 
 <script>
-import Navigation from "~/components/Menu/Navigation";
-
 import CoreMixin from "~/mixins/core";
 
 export default {
     components: {
-        Navigation
+        Navigation: () => import("./Navigation.vue")
     },
 
-    mixins: [CoreMixin]
+    mixins: [CoreMixin],
+
+    computed: {
+        containerClass() {
+            return {
+                first: this.config.first
+            };
+        }
+    }
 };
 </script>
 
