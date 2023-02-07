@@ -10,27 +10,27 @@
 </template>
 
 <script>
-import EyeIcon from "~icons/eye.svg";
-import EyeCrossedIcon from "~icons/eye-crossed.svg";
-
 export default {
     components: {
-        EyeIcon,
-        EyeCrossedIcon
+        EyeIcon: () => import("~icons/eye.svg"),
+        EyeCrossedIcon: () => import("~icons/eye-crossed.svg")
     },
+
     computed: {
         isVisible() {
             return this.$parent.$parent.visible !== undefined;
         },
+    
         movableTitleClass() {
             return {
                 widget: this.isVisible
             };
         }
     },
+
     methods: {
         turnVisible() {
-            this.$parent.$parent.$emit("turnVisible");
+            return this.$parent.$parent.$emit("turnVisible");
         }
     }
 };
