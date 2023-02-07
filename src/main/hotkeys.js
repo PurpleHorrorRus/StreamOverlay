@@ -11,9 +11,12 @@ class Hotkeys {
         this.window.menu = false;
         this.window.lock = false;
 
-        globalShortcut.register("Alt+R", () => {
-            common.windows.send(this.window, "turnMenu", !this.window.menu);
-        });
+        const turnMenu = () => {
+            return common.windows.send(this.window, "turnMenu", !this.window.menu);
+        };
+
+        globalShortcut.register("Alt+R", turnMenu);
+        globalShortcut.register("Alt+T", turnMenu);
     }
 
     registerIndexHotkeys () {
