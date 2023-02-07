@@ -27,7 +27,7 @@ export default {
     computed: {
         badgeStyle() {
             return {
-                width: `${this.settings.chat.font + 4}px`
+                width: `${this.config.settings.chat.font + 4}px`
             };
         }
     }

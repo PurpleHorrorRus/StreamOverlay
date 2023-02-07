@@ -62,14 +62,14 @@ export default {
         },
 
         onResize(x, y, width, height) {
-            this.settings.ViewersList.width = width;
-            this.settings.ViewersList.height = height;
+            this.config.settings.ViewersList.width = width;
+            this.config.settings.ViewersList.height = height;
             this.onDrag(x, y);
         },
 
         onDrag(x, y) {
-            this.settings.ViewersList.x = x;
-            this.settings.ViewersList.y = y;
+            this.config.settings.ViewersList.x = x;
+            this.config.settings.ViewersList.y = y;
             this.save();
         }
     }

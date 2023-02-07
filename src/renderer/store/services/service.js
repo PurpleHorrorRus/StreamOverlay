@@ -123,12 +123,6 @@ export default {
                         message: message.content
                     });
                 }
-
-                dispatch("server/SEND", {
-                    room: "chat",
-                    type: "message",
-                    content: message
-                });
             }
 
             return message;

@@ -98,7 +98,6 @@ export default {
             loadLanguage: "strings/LOAD",
 
             initService: "service/INIT",
-            startServer: "service/server/START",
 
             startFollowers: "followers/START",
 

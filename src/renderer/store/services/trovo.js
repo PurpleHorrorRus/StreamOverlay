@@ -85,7 +85,7 @@ export default {
 
             let chat = await client.chat.connect({
                 messages: {
-                    fetchPastMessages: rootState.settings.settings.trovo.past
+                    fetchPastMessages: rootState.config.settings.settings.trovo.past
                 }
             });
 
@@ -97,7 +97,7 @@ export default {
         },
 
         LOGIN_ERROR: ({ commit, rootState }) => {
-            rootState.settings.settings.first = true;
+            rootState.config.settings.settings.first = true;
             commit("LOGIN_REDIRECT");
             return false;
         },

@@ -13,13 +13,13 @@ export default {
 
         textStyle() {
             return {
-                fontSize: `${this.settings.chat.font}pt`
+                fontSize: `${this.config.settings.chat.font}pt`
             };
         },
 
         pictureStyle() {
             return {
-                width: `${this.settings.chat.font + 14}px`
+                width: `${this.config.settings.chat.font + 14}px`
             };
         }
     }
