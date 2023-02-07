@@ -78,7 +78,10 @@ export default {
 
         INIT: async ({ dispatch }) => {
             dispatch("UPDATE_INFO");
-            setInterval(() => dispatch("UPDATE_INFO"), 10000);
+
+            return setInterval(() => {
+                return dispatch("UPDATE_INFO");
+            }, 10000);
         },
 
         UPDATE_INFO: async ({ dispatch, state }) => {
@@ -89,6 +92,8 @@ export default {
 
             state.viewers = viewers;
             state.followers = followers;
+
+            return [viewers, followers];
         },
 
         ADD_MESSAGE: async ({ dispatch, state, rootState }, message) => {
@@ -101,23 +106,29 @@ export default {
             state.messages.unshift(message);
             dispatch("LIMIT_MESSAGES");
 
-            if (rootState.settings.settings.chat.timeout > 0) {
+            if (rootState.config.settings.chat.timeout > 0) {
                 setTimeout(() => {
                     dispatch("REMOVE_MESSAGE", message.id);
-                }, rootState.settings.settings.chat.timeout * 1000);
+                }, rootState.config.settings.chat.timeout * 1000);
             }
 
-            if (!message.system && !message.past) {
-                if (rootState.settings.settings.chat.sound) {
+            if (!message.system && !message.service && !message.past) {
+                if (rootState.config.settings.chat.sound) {
                     dispatch("PLAY_SOUND");
                 }
 
-                if (rootState.settings.settings.chat.tts.enable) {
+                if (rootState.config.settings.chat.tts.enable) {
                     dispatch("VOICE_MESSAGE", {
                         name: message.nickname,
                         message: message.content
                     });
                 }
+
+                dispatch("server/SEND", {
+                    room: "chat",
+                    type: "message",
+                    content: message
+                });
             }
 
             return message;
@@ -150,7 +161,10 @@ export default {
                 return message.id === id;
             });
 
-            if (message) message.show = false;
+            if (message) {
+                message.show = false;
+            }
+
             return Boolean(message);
         },
 
@@ -159,20 +173,25 @@ export default {
 
             if (visibleMessagesCount > config.visibleMessagesMax) {
                 for (let i = config.visibleMessagesMax; i < visibleMessagesCount; i++) {
-                    if (!state.messages[i].show) break;
+                    if (!state.messages[i].show) {
+                        break;
+                    }
+
                     state.messages[i].show = false;
                 }
             }
+
+            return true;
         },
 
         PLAY_SOUND: () => {
             const sound = new Audio("notification.mp3");
             sound.volume = 0.6;
-            sound.play();
+            return sound.play();
         },
 
         VOICE_MESSAGE: async ({ dispatch, rootState }, { name, message, forceName }) => {
-            const readName = rootState.settings.settings.chat.tts.readName || forceName;
+            const readName = rootState.config.settings.chat.tts.readName || forceName;
             const text = readName ? `${name} сказал ${message}` : message;
 
             const folder = await dispatch("PREPARE_TEMP_FOLDER", "tts", { root: true });
@@ -188,6 +207,7 @@ export default {
 
         GET_CURRENT_TIME: () => {
             const time = new Date();
+
             return misc.formatTime({
                 hours: time.getHours(),
                 mins: time.getMinutes(),
@@ -199,28 +219,21 @@ export default {
             return await TTSClient.stream(text);
         },
 
-        UPDATE_RECENT: ({ dispatch, rootState }, data) => {
-            data = { ...data };
-            let recent = [...rootState.config.recent];
-
-            const index = recent.findIndex(item => {
-                return item.title === data.title && item.game === data.game;
+        UPDATE_RECENT: ({ rootState }, data) => {
+            const index = rootState.config.recent.findIndex(item => {
+                return item.title === data.title
+                    && item.game === data.game;
             });
 
-            ~index
-                ? misc.arrayMove(recent, index, 0)
-                : recent.unshift(data);
+            rootState.config.recent = ~index
+                ? misc.arrayMove(rootState.config.recent, index, 0)
+                : misc.insertToArray(rootState.config.recent, 0, data);
 
-            if (recent.length > 5) {
-                recent = recent.splice(0, 5);
+            if (rootState.config.recent.length > 5) {
+                rootState.config.recent = rootState.config.recent.splice(0, 5);
             }
 
-            dispatch("settings/SAVE_CUSTOM", {
-                type: "recent",
-                settings: recent
-            },{ root: true });
-
-            return true;
+            return rootState.config.save("recent");
         }
     }
 };
