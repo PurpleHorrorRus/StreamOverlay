@@ -25,6 +25,18 @@ import { ipcRenderer } from "electron";
 import OBSMixin from "~/mixins/obs";
 import WidgetsMixin from "~/mixins/widgets";
 
+const notifications = {
+    controls: {
+        text: "Управление:<br/>\
+            Alt + R (Alt +T) - меню<br/>\
+            Alt + K - список зрителей",
+
+        color: "#343a40",
+        icon: () => import("~icons/keyboard.svg"),
+        handle: 10
+    }
+};
+
 export default {
     components: {
         EditMode: () => import("~/components/EditMode.vue"),
@@ -86,11 +98,13 @@ export default {
             this.connectOBS();
             this.registerIPC();
             this.setActivity();
+            this.addNotification(notifications.controls);
         }
 
         this.inited = true;
         return this.$ipc.send("dom-ready");
     },
+
     methods: {
         ...mapActions({
             setConfig: "SET_CONFIG",
