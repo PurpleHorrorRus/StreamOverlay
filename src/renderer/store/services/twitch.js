@@ -4,12 +4,15 @@ import Promise from "bluebird";
 
 import formatter from "~/store/services/formatter";
 
-import eventsub from "~/store/services/twitch/eventsub";
-import events from "~/store/services/twitch/events";
-import emotes from "~/store/services/twitch/emotes";
-import badges from "~/store/services/twitch/badges";
+import eventsub from "./twitch/eventsub";
+import events from "./twitch/events";
+import rewards from "./twitch/rewards";
+import emotes from "./twitch/emotes";
+import badges from "./twitch/badges";
 
 import misc from "~/plugins/misc";
+
+// botID = 169440375;
 
 const profilesCacheMax = 50;
 let profilesCacheSize = 0;
@@ -20,17 +23,17 @@ export default {
 
     state: () => ({
         tags: null,
-        version: 2
+        version: 3
     }),
 
     mutations: {
-        LOGIN_REDIRECT(_state, query) {
+        LOGIN_REDIRECT(_state, query = {}) {
             if (query) {
                 query = new URLSearchParams(query).toString();
             }
 
-            this.$router.replace(`/services/twitch?${query}`).catch(() => {});
-            return true;
+            return this.$router.replace(`/services/twitch?${query}`)
+                .catch(() => (false));
         }
     },
 
@@ -47,7 +50,7 @@ export default {
             }
 
             const config = rootState.config.twitch;
-            if (!config.username || !config.access_token) {
+            if (!config.username || !config.access_token || !config.oauth_token) {
                 return await dispatch("LOGIN_ERROR");
             }
 
@@ -72,16 +75,17 @@ export default {
                 language: "ru"
             }), { root: true });
 
-            let user = await client.users.getByLogin(credits.username);
+            let user = (await client.users.getByLogin(credits.username)).data[0];
+            dispatch("CACHE_PROFILE", user);
+
             user = await dispatch("service/SET_USER", {
                 ...await dispatch("FORMAT_PROFILE", user),
                 ...user,
                 id: Number(user.id),
                 link: `twitch.tv/${user.display_name}`
             }, { root: true });
-            dispatch("CACHE_PROFILE", user.nickname);
 
-            const channel = await client.channel.get(user.id);
+            const channel = (await client.channel.get(user.id)).data[0];
             await dispatch("service/SET_STREAM", {
                 title: channel.title,
                 game: channel.game_name
@@ -89,7 +93,8 @@ export default {
 
             dispatch("CONNECT", credits);
             dispatch("eventsub/CONNECT");
-            dispatch("badges/LOAD", user.id);
+            dispatch("rewards/LOAD");
+            dispatch("badges/LOAD");
             dispatch("emotes/LOAD", {
                 id: user.id,
                 name: user.nickname
@@ -99,9 +104,8 @@ export default {
         },
 
         LOGIN_ERROR: ({ commit, rootState }, query = {}) => {
-            rootState.settings.settings.first = true;
-            commit("LOGIN_REDIRECT", query);
-            return false;
+            rootState.config.settings.first = true;
+            return commit("LOGIN_REDIRECT", query) && false;
         },
 
         CONNECT: async ({ dispatch, rootState, state }, credits) => {
@@ -125,16 +129,20 @@ export default {
                 dispatch("events/ON_RAW_MESSAGE_FOLLOWERS_MODE");
             });
 
-            const chat = await dispatch("service/SET_CHAT",
-                await rootState.service.client.tmi.connect(credits.username, credits.access_token, [credits.username], {
+            const chatClient = await rootState.service.client.tmi.connect(
+                "BernkastelBot",
+                credits.oauth_token,
+                [credits.username],
+                {
                     debug: rootState.config.twitch.chatDebug,
                     secure: rootState.config.twitch.chatSecure
-                }), { root: true }
+                }
             );
 
+            const chat = await dispatch("service/SET_CHAT", chatClient, { root: true });
             chat.on("message", async message => {
-                if (!rootState.settings.settings.chat.enable) {
-                    return;
+                if (!rootState.config.settings.chat.enable) {
+                    return false;
                 }
 
                 const profile = await dispatch("GET_PROFILE", message["display-name"]);
@@ -155,10 +163,13 @@ export default {
                         emotes: message.emotes
                     }),
 
+                    reward: await dispatch("FORMAT_REWARD", message["custom-reward-id"]),
                     time: await dispatch("service/GET_CURRENT_TIME", null, { root: true }),
                     color: message.color,
                     type: message["msg-id"] || 0
                 }, { root: true });
+
+                return message;
             });
 
             chat.on(rootState.service.client.tmi.WebsocketEvents.DISCONNECTED, () => {
@@ -186,7 +197,9 @@ export default {
         },
 
         CACHE_PROFILE: async ({ rootState }, username) => {
-            profilesCache[username] = await rootState.service.client.users.getByLogin(username);
+            profilesCache[username] = typeof username !== "object"
+                ? (await rootState.service.client.users.getByLogin(username)).data[0]
+                : username;
 
             if (profilesCacheSize > profilesCacheMax - 1) {
                 const spliceLen = Object.values(profilesCache).length - profilesCacheMax;
@@ -245,6 +258,16 @@ export default {
             return await dispatch("formatter/TEXT", { formatted, part });
         },
 
+        FORMAT_REWARD: ({ state }, id) => {
+            if (!id) {
+                return null;
+            }
+
+            return state.rewards.list.find(reward => {
+                return reward.id === id;
+            });
+        },
+
         BAN: async ({ rootState }, data) => {
             data.nickname = data.nickname.toLowerCase();
             const username = rootState.service.user.nickname.toLowerCase();
@@ -277,57 +300,77 @@ export default {
                 user_id: rootState.service.user.id
             });
 
-            return Number(response.viewer_count ?? response.data?.[0].viewer_count) || 0;
+            return response.data[0]?.viewer_count || 0;
         },
 
         FOLLOWERS_COUNT: async ({ rootState }) => {
             const follows = await rootState.service.client.users.follows(rootState.service.user.id);
-            return Number(follows?.total) || 0;
+            return follows.total || 0;
+        },
+
+        LATEST_FOLLOWER: async ({ dispatch, rootState }) => {
+            const response = await rootState.service.client.users.follows(rootState.service.user.id);
+            const follower = response.data.find(user => {
+                return user.from_name !== "BernkastelBot";
+            });
+
+            const id = Number(follower.from_id);
+            const profile = (await rootState.service.client.users.get(id)).data[0];
+
+            return await dispatch("FORMAT_PROFILE", profile);
         },
 
         CHATTERS: async ({ rootState }) => {
-            const [botsRequest, { chatters }] = await Promise.all([
+            const [botsRequest, chattersRequest] = await Promise.all([
                 misc.syncRequest("https://api.twitchinsights.net/v1/bots/online"),
-                rootState.service.client.other.getViewers(rootState.service.user.nickname)
+                rootState.service.client.chat.allChatters(rootState.service.user.id, 1000)
             ]);
 
-            if (!botsRequest?.bots || !chatters) {
+            if (!botsRequest?.bots || !chattersRequest?.length) {
                 return [];
             }
 
-            const botNames = botsRequest.bots.map(bot => bot[0]);
-            for (const category in chatters) {
-                chatters[category] = lodash.difference(chatters[category], botNames);
-            }
-
-            return lodash.pickBy(chatters, category => {
-                return category.length > 0;
+            const bots = botsRequest.bots.map(bot => {
+                return bot[0];
             });
+
+            const chatters = chattersRequest.map(chatter => {
+                return chatter.user_name;
+            });
+
+            return {
+                viewers: lodash.differenceBy(chatters, bots, chatter => {
+                    return chatter.toLowerCase();
+                })
+            };
         },
 
         SAY: ({ rootState }, message) => {
             return rootState.service.chat.say(message, rootState.service.user.nickname);
         },
 
-        TURN_FOLLOWERS_ONLY: ({ rootState, state }, duration = 0) => {
+        ANSWER: async ({ rootState }, { answer, message }) => {
+            return await rootState.service.chat.say(answer, rootState.service.user.nickname, {
+                "reply-parent-msg-id": message.id
+            });
+        },
+
+        TURN_FOLLOWERS_ONLY: async ({ rootState, state }, duration = 0) => {
             if (!rootState.service.connected) {
                 return false;
             }
 
             const user_id = rootState.service.user.id;
-            rootState.service.client.chat.updateSettings(user_id, user_id, {
+            return await rootState.service.client.chat.updateSettings(user_id, {
                 follower_mode: state.tags["followers-only"] === -1,
                 follower_mode_duration: duration
             });
         },
 
         GET_CATEGORIES: async ({ dispatch, rootState }, query) => {
-            const categories = await rootState.service.client.search.categories(query);
-            const games = Array.isArray(categories)
-                ? categories
-                : (categories ? (categories.data || [categories]) : []);
+            const response = await rootState.service.client.search.categories(query);
 
-            return await Promise.map(games, async game => {
+            return await Promise.map(response.data, async game => {
                 return await dispatch("FORMAT_GAME", game);
             });
         },
@@ -335,17 +378,14 @@ export default {
         SEARCH_GAME: async ({ dispatch }, query) => {
             const games = await dispatch("GET_CATEGORIES", query);
 
-            const gameId = query = misc.textToId(query);
+            const gameId = misc.textToId(query);
             const game = games.find(game => {
                 return misc.textToId(game.name) === gameId;
             });
 
             return {
                 list: games,
-                game: game || {
-                    name: query,
-                    icon: "https://static-cdn.jtvnw.net/ttv-static/404_boxart-288x386.jpg"
-                }
+                game: game || games[0]
             };
         },
 
@@ -369,6 +409,7 @@ export default {
 
         eventsub,
         events,
+        rewards,
         emotes,
         badges
     }

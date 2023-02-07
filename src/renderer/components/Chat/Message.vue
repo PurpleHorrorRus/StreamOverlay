@@ -10,6 +10,7 @@
             :style="textStyle"
             v-text="`[${message.time}]`"
         />
+
         <img
             v-if="showAvatar"
             v-lazy-load
@@ -18,7 +19,10 @@
             class="message-avatar"
         />
 
-        <Badges v-if="showBadges" :badges="message.badges" />
+        <Badges
+            v-if="showBadges"
+            :badges="message.badges"
+        />
 
         <span
             v-if="message.nickname"
@@ -30,7 +34,13 @@
             v-text="message.nickname"
         />
 
-        <MessageBody v-if="!message.banned" :items="message.formatted" />
+        <MessageReward v-if="message.reward" />
+
+        <MessageBody
+            v-if="!message.banned"
+            :items="message.formatted"
+        />
+
         <span
             v-else
             class="message-banned stroke"
@@ -41,16 +51,14 @@
 </template>
 
 <script>
-import Badges from "~/components/Chat/Badges";
-import MessageBody from "~/components/Chat/Body";
-
 import CoreMixin from "~/mixins/core";
 import MessageMixin from "~/components/Chat/Mixin";
 
 export default {
     components: {
-        Badges,
-        MessageBody
+        Badges: () => import("./Badges.vue"),
+        MessageReward: () => import("./Reward.vue"),
+        MessageBody: () => import("./Body.vue")
     },
 
     mixins: [CoreMixin, MessageMixin],
@@ -65,7 +73,7 @@ export default {
     computed: {
         showAvatar() {
             return (
-                this.settings.chat.avatar &&
+                this.config.settings.chat.avatar &&
                 this.message.avatar?.length > 0
             );
         },
@@ -82,7 +90,7 @@ export default {
 
         showBadges() {
             return (
-                this.settings.chat.badges &&
+                this.config.settings.chat.badges &&
                 !this.message.system &&
                 this.message.badges?.length > 0
             );
@@ -90,20 +98,21 @@ export default {
 
         messageStyle() {
             return {
-                background: `rgba(20, 20, 19, ${this.settings.chat.opacity / 100})`,
-                lineHeight: `${this.settings.chat.font + 2}pt`
+                background: `rgba(20, 20, 19, ${this.config.settings.chat.opacity / 100})`,
+                lineHeight: `${this.config.settings.chat.font + 2}pt`
             };
         },
 
         avatarStyle() {
             return {
-                width: `${this.settings.chat.font + 14}px`
+                width: `${this.config.settings.chat.font + 14}px`
             };
         },
 
         messageClass() {
             return {
-                system: this.message.system
+                system: this.message.system,
+                highlight: this.message.type === "highlighted-message"
             };
         }
     },
@@ -143,6 +152,11 @@ export default {
         .message-body span {
             color: #b3b3b3;
         }
+    }
+
+    &.highlight {
+        border: 2px solid var(--secondary);
+        border-radius: 5px;
     }
 
     &-time,
