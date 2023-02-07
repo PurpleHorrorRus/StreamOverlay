@@ -8,7 +8,7 @@
                 :key="notification.type"
                 :text="notification.name"
                 :checked="config.twitch.notifications[notification.type]"
-                @change="deepChange(config.twitch.notifications, notification.type, null, 'twitch')"
+                @change="deepChange(config.twitch.notifications, notification.type)"
             />
         </div>
     </div>

@@ -8,48 +8,48 @@
         <div class="modal-body">
             <ToggleButton
                 :text="$strings.MENU.APPEARANCE.OBSPANEL.TITLE"
-                :checked="settings.OBSStatus.mini.enable"
-                @change="deepChange(settings.OBSStatus.mini, 'enable')"
+                :checked="config.settings.OBSStatus.mini.enable"
+                @change="deepChange('settings', config.settings.OBSStatus.mini, 'enable')"
             />
 
             <ModalCategory
-                v-if="settings.OBSStatus.mini.enable"
+                v-if="config.settings.OBSStatus.mini.enable"
                 :name="$strings.MENU.APPEARANCE.OBSPANEL.SETTINGS.TITLE"
             >
                 <Range
                     :text="$strings.MENU.APPEARANCE.OBSPANEL.SETTINGS.OPACITY"
-                    :value="settings.OBSStatus.mini.opacity"
+                    :value="config.settings.OBSStatus.mini.opacity"
                     :max="100"
-                    @select="deepChange(settings.OBSStatus.mini, 'opacity', $event)"
+                    @select="deepChange('settings', config.settings.OBSStatus.mini, 'opacity', $event)"
                 />
 
                 <Range
                     :text="$strings.MENU.APPEARANCE.OBSPANEL.SETTINGS.RADIUS"
-                    :value="settings.OBSStatus.mini.radius"
+                    :value="config.settings.OBSStatus.mini.radius"
                     :max="100"
-                    @select="deepChange(settings.OBSStatus.mini, 'radius', $event)"
+                    @select="deepChange('settings', config.settings.OBSStatus.mini, 'radius', $event)"
                 />
 
                 <Range
                     :text="$strings.MENU.APPEARANCE.OBSPANEL.SETTINGS.SCALE"
-                    :value="Number(settings.OBSStatus.mini.scale)"
+                    :value="Number(config.settings.OBSStatus.mini.scale)"
                     :max="1.5"
                     :min="0.5"
                     :step="0.01"
-                    @select="deepChange(settings.OBSStatus.mini, 'scale', $event)"
+                    @select="deepChange('settings', config.settings.OBSStatus.mini, 'scale', $event)"
                 />
 
                 <ToggleButton
                     :text="$strings.MENU.APPEARANCE.OBSPANEL.SETTINGS.BORDER"
-                    :checked="settings.OBSStatus.mini.border"
-                    @change="deepChange(settings.OBSStatus.mini, 'border')"
+                    :checked="config.settings.OBSStatus.mini.border"
+                    @change="deepChange('settings', config.settings.OBSStatus.mini, 'border')"
                 />
 
                 <ToggleButton
-                    v-if="settings.OBSStatus.mini.border"
+                    v-if="config.settings.OBSStatus.mini.border"
                     :text="$strings.MENU.APPEARANCE.OBSPANEL.SETTINGS.SHADOW"
-                    :checked="settings.OBSStatus.mini.shadow"
-                    @change="deepChange(settings.OBSStatus.mini, 'shadow')"
+                    :checked="config.settings.OBSStatus.mini.shadow"
+                    @change="deepChange('settings', config.settings.OBSStatus.mini, 'shadow')"
                 />
             </ModalCategory>
         </div>

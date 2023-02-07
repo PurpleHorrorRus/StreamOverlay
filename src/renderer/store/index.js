@@ -12,7 +12,6 @@ import trovo from "./services/trovo";
 
 import followers from "./followers";
 
-import settings from "./settings";
 import widgets from "./widgets";
 import notifications from "./notifications";
 import ipc from "./ipc";
@@ -25,18 +24,34 @@ export default function() {
         }),
 
         actions: {
-            SET_CONFIG: ({ dispatch, state }, config) => {
-                state.config = config;
+            SET_CONFIG: ({ state }, config) => {
+                const save = (type, content) => {
+                    state.config[type] = content || state.config[type];
 
-                if (config?.settings) {
-                    dispatch("settings/SET", config.settings, { root: true });
+                    global.$nuxt.$ipc.send("saveSettings", {
+                        type,
+                        content: state.config[type]
+                    });
+
+                    return state.config[type];
+                };
+
+                for (const key of Object.keys(config)) {
+                    if (!Array.isArray(config[key])) {
+                        config[key].save = content => save(key, content);
+                    }
                 }
+
+                state.config = config;
+                state.config.save = save;
+
+                return state.config;
             },
 
             SERVICE_DISPATCH: async ({ dispatch, state }, request) => {
                 const action = request.action || request;
                 const data = request.data || null;
-                const service = state.settings.settings.service;
+                const service = state.config.settings.service;
                 return await dispatch(`${service}/${action}`, data);
             },
 
@@ -64,7 +79,6 @@ export default function() {
 
             followers,
 
-            settings,
             widgets,
             notifications,
             ipc,

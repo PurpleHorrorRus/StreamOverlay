@@ -2,7 +2,7 @@
     <div id="widgets-page-content-container-list">
         <div id="widgets-page-content-container-list-items">
             <WidgetListItem
-                v-for="(widget, index) of $parent.widgets"
+                v-for="(widget, index) of $parent.config.widgets"
                 :key="widget.id"
                 :widget="widget"
                 @click.native="$parent.select(index)"

@@ -9,25 +9,25 @@
             <ToggleButton
                 :text="$strings.MENU.OBS.AUTORECONNECT"
                 :checked="config.obs.autoreconnect"
-                @change="deepChange(config.obs, 'autoreconnect', null, 'obs')"
+                @change="deepChange('obs', config.obs, 'autoreconnect')"
             />
 
             <ToggleButton
                 :text="$strings.MENU.OBS.NOTIFICATIONS.LOWFPS"
-                :checked="settings.notifications.lowfps"
-                @change="deepChange(settings.notifications, 'lowfps')"
+                :checked="config.settings.notifications.lowfps"
+                @change="deepChange('settings', config.settings.notifications, 'lowfps')"
             />
 
             <ToggleButton
                 :text="$strings.MENU.OBS.NOTIFICATIONS.LOWBITRATE"
-                :checked="settings.notifications.lowbitrate"
-                @change="deepChange(settings.notifications, 'lowbitrate')"
+                :checked="config.settings.notifications.lowbitrate"
+                @change="deepChange('settings', config.settings.notifications, 'lowbitrate')"
             />
 
             <ToggleButton
                 :text="$strings.MENU.OBS.NOTIFICATIONS.MUTEDMIC.TITLE"
                 :checked="config.obs.meters.mic.enable"
-                @change="deepChange(config.obs.meters.mic, 'enable', null, 'obs')"
+                @change="deepChange('obs', config.obs.meters.mic, 'enable')"
             />
 
             <ModalCategory
@@ -39,7 +39,7 @@
                     :value="config.obs.meters.mic.limit"
                     :max="0"
                     :min="-80"
-                    @select="deepChange(config.obs.meters.mic, 'limit', $event, 'obs')"
+                    @select="deepChange('obs', config.obs.meters.mic, 'limit', $event)"
                 />
 
                 <Range
@@ -48,7 +48,7 @@
                     :value="config.obs.meters.mic.timeout"
                     :max="1000"
                     :min="50"
-                    @select="deepChange(config.obs.meters.mic, 'timeout', $event, 'obs')"
+                    @select="deepChange('obs', config.obs.meters.mic, 'timeout', $event)"
                 />
             </ModalCategory>
 

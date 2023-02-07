@@ -10,8 +10,6 @@
 </template>
 
 <script>
-import { ipcRenderer } from "electron";
-
 import CoreMixin from "~/mixins/core";
 
 export default {
@@ -36,19 +34,21 @@ export default {
 
     created() {
         this.servicesList.forEach(service => {
-            service.active = this.settings.service === service.id;
+            service.active = this.config.settings.service === service.id;
             return service;
         });
     },
 
     methods: {
         async changeService(service) {
-            if (this.settings.service === service.id) {
+            if (this.config.settings.service === service.id) {
                 return false;
             }
 
-            this.deepChange(this.settings, "service", service.id);
-            ipcRenderer.send("restart");
+            this.config.settings.service = service.id;
+            this.config.settings.save();
+
+            return this.$ipc.send("restart");
         }
     }
 };

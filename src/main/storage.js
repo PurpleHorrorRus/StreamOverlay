@@ -1,8 +1,7 @@
 import { app } from "electron";
 import path from "path";
-import fs from "fs";
+import fs from "fs-extra";
 
-// eslint-disable-next-line no-undef
 const isDev = process.env.NODE_ENV === "development";
 
 const clear = {
@@ -14,7 +13,8 @@ const clear = {
         devtools: false,
         hardwareAcceleration: true,
         discord: false,
-        service: "none",
+        outputDeviceId: "default",
+        service: "twitch",
 
         chat: {
             enable: true,
@@ -64,6 +64,13 @@ const clear = {
             height: 219
         },
 
+        meridius: {
+            enable: false,
+            x: 0,
+            y: 0,
+            port: 3000
+        },
+
         notifications: {
             lowfps: true,
             lowbitrate: true
@@ -84,6 +91,7 @@ const clear = {
         password: "",
         camera: [],
         autoreconnect: false,
+
         meters: {
             mic: {
                 enable: true,
@@ -96,6 +104,7 @@ const clear = {
     twitch: {
         username: "",
         access_token: "",
+        oauth_token: "",
         version: 1,
         eventsubDebug: false,
         chatDebug: false,
@@ -119,94 +128,102 @@ const clear = {
     recent: []
 };
 
-const readJSON = dir => JSON.parse(fs.readFileSync(dir, "UTF-8"));
-const writeJSON = (dir, content) => {
-    fs.writeFileSync(dir, JSON.stringify(content, null, 4));
-    return content;
-};
+class Storage {
+    constructor () {
+        this.appdata = app.getPath("userData");
 
-const appdata = app.getPath("userData");
+        this.root = isDev
+            ? path.resolve(this.appdata, "config", "StreamOverlayMaximum")
+            : path.resolve(this.appdata, "config");
 
-const configRoot = path.join(appdata, "config");
-if (!fs.existsSync(configRoot)) {
-    fs.mkdirSync(configRoot);
-}
+        this.paths = {
+            root: this.root,
+            temp: path.resolve(app.getPath("temp"), "streamoverlay")
+        };
 
-const configPath = isDev
-    ? path.join(configRoot, "StreamOverlay")
-    : configRoot;
-
-if (!fs.existsSync(configPath)) {
-    fs.mkdirSync(configPath);
-}
-
-const nested = (settings, clear, ignoreMissingFields = false) => {
-    for (const key of Object.keys(clear)) {
-        if (settings[key] === undefined) {
-            settings[key] = clear[key];
-        } else if (typeof settings[key] === "object" && !Array.isArray(settings[key])) {
-            settings[key] = nested(settings[key], clear[key]);
-        }
+        this.config = {};
     }
 
-    if (!Array.isArray(settings) && !ignoreMissingFields) {
+    checkDirs (dirs) {
+        for (const dir of dirs) {
+            if (!fs.pathExistsSync(dir)) {
+                fs.mkdirsSync(dir);
+            }
+        }
+
+        return dirs;
+    }
+
+    merge (settings, clear) {
+        if (!clear) {
+            return settings;
+        }
+
+        for (const key of Object.keys(clear)) {
+            const settingType = typeof settings[key];
+            const differentTypes = settingType !== typeof clear[key];
+            const isNewKey = !(key in settings) && key in clear || differentTypes;
+            const settingIsArray = Array.isArray(settings[key]);
+
+            if (isNewKey) {
+                settings[key] = clear[key];
+            } else if (settingType === "object" && !settingIsArray) {
+                settings[key] = this.merge(settings[key], clear[key]);
+            }
+        }
+
         for (const key of Object.keys(settings)) {
-            if (clear[key] === undefined) {
+            if (key in settings && !(key in clear)) {
                 delete settings[key];
             }
         }
+
+        return settings;
     }
 
-    return settings;
-};
+    nested (name, skip = false) {
+        const path = this.paths[name];
+        const clearConfig = clear[name];
 
-const dataPath = filename => {
-    return path.join(configPath, filename);
-};
+        if (fs.existsSync(path)) {
+            const content = fs.readJsonSync(path);
+            return !skip ? this.merge(content, clearConfig) : content;
+        }
 
-const data = (path, clear, ignoreMissingFields = false) => {
-    if (fs.existsSync(path)) {
-        const content = readJSON(path);
-        return nested(content, clear, ignoreMissingFields);
+        fs.writeJsonSync(path, clearConfig, { spaces: 4 });
+        return clearConfig;
     }
 
-    return writeJSON(path, clear);
-};
+    create () {
+        this.checkDirs(Object.values(this.paths));
 
-const paths = {
-    configPath,
-    temp: path.resolve(app.getPath("temp"), "StreamOverlay"),
-    settings: dataPath("settings.json"),
-    twitch: dataPath("twitch.json"),
-    trovo: dataPath("trovo.json"),
-    obs: dataPath("obs.json"),
-    widgets: dataPath("widgets.json"),
-    recent: dataPath("recent.json")
-};
+        for (const key of Object.keys(clear)) {
+            this.paths[key] = path.resolve(this.root, `${key}.json`);
+        }
 
-const config = {
-    settings: data(paths.settings, clear.settings),
-    twitch: data(paths.twitch, clear.twitch),
-    trovo: data(paths.trovo, clear.trovo, true),
-    obs: data(paths.obs, clear.obs),
-    widgets: data(paths.widgets, clear.widgets),
-    recent: data(paths.recent, clear.recent)
-};
+        this.config = {
+            settings: this.nested("settings"),
+            obs: this.nested("obs"),
+            twitch: this.nested("twitch"),
+            trovo: this.nested("trovo"),
+            widgets: this.nested("widgets", true),
+            recent: this.nested("recent", true)
+        };
 
-if (config.obs.address === "localhost") {
-    config.obs.address = "127.0.0.1";
-    config.obs.port = 4455;
-    writeJSON(paths.obs, config.obs);
+        return this;
+    }
+
+    save (type, content) {
+        delete content.save;
+
+        this.config[type] = content;
+        return fs.writeJsonSync(this.paths[type], content, { spaces: 4 });
+    }
+
+    clear (type) {
+        this.config[type] = clear[type];
+        return fs.writeJsonSync(this.paths[type], this.config[type], { spaces: 4 });
+    }
 }
 
-export default {
-    save: (type = "settings", content) => {
-        config[type] = content;
-        writeJSON(paths[type], content);
-    },
-
-    config: {
-        paths,
-        ...config
-    }
-};
+export default Storage;

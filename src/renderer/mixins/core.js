@@ -11,7 +11,6 @@ export default {
     computed: {
         ...mapState({
             config: state => state.config,
-            settings: state => state.settings.settings,
 
             client: state => state.service.client,
 
@@ -24,45 +23,34 @@ export default {
         ...mapActions({
             addNotification: "notifications/ADD",
 
-            setConfig: "SET_CONFIG",
-            setSettings: "settings/SET",
-            saveSettings: "settings/SAVE",
-            saveCustom: "settings/SAVE_CUSTOM",
-
             setActivity: "discord/SET_ACTIVITY",
             clearActivity: "discord/CLEAR_ACTIVITY"
         }),
 
-        save(content = this.settings) {
-            this.saveSettings(content);
-        },
+        deepChange(category, root, option, value = "") {
+            if (!this.config[category]) {
+                console.error(`Can't change state: ${category}`);
+                return root[option];
+            }
 
-        deepChange(category, option, value = "", type = "settings") {
-            switch (typeof category[option]) {
+            switch (typeof root[option]) {
                 case "boolean": {
-                    category[option] = !category[option];
+                    root[option] = !root[option];
                     break;
                 }
 
-                case "string": {
-                    category[option] = String(value);
-                    break;
-                }
+                case "string": case "number": {
+                    if (value === null || value === undefined) {
+                        return false;
+                    }
 
-                case "number": {
-                    category[option] = Number(value);
+                    root[option] = value;
                     break;
                 }
             }
 
-            type === "settings"
-                ? this.saveSettings(this.settings)
-                : this.saveCustom({
-                    type: String(type),
-                    settings: this.config[type]
-                });
-
-            return category[option];
+            this.config[category].save();
+            return root[option];
         },
 
         async serviceDispatch(action, data) {

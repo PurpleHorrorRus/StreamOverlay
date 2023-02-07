@@ -1,5 +1,3 @@
-import { ipcRenderer } from "electron";
-
 export default {
     namespaced: true,
 
@@ -10,7 +8,7 @@ export default {
     actions: {
         TURN_LOCK: ({ state }, mouse) => {
             state.locked = mouse;
-            ipcRenderer.send("turnMouse", mouse);
+            return global.$nuxt.$ipc.send("turnMouse", mouse);
         }
     }
 };

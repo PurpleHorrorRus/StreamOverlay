@@ -109,7 +109,7 @@ export default {
     },
 
     mounted() {
-        if (this.settings.restriction) {
+        if (this.config.settings.restriction) {
             const sourceWidth = this.source.width || this.$refs.movable.$el.offsetWidth;
             const sourceHeight = this.source.width || this.$refs.movable.$el.offsetHeight;
 

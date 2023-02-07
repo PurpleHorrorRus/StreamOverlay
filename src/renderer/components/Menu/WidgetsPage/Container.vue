@@ -35,9 +35,8 @@ export default {
     created() {
         this.active = false;
 
-        if (this.widgets.length > 0) {
-            this.select(0);
-        }
+        return this.config.widgets.length > 0
+            && this.select(0);
     },
 
     methods: {
@@ -47,6 +46,7 @@ export default {
                 name: "",
                 src: "",
                 visible: true,
+
                 style: {
                     x: 200,
                     y: 200,
@@ -57,34 +57,36 @@ export default {
         },
 
         select(index) {
-            this.widget = this.widgets[index];
+            this.widget = this.config.widgets[index];
+            return this.widget;
         },
 
         add() {
             this.widget = this.empty();
+            return this.widget;
         },
 
         delete() {
-            const index = this.widgets.findIndex(widget => {
+            const index = this.config.widgets.findIndex(widget => {
                 return widget.id === this.widget.id;
             });
 
-            const copy = [...this.widgets];
-            copy.splice(index, 1);
-            this.widgets = copy;
             this.widget = this.empty();
+
+            this.config.widgets.splice(index, 1);
+            return this.config.save("widgets");
         },
 
         saveWidget() {
-            const index = this.widgets.findIndex(widget => {
+            const index = this.config.widgets.findIndex(widget => {
                 return widget.id === this.widget.id;
             });
 
             !~index
-                ? this.widgets.push(this.widget)
-                : this.widgets[index] = this.widget;
+                ? this.config.widgets.push(this.widget)
+                : (this.config.widgets[index] = this.widget);
 
-            this.saveWidgets(this.widgets);
+            return this.config.save("widgets");
         }
     }
 };

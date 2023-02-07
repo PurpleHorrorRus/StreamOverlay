@@ -10,14 +10,14 @@
 </template>
 
 <script>
-import WidgetsMixin from "~/mixins/widgets";
+import CoreMixin from "~/mixins/core";
 
 export default {
     components: {
-        WebView: () => import("~/components/WebView")
+        WebView: () => import("./WebView.vue")
     },
 
-    mixins: [WidgetsMixin],
+    mixins: [CoreMixin],
 
     props: {
         widget: {
@@ -29,28 +29,39 @@ export default {
     mounted () {
         if (this.widget.visible === undefined) {
             this.$set(this.widget, "visible", true);
-            this.widgets.find(w => w.id === this.widget.id).visible = true;
-            this.saveWidgets(this.widgets);
+
+            this.config.widgets.find(widget => {
+                return widget.id === this.widget.id;
+            }).visible = true;
+
+            return this.config.save("widgets");
         }
     },
 
     methods: {
         onResize (x, y, width, height) {
-            const index = this.widgets.findIndex(r => r.id === this.widget.id);
-            this.widgets[index].style.width = width;
-            this.widgets[index].style.height = height;
-            this.onDrag(x, y, index);
+            const index = this.config.widgets.findIndex(widget => {
+                return widget.id === this.widget.id;
+            });
+
+            this.config.widgets[index].style.width = width;
+            this.config.widgets[index].style.height = height;
+
+            return this.onDrag(x, y, index);
         },
 
-        onDrag (x, y, index = this.widgets.findIndex(r => r.id === this.widget.id)) {
-            this.widgets[index].style.x = x;
-            this.widgets[index].style.y = y;
-            this.saveWidgets(this.widgets);
+        onDrag (x, y, index = this.config.widgets.findIndex(r => r.id === this.widget.id)) {
+            this.config.widgets[index].style.x = x;
+            this.config.widgets[index].style.y = y;
+            return this.config.save("widgets");
         },
 
         turnVisible() {
-            this.widgets.find(w => w.id === this.widget.id).visible = !this.widget.visible;
-            this.saveWidgets(this.widgets);
+            this.config.widgets.find(widget => {
+                return widget.id === this.widget.id;
+            }).visible = !this.widget.visible;
+
+            return this.config.save("widgets");
         }
     }
 };

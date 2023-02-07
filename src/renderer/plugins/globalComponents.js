@@ -1,3 +1,4 @@
+import { ipcRenderer } from "electron";
 import Vue from "vue";
 
 const components = {
@@ -16,3 +17,19 @@ const components = {
 Object.entries(components).forEach(([name, component]) => {
     Vue.component(name, component);
 });
+
+export default (_, inject) => {
+    inject("ipc", {
+        send: (event, content) => {
+            if (content && typeof content === "object") {
+                return ipcRenderer.send(event, JSON.parse(JSON.stringify(content)));
+            }
+
+            return ipcRenderer.send(event, content);
+        },
+
+        invoke: async (event, content) => {
+            return await ipcRenderer.invoke(event, content);
+        }
+    });
+};

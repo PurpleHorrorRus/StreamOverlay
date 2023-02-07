@@ -5,18 +5,18 @@
         <div class="modal-body">
             <MenuError v-if="error" :error="error" />
 
-            <div v-if="!settings.first" id="settings-trovo-notifications">
+            <div v-if="!config.settings.first" id="settings-trovo-notifications">
                 <ToggleButton
                     :text="$strings.MENU.SERVICES.TROVO.JOIN"
-                    :checked="settings.trovo.notifications.welcome"
-                    @change="deepChange(settings.trovo.notifications, 'welcome', null, 'trovo')"
+                    :checked="config.settings.trovo.notifications.welcome"
+                    @change="deepChange('settings', config.settings.trovo.notifications, 'welcome')"
                 />
 
                 <ToggleButton
                     :text="$strings.MENU.SERVICES.TROVO.PAST.TITLE"
-                    :checked="settings.trovo.past"
+                    :checked="config.settings.trovo.past"
                     :tip="$strings.MENU.SERVICES.TROVO.PAST.TIP"
-                    @change="deepChange(settings.trovo, 'past', null, 'trovo')"
+                    @change="deepChange('settings', config.settings.trovo, 'past')"
                 />
             </div>
 
@@ -78,8 +78,8 @@ export default {
     },
 
     async created() {
-        if (this.config.trovo.code) {
-            this.code = this.config.trovo.code;
+        if (this.config.settings.trovo.code) {
+            this.code = this.config.settings.trovo.code;
         }
     },
 
@@ -95,7 +95,7 @@ export default {
             });
 
             if (credits) {
-                this.config.trovo = credits;
+                this.config.settings.trovo = credits;
                 this.setConfig(this.config);
                 this.$router.replace("/");
             }

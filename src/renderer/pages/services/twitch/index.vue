@@ -6,7 +6,7 @@
             <MenuError v-if="error" :error="error" />
 
             <MenuLink
-                v-if="!settings.first"
+                v-if="!config.settings.first"
                 :text="$strings.MENU.SERVICES.TWITCH.NOTIFICATIONS_SETTINGS"
                 :link="'/services/twitch/notifications'"
             />
@@ -14,26 +14,26 @@
             <ToggleButton
                 :text="$strings.MENU.SERVICES.TWITCH.CHAT_SECURE"
                 :checked="config.twitch.chatSecure"
-                @change="deepChange(config.twitch, 'chatSecure', null, 'twitch')"
+                @change="deepChange('twitch', config.twitch, 'chatSecure')"
             />
 
             <ToggleButton
                 :text="$strings.MENU.SERVICES.TWITCH.DEBUG_CHAT"
                 :checked="config.twitch.chatDebug"
-                @change="deepChange(config.twitch, 'chatDebug', null, 'twitch')"
+                @change="deepChange('twitch', config.twitch, 'chatDebug')"
             />
 
             <ToggleButton
                 :text="$strings.MENU.SERVICES.TWITCH.DEBUG_EVENTSUB"
                 :checked="config.twitch.eventsubDebug"
-                @change="deepChange(config.twitch, 'eventsubDebug', null, 'twitch')"
+                @change="deepChange('twitch', config.twitch, 'eventsubDebug')"
             />
 
             <ToggleButton
-                v-if="!settings.first"
+                v-if="!config.settings.first"
                 :text="$strings.MENU.SERVICES.TWITCH.BADGES"
-                :checked="settings.chat.badges"
-                @change="deepChange(settings.chat, 'badges')"
+                :checked="config.settings.chat.badges"
+                @change="deepChange('settings', config.settings.chat, 'badges')"
             />
 
             <Input
@@ -43,6 +43,7 @@
             />
 
             <TwitchSettingsAccessToken @input="access_token = $event" />
+            <TwitchSettingsOAuthToken @input="oauth_token = $event" />
 
             <SolidButton
                 :label="$strings.CONTINUE"
@@ -63,6 +64,7 @@ import CoreMixin from "~/mixins/core";
 import OtherMixin from "~/mixins/other";
 
 const accessTokenRegex = /access_token=(.*?)&/;
+const oauthRegex = /oauth:/;
 
 let helix = null;
 
@@ -70,7 +72,8 @@ export default {
     components: {
         MenuError: () => import("~/components/Menu/Notifications/Error"),
 
-        TwitchSettingsAccessToken: () => import("~/components/Settings/Services/Twitch/AccessToken.vue")
+        TwitchSettingsAccessToken: () => import("~/components/Settings/Services/Twitch/AccessToken.vue"),
+        TwitchSettingsOAuthToken: () => import("~/components/Settings/Services/Twitch/OAuthToken.vue")
     },
 
     mixins: [CoreMixin, OtherMixin],
@@ -80,6 +83,7 @@ export default {
     data: () => ({
         username: "",
         access_token: "",
+        oauth_token: "",
         error: "",
         validating: false
     }),
@@ -102,6 +106,17 @@ export default {
             if (accessTokenRegex.test(access_token)) {
                 this.access_token = access_token.match(accessTokenRegex)[1];
             }
+        },
+
+        oauth_token(oauth_token) {
+            if (oauth_token.length === 0) {
+                this.oauth_token = "oauth:";
+                return;
+            }
+
+            if (!oauthRegex.test(oauth_token)) {
+                this.oauth_token = `oauth:${oauth_token}`;
+            }
         }
     },
 
@@ -109,9 +124,10 @@ export default {
         if (this.config.twitch.username) {
             this.username = this.config.twitch.username;
             this.access_token = this.config.twitch.access_token;
+            this.oauth_token = this.config.twitch.oauth_token;
 
             if (this.$route.query.outdated) {
-                this.settings.first = true;
+                this.config.settings.first = true;
                 this.access_token = "";
                 this.error = this.$strings.MENU.SERVICES.TWITCH.ERROR.OUTDATED;
             }
@@ -136,6 +152,7 @@ export default {
                         ...this.config.twitch,
                         username: this.username,
                         access_token: this.access_token,
+                        oauth_token: this.oauth_token,
                         version: this.version
                     }
                 });

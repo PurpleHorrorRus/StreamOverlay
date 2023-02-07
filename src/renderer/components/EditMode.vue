@@ -13,20 +13,18 @@
 </template>
 
 <script>
-import { ipcRenderer } from "electron";
-
 import WidgetsMixin from "~/mixins/widgets";
 
 export default {
     mixins: [WidgetsMixin],
 
     beforeDestroy() {
-        ipcRenderer.send("turnMouse", false);
+        this.$ipc.send("turnMouse", false);
         this.edit = false;
     },
 
     created() {
-        ipcRenderer.send("turnMouse", true);
+        this.$ipc.send("turnMouse", true);
     },
 
     methods: {
