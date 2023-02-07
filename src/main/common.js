@@ -2,7 +2,7 @@
 import { app } from "electron";
 import path from "path";
 
-import storage from "./storage";
+import Storage from "./storage";
 import WindowsLogic from "./windows";
 
 app.getVersion = () => "2.3.0";
@@ -10,6 +10,6 @@ app.getVersion = () => "2.3.0";
 export default {
     icon: path.join("build", "icons", "icon.ico"),
     isDev: process.env.NODE_ENV === "development",
-    storage,
+    storage: new Storage().create(),
     windows: new WindowsLogic()
 };
