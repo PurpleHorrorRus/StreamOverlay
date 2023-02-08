@@ -20,7 +20,8 @@ import discord from "./discord";
 export default function() {
     return new Vuex.Store({
         state: () => ({
-            config: null
+            config: null,
+            paths: null
         }),
 
         actions: {
@@ -48,6 +49,11 @@ export default function() {
                 return state.config;
             },
 
+            SET_PATHS: ({ state }, paths) => {
+                state.paths = paths;
+                return state.paths;
+            },
+
             SERVICE_DISPATCH: async ({ dispatch, state }, request) => {
                 const action = request.action || request;
                 const data = request.data || null;
@@ -56,11 +62,11 @@ export default function() {
             },
 
             PREPARE_TEMP_FOLDER: ({ state }, folderPath) => {
-                if (!fs.existsSync(state.config.paths.temp)) {
-                    fs.mkdirSync(state.config.paths.temp);
+                if (!fs.existsSync(state.paths.temp)) {
+                    fs.mkdirSync(state.paths.temp);
                 }
 
-                const folder = path.join(state.config.paths.temp, folderPath);
+                const folder = path.join(state.paths.temp, folderPath);
                 if (!fs.existsSync(folder)) {
                     fs.mkdirSync(folder);
                 }

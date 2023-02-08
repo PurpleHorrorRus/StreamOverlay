@@ -84,8 +84,12 @@ export default {
 
         if (!this.config) {
             console.clear();
+
             const config = await this.$ipc.invoke("config");
             await this.setConfig(config);
+
+            const paths = await this.$ipc.invoke("paths");
+            await this.setPaths(paths);
         }
 
         if (await this.serviceDispatch("AUTH")) {
@@ -108,6 +112,7 @@ export default {
     methods: {
         ...mapActions({
             setConfig: "SET_CONFIG",
+            setPaths: "SET_PATHS",
 
             loadLanguage: "strings/LOAD",
 

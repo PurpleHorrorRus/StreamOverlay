@@ -13,6 +13,10 @@ class Handlers {
             ? ipcMain.handle("config", config)
             : ipcMain.handleOnce("config", config);
 
+        common.isDev
+            ? ipcMain.handle("paths", () => (common.storage.paths))
+            : ipcMain.handleOnce("paths", () => (common.storage.paths));
+
         ipcMain.on("turnMouse", (_event, enabled) => {
             mainWindowInstance.window.setIgnoreMouseEvents(!enabled);
             enabled
