@@ -100,7 +100,7 @@ export default {
             message = Object.assign(message, {
                 id: message.id || Date.now(),
                 show: true,
-                bannded: false
+                banned: false
             });
 
             state.messages.unshift(message);
