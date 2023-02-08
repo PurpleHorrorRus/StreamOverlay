@@ -15,6 +15,7 @@ const params = {
     fullscreen: true,
     flashFrame: false,
     focusable: true,
+
     webPreferences: {
         webSecurity: false,
         nodeIntegration: true,
@@ -27,8 +28,7 @@ const params = {
         enableRemoteModule: false,
         webgl: false,
         enableWebSQL: false,
-        v8CacheOptions: "none",
-        additionalArguments: ["--js-flags=--max-old-space-size=128 --stack-size=128"]
+        v8CacheOptions: "none"
     }
 };
 
