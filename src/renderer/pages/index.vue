@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions } from "vuex";
 import { ipcRenderer } from "electron";
 
 import OBSMixin from "~/mixins/obs";
@@ -88,10 +88,9 @@ export default {
             await this.setPaths(paths);
         }
 
-        if (await this.serviceDispatch("AUTH")) {
+        if (await this.authService()) {
             if (this.config.settings.first) {
-                this.config.settings.first = false;
-                this.config.settings.save();
+                this.deepChange("settings", this.config.settings, "first");
             }
 
             this.initService();
@@ -122,6 +121,16 @@ export default {
 
             addNotification: "notifications/ADD"
         }),
+
+        async authService() {
+            if (this.config.settings.service === "none") {
+                this.$router.replace("/services").catch(() => {});
+                this.settings.first = true;
+                return false;
+            }
+
+            return await this.serviceDispatch("AUTH");
+        },
 
         registerIPC() {
             ipcRenderer.on("turnMenu", (_event, sequence) => {
