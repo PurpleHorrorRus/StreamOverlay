@@ -3,7 +3,10 @@
         <Title :title="$strings.MENU.SERVICES.TWITCH.TITLE" />
 
         <div id="twitch-settings" class="modal-body">
-            <MenuError v-if="error" :error="error" />
+            <MenuError
+                v-if="error"
+                :error="error"
+            />
 
             <MenuLink
                 v-if="!config.settings.first"
@@ -69,6 +72,7 @@ let helix = null;
 export default {
     components: {
         MenuError: () => import("~/components/Menu/Notifications/Error"),
+
         TwitchSettingsAccessToken: () => import("~/components/Settings/Services/Twitch/AccessToken.vue")
     },
 
@@ -122,24 +126,21 @@ export default {
             this.validating = true;
             this.error = "";
 
-            const success = await this.validate().catch(e => {
+            const success = await this.validate().catch(() => {
                 this.reset();
-                this.error = e.error;
                 return false;
             });
 
             if (success) {
-                this.saveCustom({
-                    type: "twitch",
-                    settings: {
-                        ...this.config.twitch,
-                        username: this.username,
-                        access_token: this.access_token,
-                        version: this.version
-                    }
+                this.config.twitch.save({
+                    ...this.config.twitch,
+                    username: this.username,
+                    access_token: this.access_token,
+                    version: this.version
                 });
 
-                this.$router.replace("/");
+                return this.$router.replace("/")
+                    .catch(() => (false));
             }
         },
 
@@ -150,24 +151,18 @@ export default {
                 access_token: this.access_token
             });
 
-            const user = await helix.users.getByLogin(this.username.toLowerCase())
-                .catch(() => {
-                    throw this.handleError(this.$strings.MENU.SERVICES.TWITCH.ERROR.INVALID);
-                });
+            const user = (await helix.users.getByLogin(this.username.toLowerCase()).catch(() => {
+                this.error = this.$strings.MENU.SERVICES.TWITCH.ERROR.INVALID;
+                throw this.error;
+            }))?.data[0];
 
-            if (user.length === 0) {
-                throw this.handleError(this.$strings.MENU.SERVICES.TWITCH.ERROR.NOT_FOUND);
+            if (!user) {
+                this.error = this.$strings.MENU.SERVICES.TWITCH.ERROR.NOT_FOUND;
+                throw this.error;
             }
 
-            const data = await helix.channel.get(user.id);
+            const data = (await helix.channel.get(user.id))?.data[0];
             return await helix.updateStream(user.id, data.title, data.game_name);
-        },
-
-        handleError(error) {
-            return {
-                success: false,
-                error
-            };
         },
 
         reset() {
