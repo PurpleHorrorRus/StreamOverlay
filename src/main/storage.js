@@ -28,6 +28,7 @@ const clear = {
             width: 143,
             height: 160,
             sound: false,
+
             tts: {
                 enable: false,
                 readName: false
@@ -62,13 +63,6 @@ const clear = {
             y: 801,
             width: 192,
             height: 219
-        },
-
-        meridius: {
-            enable: false,
-            x: 0,
-            y: 0,
-            port: 3000
         },
 
         notifications: {

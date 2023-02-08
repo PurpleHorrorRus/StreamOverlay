@@ -54,10 +54,6 @@ export default {
     }),
 
     computed: {
-        ...mapState({
-            song: state => state.meridius.song
-        }),
-
         showOBS() {
             return this.connected
                 && (this.config.settings.OBSStatus.ServiceInfo.enable
@@ -120,17 +116,9 @@ export default {
 
             startFollowers: "followers/START",
 
-            startDonationAlerts: "donationalerts/INIT",
-
             turnLock: "ipc/TURN_LOCK",
 
             connectOBS: "obs/CONNECT",
-
-            connectMeridius: "meridius/CONNECT",
-
-            initOutput: "output/INIT",
-
-            startAutoprocess: "autoprocess/START",
 
             addNotification: "notifications/ADD"
         }),

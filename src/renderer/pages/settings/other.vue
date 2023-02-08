@@ -27,12 +27,6 @@
             />
 
             <ToggleButton
-                :text="$strings.MENU.OTHER.MERIDIUS"
-                :checked="config.settings.meridius.enable"
-                @change="deepChange('settings', config.settings.meridius, 'enable')"
-            />
-
-            <ToggleButton
                 :text="$strings.MENU.OTHER.DISCORD"
                 :checked="config.settings.discord"
                 @change="turnDiscord"
