@@ -125,16 +125,19 @@ export default {
             this.load = true;
 
             // eslint-disable-next-line max-len
-            this.prediction = await this.client.predictions.create(
+            const response = await this.client.predictions.create(
                 this.user.id,
                 this.prediction.title,
                 this.prediction.outcomes.filter(outcome => outcome.title.length > 0),
                 60
             );
 
+            this.prediction = response.data[0];
+
             updateInterval = setInterval(() => this.get(), updateRate * 1000);
 
             this.load = false;
+            return this.prediction;
         },
 
         async end(index) {

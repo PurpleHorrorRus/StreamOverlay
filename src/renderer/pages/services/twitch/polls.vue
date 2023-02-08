@@ -125,15 +125,28 @@ export default {
 
         async start() {
             this.load = true;
-            this.poll = await this.client.polls.create(this.user.id, this.poll.title, this.validChoices, 60);
+
+            const response = await this.client.polls.create(
+                this.user.id,
+                this.poll.title,
+                this.validChoices,
+                60
+            );
+
+            this.poll = response.data[0];
+
             updateInterval = setInterval(() => this.get(), updateRate * 1000);
+
             this.load = false;
+            return this.poll;
         },
 
         async end() {
             this.load = true;
+
             await this.client.polls.end(this.user.id, this.poll.id);
             this.poll = empty;
+
             this.clear();
             this.load = false;
         },
