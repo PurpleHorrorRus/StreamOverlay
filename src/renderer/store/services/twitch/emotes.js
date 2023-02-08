@@ -1,5 +1,6 @@
 import bttv from "./emotes/bttv";
 import ffz from "./emotes/ffz";
+import seventv from "./emotes/7tv";
 
 export default {
     namespaced: true,
@@ -8,15 +9,17 @@ export default {
 
     actions: {
         LOAD: async ({ dispatch, state }, { id, name }) => {
-            const [bGlobal, bChannel, fGlobal, fChannel] = await Promise.all([
+            const [bGlobal, bChannel, fGlobal, fChannel, sChannel] = await Promise.all([
                 dispatch("bttv/GLOBAL"),
                 dispatch("bttv/CHANNEL", id),
                 dispatch("ffz/GLOBAL"),
-                dispatch("ffz/CHANNEL", name)
+                dispatch("ffz/CHANNEL", name),
+                dispatch("seventv/CHANNEL")
             ]);
 
             state.bttv.emotes = bGlobal.concat(bChannel);
             state.ffz.emotes = fGlobal.concat(fChannel);
+            state.seventv.emotes = sChannel;
 
             return true;
         },
@@ -32,12 +35,14 @@ export default {
 
         FIND: ({ state }, word) => {
             return state.bttv.emotes.find(e => e.code === word)
-                || state.ffz.emotes.find(e => e.code === word);
+                || state.ffz.emotes.find(e => e.code === word)
+                || state.seventv.emotes.find(e => e.name === word);
         }
     },
 
     modules: {
         bttv,
-        ffz
+        ffz,
+        seventv
     }
 };
