@@ -19,7 +19,7 @@ export default {
     computed: {
         emoticionStyle() {
             return {
-                height: `${this.$parent.settings.chat.font + 16}px`
+                height: `${this.$parent.config.settings.chat.font + 16}px`
             };
         }
     }
