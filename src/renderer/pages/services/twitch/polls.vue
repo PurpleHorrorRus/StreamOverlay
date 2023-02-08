@@ -111,8 +111,7 @@ export default {
         },
 
         async get() {
-            const response = await this.client.polls.get(this.user.id);
-            const poll = response.data[0];
+            const poll = (await this.client.polls.get(this.user.id)).data[0];
 
             if (poll?.status === "ACTIVE") {
                 for (let i = 0; i < poll.choices.length; i++) {
@@ -126,14 +125,12 @@ export default {
         async start() {
             this.load = true;
 
-            const response = await this.client.polls.create(
+            this.poll = (await this.client.polls.create(
                 this.user.id,
                 this.poll.title,
                 this.validChoices,
                 60
-            );
-
-            this.poll = response.data[0];
+            )).data[0];
 
             updateInterval = setInterval(() => this.get(), updateRate * 1000);
 

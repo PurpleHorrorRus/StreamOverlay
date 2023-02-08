@@ -111,8 +111,7 @@ export default {
 
     methods: {
         async get() {
-            const response = await this.client.predictions.get(this.user.id);
-            const prediction = response.data[0];
+            const prediction = (await this.client.predictions.get(this.user.id)).data[0];
 
             if (prediction.status === "ACTIVE" || prediction.status === "LOCKED") {
                 this.prediction = prediction;
@@ -125,14 +124,12 @@ export default {
             this.load = true;
 
             // eslint-disable-next-line max-len
-            const response = await this.client.predictions.create(
+            this.prediction = (await this.client.predictions.create(
                 this.user.id,
                 this.prediction.title,
                 this.prediction.outcomes.filter(outcome => outcome.title.length > 0),
                 60
-            );
-
-            this.prediction = response.data[0];
+            )).data[0];
 
             updateInterval = setInterval(() => this.get(), updateRate * 1000);
 
