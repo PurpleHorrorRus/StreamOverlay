@@ -133,7 +133,7 @@ class Storage {
         this.appdata = app.getPath("userData");
 
         this.root = isDev
-            ? path.resolve(this.appdata, "config", "StreamOverlayMaximum")
+            ? path.resolve(this.appdata, "config", "StreamOverlay")
             : path.resolve(this.appdata, "config");
 
         this.paths = {
