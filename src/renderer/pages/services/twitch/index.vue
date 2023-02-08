@@ -63,7 +63,6 @@ import CoreMixin from "~/mixins/core";
 import OtherMixin from "~/mixins/other";
 
 const accessTokenRegex = /access_token=(.*?)&/;
-const oauthRegex = /oauth:/;
 
 let helix = null;
 
@@ -80,7 +79,6 @@ export default {
     data: () => ({
         username: "",
         access_token: "",
-        oauth_token: "",
         error: "",
         validating: false
     }),
@@ -103,17 +101,6 @@ export default {
             if (accessTokenRegex.test(access_token)) {
                 this.access_token = access_token.match(accessTokenRegex)[1];
             }
-        },
-
-        oauth_token(oauth_token) {
-            if (oauth_token.length === 0) {
-                this.oauth_token = "oauth:";
-                return;
-            }
-
-            if (!oauthRegex.test(oauth_token)) {
-                this.oauth_token = `oauth:${oauth_token}`;
-            }
         }
     },
 
@@ -121,7 +108,6 @@ export default {
         if (this.config.twitch.username) {
             this.username = this.config.twitch.username;
             this.access_token = this.config.twitch.access_token;
-            this.oauth_token = this.config.twitch.oauth_token;
 
             if (this.$route.query.outdated) {
                 this.config.settings.first = true;
@@ -149,7 +135,6 @@ export default {
                         ...this.config.twitch,
                         username: this.username,
                         access_token: this.access_token,
-                        oauth_token: this.oauth_token,
                         version: this.version
                     }
                 });

@@ -21,7 +21,7 @@ export default {
 
     state: () => ({
         tags: null,
-        version: 3
+        version: 2
     }),
 
     mutations: {
@@ -48,7 +48,7 @@ export default {
             }
 
             const config = rootState.config.twitch;
-            if (!config.username || !config.access_token || !config.oauth_token) {
+            if (!config.username || !config.access_token) {
                 return await dispatch("LOGIN_ERROR");
             }
 
@@ -128,8 +128,8 @@ export default {
             });
 
             const chatClient = await rootState.service.client.tmi.connect(
-                "BernkastelBot",
-                credits.oauth_token,
+                credits.username,
+                credits.access_token,
                 [credits.username],
                 {
                     debug: rootState.config.twitch.chatDebug,

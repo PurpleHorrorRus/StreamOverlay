@@ -104,8 +104,7 @@ const clear = {
     twitch: {
         username: "",
         access_token: "",
-        oauth_token: "",
-        version: 1,
+        version: 2,
         eventsubDebug: false,
         chatDebug: false,
         chatSecure: true,
