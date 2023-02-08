@@ -31,8 +31,7 @@ export default {
         },
 
         "channel.follow": async ({ dispatch, rootState }, data) => {
-            const userId = Number(data.user_id);
-            const user = await rootState.service.client.users.getByID(userId);
+            const user = (await rootState.service.client.users.getById(data.user_id)).data[0];
 
             return dispatch("notifications/ADD", {
                 presense: true,
@@ -54,7 +53,7 @@ export default {
         },
 
         "channel.subscribe": async ({ dispatch, rootState }, data) => {
-            const user = await rootState.service.client.users.get(Number(data.user_id));
+            const user = (await rootState.service.client.users.get(data.user_id)).data[0];
 
             return dispatch("notifications/ADD", {
                 presense: true,
@@ -76,7 +75,7 @@ export default {
         },
 
         "channel.ban": async ({ dispatch, rootState }, data) => {
-            const user = await rootState.service.client.users.get(Number(data.user_id));
+            const user = (await rootState.service.client.users.get(data.user_id)).data[0];
 
             for (const message of rootState.service.messages) {
                 if (user.display_name === message.nickname) {
