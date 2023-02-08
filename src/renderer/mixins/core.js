@@ -29,7 +29,7 @@ export default {
 
         deepChange(category, root, option, value = "") {
             if (!this.config[category]) {
-                console.error(`Can't change state: ${category}`);
+                console.error("Can't change state", category);
                 return root[option];
             }
 

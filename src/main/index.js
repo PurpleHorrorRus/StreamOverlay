@@ -20,6 +20,7 @@ if (app.requestSingleInstanceLock()) {
 
     app.commandLine.appendSwitch("enable-features", "SharedArrayBuffer");
     app.once("window-all-closed", app.quit);
+
     app.whenReady().then(async () => {
         if (!common.isDev) {
             protocol.register();
