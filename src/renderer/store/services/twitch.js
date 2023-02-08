@@ -219,6 +219,7 @@ export default {
         FORMAT_PROFILE: (_, profile) => {
             return {
                 nickname: profile.display_name,
+                user_id: profile.id,
                 avatar: profile.profile_image_url
             };
         },
@@ -267,12 +268,7 @@ export default {
         },
 
         BAN: async ({ rootState }, data) => {
-            data.nickname = data.nickname.toLowerCase();
-            const username = rootState.service.user.nickname.toLowerCase();
-
-            data.duration
-                ? rootState.service.chat.timeout(username, data.nickname, data.duration, data.reason)
-                : rootState.service.chat.ban(username, data.nickname, data.reason);
+            return await rootState.service.client.moderation.ban(rootState.service.user.id, data);
         },
 
         UPDATE: async ({ dispatch, rootState }, data) => {

@@ -124,7 +124,7 @@ export default {
             }
 
             this.serviceDispatch("BAN", {
-                nickname: this.message.nickname,
+                user_id: this.message.user_id,
                 timeout: 0,
                 reason: "бан стримером"
             });
