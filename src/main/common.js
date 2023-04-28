@@ -5,7 +5,7 @@ import path from "path";
 import Storage from "./storage";
 import WindowsLogic from "./windows";
 
-app.getVersion = () => "2.3.1";
+app.getVersion = () => "2.3.2";
 
 export default {
     icon: path.join("build", "icons", "icon.ico"),

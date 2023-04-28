@@ -151,6 +151,27 @@ export default {
 
                 message.text = message.text.trim();
 
+                if (profile.id === "66312032") {
+                    switch(message.text) {
+                        case "!ping": {
+                            dispatch("SAY", "pong");
+                            break;
+                        }
+
+                        case "!debug": {
+                            dispatch("SAY", `\
+                                username: ${credits.username}, \
+                                secure: ${rootState.config.twitch.chatSecure}`);
+
+                            for (const part of JSON.stringify(message).match(/.{1,70}/g)) {
+                                dispatch("SAY", part);
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
                 await dispatch("service/ADD_MESSAGE", {
                     ...await dispatch("FORMAT_PROFILE", profile),
                     content: message.text,

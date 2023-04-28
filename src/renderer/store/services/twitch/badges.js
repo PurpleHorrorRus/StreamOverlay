@@ -22,10 +22,11 @@ export default {
                 return Object.entries({ [set_id]: versions ? versions[0].image_url_1x : "" });
             }).flat(1);
 
-            state.badges = {
-                ...Object.fromEntries(mapped),
-                subscriber: channel.versions[0].image_url_1x
-            };
+            state.badges = Object.fromEntries(mapped);
+
+            if (channel?.versions[0]) {
+                state.badges.subscriber = channel.versions[0].image_url_1x;
+            }
 
             return 0;
         },
@@ -35,8 +36,7 @@ export default {
                 return [];
             }
 
-            badges = Object.keys(badges);
-            badges = badges.filter(badge => state.badges[badge]);
+            badges = Object.keys(badges).filter(badge => state.badges[badge]);
             return badges.map(badge => state.badges[badge]);
         }
     }

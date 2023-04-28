@@ -23,16 +23,19 @@ export default {
     actions: {
         GLOBAL: async () => {
             const response = await misc.syncRequest(globalURL);
+
+            if (!response) {
+                return [];
+            }
+
             const values = Object.values(response.sets);
-            const emotes = formatSets(values);
-            return emotes.flat(1);
+            return formatSets(values).flat(1);
         },
 
         CHANNEL: async (_, username) => {
-            username = username.toLowerCase();
+            const response = await misc.syncRequest(`https://api.frankerfacez.com/v1/room/${username.toLowerCase()}`);
 
-            const response = await misc.syncRequest(`https://api.frankerfacez.com/v1/room/${username}`);
-            return response.room
+            return response?.room
                 ? format(response.sets[response.room.set])
                 : [];
         }

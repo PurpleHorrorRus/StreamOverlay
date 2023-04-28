@@ -13,10 +13,10 @@ export default {
     actions: {
         GLOBAL: async () => {
             const response = await misc.syncRequest("https://7tv.io/v3/emote-sets/62cdd34e72a832540de95857");
-            return response.emotes.map(emote => ({
+            return response?.emotes.map(emote => ({
                 name: emote.name,
                 url: `https:${emote.data.host.url}/${emote.data.host.files[0].name}`
-            }));
+            })) || [];
         },
 
         CHANNEL: async ({ rootState }) => {

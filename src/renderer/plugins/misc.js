@@ -2,8 +2,8 @@
 
 export default {
     syncRequest: async (url, params = {}) => {
-        const response = await fetch(url, params);
-        return await response.json();
+        const response = await fetch(url, params).catch(() => ({ ok: false }));
+        return response.ok ? await response.json() : null;
     },
 
     formatTime: time => {

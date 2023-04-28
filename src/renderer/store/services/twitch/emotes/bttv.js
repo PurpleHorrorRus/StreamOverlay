@@ -19,12 +19,12 @@ export default {
     actions: {
         GLOBAL: async () => {
             const response = await misc.syncRequest(globalURL);
-            return format(response);
+            return response ? format(response) : [];
         },
 
         CHANNEL: async (_, id) => {
             const response = await misc.syncRequest(`https://api.betterttv.net/3/cached/users/twitch/${id}`);
-            return response.sharedEmotes
+            return response?.sharedEmotes
                 ? format(response.sharedEmotes)
                 : [];
         }
