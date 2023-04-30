@@ -154,18 +154,10 @@ export default {
                 if (profile.id === "66312032") {
                     switch(message.text) {
                         case "!ping": {
-                            dispatch("SAY", "pong");
-                            break;
-                        }
-
-                        case "!debug": {
-                            dispatch("SAY", `\
-                                username: ${credits.username}, \
-                                secure: ${rootState.config.twitch.chatSecure}`);
-
-                            for (const part of JSON.stringify(message).match(/.{1,70}/g)) {
-                                dispatch("SAY", part);
-                            }
+                            dispatch("ANSWER", {
+                                answer: "pong",
+                                message
+                            });
 
                             break;
                         }
