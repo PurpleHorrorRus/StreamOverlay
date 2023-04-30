@@ -133,6 +133,10 @@ export default {
         },
 
         registerIPC() {
+            ipcRenderer.once("update-available", (_, release) => {
+                return this.turnUpdate(release);
+            });
+
             ipcRenderer.on("turnMenu", (_event, sequence) => {
                 if (!this.connected || this.config.settings.first) {
                     return false;

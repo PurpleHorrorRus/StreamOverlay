@@ -1,14 +1,14 @@
 <template>
     <div id="update" class="notification icon">
         <div id="update-progress">
-            <span id="update-progress-percent" v-text="`${percent}%`" />
-            <div id="update-progress-line" :style="line" />
+            <span id="update-progress__percent" v-text="`${percent}%`" />
+            <div id="update-progress__line" :style="line" />
         </div>
 
         <span id="update-label" v-text="'Скачивание обновления...'" />
         <div id="update-release">
-            <span id="update-release-title" v-html="release.releaseName" />
-            <span id="update-release-notes" v-html="release.releaseNotes" />
+            <span id="update-release__title" v-html="release.releaseName" />
+            <span id="update-release__notes" v-html="release.releaseNotes" />
         </div>
     </div>
 </template>
@@ -62,14 +62,14 @@ export default {
         flex-direction: column;
         row-gap: 2px;
 
-        &-percent {
+        &__percent {
             width: 100%;
 
             font-size: 12px;
             text-align: center;
         }
 
-        &-line {
+        &__line {
             height: 2px;
 
             background-color: var(--secondary);
