@@ -40,7 +40,7 @@
         "nuxt-lazy-load": "1.3.0",
         "obs-websocket-js": "^5.0.2",
         "overlayaddon": "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git",
-        "simple-helix-api": "^4.0.3",
+        "simple-helix-api": "^4.0.4",
         "simple-trovo-api": "^1.1.10",
         "stream-gtts": "https://github.com/PurpleHorrorRus/StreamGTTS",
         "v-tooltip": "2.1.3",
