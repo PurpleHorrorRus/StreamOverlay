@@ -48,7 +48,8 @@ export default {
 			this.config.settings.service = service.id;
 			this.config.settings.save();
 
-			return this.$ipc.send("restart");
+			return this.$router.replace(`/services/${service.id}`)
+				.catch(() => (false));
 		}
 	}
 };

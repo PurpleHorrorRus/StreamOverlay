@@ -34,11 +34,6 @@ class Handlers {
 				: mainWindowInstance.window.webContents.closeDevTools();
 		});
 
-		ipcMain.once("restart", () => {
-			app.relaunch();
-			app.exit(0);
-		});
-
 		ipcMain.handle("FindWindow", (_, window) => {
 			return mainWindowInstance.addon.FindWindow(window);
 		});
