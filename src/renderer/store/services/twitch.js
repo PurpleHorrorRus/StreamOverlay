@@ -115,8 +115,8 @@ export default {
 
 				if (state.tags) {
 					const message = ~payload.tags["followers-only"]
-						? global.$nuxt.$strings.NOTIFICATIONS.SYSTEM.FOLLOWERS_ONLY_ON
-						: global.$nuxt.$strings.NOTIFICATIONS.SYSTEM.FOLLOWERS_ONLY_OFF;
+						? global.$nuxt.$strings.NOTIFICATIONS.TWITCH.SYSTEM.FOLLOWERS_ONLY_ON
+						: global.$nuxt.$strings.NOTIFICATIONS.TWITCH.SYSTEM.FOLLOWERS_ONLY_OFF;
 
 					dispatch("service/ADD_SYSTEM_MESSAGE", message, { root: true });
 				}
@@ -348,8 +348,7 @@ export default {
 				return false;
 			}
 
-			const user_id = rootState.service.user.id;
-			return await rootState.service.client.chat.updateSettings(user_id, {
+			return await rootState.service.client.chat.updateSettings(rootState.service.user.id, rootState.service.user.id, {
 				follower_mode: state.tags["followers-only"] === -1,
 				follower_mode_duration: duration
 			});
