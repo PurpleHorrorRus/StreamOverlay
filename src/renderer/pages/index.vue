@@ -80,11 +80,16 @@ export default {
 		if (!this.config) {
 			console.clear();
 
-			const config = await this.$ipc.invoke("config");
-			await this.setConfig(config);
+			const [config, paths] = await Promise.all([
+				this.$ipc.invoke("config"),
+				this.$ipc.invoke("paths")
+			]);
 
-			const paths = await this.$ipc.invoke("paths");
-			await this.setPaths(paths);
+			await Promise.all([
+				this.setConfig(config),
+				this.setPaths(paths),
+				this.loadLanguage("ru")
+			]);
 		}
 
 		if (await this.authService()) {
