@@ -26,9 +26,7 @@ export default {
 
     mutations: {
         LOGIN_REDIRECT(_state, query = {}) {
-            if (query) {
-                query = new URLSearchParams(query).toString();
-            }
+            query = new URLSearchParams(query).toString();
 
             return this.$router.replace(`/services/twitch?${query}`)
                 .catch(() => (false));
@@ -127,15 +125,10 @@ export default {
                 dispatch("events/ON_RAW_MESSAGE_FOLLOWERS_MODE");
             });
 
-            const chatClient = await rootState.service.client.tmi.connect(
-                credits.username,
-                credits.access_token,
-                [credits.username],
-                {
-                    debug: rootState.config.twitch.chatDebug,
-                    secure: rootState.config.twitch.chatSecure
-                }
-            );
+            const chatClient = await rootState.service.client.tmi.connect(credits.username, credits.access_token, [credits.username], {
+                debug: rootState.config.twitch.chatDebug,
+                secure: rootState.config.twitch.chatSecure
+            });
 
             const chat = await dispatch("service/SET_CHAT", chatClient, { root: true });
             chat.on("message", async message => {

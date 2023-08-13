@@ -94,8 +94,8 @@ export default {
 
         disabled() {
             return (
-                this.username.length === 0 ||
-                this.access_token.length === 0
+                this.username.length === 0 
+                || this.access_token.length === 0
             );
         }
     },
@@ -123,32 +123,35 @@ export default {
 
     methods: {
         async next() {
-            this.validating = true;
-            this.error = "";
+			this.validating = true;
+			this.error = "";
 
-            const success = await this.validate().catch(() => {
-                this.reset();
-                return false;
-            });
+			const success = await this.validate().catch(() => {
+				this.reset();
+				return false;
+			});
 
-            if (success) {
-                this.config.twitch.save({
-                    ...this.config.twitch,
-                    username: this.username,
-                    access_token: this.access_token,
-                    version: this.version
-                });
+			if (!success) {
+				this.validating = false;
+				return false;
+			}
 
-                return this.$router.replace("/")
-                    .catch(() => (false));
-            }
-        },
+			this.config.twitch.save({
+				...this.config.twitch,
+				username: this.username,
+				access_token: this.access_token,
+				version: this.version
+			});
+
+			return this.$router.replace("/")
+				.catch(() => (false));
+		},
 
         async validate() {
             helix = new Helix({
                 // eslint-disable-next-line no-undef
                 client_id: process.env.twitch_client_id,
-                access_token: this.access_token
+                access_token: this.access_token.trim()
             });
 
             const user = (await helix.users.getByLogin(this.username.toLowerCase()).catch(() => {

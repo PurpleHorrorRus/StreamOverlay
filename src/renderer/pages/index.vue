@@ -56,8 +56,7 @@ export default {
     computed: {
         showOBS() {
             return this.connected
-                && (this.config.settings.OBSStatus.ServiceInfo.enable
-                || this.config.settings.OBSStatus.ServiceInfo.followers);
+                && (this.config.settings.OBSStatus.ServiceInfo.enable || this.config.settings.OBSStatus.ServiceInfo.followers);
         },
 
         showViewersList() {
