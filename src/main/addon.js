@@ -5,44 +5,44 @@ import path from "path";
 import common from "./common";
 
 class Addon {
-    constructor (window) {
-        this.window = window;
+	constructor (window) {
+		this.window = window;
 
-        // eslint-disable-next-line no-undef
-        addon.InitWindow(this.window.getNativeWindowHandle(), path.basename(process.execPath));
-        addon.SetLowPriority();
-        addon.ReduceWorkingSet();
-    }
+		// eslint-disable-next-line no-undef
+		addon.InitWindow(this.window.getNativeWindowHandle(), path.basename(process.execPath));
+		addon.SetLowPriority();
+		addon.ReduceWorkingSet();
+	}
 
-    clearMemory () {
-        if (common.storage.config.settings.RAMClean) {
-            addon.SetLowPriority();
-            addon.ReduceWorkingSet();
-        }
+	clearMemory () {
+		if (common.storage.config.settings.RAMClean) {
+			addon.SetLowPriority();
+			addon.ReduceWorkingSet();
+		}
 
-        return {
-            interval: timeout => setInterval(() => this.clearMemory(), timeout)
-        };
-    }
+		return {
+			interval: timeout => setInterval(() => this.clearMemory(), timeout)
+		};
+	}
 
-    moveTop () {
-        if (!this.window.menu) {
-            addon.MoveTop();
-            this.window.showInactive();
-        }
+	moveTop () {
+		if (!this.window.menu) {
+			addon.MoveTop();
+			this.window.showInactive();
+		}
 
-        return {
-            interval: timeout => setInterval(() => this.moveTop(), timeout)
-        };
-    }
+		return {
+			interval: timeout => setInterval(() => this.moveTop(), timeout)
+		};
+	}
 
-    FindWindow (name) {
-        return addon.FindWindow(name);
-    }
+	FindWindow (name) {
+		return addon.FindWindow(name);
+	}
 
-    GetNames () {
-        return addon.GetNames();
-    }
+	GetNames () {
+		return addon.GetNames();
+	}
 }
 
 export default Addon;

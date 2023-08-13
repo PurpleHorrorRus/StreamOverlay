@@ -7,31 +7,31 @@ import common from "./common";
 autoUpdater.currentVersion = app.getVersion();
 autoUpdater.autoDownload = true;
 class Updater {
-    constructor (window) {
-        this.window = window;
-    }
+	constructor (window) {
+		this.window = window;
+	}
 
-    init () {
-        autoUpdater.on("error", () => {});
+	init () {
+		autoUpdater.on("error", () => {});
 
-        autoUpdater.on("download-progress", progress => {
-            return common.windows.send(this.window, "download-progress", progress);
-        });
+		autoUpdater.on("download-progress", progress => {
+			return common.windows.send(this.window, "download-progress", progress);
+		});
 
-        autoUpdater.once("update-available", info => {
-            return common.windows.send(this.window, "update-available", info);
-        });
+		autoUpdater.once("update-available", info => {
+			return common.windows.send(this.window, "update-available", info);
+		});
 
-        autoUpdater.once("update-downloaded", () => {
-            return autoUpdater.quitAndInstall(true, true);
-        });
+		autoUpdater.once("update-downloaded", () => {
+			return autoUpdater.quitAndInstall(true, true);
+		});
 
-        autoUpdater.checkForUpdates();
+		autoUpdater.checkForUpdates();
 
-        return {
-            interval: timeout => setInterval(() => autoUpdater.checkForUpdates(), timeout)
-        };
-    }
+		return {
+			interval: timeout => setInterval(() => autoUpdater.checkForUpdates(), timeout)
+		};
+	}
 }
 
 export default Updater;

@@ -13,62 +13,62 @@ const cssRules = require("../../nuxt-config/css.json");
 const isDev = process.env.NODE_ENV === "development";
 
 module.exports = {
-    target: "server",
-    ssr: false,
+	target: "server",
+	ssr: false,
 
-    telemetry: false,
-    dev: isDev,
-    loading: false,
+	telemetry: false,
+	dev: isDev,
+	loading: false,
 
-    env: require("../../env.json"),
-    head: headConfig,
-    router: routerConfig,
-    vue: vueConfig,
-    plugins: webpackPlugins(),
-    css: cssRules,
-    buildModules: ["@nuxtjs/style-resources"],
-    modules: webpackModules,
+	env: require("../../env.json"),
+	head: headConfig,
+	router: routerConfig,
+	vue: vueConfig,
+	plugins: webpackPlugins(),
+	css: cssRules,
+	buildModules: ["@nuxtjs/style-resources"],
+	modules: webpackModules,
 
-    styleResources: {
-        scss: ["~assets/css/mixins.scss"]
-    },
+	styleResources: {
+		scss: ["~assets/css/mixins.scss"]
+	},
 
-    build: {
-        publicPath: "./_nuxt/",
+	build: {
+		publicPath: "./_nuxt/",
 
-        babel: {
-            presets() {
-                return [
-                    ["@nuxt/babel-preset-app", {
-                        corejs: { version: 3 }
-                    }]
-                ];
-            }
-        },
+		babel: {
+			presets() {
+				return [
+					["@nuxt/babel-preset-app", {
+						corejs: { version: 3 }
+					}]
+				];
+			}
+		},
 
-        extend(config, { isClient }) {
-            config.resolve.alias.vue = "vue/dist/vue.min";
+		extend(config, { isClient }) {
+			config.resolve.alias.vue = "vue/dist/vue.min";
 
-            if (isClient) {
-                config.target = "electron-renderer";
-                config.devtool = "source-map";
-            }
+			if (isClient) {
+				config.target = "electron-renderer";
+				config.devtool = "source-map";
+			}
 
-            config.mode = process.env.NODE_ENV;
-            config.performance = optimizationConfig.performance;
+			config.mode = process.env.NODE_ENV;
+			config.performance = optimizationConfig.performance;
 
-            config.module.rules.find(rule => rule.test.test(".svg")).test = /\.(gif|webp)$/;
-            config.module.rules = config.module.rules.concat(webpackRules);
-        },
+			config.module.rules.find(rule => rule.test.test(".svg")).test = /\.(gif|webp)$/;
+			config.module.rules = config.module.rules.concat(webpackRules);
+		},
 
-        html: isDev ? optimizationConfig.html : {},
-        optimization: !isDev ? optimizationConfig.optimization : {},
-        splitChunks: isDev ? optimizationConfig.splitChunks : {},
-        filenames: !isDev ? optimizationConfig.filenames : {},
-        extractCSS: false
-    },
+		html: isDev ? optimizationConfig.html : {},
+		optimization: !isDev ? optimizationConfig.optimization : {},
+		splitChunks: isDev ? optimizationConfig.splitChunks : {},
+		filenames: !isDev ? optimizationConfig.filenames : {},
+		extractCSS: false
+	},
 
-    alias: {
-        "~icons": path.resolve(__dirname, "assets/icons")
-    }
+	alias: {
+		"~icons": path.resolve(__dirname, "assets/icons")
+	}
 };

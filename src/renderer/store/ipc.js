@@ -1,14 +1,14 @@
 export default {
-    namespaced: true,
+	namespaced: true,
 
-    state: () => ({
-        locked: false
-    }),
+	state: () => ({
+		locked: false
+	}),
 
-    actions: {
-        TURN_LOCK: ({ state }, mouse) => {
-            state.locked = mouse;
-            return global.$nuxt.$ipc.send("turnMouse", mouse);
-        }
-    }
+	actions: {
+		TURN_LOCK: ({ state }, mouse) => {
+			state.locked = mouse;
+			return global.$nuxt.$ipc.send("turnMouse", mouse);
+		}
+	}
 };

@@ -3,18 +3,18 @@ import { mapActions } from "vuex";
 import CoreMixin from "~/mixins/core";
 
 export default {
-    mixins: [CoreMixin],
+	mixins: [CoreMixin],
 
-    computed: {
-        edit: {
-            get () { return this.$store.state.widgets.edit; },
-            set (value) { this.turnEdit(value); }
-        }
-    },
+	computed: {
+		edit: {
+			get () { return this.$store.state.widgets.edit; },
+			set (value) { this.turnEdit(value); }
+		}
+	},
 
-    methods: {
-        ...mapActions({
-            turnEdit: "widgets/TURN_EDIT"
-        })
-    }
+	methods: {
+		...mapActions({
+			turnEdit: "widgets/TURN_EDIT"
+		})
+	}
 };

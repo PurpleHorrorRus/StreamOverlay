@@ -11,73 +11,73 @@ let serivceName = "";
 let latestActivity = "";
 
 export default {
-    namespaced: true,
+	namespaced: true,
 
-    actions: {
-        AUTH: async ({ dispatch, rootState }) => {
-            if (!interval) {
-                service = rootState.config.settings.service;
-                serivceName = service.charAt(0).toUpperCase() + service.slice(1);
+	actions: {
+		AUTH: async ({ dispatch, rootState }) => {
+			if (!interval) {
+				service = rootState.config.settings.service;
+				serivceName = service.charAt(0).toUpperCase() + service.slice(1);
 
-                interval = setInterval(() => {
-                    return dispatch(client ? "SET_ACTIVITY" : "AUTH");
-                }, 20 * 1000);
-            }
+				interval = setInterval(() => {
+					return dispatch(client ? "SET_ACTIVITY" : "AUTH");
+				}, 20 * 1000);
+			}
 
-            client = new Discord.Client({ transport: "ipc" });
-            await client.login({ clientId });
-            return await dispatch("SET_ACTIVITY");
-        },
+			client = new Discord.Client({ transport: "ipc" });
+			await client.login({ clientId });
+			return await dispatch("SET_ACTIVITY");
+		},
 
-        SET_ACTIVITY: async ({ dispatch, rootState }) => {
-            if (!rootState.config.settings.discord) {
-                return false;
-            }
+		SET_ACTIVITY: async ({ dispatch, rootState }) => {
+			if (!rootState.config.settings.discord) {
+				return false;
+			}
 
-            if (!client) {
-                return await dispatch("AUTH");
-            }
+			if (!client) {
+				return await dispatch("AUTH");
+			}
 
-            const activity = rootState.service.stream.title + "_" + rootState.service.stream.game;
-            if (activity !== latestActivity) {
-                const response = await dispatch("SERVICE_DISPATCH", {
-                    action: "SEARCH_GAME",
-                    data: rootState.service.stream.game
-                }, { root: true });
+			const activity = rootState.service.stream.title + "_" + rootState.service.stream.game;
+			if (activity !== latestActivity) {
+				const response = await dispatch("SERVICE_DISPATCH", {
+					action: "SEARCH_GAME",
+					data: rootState.service.stream.game
+				}, { root: true });
 
-                const updated = await client.setActivity({
-                    details: rootState.service.stream.title,
-                    state: rootState.service.stream.game,
-                    largeImageKey: response.game.box_art_url || response.game.icon,
-                    largeImageText: rootState.service.user.link,
-                    smallImageKey: service,
-                    smallImageText: serivceName,
-                    instance: false,
+				const updated = await client.setActivity({
+					details: rootState.service.stream.title,
+					state: rootState.service.stream.game,
+					largeImageKey: response.game.box_art_url || response.game.icon,
+					largeImageText: rootState.service.user.link,
+					smallImageKey: service,
+					smallImageText: serivceName,
+					instance: false,
 
-                    buttons: [{
-                        label: "Смотреть",
-                        url: `https://${rootState.service.user.link}`
-                    }]
-                }).catch(() => {
-                    client = null;
-                    return false;
-                });
+					buttons: [{
+						label: "Смотреть",
+						url: `https://${rootState.service.user.link}`
+					}]
+				}).catch(() => {
+					client = null;
+					return false;
+				});
 
-                latestActivity = updated ? activity : "";
-                return updated;
-            }
+				latestActivity = updated ? activity : "";
+				return updated;
+			}
 
-            return false;
-        },
+			return false;
+		},
 
-        CLEAR_ACTIVITY: () => {
-            client.clearActivity();
+		CLEAR_ACTIVITY: () => {
+			client.clearActivity();
 
-            clearInterval(interval);
-            interval = null;
-            client = null;
+			clearInterval(interval);
+			interval = null;
+			client = null;
 
-            return true;
-        }
-    }
+			return true;
+		}
+	}
 };

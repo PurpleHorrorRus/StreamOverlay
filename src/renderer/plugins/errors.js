@@ -1,3 +1,3 @@
 export default function({ app }) {
-    app.nuxt.error = () => {};
+	app.nuxt.error = () => {};
 }

@@ -1,20 +1,20 @@
 export default {
-    namespaced: true,
+	namespaced: true,
 
-    state: () => ({
-        list: []
-    }),
+	state: () => ({
+		list: []
+	}),
 
-    actions: {
-        LOAD: async ({ state, rootState }) => {
-            let rewards = await rootState.service.client.rewards.all(rootState.service.user.id);
+	actions: {
+		LOAD: async ({ state, rootState }) => {
+			let rewards = await rootState.service.client.rewards.all(rootState.service.user.id);
 
-            if (!Array.isArray(rewards)) {
-                rewards = [rewards];
-            }
+			if (!Array.isArray(rewards)) {
+				rewards = [rewards];
+			}
 
-            state.list = rewards;
-            return state.list;
-        }
-    }
+			state.list = rewards;
+			return state.list;
+		}
+	}
 };

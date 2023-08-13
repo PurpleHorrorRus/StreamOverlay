@@ -6,228 +6,228 @@ import TTS from "stream-gtts";
 import misc from "~/plugins/misc";
 
 const config = {
-    visibleMessagesMax: 15
+	visibleMessagesMax: 15
 };
 
 const emptyStream = {
-    title: "",
-    game: ""
+	title: "",
+	game: ""
 };
 
 const TTSClient = new TTS("ru");
 const TTSQuery = [];
 
 const DownloadTTS = async (text, folder) => {
-    const filename = "TTS_" + Math.floor(performance.now()) + ".mp3";
-    const filepath = path.join(folder, filename);
-    await TTSClient.save(filepath, text);
-    return filepath;
+	const filename = "TTS_" + Math.floor(performance.now()) + ".mp3";
+	const filepath = path.join(folder, filename);
+	await TTSClient.save(filepath, text);
+	return filepath;
 };
 
 const ReadTTS = async file => {
-    const audio = new Audio(file);
-    audio.volume = 0.5;
-    audio.play();
-    audio.onended = async () => {
-        fs.remove(file);
-        TTSQuery.splice(0, 1);
+	const audio = new Audio(file);
+	audio.volume = 0.5;
+	audio.play();
+	audio.onended = async () => {
+		fs.remove(file);
+		TTSQuery.splice(0, 1);
 
-        if (TTSQuery.length > 0) {
-            await Promise.delay(500);
-            return ReadTTS(TTSQuery[0]);
-        }
-    };
+		if (TTSQuery.length > 0) {
+			await Promise.delay(500);
+			return ReadTTS(TTSQuery[0]);
+		}
+	};
 };
 
 export default {
-    namespaced: true,
+	namespaced: true,
 
-    state: () => ({
-        client: null,
-        chat: null,
-        user: null,
-        connected: false,
+	state: () => ({
+		client: null,
+		chat: null,
+		user: null,
+		connected: false,
 
-        messages: [],
-        stream: emptyStream,
+		messages: [],
+		stream: emptyStream,
 
-        viewers: 0,
-        followers: 0
-    }),
+		viewers: 0,
+		followers: 0
+	}),
 
-    actions: {
-        SET_CLIENT: ({ state }, client) => {
-            state.client = client;
-            return state.client;
-        },
+	actions: {
+		SET_CLIENT: ({ state }, client) => {
+			state.client = client;
+			return state.client;
+		},
 
-        SET_CHAT: ({ state }, chat) => {
-            state.chat = chat;
-            return state.chat;
-        },
+		SET_CHAT: ({ state }, chat) => {
+			state.chat = chat;
+			return state.chat;
+		},
 
-        SET_USER: ({ state }, user) => {
-            state.user = user;
-            return state.user;
-        },
+		SET_USER: ({ state }, user) => {
+			state.user = user;
+			return state.user;
+		},
 
-        SET_STREAM: ({ state }, stream) => {
-            state.stream = stream;
-            return state.stream;
-        },
+		SET_STREAM: ({ state }, stream) => {
+			state.stream = stream;
+			return state.stream;
+		},
 
-        INIT: async ({ dispatch }) => {
-            dispatch("UPDATE_INFO");
+		INIT: async ({ dispatch }) => {
+			dispatch("UPDATE_INFO");
 
-            return setInterval(() => {
-                return dispatch("UPDATE_INFO");
-            }, 10000);
-        },
+			return setInterval(() => {
+				return dispatch("UPDATE_INFO");
+			}, 10000);
+		},
 
-        UPDATE_INFO: async ({ dispatch, state }) => {
-            const [viewers, followers] = await Promise.all([
-                dispatch("SERVICE_DISPATCH", "VIEWERS_COUNT", { root: true }),
-                dispatch("SERVICE_DISPATCH", "FOLLOWERS_COUNT", { root: true })
-            ]);
+		UPDATE_INFO: async ({ dispatch, state }) => {
+			const [viewers, followers] = await Promise.all([
+				dispatch("SERVICE_DISPATCH", "VIEWERS_COUNT", { root: true }),
+				dispatch("SERVICE_DISPATCH", "FOLLOWERS_COUNT", { root: true })
+			]);
 
-            state.viewers = viewers;
-            state.followers = followers;
+			state.viewers = viewers;
+			state.followers = followers;
 
-            return [viewers, followers];
-        },
+			return [viewers, followers];
+		},
 
-        ADD_MESSAGE: async ({ dispatch, state, rootState }, message) => {
-            message = Object.assign(message, {
-                id: message.id || Date.now(),
-                show: true,
-                banned: false
-            });
+		ADD_MESSAGE: async ({ dispatch, state, rootState }, message) => {
+			message = Object.assign(message, {
+				id: message.id || Date.now(),
+				show: true,
+				banned: false
+			});
 
-            state.messages.unshift(message);
-            dispatch("LIMIT_MESSAGES");
+			state.messages.unshift(message);
+			dispatch("LIMIT_MESSAGES");
 
-            if (rootState.config.settings.chat.timeout > 0) {
-                setTimeout(() => {
-                    dispatch("REMOVE_MESSAGE", message.id);
-                }, rootState.config.settings.chat.timeout * 1000);
-            }
+			if (rootState.config.settings.chat.timeout > 0) {
+				setTimeout(() => {
+					dispatch("REMOVE_MESSAGE", message.id);
+				}, rootState.config.settings.chat.timeout * 1000);
+			}
 
-            if (!message.system && !message.service && !message.past) {
-                if (rootState.config.settings.chat.sound) {
-                    dispatch("PLAY_SOUND");
-                }
+			if (!message.system && !message.service && !message.past) {
+				if (rootState.config.settings.chat.sound) {
+					dispatch("PLAY_SOUND");
+				}
 
-                if (rootState.config.settings.chat.tts.enable) {
-                    dispatch("VOICE_MESSAGE", {
-                        name: message.nickname,
-                        message: message.content
-                    });
-                }
-            }
+				if (rootState.config.settings.chat.tts.enable) {
+					dispatch("VOICE_MESSAGE", {
+						name: message.nickname,
+						message: message.content
+					});
+				}
+			}
 
-            return message;
-        },
+			return message;
+		},
 
-        ADD_SYSTEM_MESSAGE: async ({ dispatch }, data) => {
-            const isObject = typeof data === "object";
+		ADD_SYSTEM_MESSAGE: async ({ dispatch }, data) => {
+			const isObject = typeof data === "object";
 
-            let message = {
-                id: Date.now(),
-                nickname: isObject ? data.nickname : "SYSTEM",
-                system: true,
-                time: data.time || await dispatch("GET_CURRENT_TIME"),
+			let message = {
+				id: Date.now(),
+				nickname: isObject ? data.nickname : "SYSTEM",
+				system: true,
+				time: data.time || await dispatch("GET_CURRENT_TIME"),
 
-                formatted: [{
-                    type: "text",
-                    content: isObject ? data.content : data
-                }]
-            };
+				formatted: [{
+					type: "text",
+					content: isObject ? data.content : data
+				}]
+			};
 
-            if (isObject) {
-                message = Object.assign(message, data);
-            }
+			if (isObject) {
+				message = Object.assign(message, data);
+			}
 
-            return await dispatch("ADD_MESSAGE", message);
-        },
+			return await dispatch("ADD_MESSAGE", message);
+		},
 
-        REMOVE_MESSAGE: ({ state }, id) => {
-            const message = state.messages.find(message => {
-                return message.id === id;
-            });
+		REMOVE_MESSAGE: ({ state }, id) => {
+			const message = state.messages.find(message => {
+				return message.id === id;
+			});
 
-            if (message) {
-                message.show = false;
-            }
+			if (message) {
+				message.show = false;
+			}
 
-            return Boolean(message);
-        },
+			return Boolean(message);
+		},
 
-        LIMIT_MESSAGES: ({ state }) => {
-            const visibleMessagesCount = state.messages.filter(m => m.show).length;
+		LIMIT_MESSAGES: ({ state }) => {
+			const visibleMessagesCount = state.messages.filter(m => m.show).length;
 
-            if (visibleMessagesCount > config.visibleMessagesMax) {
-                for (let i = config.visibleMessagesMax; i < visibleMessagesCount; i++) {
-                    if (!state.messages[i].show) {
-                        break;
-                    }
+			if (visibleMessagesCount > config.visibleMessagesMax) {
+				for (let i = config.visibleMessagesMax; i < visibleMessagesCount; i++) {
+					if (!state.messages[i].show) {
+						break;
+					}
 
-                    state.messages[i].show = false;
-                }
-            }
+					state.messages[i].show = false;
+				}
+			}
 
-            return true;
-        },
+			return true;
+		},
 
-        PLAY_SOUND: () => {
-            const sound = new Audio("notification.mp3");
-            sound.volume = 0.6;
-            return sound.play();
-        },
+		PLAY_SOUND: () => {
+			const sound = new Audio("notification.mp3");
+			sound.volume = 0.6;
+			return sound.play();
+		},
 
-        VOICE_MESSAGE: async ({ dispatch, rootState }, { name, message, forceName }) => {
-            const readName = rootState.config.settings.chat.tts.readName || forceName;
-            const text = readName ? `${name} сказал ${message}` : message;
+		VOICE_MESSAGE: async ({ dispatch, rootState }, { name, message, forceName }) => {
+			const readName = rootState.config.settings.chat.tts.readName || forceName;
+			const text = readName ? `${name} сказал ${message}` : message;
 
-            const folder = await dispatch("PREPARE_TEMP_FOLDER", "tts", { root: true });
-            const file = await DownloadTTS(text, folder);
-            TTSQuery.push(file);
+			const folder = await dispatch("PREPARE_TEMP_FOLDER", "tts", { root: true });
+			const file = await DownloadTTS(text, folder);
+			TTSQuery.push(file);
 
-            if (TTSQuery.length === 1) {
-                return await ReadTTS(TTSQuery[0]);
-            }
+			if (TTSQuery.length === 1) {
+				return await ReadTTS(TTSQuery[0]);
+			}
 
-            return text;
-        },
+			return text;
+		},
 
-        GET_CURRENT_TIME: () => {
-            const time = new Date();
+		GET_CURRENT_TIME: () => {
+			const time = new Date();
 
-            return misc.formatTime({
-                hours: time.getHours(),
-                mins: time.getMinutes(),
-                seconds: time.getSeconds()
-            });
-        },
+			return misc.formatTime({
+				hours: time.getHours(),
+				mins: time.getMinutes(),
+				seconds: time.getSeconds()
+			});
+		},
 
-        STREAM_VOICE: async (_, text) => {
-            return await TTSClient.stream(text);
-        },
+		STREAM_VOICE: async (_, text) => {
+			return await TTSClient.stream(text);
+		},
 
-        UPDATE_RECENT: ({ rootState }, data) => {
-            const index = rootState.config.recent.findIndex(item => {
-                return item.title === data.title
+		UPDATE_RECENT: ({ rootState }, data) => {
+			const index = rootState.config.recent.findIndex(item => {
+				return item.title === data.title
                     && item.game === data.game;
-            });
+			});
 
-            rootState.config.recent = ~index
-                ? misc.arrayMove(rootState.config.recent, index, 0)
-                : misc.insertToArray(rootState.config.recent, 0, data);
+			rootState.config.recent = ~index
+				? misc.arrayMove(rootState.config.recent, index, 0)
+				: misc.insertToArray(rootState.config.recent, 0, data);
 
-            if (rootState.config.recent.length > 5) {
-                rootState.config.recent = rootState.config.recent.splice(0, 5);
-            }
+			if (rootState.config.recent.length > 5) {
+				rootState.config.recent = rootState.config.recent.splice(0, 5);
+			}
 
-            return rootState.config.save("recent");
-        }
-    }
+			return rootState.config.save("recent");
+		}
+	}
 };
