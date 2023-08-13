@@ -34,6 +34,10 @@ class Handlers {
 				: mainWindowInstance.window.webContents.closeDevTools();
 		});
 
+		ipcMain.once("quit", () => {
+			return app.quit();
+		});
+
 		ipcMain.handle("FindWindow", (_, window) => {
 			return mainWindowInstance.addon.FindWindow(window);
 		});

@@ -3,6 +3,14 @@
         <Notifications />
         <Lock :locked="!hidden" />
         <ModalContent v-show="!hidden" />
+
+        <XIcon
+            v-if="!hidden"
+            id="modal-quit"
+            v-tooltip.left="$strings.MENU.QUIT"
+            class="icon clickable"
+            @click="quit"
+        />
     </div>
 </template>
 
@@ -13,45 +21,51 @@ import { mapActions, mapState } from "vuex";
 import CoreMixin from "~/mixins/core";
 
 export default {
-    components: {
-        Notifications: () => import("~/components/Notifications/Notifications.vue"),
-        Lock: () => import("~/components/Menu/Lock.vue"),
-        ModalContent: () => import("~/components/Menu/ModalContent.vue")
-    },
+	components: {
+		Notifications: () => import("~/components/Notifications/Notifications.vue"),
+		Lock: () => import("~/components/Menu/Lock.vue"),
+		ModalContent: () => import("~/components/Menu/ModalContent.vue"),
 
-    mixins: [CoreMixin],
+		XIcon: () => import("~/assets/icons/x.svg")
+	},
 
-    data: () => ({
-        hidden: false
-    }),
+	mixins: [CoreMixin],
 
-    computed: {
-        ...mapState({
-            locked: state => state.ipc.locked
-        })
-    },
+	data: () => ({
+		hidden: false
+	}),
 
-    created() {
-        document.getElementsByTagName("html")[0].classList.add(this.config.settings.service);
+	computed: {
+		...mapState({
+			locked: state => state.ipc.locked
+		})
+	},
 
-        this.turnLock(true);
+	created() {
+		document.getElementsByTagName("html")[0].classList.add(this.config.settings.service);
 
-        ipcRenderer.on("turnLock", (_event, mouse) => {
-            this.hidden = !mouse;
-        });
-    },
+		this.turnLock(true);
 
-    beforeDestroy() {
-        this.hidden = false;
-        this.turnLock(false);
-        return ipcRenderer.removeAllListeners("turnLock");
-    },
+		ipcRenderer.on("turnLock", (_event, mouse) => {
+			this.hidden = !mouse;
+		});
+	},
 
-    methods: {
-        ...mapActions({
-            turnLock: "ipc/TURN_LOCK"
-        })
-    }
+	beforeDestroy() {
+		this.hidden = false;
+		this.turnLock(false);
+		return ipcRenderer.removeAllListeners("turnLock");
+	},
+
+	methods: {
+		...mapActions({
+			turnLock: "ipc/TURN_LOCK"
+		}),
+
+		quit() {
+			return this.$ipc.send("quit");
+		}
+	}
 };
 </script>
 
@@ -71,5 +85,14 @@ export default {
         top: 50%;
         left: 50%;
     }
+
+    &-quit {
+		position: absolute;
+		top: 40px;
+		right: 10px;
+
+		width: 30px;
+		height: 30px;
+	}
 }
 </style>
