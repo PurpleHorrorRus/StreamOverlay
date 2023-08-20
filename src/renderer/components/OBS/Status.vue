@@ -12,7 +12,7 @@
             />
 
             <span
-                v-if="settings.OBSStatus.time"
+                v-if="config.settings.OBSStatus.time"
                 id="status-information-time"
                 v-text="formatTime"
             />
@@ -28,28 +28,28 @@ import misc from "~/plugins/misc";
 import OBSMixin from "~/mixins/obs";
 
 export default {
-    components: {
-        DotIcon: () => import("~icons/dot.svg")
-    },
+	components: {
+		DotIcon: () => import("~icons/dot.svg")
+	},
 
-    mixins: [OBSMixin],
+	mixins: [OBSMixin],
 
-    computed: {
-        ...mapState({
-            time: state => state.obs.time
-        }),
+	computed: {
+		...mapState({
+			time: state => state.obs.time
+		}),
 
-        label() {
-            if (this.streaming && this.recording) return "LIVE/REC";
-            else if (this.streaming) return "LIVE";
-            else if (this.recording) return "REC";
-            return "";
-        },
+		label() {
+			if (this.streaming && this.recording) return "LIVE/REC";
+			else if (this.streaming) return "LIVE";
+			else if (this.recording) return "REC";
+			return "";
+		},
 
-        formatTime() {
-            return misc.formatTime(this.time);
-        }
-    }
+		formatTime() {
+			return misc.formatTime(this.time);
+		}
+	}
 };
 </script>
 

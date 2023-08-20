@@ -23,69 +23,69 @@ import { mapState } from "vuex";
 import OBSMixin from "~/mixins/obs";
 
 export default {
-    components: {
-        Devices: () => import("~/components/OBS/Devices.vue"),
-        ServiceInfo: () => import("~/components/OBS/ServiceInfo.vue"),
-        Status: () => import("~/components/OBS/Status.vue"),
-        OBSTech: () => import("~/components/OBS/Tech.vue")
-    },
+	components: {
+		Devices: () => import("~/components/OBS/Devices.vue"),
+		ServiceInfo: () => import("~/components/OBS/ServiceInfo.vue"),
+		Status: () => import("~/components/OBS/Status.vue"),
+		OBSTech: () => import("~/components/OBS/Tech.vue")
+	},
 
-    mixins: [OBSMixin],
+	mixins: [OBSMixin],
 
-    computed: {
-        ...mapState({
-            chatConnected: state => state.service.connected
-        }),
+	computed: {
+		...mapState({
+			chatConnected: state => state.service.connected
+		}),
 
-        showStatus() {
-            return this.streaming
+		showStatus() {
+			return this.streaming
                 || this.recording;
-        },
+		},
 
-        showTech() {
-            return this.config.settings.OBSStatus.tech;
-        },
+		showTech() {
+			return this.config.settings.OBSStatus.tech;
+		},
 
-        OBSClass() {
-            return {
-                mini: this.config.settings.OBSStatus.mini.enable,
-                connected: this.OBSConnected && !this.streaming && !this.recording,
-                disconnected: !this.OBSConnected,
-                streaming: this.streaming,
-                recording: this.recording
-            };
-        },
+		OBSClass() {
+			return {
+				mini: this.config.settings.OBSStatus.mini.enable,
+				connected: this.OBSConnected && !this.streaming && !this.recording,
+				disconnected: !this.OBSConnected,
+				streaming: this.streaming,
+				recording: this.recording
+			};
+		},
 
-        OBSStyle() {
-            if (this.config.settings.OBSStatus.mini.enable) {
-                const OBSPanelMini = this.config.settings.OBSStatus.mini;
+		OBSStyle() {
+			if (this.config.settings.OBSStatus.mini.enable) {
+				const OBSPanelMini = this.config.settings.OBSStatus.mini;
 
-                return {
-                    background: `rgba(0, 0, 0, ${OBSPanelMini.opacity}%)`,
-                    borderRadius: `${OBSPanelMini.radius}px`,
-                    transform: `scale(${OBSPanelMini.scale})`,
+				return {
+					background: `rgba(0, 0, 0, ${OBSPanelMini.opacity}%)`,
+					borderRadius: `${OBSPanelMini.radius}px`,
+					transform: `scale(${OBSPanelMini.scale})`,
 
-                    border: OBSPanelMini.border
-                        ? `1px solid rgba(225, 225, 225, ${Math.min(OBSPanelMini.opacity, 50)}%`
-                        : "none",
+					border: OBSPanelMini.border
+						? `1px solid rgba(225, 225, 225, ${Math.min(OBSPanelMini.opacity, 50)}%`
+						: "none",
 
-                    filter: OBSPanelMini.border && OBSPanelMini.shadow
-                        ? `drop-shadow(2px 2px 2px rgba(0, 0, 0, ${Math.min(OBSPanelMini.opacity, 80)}%))`
-                        : "unset"
-                };
-            }
+					filter: OBSPanelMini.border && OBSPanelMini.shadow
+						? `drop-shadow(2px 2px 2px rgba(0, 0, 0, ${Math.min(OBSPanelMini.opacity, 80)}%))`
+						: "unset"
+				};
+			}
 
-            return {};
-        }
-    },
+			return {};
+		}
+	},
 
-    methods: {
-        onDrag(x, y) {
-            this.config.settings.OBSStatus.x = x;
-            this.config.settings.OBSStatus.y = y;
-            return this.config.settings.save();
-        }
-    }
+	methods: {
+		onDrag(x, y) {
+			this.config.settings.OBSStatus.x = x;
+			this.config.settings.OBSStatus.y = y;
+			return this.config.settings.save();
+		}
+	}
 };
 </script>
 

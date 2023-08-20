@@ -1,7 +1,7 @@
 <template>
     <Movable
         id="viewers-list"
-        :source="settings.ViewersList"
+        :source="config.settings.ViewersList"
         name="Список зрителей"
         class="movable-slot"
     >
@@ -28,51 +28,51 @@ let interval = null;
 let timeout = null;
 
 export default {
-    components: {
-        ViewersListCategory: () => import("~/components/ViewersList/Category")
-    },
+	components: {
+		ViewersListCategory: () => import("~/components/ViewersList/Category")
+	},
 
-    mixins: [CoreMixin],
+	mixins: [CoreMixin],
 
-    data: () => ({
-        loading: true,
-        chatters: {}
-    }),
+	data: () => ({
+		loading: true,
+		chatters: {}
+	}),
 
-    async created() {
-        interval = setInterval(() => this.get(), 15 * 1000);
-    },
+	async created() {
+		interval = setInterval(() => this.get(), 15 * 1000);
+	},
 
-    mounted() {
-        timeout = setTimeout(async () => {
-            await this.get();
-            this.loading = false;
-        }, 1000);
-    },
+	mounted() {
+		timeout = setTimeout(async () => {
+			await this.get();
+			this.loading = false;
+		}, 1000);
+	},
 
-    beforeDestroy() {
-        clearTimeout(timeout);
-        clearInterval(interval);
-        interval = null;
-    },
+	beforeDestroy() {
+		clearTimeout(timeout);
+		clearInterval(interval);
+		interval = null;
+	},
 
-    methods: {
-        async get() {
-            this.chatters = await this.serviceDispatch("CHATTERS");
-        },
+	methods: {
+		async get() {
+			this.chatters = await this.serviceDispatch("CHATTERS");
+		},
 
-        onResize(x, y, width, height) {
-            this.config.settings.ViewersList.width = width;
-            this.config.settings.ViewersList.height = height;
-            this.onDrag(x, y);
-        },
+		onResize(x, y, width, height) {
+			this.config.settings.ViewersList.width = width;
+			this.config.settings.ViewersList.height = height;
+			this.onDrag(x, y);
+		},
 
-        onDrag(x, y) {
-            this.config.settings.ViewersList.x = x;
-            this.config.settings.ViewersList.y = y;
-            this.save();
-        }
-    }
+		onDrag(x, y) {
+			this.config.settings.ViewersList.x = x;
+			this.config.settings.ViewersList.y = y;
+			this.save();
+		}
+	}
 };
 </script>
 

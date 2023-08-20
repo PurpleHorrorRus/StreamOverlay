@@ -44,90 +44,90 @@ const accessTokenRegex = /code=(.*?)&/;
 let TrovoClient = null;
 
 export default {
-    components: {
-        MenuError: () => import("~/components/Menu/Notifications/Error.vue"),
-        TrovoSettinsCode: () => import("~/components/Settings/Services/Trovo/Code.vue")
-    },
+	components: {
+		MenuError: () => import("~/components/Menu/Notifications/Error.vue"),
+		TrovoSettinsCode: () => import("~/components/Settings/Services/Trovo/Code.vue")
+	},
 
-    mixins: [CoreMixin, OtherMixin],
+	mixins: [CoreMixin, OtherMixin],
 
-    layout: "modal",
+	layout: "modal",
 
-    data: () => ({
-        code: "",
-        error: "",
-        validating: false
-    }),
+	data: () => ({
+		code: "",
+		error: "",
+		validating: false
+	}),
 
-    computed: {
-        ...mapState({
-            paths: state => state.config.paths
-        }),
+	computed: {
+		...mapState({
+			paths: state => state.config.paths
+		}),
 
-        disabled() {
-            return this.code.length === 0;
-        }
-    },
+		disabled() {
+			return this.code.length === 0;
+		}
+	},
 
-    watch: {
-        code(code) {
-            if (accessTokenRegex.test(code)) {
-                this.code = code.match(accessTokenRegex)[1];
-            }
-        }
-    },
+	watch: {
+		code(code) {
+			if (accessTokenRegex.test(code)) {
+				this.code = code.match(accessTokenRegex)[1];
+			}
+		}
+	},
 
-    async created() {
-        if (this.config.settings.trovo.code) {
-            this.code = this.config.settings.trovo.code;
-        }
-    },
+	async created() {
+		if (this.config.settings.trovo.code) {
+			this.code = this.config.settings.trovo.code;
+		}
+	},
 
-    methods: {
-        async next() {
-            this.validating = true;
-            this.error = "";
+	methods: {
+		async next() {
+			this.validating = true;
+			this.error = "";
 
-            const credits = await this.validate().catch(e => {
-                this.reset();
-                this.error = e;
-                return false;
-            });
+			const credits = await this.validate().catch(e => {
+				this.reset();
+				this.error = e;
+				return false;
+			});
 
-            if (credits) {
-                this.config.settings.trovo = credits;
-                this.setConfig(this.config);
-                this.$router.replace("/");
-            }
-        },
+			if (credits) {
+				this.config.settings.trovo = credits;
+				this.setConfig(this.config);
+				this.$router.replace("/");
+			}
+		},
 
-        async validate() {
-            if (!TrovoClient) {
-                TrovoClient = new TrovoAPI({
-                    // eslint-disable-next-line no-undef
-                    client_id: process.env.trovo_client_id,
-                    // eslint-disable-next-line no-undef
-                    client_secret: process.env.trovo_client_secret,
-                    redirect_uri: "https://purplehorrorrus.github.io/token",
-                    credits: this.paths.trovo
-                });
-            }
+		async validate() {
+			if (!TrovoClient) {
+				TrovoClient = new TrovoAPI({
+					// eslint-disable-next-line no-undef
+					client_id: process.env.trovo_client_id,
+					// eslint-disable-next-line no-undef
+					client_secret: process.env.trovo_client_secret,
+					redirect_uri: "https://purplehorrorrus.github.io/token",
+					credits: this.paths.trovo
+				});
+			}
 
-            return await TrovoClient.exchange(this.code);
-        },
+			return await TrovoClient.exchange(this.code);
+		},
 
-        handleError(error) {
-            return {
-                success: false,
-                error
-            };
-        },
+		handleError(error) {
+			return {
+				success: false,
+				error
+			};
+		},
 
-        reset() {
-            TrovoClient = null;
-            this.validating = false;
-        }
-    }
+		reset() {
+			TrovoClient = null;
+			this.validating = false;
+		}
+	}
 };
 </script>
 

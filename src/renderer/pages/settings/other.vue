@@ -72,23 +72,23 @@
 import CoreMixin from "~/mixins/core";
 
 export default {
-    mixins: [CoreMixin],
+	mixins: [CoreMixin],
 
-    layout: "modal",
+	layout: "modal",
 
-    methods: {
-        turnDiscord() {
-            this.deepChange("settings", this.config.settings, "discord");
+	methods: {
+		turnDiscord() {
+			this.deepChange("settings", this.config.settings, "discord");
 
-            return this.config.settings.discord
-                ? this.setActivity()
-                : this.clearActivity();
-        },
+			return this.config.settings.discord
+				? this.setActivity()
+				: this.clearActivity();
+		},
 
-        turnDevtools() {
-            this.deepChange("settings", this.config.settings, "devtools");
-            return this.$ipc.send("devTools", this.config.settings.devtools);
-        }
-    }
+		turnDevtools() {
+			this.deepChange("settings", this.config.settings, "devtools");
+			return this.$ipc.send("devTools", this.config.settings.devtools);
+		}
+	}
 };
 </script>
