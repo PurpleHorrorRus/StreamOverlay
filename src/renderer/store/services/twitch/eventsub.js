@@ -21,7 +21,8 @@ export default {
 			}
 
 			const conditions = [{
-				broadcaster_user_id: String(rootState.service.user.id)
+				broadcaster_user_id: String(rootState.service.user.id),
+				moderator_user_id: String(rootState.service.user.id)
 			}];
 
 			state.client = rootState.service.client.EventSub;
@@ -34,7 +35,7 @@ export default {
 						if (rootState.config.twitch.notifications[type]) {
 							dispatch(`events/${type}`, data);
 						}
-					});
+					}, state.events.versions[type]);
 				}
 			});
 

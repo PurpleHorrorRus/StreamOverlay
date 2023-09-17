@@ -3,7 +3,15 @@ const timeout = 10;
 export default {
 	namespaced: true,
 
-	state: () => ({}),
+	state: () => ({
+		versions: {
+			"channel.update": 2,
+			"channel.follow": 2,
+			"channel.subscribe": 1,
+			"channel.ban": 1,
+			"stream.online": 1
+		}
+	}),
 
 	actions: {
 		"channel.update": async ({ dispatch }, data) => {
