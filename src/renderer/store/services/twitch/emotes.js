@@ -28,7 +28,7 @@ export default {
 		FORMAT_TWITCH_EMOTES: (_, emotes) => {
 			return emotes.map(emote => {
 				return emote.positions.map(() => ({
-					url: `http://static-cdn.jtvnw.net/emoticons/v1/${emote.id}/3.0`,
+					url: `http://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/2.0`,
 					code: emote.code
 				}));
 			}).flat(2);
