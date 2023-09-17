@@ -304,7 +304,7 @@ export default {
 		},
 
 		FOLLOWERS_COUNT: async ({ rootState }) => {
-			const follows = await rootState.service.client.users.follows(rootState.service.user.id);
+			const follows = await rootState.service.client.channel.followers(rootState.service.user.id);
 			return follows.total || 0;
 		},
 
