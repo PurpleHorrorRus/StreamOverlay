@@ -18,27 +18,27 @@ import { ipcRenderer } from "electron";
 import { mapState } from "vuex";
 
 export default {
-    data: () => ({
-        percent: 0
-    }),
+	data: () => ({
+		percent: 0
+	}),
 
-    computed: {
-        ...mapState({
-            release: state => state.notifications.update.release
-        }),
+	computed: {
+		...mapState({
+			release: state => state.notifications.update.release
+		}),
 
-        line() {
-            return {
-                width: `${this.percent}%`
-            };
-        }
-    },
+		line() {
+			return {
+				width: `${this.percent}%`
+			};
+		}
+	},
 
-    created() {
-        ipcRenderer.on("download-progress", (_, progress) => {
-            this.percent = Math.round(progress.percent);
-        });
-    }
+	created() {
+		ipcRenderer.on("download-progress", (_, progress) => {
+			this.percent = Math.round(progress.percent);
+		});
+	}
 };
 </script>
 
