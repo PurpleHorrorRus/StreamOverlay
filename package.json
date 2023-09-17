@@ -10,7 +10,7 @@
     },
     "main": "./dist/main/index.js",
     "engines": {
-        "node": "<=16.18.1"
+        "node": ">=20.6.1"
     },
     "resolutions": {
         "nth-check": "^2.0.1",
@@ -25,7 +25,7 @@
     },
     "scripts": {
         "dev": "cross-env NODE_ENV=development node .electron-nuxt/index.js",
-        "build": "cross-env NODE_ENV=production node .electron-nuxt/index.js",
+        "build": "cross-env NODE_ENV=production node --openssl-legacy-provider .electron-nuxt/index.js",
         "postinstall": "electron-builder install-app-deps",
         "deps": "yarn && yarn postinstall"
     },
@@ -33,14 +33,14 @@
         "7tv": "^0.0.4",
         "bluebird": "^3.7.2",
         "discord-rpc": "^4.0.1",
-        "electron-updater": "^6.1.1",
+        "electron-updater": "^6.1.4",
         "http": "^0.0.1-security",
-        "node-fetch": "2.6.13",
+        "node-fetch": "2.7.0",
         "nuxt": "2.17.1",
         "nuxt-lazy-load": "1.3.0",
         "obs-websocket-js": "^5.0.3",
         "overlayaddon": "https://github.com/PurpleHorrorRus/StreamOverlayAddon.git",
-        "simple-helix-api": "^4.1.0",
+        "simple-helix-api": "^4.1.2",
         "simple-trovo-api": "^1.1.10",
         "stream-gtts": "https://github.com/PurpleHorrorRus/StreamGTTS",
         "v-tooltip": "2.1.3",
@@ -61,14 +61,14 @@
         "babel-eslint": "^10.1.0",
         "babel-loader": "8.3.0",
         "cross-env": "^7.0.3",
-        "electron": "^26.0.0",
-        "electron-builder": "^24.6.3",
-        "eslint": "^8.47.0",
+        "electron": "^26.2.1",
+        "electron-builder": "^24.6.4",
+        "eslint": "^8.49.0",
         "eslint-plugin-vue": "^9.17.0",
         "file-loader": "^6.2.0",
-        "sass": "^1.66.1",
+        "sass": "^1.67.0",
         "sass-loader": "10.1.1",
         "url-loader": "^4.1.1",
-        "webpack": "4.46.0"
+        "webpack": "4.47.0"
     }
 }
